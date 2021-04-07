@@ -1,0 +1,1108 @@
+SET foreign_key_checks = 0;
+#
+# TABLE STRUCTURE FOR: mp_banks
+#
+
+DROP TABLE IF EXISTS `mp_banks`;
+
+CREATE TABLE `mp_banks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `bankname` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `branch` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `branchcode` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `title` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `accountno` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `status` int(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_banks` (`id`, `bankname`, `branch`, `branchcode`, `title`, `accountno`, `status`) VALUES ('1', 'Islami Bank Bangladesh Ltd', 'Tangail', '123456789', 'Business Account ', '12345678910', '0');
+
+
+#
+# TABLE STRUCTURE FOR: mp_bank_opening
+#
+
+DROP TABLE IF EXISTS `mp_bank_opening`;
+
+CREATE TABLE `mp_bank_opening` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date_created` date NOT NULL,
+  `bank_id` int(11) NOT NULL,
+  `amount` varchar(255) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `bank_id` (`bank_id`),
+  CONSTRAINT `bank_opening_transac` FOREIGN KEY (`bank_id`) REFERENCES `mp_banks` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#
+# TABLE STRUCTURE FOR: mp_bank_transaction
+#
+
+DROP TABLE IF EXISTS `mp_bank_transaction`;
+
+CREATE TABLE `mp_bank_transaction` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction_id` int(11) NOT NULL,
+  `bank_id` int(11) NOT NULL,
+  `payee_id` int(11) NOT NULL,
+  `method` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `cheque_amount` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `ref_no` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `transaction_status` int(1) NOT NULL,
+  `transaction_type` varchar(50) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `transaction_id` (`transaction_id`),
+  KEY `bank_id` (`bank_id`),
+  KEY `payee_id` (`payee_id`),
+  CONSTRAINT `bankid_bank_fk` FOREIGN KEY (`bank_id`) REFERENCES `mp_banks` (`id`),
+  CONSTRAINT `payee_bank_fk` FOREIGN KEY (`payee_id`) REFERENCES `mp_payee` (`id`),
+  CONSTRAINT `transaction_general_fk` FOREIGN KEY (`transaction_id`) REFERENCES `mp_generalentry` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
+
+#
+# TABLE STRUCTURE FOR: mp_barcode
+#
+
+DROP TABLE IF EXISTS `mp_barcode`;
+
+CREATE TABLE `mp_barcode` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `barcode` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `random_no` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `description` longtext CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_barcode` (`id`, `barcode`, `random_no`, `description`) VALUES ('3', 'A8FR250-Fan Regulator', 'J220H000051', 'sdad');
+INSERT INTO `mp_barcode` (`id`, `barcode`, `random_no`, `description`) VALUES ('4', 'aaaaaaaa', '4073127917', 'hhh');
+INSERT INTO `mp_barcode` (`id`, `barcode`, `random_no`, `description`) VALUES ('5', 'NEO RHEUMACYL 20 TABLET', '8659405067', '');
+
+
+#
+# TABLE STRUCTURE FOR: mp_brand
+#
+
+DROP TABLE IF EXISTS `mp_brand`;
+
+CREATE TABLE `mp_brand` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_brand` (`id`, `name`) VALUES ('1', 'Merk A');
+INSERT INTO `mp_brand` (`id`, `name`) VALUES ('2', 'Merk B');
+INSERT INTO `mp_brand` (`id`, `name`) VALUES ('3', 'Merk C');
+INSERT INTO `mp_brand` (`id`, `name`) VALUES ('4', 'Merk D');
+INSERT INTO `mp_brand` (`id`, `name`) VALUES ('5', 'Merk E');
+
+
+#
+# TABLE STRUCTURE FOR: mp_brand_sector
+#
+
+DROP TABLE IF EXISTS `mp_brand_sector`;
+
+CREATE TABLE `mp_brand_sector` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `sector` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `created` date NOT NULL,
+  `updated` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_brand_sector` (`id`, `sector`, `created`, `updated`) VALUES ('1', 'Merk Minuman Segar', '2018-05-28', '2019-07-27');
+INSERT INTO `mp_brand_sector` (`id`, `sector`, `created`, `updated`) VALUES ('2', 'Merk Obat dan Kesehatan', '2018-05-29', '2019-07-27');
+INSERT INTO `mp_brand_sector` (`id`, `sector`, `created`, `updated`) VALUES ('3', 'Merk Kosmetik dan Skincare', '2018-05-29', '2019-07-27');
+INSERT INTO `mp_brand_sector` (`id`, `sector`, `created`, `updated`) VALUES ('4', 'Merk Pembersih Rumah Tangga', '2018-05-29', '2019-07-27');
+INSERT INTO `mp_brand_sector` (`id`, `sector`, `created`, `updated`) VALUES ('5', 'Merk Rokok', '2018-06-04', '2019-07-27');
+INSERT INTO `mp_brand_sector` (`id`, `sector`, `created`, `updated`) VALUES ('6', 'Merk Makanan dan Snack', '2018-07-05', '2019-07-27');
+
+
+#
+# TABLE STRUCTURE FOR: mp_category
+#
+
+DROP TABLE IF EXISTS `mp_category`;
+
+CREATE TABLE `mp_category` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `category_name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `description` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `register_date` date NOT NULL,
+  `status` int(1) NOT NULL,
+  `added_by` varchar(255) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id` (`id`),
+  KEY `id_2` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_category` (`id`, `category_name`, `description`, `register_date`, `status`, `added_by`) VALUES ('1', 'Alat Mandi', 'Alat Mandi', '2019-07-27', '0', 'Supper Admin');
+INSERT INTO `mp_category` (`id`, `category_name`, `description`, `register_date`, `status`, `added_by`) VALUES ('2', 'Kosmetik', 'Kosmetik', '2019-07-27', '0', 'Supper Admin');
+INSERT INTO `mp_category` (`id`, `category_name`, `description`, `register_date`, `status`, `added_by`) VALUES ('3', 'Minuman', 'Minuman', '2019-07-27', '0', 'Supper Admin');
+INSERT INTO `mp_category` (`id`, `category_name`, `description`, `register_date`, `status`, `added_by`) VALUES ('4', 'Obat', 'Obat', '2019-07-27', '0', 'Supper Admin');
+INSERT INTO `mp_category` (`id`, `category_name`, `description`, `register_date`, `status`, `added_by`) VALUES ('5', 'Parfum', 'Parfum', '2019-07-27', '0', 'Supper Admin');
+INSERT INTO `mp_category` (`id`, `category_name`, `description`, `register_date`, `status`, `added_by`) VALUES ('6', 'Pembersih', 'Pembersih', '2019-07-27', '0', 'Supper Admin');
+INSERT INTO `mp_category` (`id`, `category_name`, `description`, `register_date`, `status`, `added_by`) VALUES ('7', 'Rokok', 'Rokok', '2019-07-27', '0', 'Supper Admin');
+INSERT INTO `mp_category` (`id`, `category_name`, `description`, `register_date`, `status`, `added_by`) VALUES ('8', 'Sembako', 'Sembako', '2019-07-27', '0', 'Supper Admin');
+INSERT INTO `mp_category` (`id`, `category_name`, `description`, `register_date`, `status`, `added_by`) VALUES ('9', 'Skincare', 'Skincare', '2019-07-27', '0', 'Supper Admin');
+INSERT INTO `mp_category` (`id`, `category_name`, `description`, `register_date`, `status`, `added_by`) VALUES ('10', 'Snack', 'Snack', '2019-07-27', '0', 'Supper Admin');
+INSERT INTO `mp_category` (`id`, `category_name`, `description`, `register_date`, `status`, `added_by`) VALUES ('11', 'Suplemen', 'Suplemen', '2019-07-27', '0', 'Supper Admin');
+
+
+#
+# TABLE STRUCTURE FOR: mp_contactabout
+#
+
+DROP TABLE IF EXISTS `mp_contactabout`;
+
+CREATE TABLE `mp_contactabout` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `contact_title` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `contact_description` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `phone_number` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `address` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `email` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `facebook` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `twitter` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `linked` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `googleplus` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `about_title` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `about_quotation` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `about_name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `about_title2` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `about_description` varchar(255) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_contactabout` (`id`, `contact_title`, `contact_description`, `phone_number`, `address`, `email`, `facebook`, `twitter`, `linked`, `googleplus`, `about_title`, `about_quotation`, `about_name`, `about_title2`, `about_description`) VALUES ('1', 'Contact Us', 'Tangail Marcel', '01715932630', 'Tangail', 'aloranbdsoft@gmail.com', 'aloranbdsoft@gmail.com', 'ali.i.roshan', 'ali.i.roshan', 'ali.i.roshan', '« Lorem Ipsum is simply dummy text of the printing  »', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.p;#039;s standard dummy text ever since the 1500s, when an unknown printer took a ga', '— Medix Pharmacy', 'About Us', 'Praesent convallis tortor et enim laoreet, vel consectetur purus latoque penatibus et dis parturient.');
+
+
+#
+# TABLE STRUCTURE FOR: mp_customer_payments
+#
+
+DROP TABLE IF EXISTS `mp_customer_payments`;
+
+CREATE TABLE `mp_customer_payments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `amount` decimal(11,2) NOT NULL,
+  `method` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `date` date NOT NULL,
+  `description` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `agentname` varchar(50) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `transaction_id` (`transaction_id`),
+  KEY `customer_id` (`customer_id`),
+  CONSTRAINT `customer_trans_fk` FOREIGN KEY (`transaction_id`) REFERENCES `mp_generalentry` (`id`),
+  CONSTRAINT `payee_id_fk` FOREIGN KEY (`customer_id`) REFERENCES `mp_payee` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+
+#
+# TABLE STRUCTURE FOR: mp_drivers
+#
+
+DROP TABLE IF EXISTS `mp_drivers`;
+
+CREATE TABLE `mp_drivers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `contact` varchar(15) CHARACTER SET latin1 NOT NULL,
+  `address` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `lisence` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `ref` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `date` date NOT NULL,
+  `cus_picture` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `status` int(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_drivers` (`id`, `name`, `contact`, `address`, `lisence`, `ref`, `date`, `cus_picture`, `status`) VALUES ('2', 'gfsdf', '568', 'gdfgds', '63863', 'grt', '2018-07-05', 'default.jpg', '0');
+
+
+#
+# TABLE STRUCTURE FOR: mp_expense
+#
+
+DROP TABLE IF EXISTS `mp_expense`;
+
+CREATE TABLE `mp_expense` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction_id` int(11) NOT NULL,
+  `head_id` int(11) NOT NULL,
+  `total_bill` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `total_paid` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `date` date NOT NULL,
+  `user` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `method` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `description` longtext CHARACTER SET latin1 NOT NULL,
+  `payee_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `head_id` (`head_id`),
+  KEY `transaction_id` (`transaction_id`),
+  KEY `payee_id` (`payee_id`),
+  CONSTRAINT `general_expense_fk` FOREIGN KEY (`transaction_id`) REFERENCES `mp_generalentry` (`id`),
+  CONSTRAINT `head_expense_fk` FOREIGN KEY (`head_id`) REFERENCES `mp_head` (`id`),
+  CONSTRAINT `payee_expense_fk` FOREIGN KEY (`payee_id`) REFERENCES `mp_payee` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+#
+# TABLE STRUCTURE FOR: mp_generalentry
+#
+
+DROP TABLE IF EXISTS `mp_generalentry`;
+
+CREATE TABLE `mp_generalentry` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `customer_id` int(11) DEFAULT '0',
+  `date` date NOT NULL,
+  `naration` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `generated_source` varchar(50) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=207 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_generalentry` (`id`, `customer_id`, `date`, `naration`, `generated_source`) VALUES ('198', '0', '2019-07-01', 'Modal awal perusahaan', 'Journal Voucher');
+INSERT INTO `mp_generalentry` (`id`, `customer_id`, `date`, `naration`, `generated_source`) VALUES ('199', '0', '2019-07-02', 'Sewa kantor selama satu tahun', 'Journal Voucher');
+INSERT INTO `mp_generalentry` (`id`, `customer_id`, `date`, `naration`, `generated_source`) VALUES ('200', '0', '2019-07-04', 'Membeli Peralatan Kantor', 'Journal Voucher');
+INSERT INTO `mp_generalentry` (`id`, `customer_id`, `date`, `naration`, `generated_source`) VALUES ('201', '0', '2019-07-08', 'Pendapatan dari penjualan tunai', 'Journal Voucher');
+INSERT INTO `mp_generalentry` (`id`, `customer_id`, `date`, `naration`, `generated_source`) VALUES ('202', '0', '2019-07-16', 'Gaji Karyawan bulan Juli', 'Journal Voucher');
+INSERT INTO `mp_generalentry` (`id`, `customer_id`, `date`, `naration`, `generated_source`) VALUES ('203', '0', '2019-07-27', 'Transaction occured from POS', 'pos');
+INSERT INTO `mp_generalentry` (`id`, `customer_id`, `date`, `naration`, `generated_source`) VALUES ('204', '0', '2019-07-27', 'Transaction occured from create purchases', 'create_purchases');
+INSERT INTO `mp_generalentry` (`id`, `customer_id`, `date`, `naration`, `generated_source`) VALUES ('205', '0', '2019-07-27', 'Transaction occured from create purchases', 'create_purchases');
+INSERT INTO `mp_generalentry` (`id`, `customer_id`, `date`, `naration`, `generated_source`) VALUES ('206', '0', '2019-07-27', 'Transaction occured from Supplier payments', 'supplier_payment');
+
+
+#
+# TABLE STRUCTURE FOR: mp_head
+#
+
+DROP TABLE IF EXISTS `mp_head`;
+
+CREATE TABLE `mp_head` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `nature` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `type` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `relation_id` int(11) NOT NULL,
+  `expense_type` varchar(50) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('1', 'Beban Gaji', 'Expense', 'Lancar', '0', 'Beban Kas');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('2', 'Kas', 'Assets', 'Lancar', '0', '-');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('3', 'Pendapatan Penjualan', 'Revenue', 'Lancar', '0', '-');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('4', 'Piutang Usaha (AR)', 'Assets', 'Lancar', '0', '-');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('5', 'Hutang Usaha (AP)', 'Liability', 'Lancar', '0', '-');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('6', 'Beban Telepon', 'Expense', 'Lancar', '0', 'Beban Kas');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('7', 'Modal Usaha', 'Equity', 'Lancar', '0', '-');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('8', 'Tanah', 'Assets', 'Tetap', '0', '-');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('9', 'Bangunan', 'Assets', 'Tetap', '0', '-');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('10', 'Hutang Wesel', 'Liability', 'Lancar', '0', '-');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('11', 'Peralatan Kantor', 'Assets', 'Lancar', '0', '-');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('12', 'Pendapatan Jasa', 'Revenue', 'Lancar', '0', '-');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('13', 'Beban Administrasi', 'Expense', 'Lancar', '0', 'Beban Kas');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('14', 'Beban Listrik &amp; Air', 'Expense', 'Lancar', '0', 'Beban Kas');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('15', 'Beban Iklan', 'Expense', 'Lancar', '0', 'Beban Kas');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('16', 'Kas Bank', 'Assets', 'Lancar', '0', '-');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('17', 'Asuransi dibayar dimuka', 'Assets', 'Lancar', '0', '-');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('18', 'Sewa dibayar dimuka', 'Assets', 'Lancar', '0', '-');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('19', 'Beban Perlengkapan', 'Expense', 'Lancar', '0', 'Beban Kas');
+INSERT INTO `mp_head` (`id`, `name`, `nature`, `type`, `relation_id`, `expense_type`) VALUES ('20', 'Beban Bunga', 'Expense', 'Lancar', '0', 'Beban Kas');
+
+
+#
+# TABLE STRUCTURE FOR: mp_invoices
+#
+
+DROP TABLE IF EXISTS `mp_invoices`;
+
+CREATE TABLE `mp_invoices` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction_id` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `discount` decimal(11,2) NOT NULL,
+  `status` int(1) NOT NULL,
+  `description` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `agentname` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `cus_id` int(11) NOT NULL,
+  `cus_picture` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `delivered_to` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `delivered_by` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `delivered_date` date NOT NULL,
+  `delivered_description` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `shippingcharges` decimal(11,2) NOT NULL,
+  `prescription_id` int(11) NOT NULL,
+  `region_id` int(11) NOT NULL,
+  `vehicle_id` int(11) NOT NULL,
+  `driver_id` int(11) NOT NULL,
+  `payment_method` int(1) NOT NULL,
+  `total_bill` decimal(11,2) NOT NULL,
+  `bill_paid` decimal(11,2) NOT NULL,
+  `source` int(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id` (`id`),
+  KEY `cus_id` (`cus_id`),
+  KEY `prescription_id` (`prescription_id`),
+  KEY `transaction_id` (`transaction_id`),
+  CONSTRAINT `invoice_payee_fk` FOREIGN KEY (`cus_id`) REFERENCES `mp_payee` (`id`),
+  CONSTRAINT `invoice_transaction_fk` FOREIGN KEY (`transaction_id`) REFERENCES `mp_generalentry` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=142 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_invoices` (`id`, `transaction_id`, `date`, `discount`, `status`, `description`, `agentname`, `cus_id`, `cus_picture`, `delivered_to`, `delivered_by`, `delivered_date`, `delivered_description`, `shippingcharges`, `prescription_id`, `region_id`, `vehicle_id`, `driver_id`, `payment_method`, `total_bill`, `bill_paid`, `source`) VALUES ('141', '203', '2019-07-27', '0.00', '0', '', 'Supper Admin', '1', '', '', '', '0000-00-00', '', '0.00', '0', '0', '0', '0', '0', '99300.00', '99300.00', '0');
+
+
+#
+# TABLE STRUCTURE FOR: mp_langingpage
+#
+
+DROP TABLE IF EXISTS `mp_langingpage`;
+
+CREATE TABLE `mp_langingpage` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `companyname` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `companydescription` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `companykeywords` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `logo` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `banner` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `slider1` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `slider2` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `slider3` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `slider4` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `slider5` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `title1` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `title2` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `title3` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `title4` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `title5` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `title6` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `subtitle6` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `subtitle6one` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `title8` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `title9` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `title10` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `currency` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `language` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `primarycolor` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `theme_pri_hover` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `expirey` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_langingpage` (`id`, `companyname`, `companydescription`, `companykeywords`, `logo`, `banner`, `slider1`, `slider2`, `slider3`, `slider4`, `slider5`, `title1`, `title2`, `title3`, `title4`, `title5`, `title6`, `subtitle6`, `subtitle6one`, `title8`, `title9`, `title10`, `currency`, `language`, `primarycolor`, `theme_pri_hover`, `expirey`) VALUES ('1', 'PT. SiAP System', 'Sistem Akuntansi dan Penjualan', 'Sistem Akuntansi dan Penjualan', 'dcb99169fed78154951d15df01aa5dbe.png', '1171127a5133603e62cc949a87aedda4.jpg', '0ae082ea4c6d3334de39a11840c07c09.jpg', 'a3cbfa5f37d75bd8de678ceded28da43.png', 'd6e2b9bad5eb6560699d95d0235b3e9e.png', '67e008061660613ba4497979db422f91.png', 'ec572d4564b40dec3412b2d305f6a59e.png', 'THE  PHARMACY AND POS SYSTEM', 'OUR SERVICES', 'THINGS YOU SHOULD KNOW ABOUT US', 'MEET OUR PHARMACIST!.', 'SEE WHAT PATIENTS ARE SAYING?.', 'CONTACT US.', 'Contact Info.', 'Having Any Query! Or Book an appointment.', 'Quick Links.', 'Follow us.', 'Copyright ©2018: jannatgroupbd.com\r\ndevelopment by: AloranBD Soft', 'IDR', 'ID', '#18dce2', '#16c8cd', '55');
+
+
+#
+# TABLE STRUCTURE FOR: mp_productslist
+#
+
+DROP TABLE IF EXISTS `mp_productslist`;
+
+CREATE TABLE `mp_productslist` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `category_id` int(11) NOT NULL,
+  `product_name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `mg` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `purchase` decimal(11,2) NOT NULL,
+  `retail` decimal(11,2) NOT NULL,
+  `expire` date NOT NULL,
+  `manufacturing` date NOT NULL,
+  `sideeffects` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `description` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `barcode` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `min_stock` int(11) NOT NULL,
+  `status` int(1) NOT NULL,
+  `total_units` int(11) NOT NULL,
+  `packsize` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `sku` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `location` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `tax` decimal(11,2) NOT NULL,
+  `type` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `image` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `brand_id` int(11) NOT NULL,
+  `brand_sector_id` int(11) NOT NULL,
+  `unit_type` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `net_weight` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `whole_sale` decimal(11,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `category_id` (`category_id`),
+  KEY `brand_id` (`brand_id`),
+  KEY `brand_sector_id` (`brand_sector_id`),
+  KEY `unit_type` (`unit_type`)
+) ENGINE=InnoDB AUTO_INCREMENT=1449 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1375', '4', 'NEO RHEUMACYL 20 TABLET', '1', '145', '3400.00', '4000.00', '2025-06-10', '2019-07-09', 'No Effects', 'here', '8999908000101', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '2', 'Pcs', '', '3900.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1376', '4', 'BODREX TAB LAPIS DUA 20 TABLET', '1', '142', '3000.00', '4500.00', '2022-02-09', '2019-07-01', 'No Effects', 'here', '8999908000200', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '2', 'Pcs', '', '4200.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1377', '4', 'BODREXIN 20 TABLET', '1', '140', '12100.00', '18000.00', '2022-02-09', '2019-07-05', 'No Effects', 'here', '8999908000705', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '2', 'Pcs', '', '16000.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1378', '4', 'OBB OBAT BATUK 60ML', '1', '143', '4200.00', '6300.00', '2022-06-08', '2019-07-18', 'No Effects', 'here', '8999908001207', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '2', 'Pcs', '', '6000.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1379', '1', 'E4USBSPW16-2USB Charger with Switch', '', '144', '402.00', '600.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '450.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1380', '1', 'E4MSSPWP.01 Motion Sensor (PIR)', '', '144', '570.00', '850.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '637.50');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1381', '1', 'E4MSSPWM.01 Motion Sensor (MW)', '', '144', '533.00', '795.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '596.25');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1382', '1', 'E4CBSR16.1-Calling Bell Switch', '', '144', '74.00', '110.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '82.50');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1383', '1', 'E41GSR16.1-1Gang Switch', '', '144', '54.00', '80.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '60.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1384', '1', 'E42PS10-2 Pin Socket', '', '144', '94.00', '140.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '105.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1385', '1', 'E42GSR16.1-2Gang Switch', '', '144', '101.00', '150.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '112.50');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1386', '1', 'E43GSR10.1-3Gang Switch', '', '144', '127.00', '190.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '142.50');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1387', '1', 'E44GSR10.1-4Gang Switch', '', '144', '161.00', '240.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '180.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1388', '1', 'E41GSR16.2-1Gang-2way  Switch', '', '144', '70.00', '105.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '78.75');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1389', '1', 'E42GSR16.2-2Gang-2way  Switch', '', '144', '121.00', '180.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '135.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1390', '1', 'E43GSR10.2-3Gang-2way  Switch', '', '144', '161.00', '240.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '180.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1391', '1', 'E44GSR10.2-4Gang-2way  Switch', '', '144', '198.00', '295.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '221.25');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1392', '1', 'E43PU13-3Pin Socket', '', '144', '107.00', '160.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '120.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1393', '1', 'E43PUS13-3Pin Socket & Switch', '', '144', '141.00', '210.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '157.50');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1394', '1', 'E4MSU13-Multi Socket', '', '144', '154.00', '230.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '172.50');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1395', '1', 'E4TS3-Telephone Socket', '', '144', '94.00', '140.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '105.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1396', '1', 'E4TVS-TV Socket', '', '144', '94.00', '140.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '105.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1397', '1', 'E4DS5-Data Socket', '', '144', '141.00', '210.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '157.50');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1398', '1', 'E4FR250-Fan Regulator', '', '144', '168.00', '400.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '300.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1399', '1', 'E4LD250-Light Dimmer Switch', '', '144', '261.00', '390.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '292.50');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1400', '1', 'E4BP-Blank Plate', '', '144', '34.00', '50.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '37.50');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1401', '1', 'E42PSS10-2 Pin Socket with switch (PW)', '', '144', '127.00', '190.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '1.00', 'Finished Products', '', '1', '1', '1', '', '38.50');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1402', '2', 'Rod', '20', '379', '70.00', '80.00', '0000-00-00', '0000-00-00', '', '                                tfygv', '54652', '10', '0', '20', '20', '1478', 'zx', '0.00', 'Raw Product', 'default.jpg', '4', '5', '1', '400', '1600.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1403', '1', 'MSD55FD (55\")', '', '0', '58017.00', '69900.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '62910.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1404', '1', 'MSD49FD (49\")', '', '0', '49717.00', '59900.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '53910.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1405', '1', 'MD4-TS43-DL200-(43\'\')-SMART', '', '0', '38927.00', '46900.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '42210.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1406', '1', 'MD1-TS43-FV100  (43\")', '', '0', '34777.00', '41900.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '37710.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1407', '1', 'MD437TS25  (43\")', '', '0', '34777.00', '41900.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '37710.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1408', '1', 'M42T3500 (42\'\')', '', '0', '55195.00', '66500.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '59850.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1409', '1', 'MC42D12 (42\'\') - (Non Warranty)', '', '0', '22369.00', '26950.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '24255.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1410', '1', 'M40E3000-FHD (40\")', '', '0', '33117.00', '39900.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '35910.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1411', '1', 'M40E36D (40\")', '', '0', '33117.00', '39900.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '35910.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1412', '1', 'ME396AFH (39\")', '', '4', '28212.00', '33990.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '30591.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1413', '1', 'ME326DH-S-(32\")-SMART', '', '0', '21572.00', '25990.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '23391.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1414', '1', 'ME4-DH32-BY200-(32\")-SMART', '', '0', '21572.00', '25990.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '23391.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1415', '1', 'ME326AH (32\")', '', '0', '18094.00', '21800.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '19620.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1416', '1', 'ME326AH-Silver (32\")', '', '0', '18094.00', '21800.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '19620.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1417', '1', 'MD326SR (32\")', '', '0', '17422.00', '20990.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '18891.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1418', '1', 'MD326SR-Silver (32\")', '', '0', '17422.00', '20990.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '18891.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1419', '1', 'MD326JX (32\")', '', '50', '17264.00', '20800.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '18720.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1420', '1', 'MD326JX-Silver (32\")', '', '0', '17264.00', '20800.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '18720.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1421', '1', 'MT32D27 (32\'\')', '', '0', '17264.00', '20800.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '18720.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1422', '1', 'M32E3000 (32\'\')', '', '0', '17264.00', '20800.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '18720.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1423', '1', 'MD1-EF32-SV100 (32\'\')', '', '0', '16592.00', '19990.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '17991.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1424', '1', 'MD286CD-Silver (28\")', '', '0', '15936.00', '19200.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '17280.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1425', '1', 'MD286CD  (28\")', '', '0', '15687.00', '18900.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '17010.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1426', '1', 'MD285AH-Silver (28\")', '', '0', '15521.00', '18700.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '16830.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1427', '1', 'MD285AH (28\")', '', '11', '15272.00', '18400.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '16560.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1428', '1', 'MDF-DT24-AU200-(24\'\')Full HD', '', '0', '12616.00', '15200.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '13680.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1429', '1', 'MCT24O4K (24\")', '', '13', '12442.00', '14990.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '13491.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1430', '1', 'MCT24O4K-Silver (24\")', '', '0', '12442.00', '14990.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '13491.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1431', '1', 'MD1-DT24-MC100 (24\")', '', '0', '12284.00', '14800.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '13320.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1432', '1', 'MD1-DT24-MC100-Silver (24\")', '', '0', '12284.00', '14800.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '13320.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1433', '1', 'MD1-DT24-RL100 (24\")', '', '0', '12035.00', '14500.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '13050.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1434', '1', 'MD1-DT24-RL100-Silver (24\")', '', '0', '12035.00', '14500.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '13050.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1435', '1', 'MCT24O4X (24\")', '', '0', '12035.00', '14500.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '13050.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1436', '1', 'MCT24O4C (24\")', '', '0', '12035.00', '14500.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '13050.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1437', '1', 'MCT24O4 (24\")', '', '0', '12035.00', '14500.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '13050.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1438', '1', 'MCT24O4-Silver (24\")', '', '0', '12035.00', '14500.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '13050.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1439', '1', 'MCT24DF6 (24\")', '', '0', '12035.00', '14500.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '13050.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1440', '1', 'MCT24DF6-Silver (24\")', '', '0', '12035.00', '14500.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '13050.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1441', '1', 'MSE20BX6 (20\')', '', '0', '10334.00', '12450.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '11205.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1442', '1', 'MSE20BX6-Silver (20\'\')', '', '0', '10583.00', '12750.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '11475.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1443', '1', 'WJ4-SB-55SV100(55\"4K)Smart', 'Pice', '10', '101200.00', '115000.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '123456', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '115000.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1444', '1', 'WUD55MF56(55\"4K)Smart', 'Pice', '10', '96800.00', '11000.00', '0000-00-00', '0000-00-00', 'No Effects', 'here', '1234567', '10', '0', '0', '1', '', 'Ware House', '0.00', 'Finished Products', '', '1', '1', '1', '', '11000.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1446', '4', 'PVC ID Card Print with Card Holder T-738V', '0', '277', '35.00', '100.00', '0000-00-00', '2018-07-05', '', '                                ', '', '1000', '0', '0', '', '', '', '0.00', 'Finished Products', 'default.jpg', '1', '6', '- kilogram', '', '0.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1447', '3', 'ID Card Holder Water-proof Anti-fold (T-738V)', '-1', '300', '18.00', '30.00', '0000-00-00', '2018-07-05', '', '                                ', '', '1000', '0', '0', '', '', '', '0.00', 'Finished Products', 'default.jpg', '5', '6', '- mimiter', '', '23.00');
+INSERT INTO `mp_productslist` (`id`, `category_id`, `product_name`, `mg`, `quantity`, `purchase`, `retail`, `expire`, `manufacturing`, `sideeffects`, `description`, `barcode`, `min_stock`, `status`, `total_units`, `packsize`, `sku`, `location`, `tax`, `type`, `image`, `brand_id`, `brand_sector_id`, `unit_type`, `net_weight`, `whole_sale`) VALUES ('1448', '1', 'T-shart', '250', '0', '150.00', '200.00', '2019-02-06', '2019-02-20', '654', '   This is a description                ', '32145', '20', '0', '0', '', '1254', '', '0.00', 'Raw Product', 'default.jpg', '2', '2', '- kilogram', '797', '0.00');
+
+
+#
+# TABLE STRUCTURE FOR: mp_menu
+#
+
+DROP TABLE IF EXISTS `mp_menu`;
+
+CREATE TABLE `mp_menu` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `icon` varchar(100) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('1', 'Inventori', 'fa fa-life-ring');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('2', 'Pengaturan', 'fa fa-cog');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('5', 'Laporan', 'fa fa-balance-scale');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('6', 'POS', 'fa fa-clipboard');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('7', 'Profil', 'fa fa-user');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('12', 'Hak Akses', 'fa fa-users');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('16', 'Supplier', 'fa fa-truck');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('18', 'Bank', 'fa fa-bank');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('20', 'Pembelian', 'fa fa-briefcase');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('21', 'Supply Chain', 'fa fa-flask');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('22', 'Atribut', 'fa fa-anchor');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('23', 'Akuntansi', 'fa fa-calculator');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('24', 'Statement', 'fa fa-line-chart');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('25', 'Opsi Umum', 'fa fa-shopping-bag');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('26', 'Dashboard', 'fa fa-tachometer');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('27', 'Expense', 'fa fa-paper-plane');
+INSERT INTO `mp_menu` (`id`, `name`, `icon`) VALUES ('28', 'Customer', 'fa fa-user');
+
+
+#
+# TABLE STRUCTURE FOR: mp_menulist
+#
+
+DROP TABLE IF EXISTS `mp_menulist`;
+
+CREATE TABLE `mp_menulist` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `menu_id` int(11) NOT NULL,
+  `title` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `link` varchar(255) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `menu_id` (`menu_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=74 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('1', '1', 'Produk', 'product');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('2', '1', 'Kategori', 'category');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('3', '2', 'Tampilan & Sistem', 'layout');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('9', '28', 'Customer', 'customers');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('10', '5', 'Laporan Penjualan', 'salesreport');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('13', '6', 'Daftar Invoice', 'invoice/manage');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('16', '7', 'Personal', 'profile');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('17', '25', 'Pengguna', 'users');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('18', '25', 'Item Yang Diminta', 'todolist');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('26', '12', 'Atur Hak Akses', 'multiple_roles');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('28', '16', 'Daftar Supplier', 'supplier');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('29', '27', 'Expense', 'Expense');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('30', '18', 'Cek', 'bank/written_cheque');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('31', '18', 'Daftar Bank', 'bank');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('34', '1', 'Pending stok', 'product/pending_stock');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('36', '6', 'Buat Invoice', 'invoice');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('37', '6', 'Retur Item', 'return_items');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('38', '5', 'Laporan Retur', 'salesreport/returnitemreport');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('39', '20', 'Buat Purchase', 'purchase');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('40', '21', 'Daftar Pengiriman', 'supply');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('41', '21', 'Sopir', 'supply/drivers');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('42', '21', 'Kendaraan', 'supply/vehicle');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('43', '22', 'Merk', 'initilization');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('44', '22', 'Sektor Merk', 'initilization/brandSector');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('45', '22', 'Region', 'initilization/region');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('46', '22', 'Kota', 'initilization/town');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('47', '22', 'Unit', 'initilization/units');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('48', '22', 'Toko', 'initilization/stores');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('49', '1', 'Peringatan Stok', 'stockAlertReport');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('50', '1', 'Produk Kadaluarsa', 'product/expired_list');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('51', '1', 'Stok', 'product/productStock');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('52', '1', 'Stok Kadaluarsa', 'product/expired_stock');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('53', '16', 'Pembayaran Supplier', 'supplier/payment_list');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('54', '23', 'Buku Besar Customer', 'customers/ledger');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('55', '23', 'Buku Besar Supplier', 'supplier/ledger');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('56', '20', 'Retur Pembelian', 'purchase/return_list');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('57', '4', 'Pembayaran Customer', 'customers/payment_list ');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('58', '23', 'Bagan Akun', 'accounts');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('59', '24', 'Jurnal Umum', 'statements');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('60', '24', 'Buku Besar', 'statements/leadgerAccounst');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('61', '24', 'Neraca Saldo', 'statements/trail_balance');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('62', '24', 'Laporan Laba Rugi', 'statements/income_statement');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('63', '24', 'Neraca Keuangan', 'statements/balancesheet');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('64', '23', 'Entri Jurnal', 'statements/journal_voucher');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('65', '23', 'Pembukaan Saldo', 'statements/opening_balance');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('66', '28', 'Pembayaran Customer', 'customers/payment_list ');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('68', '25', 'Backup Database', 'backup');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('69', '25', 'Restore Database', 'backup/upload_restore');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('70', '18', 'Deposito Bank', 'bank/deposit_list');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('71', '18', 'Buku Bank', 'bank/bank_book');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('72', '26', 'Dashboard', 'dashboard');
+INSERT INTO `mp_menulist` (`id`, `menu_id`, `title`, `link`) VALUES ('73', '25', 'Pengaturan Printer', 'Printer_settings');
+
+
+#
+# TABLE STRUCTURE FOR: mp_multipleroles
+#
+
+DROP TABLE IF EXISTS `mp_multipleroles`;
+
+CREATE TABLE `mp_multipleroles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `menu_Id` int(11) NOT NULL,
+  `role` int(1) NOT NULL,
+  `agentid` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `menu_Id` (`menu_Id`),
+  KEY `agentid` (`agentid`),
+  CONSTRAINT `roles_agentid_fk` FOREIGN KEY (`agentid`) REFERENCES `mp_users` (`id`),
+  CONSTRAINT `roles_menuid_fk` FOREIGN KEY (`menu_Id`) REFERENCES `mp_menu` (`id`),
+  CONSTRAINT `roles_user_fk` FOREIGN KEY (`user_id`) REFERENCES `mp_users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=151 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('117', '1', '12', '0', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('118', '1', '1', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('119', '1', '2', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('120', '1', '5', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('121', '1', '6', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('122', '1', '7', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('123', '1', '16', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('124', '1', '18', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('125', '1', '20', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('126', '1', '21', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('127', '1', '22', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('128', '1', '23', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('129', '1', '24', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('130', '1', '25', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('131', '1', '26', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('132', '1', '27', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('133', '1', '28', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('134', '2', '1', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('135', '2', '2', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('136', '2', '5', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('137', '2', '6', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('138', '2', '7', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('139', '2', '12', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('140', '2', '16', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('141', '2', '18', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('142', '2', '20', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('143', '2', '21', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('144', '2', '22', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('145', '2', '23', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('146', '2', '25', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('147', '2', '26', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('148', '2', '27', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('149', '2', '28', '1', '1');
+INSERT INTO `mp_multipleroles` (`id`, `user_id`, `menu_Id`, `role`, `agentid`) VALUES ('150', '2', '24', '1', '1');
+
+
+#
+# TABLE STRUCTURE FOR: mp_payee
+#
+
+DROP TABLE IF EXISTS `mp_payee`;
+
+CREATE TABLE `mp_payee` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `customer_name` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `cus_email` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `cus_password` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `cus_address` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `cus_contact_1` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `cus_contact_2` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `cus_company` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `cus_description` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `cus_picture` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `cus_status` int(1) NOT NULL,
+  `cus_region` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `cus_town` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `cus_type` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `cus_balance` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `cus_date` date NOT NULL,
+  `customer_nationalid` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `type` varchar(100) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('1', 'dsfjsd', 'walkin@gmail.com', '', 'hbh', '', '1722967053', 'gfchg', '', 'default.jpg', '0', 'hmbh', 'v j', 'Regular', '0.00', '2018-04-22', '1234578', 'customer');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('2', 'Habib', 'a@gmail.com', '', 'gbdggdfgdsfg', '5285', '1715932630', 'fghfdg', 'fgsd', 'default.jpg', '0', 'Dhaka', 'gbf', 'Regular', '', '2018-07-04', '12335555', 'customer');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('4', 'Walton Company', 'as@gmail.com', '', 'Rampur, Kalihati', '', '', '', '', 'default.jpg', '0', '', '', 'Regular', '', '2018-06-15', '12335555', 'supplier');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('5', 'Hasn', 'asss@gmail.com', '', 'hbh', '', '1722967052', 'bhbh', '', 'default.jpg', '0', 'knm', 'hvh', 'Regular', '', '2018-06-18', '14785', 'customer');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('6', 'Moyn', '', '', 'fsf', '', '1722963540', 'mgvh', '', 'default.jpg', '0', 'hjbj', 'hbh', 'Regular', '', '2018-07-04', '24587', 'customer');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('7', 'Md. Tarek Khan', 'abccomputer@gmail.com', '', '50, New Market, Dhaka-1207', '21568745', '1712031466', 'ABC Computer', '', 'default.jpg', '0', 'New Market', 'Dhaka', 'Regular', '', '2018-07-04', '1.99E+16', 'customer');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('8', 'Md. Arab Ali', 'arabali_du@yahoo.com', '', 'Amuria, Magura', '', '1722333846', 'Magura Govt. Mahila College, Magura', '', '366cfcaa8d41b3dc6645de2138ae0f4d.jpg', '0', 'Magura', 'Magura', 'Regular', '', '2018-07-05', '1.99E+16', 'customer');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('9', 'Md Miraj Hossain', 'miraj_designbd@outlook.com', '', 'Shop # 249, Goli # 04, Gausul Azam Super Market, Nilkhet, Dhaka-1205.', '', '1712031466', 'Rakib Enterprise', '', '4cb799fd339fb5fa5c3cb3aa5ce9e770.jpg', '0', 'New Market', 'Dhaka', 'Regular', '', '2018-07-09', '1.99155E+16', 'supplier');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('10', 'Halim', 'a...@gmail.com', '', 'sdcs', '58545', '5445', 'tgert', 'rtger', 'default.jpg', '0', 'fas', 'hhg', 'Regular', '', '2018-07-09', '2858585', 'customer');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('12', 'Kamal', '', '', 'vsd', '557', '214785236', 'dsfsd', '', '', '0', 'vsd', 'vsd', 'Regular', '', '0000-00-00', '4878', 'customer');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('13', 'Selim', '', '', '', '', '', '', '', '', '0', '', '', 'Regular', '', '0000-00-00', '', 'customer');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('14', 'dsfjsd', 'walkin@gmail.com', '', 'hbh', '', '1722967053', 'gfchg', '', '', '0', 'hmbh', 'v j', 'Regular', '', '0000-00-00', '1234578', 'customer');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('15', 'chghjjjj', '', '', '', '', '', '', '', '', '0', '', '', 'Regular', '', '0000-00-00', '', 'customer');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('16', 'xzczczxc', '', '', '', '', '', '', '', '', '0', '', '', '', '', '0000-00-00', '', 'customer');
+INSERT INTO `mp_payee` (`id`, `customer_name`, `cus_email`, `cus_password`, `cus_address`, `cus_contact_1`, `cus_contact_2`, `cus_company`, `cus_description`, `cus_picture`, `cus_status`, `cus_region`, `cus_town`, `cus_type`, `cus_balance`, `cus_date`, `customer_nationalid`, `type`) VALUES ('17', 'sdfsd', '', '', '', '', '', '', '', '', '0', '', '', 'Regular', '', '0000-00-00', '', 'supplier');
+
+
+#
+# TABLE STRUCTURE FOR: mp_printer
+#
+
+DROP TABLE IF EXISTS `mp_printer`;
+
+CREATE TABLE `mp_printer` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `printer_name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `fontsize` int(11) NOT NULL,
+  `set_default` int(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_printer` (`id`, `printer_name`, `fontsize`, `set_default`) VALUES ('6', 'Black Copper BC-85AC', '11', '1');
+
+
+#
+# TABLE STRUCTURE FOR: mp_purchase
+#
+
+DROP TABLE IF EXISTS `mp_purchase`;
+
+CREATE TABLE `mp_purchase` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction_id` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `supplier_id` int(11) NOT NULL,
+  `store` int(11) NOT NULL,
+  `invoice_id` int(11) NOT NULL,
+  `description` longtext CHARACTER SET latin1 NOT NULL,
+  `total_amount` decimal(11,2) NOT NULL,
+  `payment_type_id` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `payment_date` date NOT NULL,
+  `cash` decimal(11,2) NOT NULL,
+  `cus_picture` decimal(11,2) NOT NULL,
+  `status` int(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `transaction_id` (`transaction_id`),
+  KEY `supplier_id` (`supplier_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_purchase` (`id`, `transaction_id`, `date`, `supplier_id`, `store`, `invoice_id`, `description`, `total_amount`, `payment_type_id`, `payment_date`, `cash`, `cus_picture`, `status`) VALUES ('6', '204', '2019-07-27', '4', '1', '5566', 'Pembelian Produk Skincare', '500000.00', 'Cash', '2019-07-27', '500000.00', '6.00', '0');
+INSERT INTO `mp_purchase` (`id`, `transaction_id`, `date`, `supplier_id`, `store`, `invoice_id`, `description`, `total_amount`, `payment_type_id`, `payment_date`, `cash`, `cus_picture`, `status`) VALUES ('7', '205', '2019-07-27', '4', '1', '6655', 'Pembelian Produk Alat Mandi Dengan Hutang', '600000.00', 'Cash', '2019-07-27', '0.00', '7.00', '0');
+
+
+#
+# TABLE STRUCTURE FOR: mp_region
+#
+
+DROP TABLE IF EXISTS `mp_region`;
+
+CREATE TABLE `mp_region` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `code` varchar(255) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_region` (`id`, `name`, `code`) VALUES ('1', 'Jawa', '1001');
+INSERT INTO `mp_region` (`id`, `name`, `code`) VALUES ('2', 'Luar Jawa', '1002');
+
+
+#
+# TABLE STRUCTURE FOR: mp_return
+#
+
+DROP TABLE IF EXISTS `mp_return`;
+
+CREATE TABLE `mp_return` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction_id` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `cus_id` int(11) NOT NULL,
+  `agent` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `invoice_id` int(11) NOT NULL,
+  `return_amount` decimal(11,2) NOT NULL,
+  `total_bill` decimal(11,2) NOT NULL,
+  `discount_given` decimal(11,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `transaction_id` (`transaction_id`),
+  KEY `cus_id` (`cus_id`),
+  KEY `invoice_id` (`invoice_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+#
+# TABLE STRUCTURE FOR: mp_return_list
+#
+
+DROP TABLE IF EXISTS `mp_return_list`;
+
+CREATE TABLE `mp_return_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `return_id` int(11) NOT NULL,
+  `barcode` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `product_no` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `product_name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `mg` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `price` decimal(11,2) NOT NULL,
+  `purchase` decimal(11,2) NOT NULL,
+  `qty` int(11) NOT NULL,
+  `tax` decimal(11,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `transaction_id` (`return_id`),
+  KEY `medicine_id` (`product_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+#
+# TABLE STRUCTURE FOR: mp_sales
+#
+
+DROP TABLE IF EXISTS `mp_sales`;
+
+CREATE TABLE `mp_sales` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_id` int(11) NOT NULL,
+  `product_no` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `product_name` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `mg` int(11) NOT NULL,
+  `price` decimal(11,2) NOT NULL,
+  `purchase` decimal(11,2) NOT NULL,
+  `qty` int(11) NOT NULL,
+  `tax` decimal(11,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `medicine_id` (`product_id`),
+  KEY `order_id` (`order_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_sales` (`id`, `product_id`, `product_no`, `order_id`, `product_name`, `mg`, `price`, `purchase`, `qty`, `tax`) VALUES ('183', '1375', '', '141', 'NEO RHEUMACYL 20 TABLET', '1', '4000.00', '3400.00', '3', '0.00');
+INSERT INTO `mp_sales` (`id`, `product_id`, `product_no`, `order_id`, `product_name`, `mg`, `price`, `purchase`, `qty`, `tax`) VALUES ('184', '1376', '', '141', 'BODREX TAB LAPIS DUA 20 TABLET', '1', '4500.00', '3000.00', '2', '0.00');
+INSERT INTO `mp_sales` (`id`, `product_id`, `product_no`, `order_id`, `product_name`, `mg`, `price`, `purchase`, `qty`, `tax`) VALUES ('185', '1377', '', '141', 'BODREXIN 20 TABLET', '1', '18000.00', '12100.00', '4', '0.00');
+INSERT INTO `mp_sales` (`id`, `product_id`, `product_no`, `order_id`, `product_name`, `mg`, `price`, `purchase`, `qty`, `tax`) VALUES ('186', '1378', '', '141', 'OBB OBAT BATUK 60ML', '1', '6300.00', '4200.00', '1', '0.00');
+
+
+#
+# TABLE STRUCTURE FOR: mp_stock
+#
+
+DROP TABLE IF EXISTS `mp_stock`;
+
+CREATE TABLE `mp_stock` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `mid` int(11) NOT NULL,
+  `manufacturing` date NOT NULL,
+  `expiry` date NOT NULL,
+  `qty` int(11) NOT NULL,
+  `description` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `date` date NOT NULL,
+  `added` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `purchase` decimal(11,2) NOT NULL,
+  `selling` decimal(11,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `mid` (`mid`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_stock` (`id`, `mid`, `manufacturing`, `expiry`, `qty`, `description`, `date`, `added`, `purchase`, `selling`) VALUES ('1', '0', '2018-07-05', '2020-01-01', '0', '', '2018-07-05', 'Md. Habibur Rahman', '0.00', '0.00');
+
+
+#
+# TABLE STRUCTURE FOR: mp_stores
+#
+
+DROP TABLE IF EXISTS `mp_stores`;
+
+CREATE TABLE `mp_stores` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `code` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `address` varchar(255) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_stores` (`id`, `name`, `code`, `address`) VALUES ('1', 'Toko Kelontong', '101', 'Jl. Apa saja asal - Bareng 56');
+
+
+#
+# TABLE STRUCTURE FOR: mp_sub_entry
+#
+
+DROP TABLE IF EXISTS `mp_sub_entry`;
+
+CREATE TABLE `mp_sub_entry` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `parent_id` int(11) NOT NULL,
+  `accounthead` int(11) NOT NULL,
+  `amount` decimal(11,2) NOT NULL,
+  `type` int(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sid` (`parent_id`),
+  KEY `accounthead` (`accounthead`),
+  KEY `amount` (`amount`)
+) ENGINE=InnoDB AUTO_INCREMENT=432 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('413', '198', '2', '500000000.00', '0');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('414', '198', '7', '500000000.00', '1');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('415', '199', '18', '20000000.00', '0');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('416', '199', '2', '20000000.00', '1');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('417', '200', '11', '15000000.00', '0');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('418', '200', '2', '15000000.00', '1');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('419', '201', '2', '10000000.00', '0');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('420', '201', '3', '10000000.00', '1');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('421', '202', '1', '25000000.00', '0');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('422', '202', '2', '25000000.00', '1');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('423', '203', '2', '99300.00', '0');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('424', '203', '3', '99300.00', '1');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('425', '204', '3', '500000.00', '0');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('426', '204', '2', '500000.00', '1');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('427', '205', '3', '600000.00', '0');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('428', '205', '2', '0.00', '1');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('429', '205', '5', '600000.00', '1');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('430', '206', '5', '200000.00', '0');
+INSERT INTO `mp_sub_entry` (`id`, `parent_id`, `accounthead`, `amount`, `type`) VALUES ('431', '206', '2', '200000.00', '1');
+
+
+#
+# TABLE STRUCTURE FOR: mp_supplier_payments
+#
+
+DROP TABLE IF EXISTS `mp_supplier_payments`;
+
+CREATE TABLE `mp_supplier_payments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction_id` int(11) NOT NULL,
+  `supplier_id` int(11) NOT NULL,
+  `amount` decimal(11,2) NOT NULL,
+  `method` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `date` date NOT NULL,
+  `description` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `agentname` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `mode` int(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `transaction_id` (`transaction_id`),
+  KEY `supplier_id` (`supplier_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_supplier_payments` (`id`, `transaction_id`, `supplier_id`, `amount`, `method`, `date`, `description`, `agentname`, `mode`) VALUES ('4', '206', '4', '200000.00', 'Cash', '2019-07-27', 'Cicilan hutang purchase dari 600000', 'Supper Admin', '0');
+
+
+#
+# TABLE STRUCTURE FOR: mp_supply
+#
+
+DROP TABLE IF EXISTS `mp_supply`;
+
+CREATE TABLE `mp_supply` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `driver_id` int(11) NOT NULL,
+  `vehicle_id` int(11) NOT NULL,
+  `date` date NOT NULL,
+  `region_id` int(11) NOT NULL,
+  `town_id` int(11) NOT NULL,
+  `expense` decimal(11,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `driver_id` (`driver_id`),
+  KEY `vehicle_id` (`vehicle_id`),
+  KEY `region_id` (`region_id`),
+  KEY `town_id` (`town_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#
+# TABLE STRUCTURE FOR: mp_temp_barcoder_invoice
+#
+
+DROP TABLE IF EXISTS `mp_temp_barcoder_invoice`;
+
+CREATE TABLE `mp_temp_barcoder_invoice` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `barcode` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `product_no` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `product_id` int(11) NOT NULL,
+  `product_name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `mg` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `price` decimal(11,2) NOT NULL,
+  `purchase` decimal(11,2) NOT NULL,
+  `qty` int(11) NOT NULL,
+  `tax` double(11,2) NOT NULL,
+  `agentid` int(11) NOT NULL,
+  `source` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `pack` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `product_id` (`product_id`),
+  KEY `agentid` (`agentid`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_temp_barcoder_invoice` (`id`, `barcode`, `product_no`, `product_id`, `product_name`, `mg`, `price`, `purchase`, `qty`, `tax`, `agentid`, `source`, `pack`) VALUES ('1', '8999908000101', '', '1375', 'NEO RHEUMACYL 20 TABLET', '1', '3900.00', '3400.00', '1', '0.00', '1', 'supply', '1');
+
+
+#
+# TABLE STRUCTURE FOR: mp_todolist
+#
+
+DROP TABLE IF EXISTS `mp_todolist`;
+
+CREATE TABLE `mp_todolist` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `date` date NOT NULL,
+  `addedby` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `status` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `addedby` (`addedby`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+#
+# TABLE STRUCTURE FOR: mp_town
+#
+
+DROP TABLE IF EXISTS `mp_town`;
+
+CREATE TABLE `mp_town` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `region` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `status` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_town` (`id`, `name`, `region`, `status`) VALUES ('1', 'Jakarta', 'Jawa', '0');
+INSERT INTO `mp_town` (`id`, `name`, `region`, `status`) VALUES ('2', 'Bali', 'Luar Jawa', '1');
+
+
+#
+# TABLE STRUCTURE FOR: mp_units
+#
+
+DROP TABLE IF EXISTS `mp_units`;
+
+CREATE TABLE `mp_units` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `symbol` varchar(255) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `symbol` (`symbol`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_units` (`id`, `name`, `symbol`) VALUES ('1', 'Pieces', 'Pcs');
+INSERT INTO `mp_units` (`id`, `name`, `symbol`) VALUES ('2', 'Botol', 'btl');
+INSERT INTO `mp_units` (`id`, `name`, `symbol`) VALUES ('3', 'Paket', 'pkt');
+INSERT INTO `mp_units` (`id`, `name`, `symbol`) VALUES ('4', 'Sacet', 'sct');
+INSERT INTO `mp_units` (`id`, `name`, `symbol`) VALUES ('5', 'Bungkus', 'bks');
+
+
+#
+# TABLE STRUCTURE FOR: mp_users
+#
+
+DROP TABLE IF EXISTS `mp_users`;
+
+CREATE TABLE `mp_users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_name` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `user_email` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `user_address` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `user_contact_1` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `user_contact_2` varchar(50) CHARACTER SET latin1 NOT NULL,
+  `cus_picture` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `status` int(1) NOT NULL,
+  `user_description` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `user_password` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `user_date` date NOT NULL,
+  `agentname` varchar(255) CHARACTER SET latin1 NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_name` (`user_name`),
+  KEY `user_name_2` (`user_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_users` (`id`, `user_name`, `user_email`, `user_address`, `user_contact_1`, `user_contact_2`, `cus_picture`, `status`, `user_description`, `user_password`, `user_date`, `agentname`) VALUES ('1', 'Supper Admin', 'admin@glossytruth.com', 'Anaytgonj Lane 82/3,4th Flore, Hazaribagh, Dhaka-1205', '01745519614', '01715932630', '86ed815b3c9225ba422bcdad8cb8e3d8.png', '0', 'admin', '7c4a8d09ca3762af61e59520943dc26494f8941b', '2017-08-23', 'Jannat Group');
+INSERT INTO `mp_users` (`id`, `user_name`, `user_email`, `user_address`, `user_contact_1`, `user_contact_2`, `cus_picture`, `status`, `user_description`, `user_password`, `user_date`, `agentname`) VALUES ('2', 'Sub Admin', 'admin@gmail.com', 'dfgdsf', '5678686', '5686', 'default.jpg', '0', 'User', '7c4a8d09ca3762af61e59520943dc26494f8941b', '2018-06-01', 'Md. Habibur Rahman');
+
+
+#
+# TABLE STRUCTURE FOR: mp_vehicle
+#
+
+DROP TABLE IF EXISTS `mp_vehicle`;
+
+CREATE TABLE `mp_vehicle` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `number` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `vehicle_id` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `chase_no` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `engine_no` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `date` date NOT NULL,
+  `status` int(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+INSERT INTO `mp_vehicle` (`id`, `name`, `number`, `vehicle_id`, `chase_no`, `engine_no`, `date`, `status`) VALUES ('1', 'PIkup', '101', '1123465', '123456', '1452', '2018-05-28', '0');
+
+
+SET foreign_key_checks = 1;
