@@ -49,7 +49,7 @@ if ($this->session->userdata('user_id') == "") {
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
 
     <!-- jQuery 2.2.3 -->
-    <script src="<?php echo base_url(); ?>assets/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/plugins/jQuery/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap 3.3.6 -->
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

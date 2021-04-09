@@ -50,13 +50,13 @@
                                         </td>
                                         <td>
                                             <?php
-                                            $data = array('class' => 'form-control input-lg', 'step' => '.01', 'type' => 'number', 'name' => 'debitamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_debits()');
+                                            $data = array('class' => 'form-control input-lg mask', 'name' => 'debitamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_debits()');
                                             echo form_input($data);
                                             ?>
                                         </td>
                                         <td>
                                             <?php
-                                            $data = array('class' => 'form-control input-lg', 'type' => 'number', 'name' => 'creditamount[]', 'step' => '.01', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_credits()');
+                                            $data = array('class' => 'form-control input-lg mask',  'name' => 'creditamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_credits()');
                                             echo form_input($data);
                                             ?>
                                         </td>
@@ -74,13 +74,13 @@
                                         <th>Total: </th>
                                         <th>
                                             <?php
-                                            $data = array('type' => 'number', 'name' => 'total_debit_amount', 'step' => '.01', 'value' => '0.00', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
+                                            $data = array('name' => 'total_debit_amount', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
                                             echo form_input($data);
                                             ?>
                                         </th>
                                         <th>
                                             <?php
-                                            $data = array('type' => 'number', 'name' => 'total_credit_amount', 'step' => '.01', 'value' => '0.00', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
+                                            $data = array('name' => 'total_credit_amount',  'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
                                             echo form_input($data);
                                             ?>
                                         </th>
@@ -109,6 +109,11 @@
     </div>
 </section>
 <script src="<?php echo base_url(); ?>assets/dist/js/backend/journal_voucher.js"></script>
-<!-- Bootstrap model  -->
+<script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
+
+<script>
+    $('.mask').mask('000.000.000.000.000', {
+        reverse: true
+    });
+</script>
 <?php $this->load->view('bootstrap_model.php'); ?>
-<!-- Bootstrap model  ends-->

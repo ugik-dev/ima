@@ -30,6 +30,9 @@
                     jQuery('#transaction_table_body').append(response);
                     $('.select2').select2();
 
+                    $('.mask').mask('000.000.000.000.000', {
+                        reverse: true
+                    });
 
                 }
             });
