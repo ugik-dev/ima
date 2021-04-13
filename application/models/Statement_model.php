@@ -42,30 +42,30 @@ class Statement_model extends CI_Model
                                     $form_content .= '<tr>
                             <td>' . $transaction_record->date . '</td>
                             <td>
-                            <a href="#">' . $single_trans->name . '</a>
+                            <a >' . $single_trans->name . '</a>
                             </td>
                             <td>
-                            <a href="#">' . $single_trans->sub_keterangan . '</a>
+                            <a >' . $single_trans->sub_keterangan . '</a>
                                 </td>
                             <td>
-                                <a href="#" class="currency">' . $single_trans->amount . '</a>
+                                <a  class="currency">' . $single_trans->amount . '</a>
                             </td>
                             <td>
-                                <a href="#"></a>
+                                <a ></a>
                             </td>          
                             </tr>';
                                 } else if ($single_trans->type == 1) {
                                     $form_content .= '<tr>
-                            <td>' . $transaction_record->date . '</td><td ><a class="general-journal-credit" href="#">' . $single_trans->name . '</a>
+                            <td>' . $transaction_record->date . '</td><td ><a class="general-journal-credit" >' . $single_trans->name . '</a>
                             </td>
                             <td>
-                            <a href="#">' . $single_trans->sub_keterangan . '</a>
+                            <a >' . $single_trans->sub_keterangan . '</a>
                                 </td>
                             <td>
-                                <a href="#"></a>
+                                <a ></a>
                             </td>
                             <td>
-                                <a href="#" class="currency">' . $single_trans->amount . '</a>
+                                <a  class="currency">' . $single_trans->amount . '</a>
                             </td>           
                             </tr>';
                                 }
@@ -155,11 +155,11 @@ class Statement_model extends CI_Model
                             $total_ledger = number_format($total_ledger, '2', '.', '');
 
                             $form_content .= '<tr>
-                        <td>' . $single_ledger->date . '</td><td><a href="#">' . $single_ledger->naration . '</a></td><td>
-                            <a href="#" class="currency">' . $debitamount . '</a>
+                        <td>' . $single_ledger->date . '</td><td><a >' . $single_ledger->naration . '</a></td><td>
+                            <a  class="currency">' . $debitamount . '</a>
                         </td>
                         <td>
-                            <a href="#"  class="currency">' . $creditamount . '</a>
+                            <a   class="currency">' . $creditamount . '</a>
                         </td>
                         <td  >' . ($total_ledger < 0 ? '( <a class="currency">' . -$total_ledger . '</a>)' : '<a class="currency">' . $total_ledger . '</a>') . '</td>            
                     </tr>';
