@@ -12,7 +12,7 @@ class Statement_model extends CI_Model
         $total_credit = 0;
         $form_content = '';
 
-        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration");
+        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal");
         $this->db->from('mp_generalentry');
         $this->db->where('date >=', $date1);
         $this->db->where('date <=', $date2);
@@ -40,7 +40,14 @@ class Statement_model extends CI_Model
 
                                 if ($single_trans->type == 0) {
                                     $form_content .= '<tr>
-                            <td>' . $transaction_record->date . '</td><td><a href="#">' . $single_trans->name . '</a></td><td>
+                            <td>' . $transaction_record->date . '</td>
+                            <td>
+                            <a href="#">' . $single_trans->name . '</a>
+                            </td>
+                            <td>
+                            <a href="#">' . $single_trans->sub_keterangan . '</a>
+                                </td>
+                            <td>
                                 <a href="#" class="currency">' . $single_trans->amount . '</a>
                             </td>
                             <td>
@@ -49,8 +56,11 @@ class Statement_model extends CI_Model
                             </tr>';
                                 } else if ($single_trans->type == 1) {
                                     $form_content .= '<tr>
-                            <td >' . $transaction_record->date . '</td><td ><a class="general-journal-credit" href="#">' . $single_trans->name . '</a>
+                            <td>' . $transaction_record->date . '</td><td ><a class="general-journal-credit" href="#">' . $single_trans->name . '</a>
                             </td>
+                            <td>
+                            <a href="#">' . $single_trans->sub_keterangan . '</a>
+                                </td>
                             <td>
                                 <a href="#"></a>
                             </td>
@@ -62,8 +72,15 @@ class Statement_model extends CI_Model
                             }
                         }
                     }
-                    $form_content .= '<tr class="narration" ><td class="border-bottom-journal" colspan="4"><small> <i> - ' . $transaction_record->naration . '</i>
-                        </small></td></tr>';
+                    $form_content .= '<tr class="narration" >
+                    <td class="border-bottom-journal" colspan="5"><small> <i> - ' . $transaction_record->naration . '</i>
+                        </small>
+                        <br>
+                        <small> <i> No Jurnal : ' . $transaction_record->no_jurnal . '</i>
+                        </small>
+                        </td>
+                        
+                        </tr>';
                 }
             }
         }
@@ -73,7 +90,7 @@ class Statement_model extends CI_Model
     //USED TO GET THE LEDGER USING NATURE 
     public function get_ledger_transactions($head_id, $date1, $date2)
     {
-        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_head.name,mp_head.nature,mp_sub_entry.*");
+        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal,mp_head.name,mp_head.nature,mp_sub_entry.*");
         $this->db->from('mp_sub_entry');
         $this->db->join('mp_head', "mp_head.id = mp_sub_entry.accounthead");
         $this->db->join('mp_generalentry', 'mp_generalentry.id = mp_sub_entry.parent_id');
@@ -139,12 +156,12 @@ class Statement_model extends CI_Model
 
                             $form_content .= '<tr>
                         <td>' . $single_ledger->date . '</td><td><a href="#">' . $single_ledger->naration . '</a></td><td>
-                            <a href="#">' . $debitamount . '</a>
+                            <a href="#" class="currency">' . $debitamount . '</a>
                         </td>
                         <td>
-                            <a href="#">' . $creditamount . '</a>
+                            <a href="#"  class="currency">' . $creditamount . '</a>
                         </td>
-                        <td>' . ($total_ledger < 0 ? '(' . -$total_ledger . ')' : $total_ledger) . '</td>            
+                        <td  >' . ($total_ledger < 0 ? '( <a class="currency">' . -$total_ledger . '</a>)' : '<a class="currency">' . $total_ledger . '</a>') . '</td>            
                     </tr>';
                         }
                     }

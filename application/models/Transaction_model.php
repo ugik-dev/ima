@@ -971,6 +971,7 @@ class Transaction_model extends CI_Model
         $trans_data = array(
             'date' => $data['date'],
             'naration' => $data['description'],
+            'no_jurnal' => $data['no_jurnal'],
             'generated_source' => 'Journal Voucher'
         );
 
@@ -989,14 +990,16 @@ class Transaction_model extends CI_Model
                         'parent_id'   => $order_id,
                         'accounthead' => $data['account_head'][$i],
                         'amount'      => $data['debitamount'][$i],
-                        'type'        => 0
+                        'type'        => 0,
+                        'sub_keterangan' => $data['sub_keterangan'][$i]
                     );
                 } else if ($data['creditamount'][$i] != 0) {
                     $sub_data  = array(
                         'parent_id'   => $order_id,
                         'accounthead' => $data['account_head'][$i],
                         'amount'      => $data['creditamount'][$i],
-                        'type'        => 1
+                        'type'        => 1,
+                        'sub_keterangan' => $data['sub_keterangan'][$i]
                     );
                 }
 

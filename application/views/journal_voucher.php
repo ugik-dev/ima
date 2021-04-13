@@ -13,6 +13,13 @@
                         </h4>
                         <div class="col-md-12 ">
                             <div class="form-group">
+                                <?php echo form_label('No Jurnal'); ?>
+                                <?php
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_jurnal',);
+                                echo form_input($data);
+                                ?>
+                            </div>
+                            <div class="form-group">
                                 <?php echo form_label('Rincian Transaksi'); ?>
                                 <?php
                                 $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'description', 'reqiured' => '');
@@ -34,9 +41,9 @@
                                 <thead>
                                     <tr>
                                         <th class="col-md-5 ">Akun</th>
-                                        <th class="col-md-3"></th>
                                         <th class="col-md-2">Debit</th>
                                         <th class="col-md-2">Kredit</th>
+                                        <th class="col-md-3">Keterangan</th>
                                     </tr>
                                 </thead>
                                 <tbody id="transaction_table_body">
@@ -46,8 +53,8 @@
                                                 <?php echo $accounts_records; ?>
                                             </select>
                                         </td>
-                                        <td>
-                                        </td>
+                                        <!-- <td>
+                                        </td> -->
                                         <td>
                                             <?php
                                             $data = array('class' => 'form-control input-lg mask', 'name' => 'debitamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_debits()');
@@ -60,17 +67,23 @@
                                             echo form_input($data);
                                             ?>
                                         </td>
+                                        <td>
+                                            <?php
+                                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'sub_keterangan[]', 'value' => '');
+                                            echo form_input($data);
+                                            ?>
+                                        </td>
                                     </tr>
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="3">
+                                        <td colspan="1">
                                             <button type="button" class="btn btn-primary" name="addline" onclick="add_new_row('<?php echo base_url() . 'statements/popup/new_row'; ?>')"> <i class="fa fa-plus-circle"></i> Tambah Baris </button>
                                         </td>
                                         <td id="row_loading_status"></td>
                                     </tr>
                                     <tr>
-                                        <th></th>
+                                        <!-- <th></th> -->
                                         <th>Total: </th>
                                         <th>
                                             <?php

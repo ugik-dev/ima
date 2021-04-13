@@ -34,6 +34,33 @@ class Statements extends CI_Controller
 		$this->load->view('main/index.php', $data);
 	}
 
+	public function v2()
+	{
+
+		// DEFINES PAGE TITLE
+		$data['title'] = 'Jurnal Umum';
+
+		// DEFINES WHICH PAGE TO RENDER
+		$data['main_view'] = 'generaljournal2';
+
+		$from 	 = html_escape($this->input->post('from'));
+		$to 	 = html_escape($this->input->post('to'));
+
+		if ($from == NULL and $to == NULL) {
+			$from = date('Y-m-' . '1');
+			$to =  date('Y-m-' . '31');
+		}
+
+		$this->load->model('Statement_model');
+		$data['transaction_records'] = $this->Statement_model->fetch_transasctions($from, $to);
+
+		$data['from'] = $from;
+		$data['to'] = $to;
+
+		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+		$this->load->view('main/index.php', $data);
+	}
+
 	//USED TO GENERATE LEDGER ACCOUNTS 
 	//Statements/general_journal
 	function leadgerAccounst()
@@ -279,6 +306,10 @@ class Statements extends CI_Controller
 		$account_head   = html_escape($this->input->post('account_head'));
 		$debitamount   = html_escape($this->input->post('debitamount'));
 		$creditamount   = html_escape($this->input->post('creditamount'));
+		$no_jurnal   = html_escape($this->input->post('no_jurnal'));
+		$sub_keterangan   = html_escape($this->input->post('sub_keterangan'));
+
+
 
 		if ($date == NULL) {
 			$date = date('Y-m-d');
@@ -302,6 +333,8 @@ class Statements extends CI_Controller
 			'account_head' => $account_head,
 			'debitamount' => $debitamount,
 			'creditamount' => $creditamount,
+			'no_jurnal' => $no_jurnal,
+			'sub_keterangan' => $sub_keterangan
 		);
 
 		// var_dump($data);

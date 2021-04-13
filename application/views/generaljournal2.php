@@ -67,8 +67,9 @@
                         <table class="table table-hover table-responsive" id="dataTable">
                             <thead class="ledger_head">
                                 <th class="col-md-2">TANGGAL</th>
-                                <th class="col-md-4">AKUN</th>
-                                <th class="col-md-4">KETERANGAN</th>
+                                <th class="col-md-8">NAMA AKUN DAN TRANSAKSI </th>
+                                <th class="col-md-8">KETERANGAN </th>
+
                                 <th class="col-md-1">DEBIT</th>
                                 <th class="col-md-1">KREDIT</th>
                             </thead>
@@ -103,9 +104,15 @@
     }
 
 
+    console.log('ss')
+    // $('.currency').val();
     var elements = document.getElementsByClassName('currency')
 
+    // loop through all the `money` elements
     for (var i = 0; i < elements.length; i++) {
+        // split the money value into two parts (before the decimal and after)
+        // var amounts = elements[i].innerHTML.split('.')
+        // update the content to your formatted version
         elements[i].innerHTML = formatRupiah(elements[i].innerHTML);
     }
 </script>
