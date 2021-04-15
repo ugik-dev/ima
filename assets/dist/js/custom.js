@@ -962,9 +962,119 @@ $("#Edit_Return_items").validate({
   },
 });
 
+function formatRupiah(angka, prefix) {
+  var number_string = angka.toString(),
+    split = number_string.split(","),
+    sisa = split[0].length % 3,
+    rupiah = split[0].substr(0, sisa),
+    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+  // tambahkan titik jika yang di input sudah menjadi angka ribuan
+  if (ribuan) {
+    separator = sisa ? "." : "";
+    rupiah += separator + ribuan.join(".");
+  }
+
+  rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
+  return prefix == undefined ? rupiah : rupiah ? "Rp. " + rupiah : "";
+}
+
 function printDiv(divName) {
   var printContents = document.getElementById(divName).innerHTML;
   console.log(printContents);
+  var originalContents = document.body.innerHTML;
+  document.body.innerHTML = printContents;
+  window.print();
+  document.body.innerHTML = originalContents;
+}
+
+function printSingleJurnal(id) {
+  var naration = document.getElementById("naration_" + id).innerHTML;
+  var no_jurnal = document.getElementById("no_jurnal_" + id).innerHTML;
+  var name = document.getElementsByClassName("rinc_name_" + id);
+  var ket = document.getElementsByClassName("rinc_ket_" + id);
+  var debit = document.getElementsByClassName("rinc_debit_" + id);
+  var kredit = document.getElementsByClassName("rinc_kredit_" + id);
+  isi = "";
+  var consdebit = 0;
+  var conskredit = 0;
+  console.log(name[0].innerHTML);
+  for (var i = 0; i < name.length; i++) {
+    isi += `<tr style="height : 10px">
+    <td>${name[i].innerHTML.substring(1, 13)}</td>
+    <td>${ket[i].innerHTML}</td>
+    <td style="text-align:right ; padding-right : 10px">${
+      debit[i].innerHTML
+    }</td>
+    <td>${kredit[i].innerHTML}</td>
+    </tr>
+    `;
+    last = i;
+    console.log(debit[i].innerHTML.replace(/[^0-9]/g, ""));
+    consdebit =
+      consdebit +
+      (debit[i].innerHTML
+        ? parseInt(debit[i].innerHTML.replace(/[^0-9]/g, ""))
+        : 0);
+    conskredit =
+      conskredit +
+      (kredit[i].innerHTML
+        ? parseInt(kredit[i].innerHTML.replace(/[^0-9]/g, ""))
+        : 0);
+  }
+  for (var j = last; j < 10; j++) {
+    isi += `<tr  style="height : 22px; padding : 10px">
+    <td> </td>
+    <td> </td>
+    <td> </td>
+    <td> </td>
+    </tr>
+    `;
+  }
+  isi += `<tr  style="height : 22px; padding : 10px">
+    <td> </td>
+    <td> </td>
+    <td>${formatRupiah(consdebit)} </td>
+    <td>${formatRupiah(conskredit)} </td>
+    </tr>
+    `;
+
+  var printContents = `
+         <div class="box-body box-bg ">
+            <div class="make-container-center">
+              <div class="col-md-12">
+                            <h2 style="text-align:center">Jurnal Voucher</h2>
+                            <h3 style="text-align:center">PT. Indometal Asia </h3>
+                        </div>
+              <div class="col-md-12">
+            <table style="" border="0">
+        <tr>
+            <td style="width: 100px">Deskripsi</td>
+            <td style="width: 10px">:</td>
+            <td style="width: 300px">${naration}</td>
+			 <td style="width: 100px">Tanggal</td>
+            <td style="width: 10px">:</td>
+            <td style="width: 300px">${no_jurnal}</td>
+        </tr>
+        <tr>
+        </tr>
+    </table>
+	 <table style="" border="1" cellspacing="0">
+        <tr>
+            <td style="width: 200px ;text-align:center">No Akun</td>
+            <td style="width: 350px ; text-align:center">Keterangan</td>
+            <td style="width: 100px ; text-align:center">Debit</td>
+            <td style="width: 100px; text-align:center">Kredit</td>
+        </tr>
+        ${isi}
+    </table>
+             </div>
+        </div>
+		
+        
+             </div>
+             `;
+  // console.log(printContents);
   var originalContents = document.body.innerHTML;
   document.body.innerHTML = printContents;
   window.print();

@@ -2,7 +2,7 @@
 /*
 
 */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 class Dashboard extends CI_Controller
 {
 	// Homepage
@@ -55,25 +55,25 @@ class Dashboard extends CI_Controller
 		$data['product_alert_limit'] = $this->Crud_model->fetch_record_product_alert_limit(8);
 
 		//CASH IN HAND
-		$data['cash_in_hand'] = $this->Statement_model->count_head_amount_by_id(2);		
+		$data['cash_in_hand'] = $this->Statement_model->count_head_amount_by_id(2);
 
 		//ACCOUNT RECEIVABLE
-		$data['account_recieveble'] = $this->Statement_model->count_head_amount_by_id(4);		
+		$data['account_recieveble'] = $this->Statement_model->count_head_amount_by_id(4);
 
 		//CASH IN BANK
-		$data['cash_in_bank'] = $this->Statement_model->count_head_amount_by_id(16);		
+		$data['cash_in_bank'] = $this->Statement_model->count_head_amount_by_id(16);
 
 		//PAYABLES
-		$data['payables'] = $this->Statement_model->count_head_amount_by_id(5);		
+		$data['payables'] = $this->Statement_model->count_head_amount_by_id(5);
 
 		//STOCK ALERT
-		$data['out_of_stock'] = $this->Accounts_model->out_of_stock();		
+		$data['out_of_stock'] = $this->Accounts_model->out_of_stock();
 
 		//RETURN AMOUNT 
 		$data['amount_return'] = $this->Accounts_model->amount_return();
 
 		//EXPENSE AMOUNT 
-		$data['expense_amount'] = $this->Accounts_model->expense_amount();		
+		$data['expense_amount'] = $this->Accounts_model->expense_amount();
 
 		//EXPENSE AMOUNT 
 		$data['purchase_amount'] = $this->Accounts_model->purchase_amount();
@@ -84,15 +84,15 @@ class Dashboard extends CI_Controller
 		$data['suppliers_count'] = $this->Crud_model->count_product('mp_payee', 'type', 'supplier');
 
 		//SUPPLIERS
-		$data['result_supplier'] = $this->Crud_model->fetch_payee_record('supplier',NULL);
+		$data['result_supplier'] = $this->Crud_model->fetch_payee_record('supplier', NULL);
 
 		//CUSTOMER
-		$data['result_customer'] = $this->Crud_model->fetch_payee_record('customer',NULL);
+		$data['result_customer'] = $this->Crud_model->fetch_payee_record('customer', NULL);
 
 		//CURRENCY 
-		$data['currency'] = '( '.$this->Crud_model->fetch_record_by_id('mp_langingpage',1)[0]->currency.' )';
+		$data['currency'] = '( ' . $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency . ' )';
 
-		$data['Sales_today_count'] = $this->Crud_model->count_sales('mp_invoices', date('Y-m-d') , date('Y-m-d'));
+		$data['Sales_today_count'] = $this->Crud_model->count_sales('mp_invoices', date('Y-m-d'), date('Y-m-d'));
 		$data['Sales_month_count'] = $this->Crud_model->count_sales('mp_invoices', date('Y-m') . '-1', date('Y-m') . '-30');
 
 		// COUNTING THE TODO LIST FOR THIS MONTH IN Todolist TABLE
@@ -103,9 +103,9 @@ class Dashboard extends CI_Controller
 
 		$this->load->model('Accounts_model');
 		//COUNT AMOUNT OF SALES TODAY AND EXPENSE
-		$data['sales_today_amount'] =  $this->Accounts_model->Statistics_sales_with_date(date('Y-m-d'),date('Y-m-d'));
+		$data['sales_today_amount'] =  $this->Accounts_model->Statistics_sales_with_date(date('Y-m-d'), date('Y-m-d'));
 
-		$data['sales_month_amount'] = $this->Accounts_model->Statistics_sales_with_date(date('Y-m'.'-1'),date('Y-m'.'-31'));
+		$data['sales_month_amount'] = $this->Accounts_model->Statistics_sales_with_date(date('Y-m' . '-1'), date('Y-m' . '-31'));
 
 
 		// DEFINES TO LOAD THE MODEL Accounts_model
@@ -114,10 +114,12 @@ class Dashboard extends CI_Controller
 		// FETCHING THE EXPENSE AND REVENUE FOR GRAPH
 		$result_sales_this_year_and_total_profit = $this->Accounts_model->statistics_sales_this_year();
 		$data['result_sales_arr'] = json_encode($result_sales_this_year_and_total_profit[0]);
-		
+
 		$data['result_profit_this_year'] = json_encode($result_sales_this_year_and_total_profit[1]);
 		$data['result_expense_this_year'] = json_encode($result_sales_this_year_and_total_profit[2]);
 
+		// echo json_encode($data);
+		// die();
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
 		$this->load->view('main/index.php', $data);
 	}

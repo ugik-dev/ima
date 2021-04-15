@@ -37,35 +37,34 @@ class Statement_model extends CI_Model
                         $sub_query =  $sub_query->result();
                         if ($sub_query != NULL) {
                             foreach ($sub_query as $single_trans) {
-
                                 if ($single_trans->type == 0) {
                                     $form_content .= '<tr>
                             <td>' . $transaction_record->date . '</td>
                             <td>
-                            <a >' . $single_trans->name . '</a>
+                            <a  class="rinc_name_' . $transaction_record->transaction_id . '">' . $single_trans->name . '</a>
                             </td>
                             <td>
-                            <a >' . $single_trans->sub_keterangan . '</a>
+                            <a class="rinc_ket_' . $transaction_record->transaction_id . '">' . $single_trans->sub_keterangan . '</a>
                                 </td>
                             <td>
-                                <a  class="currency">' . $single_trans->amount . '</a>
+                                <a  class="currency rinc_debit_' . $transaction_record->transaction_id . '">' . $single_trans->amount . '</a>
                             </td>
                             <td>
-                                <a ></a>
+                                <a class="rinc_kredit_' . $transaction_record->transaction_id . '"></a>
                             </td>          
                             </tr>';
                                 } else if ($single_trans->type == 1) {
                                     $form_content .= '<tr>
-                            <td>' . $transaction_record->date . '</td><td ><a class="general-journal-credit" >' . $single_trans->name . '</a>
+                            <td>' . $transaction_record->date . '</td><td ><a class="general-journal-credit rinc_name_' . $transaction_record->transaction_id . '" >' . $single_trans->name . '</a>
                             </td>
                             <td>
-                            <a >' . $single_trans->sub_keterangan . '</a>
+                            <a class="rinc_ket_' . $transaction_record->transaction_id . '" >' . $single_trans->sub_keterangan . '</a>
                                 </td>
                             <td>
-                                <a ></a>
+                                <a class="rinc_debit_' . $transaction_record->transaction_id . '"></a>
                             </td>
                             <td>
-                                <a  class="currency">' . $single_trans->amount . '</a>
+                                <a  class="currency rinc_kredit_' . $transaction_record->transaction_id . '">' . $single_trans->amount . '</a>
                             </td>           
                             </tr>';
                                 }
@@ -73,11 +72,14 @@ class Statement_model extends CI_Model
                         }
                     }
                     $form_content .= '<tr class="narration" >
-                    <td class="border-bottom-journal" colspan="5"><small> <i> - ' . $transaction_record->naration . '</i>
+                    <td class="border-bottom-journal" colspan="5">
+                    <small> <i id="naration_' . $transaction_record->transaction_id . '">' . (empty($transaction_record->naration) ? '-' : $transaction_record->naration) . '</i>
                         </small>
                         <br>
-                        <small> <i> No Jurnal : ' . $transaction_record->no_jurnal . '</i>
-                        </small>
+                       <small> <i> No Jurnal : </small> <a id="no_jurnal_' . $transaction_record->transaction_id . '">' . $transaction_record->no_jurnal . '</a> </i> 
+           
+                <button onclick="printSingleJurnal(' . $transaction_record->transaction_id . ')" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-print  pull-left"></i> Voucher</button>
+         
                         </td>
                         
                         </tr>';
@@ -239,11 +241,11 @@ class Statement_model extends CI_Model
                             $total_credit = $total_credit + $creditamt;
                         }
 
-                        $from_creator .= '<tr><td style=text-align:left;><h4>' . $single_head->name . '</h4></td><td><h4>' . $debitamt . '</h4></td><td><h4>' . $creditamt . '</h4></td></tr>';
+                        $from_creator .= '<tr><td style=text-align:left;><h4>' . $single_head->name . '</h4></td><td><h4 class="currency">' . $debitamt . '</h4></td><td><h4  class="currency">' . $creditamt . '</h4></td></tr>';
                     }
                 }
 
-                $from_creator .= '<tr class="balancesheet-row"><td></td><td><h4>' . $total_debit . '</h4></td><td><h4>' . $total_credit . '</h4></td></tr>';
+                $from_creator .= '<tr class="balancesheet-row"><td></td><td><h4  class="currency">' . $total_debit . '</h4></td><td><h4  class="currency">' . $total_credit . '</h4></td></tr>';
             }
         }
 
