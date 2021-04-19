@@ -95,7 +95,6 @@
         rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
         return prefix == undefined ? rupiah : rupiah ? "Rp. " + rupiah : "";
     }
-
     var elements = document.getElementsByClassName('currency')
 
     for (var i = 0; i < elements.length; i++) {

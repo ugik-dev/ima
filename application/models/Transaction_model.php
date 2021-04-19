@@ -1018,6 +1018,70 @@ class Transaction_model extends CI_Model
         return $data;
     }
 
+    function journal_voucher_edit($data)
+    {
+
+        $trans_data = array(
+            'date' => $data['date'],
+            'naration' => $data['description'],
+            'no_jurnal' => $data['no_jurnal'],
+            'generated_source' => 'Journal Voucher'
+        );
+
+        $this->db->trans_start();
+        // $this->db->trans_strict(FALSE);
+        //INSERT AND GET LAST ID
+        $this->db->where('id', $data['id']);
+        $this->db->update('mp_generalentry', $trans_data);
+        // $order_id = $this->db->insert_id();
+
+        $total_heads = count($data['account_head']);
+
+        for ($i = 0; $i < $total_heads; $i++) {
+            if ($data['account_head'] != 0) {
+                if ($data['debitamount'][$i] != 0) {
+                    $sub_data  = array(
+                        'parent_id'   =>  $data['id'],
+                        'accounthead' => $data['account_head'][$i],
+                        'amount'      => $data['debitamount'][$i],
+                        'type'        => 0,
+                        'sub_keterangan' => $data['sub_keterangan'][$i]
+                    );
+                } else if ($data['creditamount'][$i] != 0) {
+                    $sub_data  = array(
+                        'parent_id'   =>  $data['id'],
+                        'accounthead' => $data['account_head'][$i],
+                        'amount'      => $data['creditamount'][$i],
+                        'type'        => 1,
+                        'sub_keterangan' => $data['sub_keterangan'][$i]
+                    );
+                }
+
+                if ($data['creditamount'][$i] == 0 && $data['debitamount'][$i] == 0) {
+                    if (!empty($data['sub_id'][$i])) {
+                        $this->db->where('id', $data['sub_id'][$i]);
+                        $this->db->delete('mp_sub_entry');
+                    }
+                } else  if (!empty($data['sub_id'][$i])) {
+                    $this->db->where('id', $data['sub_id'][$i]);
+                    $this->db->update('mp_sub_entry', $sub_data);
+                } else {
+                    $this->db->insert('mp_sub_entry', $sub_data);
+                }
+            }
+        }
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $data = NULL;
+        } else {
+            $this->db->trans_commit();
+        }
+
+        return $data;
+    }
+
     //USED TO CREATE A OPENING BALANCE
     function opening_balance($data)
     {

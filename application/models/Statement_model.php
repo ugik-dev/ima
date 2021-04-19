@@ -5,6 +5,39 @@
 class Statement_model extends CI_Model
 {
     //USED TO FETCH TRANSACTIONS FOR GENERAL JOURNAL
+    public function getSingelJurnal($filter = [])
+    {
+
+        $total_debit = 0;
+        $total_credit = 0;
+        $form_content = '';
+
+        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
+        $this->db->from('mp_generalentry');
+        // if (!empty($filter['id']))
+        $this->db->where('id', $filter['id']);
+        // $this->db->where('date >=', $date1);
+        // $this->db->where('date <=', $date2);
+        $this->db->order_by('mp_generalentry.id', 'DESC');
+        $query = $this->db->get();
+        $transaction_records =  $query->result()['0'];
+        if ($transaction_records  != NULL) {
+            $this->db->select("mp_sub_entry.*,mp_head.name");
+            $this->db->from('mp_sub_entry');
+            $this->db->join('mp_head', 'mp_head.id = mp_sub_entry.accounthead');
+            $this->db->where('mp_sub_entry.parent_id =', $transaction_records->transaction_id);
+            $sub_query = $this->db->get();
+            if ($sub_query->num_rows() > 0) {
+                $sub_query =  $sub_query->result();
+            }
+        }
+        $data['parent'] = $transaction_records;
+        $data['sub_parent'] = $sub_query;
+        // echo json_encode($data);
+        // die();
+        return $data;
+    }
+
     public function fetch_transasctions($date1, $date2)
     {
 
@@ -12,7 +45,7 @@ class Statement_model extends CI_Model
         $total_credit = 0;
         $form_content = '';
 
-        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal");
+        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
         $this->db->from('mp_generalentry');
         $this->db->where('date >=', $date1);
         $this->db->where('date <=', $date2);
@@ -71,12 +104,14 @@ class Statement_model extends CI_Model
                             }
                         }
                     }
+                    $btn_lock = ' <a href="' . base_url() . 'statements/edit_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-pencil  pull-left"></i> Edit</a>';
                     $form_content .= '<tr class="narration" >
                     <td class="border-bottom-journal" colspan="5">
                     <small> <i id="naration_' . $transaction_record->transaction_id . '">' . (empty($transaction_record->naration) ? '-' : $transaction_record->naration) . '</i>
                         </small>
                         <br>
-                       <small> <i> No Jurnal : </small> <a id="no_jurnal_' . $transaction_record->transaction_id . '">' . $transaction_record->no_jurnal . '</a> </i> 
+                       <small> <i> No Jurnal : </small> <a id="no_jurnal_' . $transaction_record->transaction_id . '">' . $transaction_record->no_jurnal . '</a> </i> ' .
+                        ($transaction_record->gen_lock != 'Y' ? $btn_lock : '') . '
            
                 <button onclick="printSingleJurnal(' . $transaction_record->transaction_id . ')" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-print  pull-left"></i> Voucher</button>
          
@@ -528,9 +563,7 @@ class Statement_model extends CI_Model
                 }
             }
         }
-
         $total_revenue = ($total_revenue < 0 ? -$total_revenue : $total_revenue);
-
         $this->db->select("*");
         $this->db->from('mp_head');
         $this->db->where(['mp_head.nature' => 'Expense']);

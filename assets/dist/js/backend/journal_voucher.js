@@ -1,5 +1,5 @@
 var timmer;
-function count_debits() {
+function count_debits(edit = false) {
   clearTimeout(timmer);
 
   timmer = setTimeout(function callback() {
@@ -17,9 +17,12 @@ function count_debits() {
     });
 
     $('input[name="total_debit_amount"]').val(formatRupiah(total_debit));
-
     //USED TO CHECK THE VALIDITY OF THIS TRANSACTION
-    check_validity();
+    if (edit) {
+      count_credits();
+    } else {
+      check_validity();
+    }
   }, 800);
 }
 function count_credits() {
@@ -47,12 +50,14 @@ function count_credits() {
 function check_validity() {
   var total_debit = $('input[name="total_debit_amount"]').val();
   var total_credit = $('input[name="total_credit_amount"]').val();
-
+  total_debit = parseInt(total_debit.replace(/[^0-9]/g, ""));
+  total_credit = parseInt(total_credit.replace(/[^0-9]/g, ""));
+  // console.log(total_debit);
   if (total_debit != total_credit) {
-    if (total_debit > total_credit) {
-      $("#transaction_validity").html(total_credit - total_debit);
+    if (total_debit < total_credit) {
+      $("#transaction_validity").html(formatRupiah(total_credit - total_debit));
     } else {
-      $("#transaction_validity").html(total_debit - total_credit);
+      $("#transaction_validity").html(formatRupiah(total_debit - total_credit));
     }
 
     //USED TO DISABLED THE BUTTON IF ANY ERROR OCCURED
@@ -78,4 +83,39 @@ function formatRupiah(angka, prefix) {
 
   rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
   return prefix == undefined ? rupiah : rupiah ? "Rp. " + rupiah : "";
+}
+
+function delete_row(row) {
+  // console.log(row);
+
+  i = 0;
+  $('input[name="creditamount[]"]').each(function () {
+    if (row == i) {
+      if ($('input[name="delete_row[' + row + ']"]').prop("checked") == true) {
+        $(this).val("");
+        $(this).prop("readonly", true);
+      } else if (
+        $('input[name="delete_row[' + row + ']"]').prop("checked") == false
+      ) {
+        $(this).prop("readonly", false);
+      }
+    }
+    i++;
+  });
+  i = 0;
+  $('input[name="debitamount[]"]').each(function () {
+    if (row == i) {
+      if ($('input[name="delete_row[' + row + ']"]').prop("checked") == true) {
+        $(this).val("");
+        $(this).prop("readonly", true);
+      } else if (
+        $('input[name="delete_row[' + row + ']"]').prop("checked") == false
+      ) {
+        $(this).prop("readonly", false);
+      }
+    }
+    i++;
+  });
+
+  count_debits(true);
 }

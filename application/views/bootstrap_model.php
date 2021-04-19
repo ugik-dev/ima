@@ -33,6 +33,9 @@
                     $('.mask').mask('000.000.000.000.000', {
                         reverse: true
                     });
+                    // $('#sub_head').select2('data', {
+                    //     value: '10'
+                    // });
 
                 }
             });
