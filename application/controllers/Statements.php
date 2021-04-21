@@ -66,7 +66,7 @@ class Statements extends CI_Controller
 		$sheet->mergeCells("A3:F3");
 		$sheet->setCellValue('A1', 'PT INDOMETAL ASIA');
 		$sheet->setCellValue('A2', 'Jurnal Umum');
-		$sheet->setCellValue('A3', 'Periode : ' . $from . '-' . $to);
+		$sheet->setCellValue('A3', 'Periode : ' . $from . ' s.d. ' . $to);
 
 		$sheet->setCellValue('A5', 'TANGGAL');
 		$sheet->setCellValue('B5', 'NO JURNAL');
@@ -79,7 +79,7 @@ class Statements extends CI_Controller
 
 		$writer = new Xlsx($spreadsheet);
 
-		$filename = 'jurnal_umum_' . $from . '-' . $to;
+		$filename = 'jurnal_umum_' . $from . '_sd_' . $to;
 
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
