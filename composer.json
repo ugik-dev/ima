@@ -1,5 +1,6 @@
 {
     "require": {
-        "mike42/escpos-php": "^2.0"
+        "mike42/escpos-php": "^2.0",
+        "phpoffice/phpspreadsheet": "^1.17"
     }
 }

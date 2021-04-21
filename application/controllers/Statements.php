@@ -3,6 +3,11 @@
 
 */
 defined('BASEPATH') or exit('No direct script access allowed');
+
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class Statements extends CI_Controller
 {
 	// Statements
@@ -20,8 +25,9 @@ class Statements extends CI_Controller
 		$to 	 = html_escape($this->input->post('to'));
 
 		if ($from == NULL and $to == NULL) {
-			$from = date('Y-m-' . '1');
-			$to =  date('Y-m-' . '31');
+			$from = date('Y-m-' . '01');
+			// $to =  date('Y-m-' . '31');
+			$to = date('Y-m-' . date('t', strtotime($from)));
 		}
 
 		$this->load->model('Statement_model');
@@ -34,6 +40,53 @@ class Statements extends CI_Controller
 		$this->load->view('main/index.php', $data);
 	}
 
+	public function export_excel()
+	{
+
+		$from = $this->input->get()['from'];
+		$to = $this->input->get()['to'];
+		$spreadsheet = new Spreadsheet();
+
+		$sheet = $spreadsheet->getActiveSheet();
+		$sheet->getColumnDimension('A')->setWidth(12);
+		$sheet->getColumnDimension('B')->setWidth(20);
+		$sheet->getColumnDimension('C')->setWidth(37);
+		$sheet->getColumnDimension('D')->setWidth(37);
+		$sheet->getColumnDimension('E')->setWidth(23);
+		$sheet->getColumnDimension('F')->setWidth(23);
+		$spreadsheet->getActiveSheet()->getStyle('A5:F5')->getAlignment()->setHorizontal('center')->setWrapText(true);
+		$spreadsheet->getActiveSheet()->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
+
+		$sheet->getStyle('E:F')->getNumberFormat()->setFormatCode("_(* #,##0.00_);_(* \(#,##0.00\);_(* \"-\"??_);_(@_)");
+
+		$this->load->model('Statement_model');
+		$data['transaction_records'] = $this->Statement_model->export_excel($from, $to, $sheet);
+		$sheet->mergeCells("A1:F1");
+		$sheet->mergeCells("A2:F2");
+		$sheet->mergeCells("A3:F3");
+		$sheet->setCellValue('A1', 'PT INDOMETAL ASIA');
+		$sheet->setCellValue('A2', 'Jurnal Umum');
+		$sheet->setCellValue('A3', 'Periode : ' . $from . '-' . $to);
+
+		$sheet->setCellValue('A5', 'TANGGAL');
+		$sheet->setCellValue('B5', 'NO JURNAL');
+		$sheet->setCellValue('C5', 'NO AKUN');
+		$sheet->setCellValue('D5', 'KETERANGAN');
+		$sheet->setCellValue('E5', 'DEBIT');
+		$sheet->setCellValue('F5', 'KREDIT');
+		// $sheet->setCellValue('E5', 'DEBIT');
+
+
+		$writer = new Xlsx($spreadsheet);
+
+		$filename = 'jurnal_umum_' . $from . '-' . $to;
+
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+		header('Cache-Control: max-age=0');
+
+		$writer->save('php://output'); // download file 
+	}
 	public function v2()
 	{
 
