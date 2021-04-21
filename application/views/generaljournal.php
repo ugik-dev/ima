@@ -270,7 +270,7 @@
                             <td style="width: 90px ; text-align:center">Dibukukan</td>
                         </tr>
                         <tr style="height: 70px">
-                            <td style="width: 90px ; text-align:center">SETIAWAN R</td>
+                            <td style=" vertical-align: bottom; text-align:center">SETIAWAN R</td>
                             <td></td>
                             <td style="width: 90px ; text-align:center"></td>
                             <td></td>
