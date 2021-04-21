@@ -152,10 +152,10 @@
             isi += `<tr style="height : 10px">
                 <td>${name[i].innerHTML.substring(1, 13)}</td>
                 <td>${ket[i].innerHTML}</td>
-                <td style="text-align:right ; padding-right : 10px">${
+                <td style="text-align:right ; padding-right : 5px">${
                 debit[i].innerHTML
                 }</td>
-                <td>${kredit[i].innerHTML}</td>
+                <td style="text-align:right ; padding-right : 5px">${kredit[i].innerHTML}</td>
                 </tr>
                 `;
             last = i;
@@ -175,131 +175,127 @@
         // console.log(fixdate)
         for (var j = last; j < 7; j++) {
             isi += `<tr  style="height : 22px; padding : 10px">
-    <td> </td>
-    <td> </td>
-    <td> </td>
-    <td> </td>
-    </tr>
-    `;
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            <td> </td>
+            </tr>
+            `;
         }
         isi += `<tr  style="height : 22px; padding : 10px">
-    <td colspan="2"><bold>Jumlah</bold> </td>
-   
-    <td>${formatRupiah(consdebit)} </td>
-    <td>${formatRupiah(conskredit)} </td>
-    </tr>
-    `;
+            <td colspan="2"><bold>Jumlah</bold> </td>
+        
+            <td style="text-align:right ; padding-right : 10px">${formatRupiah(consdebit)} </td>
+            <td style="text-align:right ; padding-right : 10px">${formatRupiah(conskredit)} </td>
+            </tr>
+            `;
         // <div class="box-body box-bg ">
         // <div class="make-container-center">
 
         var printContents = `
-              <div class="col-md-12">
-                            <h2 style="text-align:center">Jurnal Voucher</h2>
-                            <h3 style="text-align:center">PT. Indometal Asia </h3>
-              <div class="col-md-12">
+                            <div class="col-md-12">
+                                            <h2 style="text-align:center">Jurnal Voucher</h2>
+                                            <h3 style="text-align:center">PT. Indometal Asia </h3>
+                           </div>
+                            <div class="col-md-12" style="font-size: 11px;">
+                            <table style="" border="0">
+                        <tr>
+                            <td style="width: 100px">Deskripsi</td>
+                            <td style="width: 10px">:</td>
+                            <td style="text-align:left ;width: 400px">${naration}</td>
+                            <td style="text-align:left ;width: 100px">No Voucher</td>
+                            <td style="width: 10px">:</td>
+                            <td style="text-align:left; width: 200px">${no_jurnal}</td>
+                        </tr>
+                            <tr>
+                            <td style="width: 100px">Sejumlah</td>
+                            <td style="width: 10px">:</td>
+                            <td style="text-align:left ;width: 400px">${formatRupiah(conskredit)}</td>
+                            <td style="text-align:left ;width: 100px">Tanggal</td>
+                            <td style="width: 10px">:</td>
+                            <td style="text-align:left; width: 200px">${date}</td>
+                        </tr>
+                            <tr>
+                            <td style="width: 100px">Terbilang</td>
+                            <td style="width: 10px">:</td>
+                            <td style="text-align:left ;width: 400px">${terbilang(conskredit.toString())}</td>
+                        
+                        </tr>
+                        <tr>
+                        </tr>
+                    </table>
+                    <br>
+                    <table style="" border="1" cellspacing="0">
+                        <tr>
+                            <td style="width: 200px ;text-align:center">No Akun</td>
+                            <td style="width: 350px ; text-align:center">Keterangan</td>
+                            <td style="width: 100px ; text-align:center">Debit</td>
+                            <td style="width: 100px; text-align:center">Kredit</td>
+                        </tr>
+                        ${isi}
+                    </table>
+                    <br>
+                    <table style="font-size: 11px; width: 100%" border="0" cellspacing="0">
+                        <tr>
+                            <td style="width: 400 ;text-align:left; padding : 3px">
+                            
+                             <table style="" border="1" cellspacing="0">
+                                <tr>
+                                    <td style="width: 130 ;text-align:left; padding : 3px">Pengeluaran Berupa</td>
+                                    <td style="width: 130 ; text-align:left ; padding : 3px">Kas/Cek/Trans*)</td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 130 ;text-align:left; padding : 3px">Nomor</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 130 ;text-align:left; padding : 3px">Tanggal</td>
+                                    <td ></td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 130 ;text-align:left; padding : 3px">A/C No.</td>
+                                    <td style="width: 130 ; text-align:left ; padding : 3px">112-0098146017</td>
+                                </tr>
+                            </table>
+                    
 
-            <table style="" border="0">
-        <tr>
-            <td style="width: 100px">Deskripsi</td>
-            <td style="width: 10px">:</td>
-            <td style="text-align:left ;width: 400px">${naration}</td>
-			 <td style="text-align:left ;width: 100px">No Voucher</td>
-            <td style="width: 10px">:</td>
-            <td style="text-align:left; width: 200px">${no_jurnal}</td>
-        </tr>
-              <tr>
-            <td style="width: 100px">Sejumlah</td>
-            <td style="width: 10px">:</td>
-            <td style="text-align:left ;width: 400px">${formatRupiah(conskredit)}</td>
-			 <td style="text-align:left ;width: 100px">Tanggal</td>
-            <td style="width: 10px">:</td>
-            <td style="text-align:left; width: 200px">${date}</td>
-        </tr>
-              <tr>
-            <td style="width: 100px">Terbilang</td>
-            <td style="width: 10px">:</td>
-            <td style="text-align:left ;width: 400px">${terbilang(conskredit.toString())}</td>
-		
-        </tr>
-        <tr>
-        </tr>
-    </table>
-    <br>
-	 <table style="" border="1" cellspacing="0">
-        <tr>
-            <td style="width: 200px ;text-align:center">No Akun</td>
-            <td style="width: 350px ; text-align:center">Keterangan</td>
-            <td style="width: 100px ; text-align:center">Debit</td>
-            <td style="width: 100px; text-align:center">Kredit</td>
-        </tr>
-        ${isi}
-    </table>
-    <br>
-     <table style="font-size: 11px;" border="0" cellspacing="0">
-        <tr>
-            <td style="width: 400 ;text-align:left; padding : 3px">
-            
-            <table style="" border="1" cellspacing="0">
-        <tr>
-            <td style="width: 130 ;text-align:left; padding : 3px">Pengeluaran Berupa</td>
-            <td style="width: 130 ; text-align:ledt ; padding : 3px">Kas/Cek/Trans*)</td>
-        </tr>
-        <tr>
-            <td style="width: 130 ;text-align:left; padding : 3px">Nomor</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td style="width: 130 ;text-align:left; padding : 3px">Tanggal</td>
-            <td ></td>
-        </tr>
-        <tr>
-            <td style="width: 130 ;text-align:left; padding : 3px">A/C No.</td>
-            <td style="width: 130 ; text-align:ledt ; padding : 3px">112-0098146017</td>
-        </tr>
-    </table>
-  	
-
-            </td>
-            <td style="width: 130 ; text-align:ledt ; padding : 3px">
-    <table style="" border="1" cellspacing="0">
-        <tr>
-            <td style="width: 120px ;text-align:center">Disetujui</td>
-            <td style="width: 120px ; text-align:center">Diverifikasi</td>
-            <td style="width: 120px ; text-align:center">Dibuat Oleh</td>
-            <td style="width: 120px ; text-align:center">Diterima</td>
-            <td style="width: 120px ; text-align:center">Dibukukan</td>
-        </tr>
-        <tr style="height: 70px">
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td style="text-align:left">Tgl</td>
-            <td style="text-align:left">Tgl</td>
-            <td style="text-align:left">Tgl</td>
-            <td style="text-align:left">Tgl</td>
-            <td style="text-align:left">Tgl</td>
-           
-        </tr>
-   
-    </table>
-  	        </td>
-        </tr>
-        </table>
-  		
-  
-     	
-        
+                            </td>
+                            <td style="width: 130 ; align:right ; padding : 3px">
+                    <table style="float: right"  border="1" cellspacing="0">
+                        <tr>
+                            <td style="width: 90px ;text-align:center">Disetujui</td>
+                            <td style="width: 90px ; text-align:center">Diverifikasi</td>
+                            <td style="width: 90px ; text-align:center">Dibuat Oleh</td>
+                            <td style="width: 90px ; text-align:center">Diterima</td>
+                            <td style="width: 90px ; text-align:center">Dibukukan</td>
+                        </tr>
+                        <tr style="height: 70px">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align:left; margin-right: 1px">Tgl</td>
+                            <td style="text-align:left">Tgl</td>
+                            <td style="text-align:left">Tgl</td>
+                            <td style="text-align:left">Tgl</td>
+                            <td style="text-align:left">Tgl</td>
+                        
+                        </tr>
+                
+                    </table>
+                            </td>
+                        </tr>
+                        </table>
              </div>
              `;
         // console.log(printContents);
         var originalContents = document.body.innerHTML;
         document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
+        // window.print();
+        // document.body.innerHTML = originalContents;
     }
 </script>
 <!-- Bootstrap model  -->

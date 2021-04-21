@@ -40,6 +40,28 @@ class Statements extends CI_Controller
 		$this->load->view('main/index.php', $data);
 	}
 
+	public function show($id)
+	{
+
+		// DEFINES PAGE TITLE
+
+		// DEFINES WHICH PAGE TO RENDER
+		$data['main_view'] = 'generaljournal';
+
+		$from 	 = html_escape($this->input->post('from'));
+		$to 	 = html_escape($this->input->post('to'));
+
+		$this->load->model('Statement_model');
+		$data['transaction'] = $this->Statement_model->detail_fetch_transasctions($id);
+		echo json_encode($data);
+		die();
+		$data['title'] = $data['transaction'];
+
+		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+		$this->load->view('main/index.php', $data);
+	}
+
+
 	public function export_excel()
 	{
 
