@@ -72,7 +72,7 @@ class Statement_model extends CI_Model
                             foreach ($sub_query as $single_trans) {
                                 if ($single_trans->type == 0) {
                                     $form_content .= '<tr>
-                            <td>' . $transaction_record->date . '</td>
+                            <td id="date_' . $transaction_record->transaction_id . '">' . $transaction_record->date . '</td>
                             <td>
                             <a  class="rinc_name_' . $transaction_record->transaction_id . '">' . $single_trans->name . '</a>
                             </td>
@@ -113,7 +113,7 @@ class Statement_model extends CI_Model
                        <small> <i> No Jurnal : </small> <a id="no_jurnal_' . $transaction_record->transaction_id . '">' . $transaction_record->no_jurnal . '</a> </i> ' .
                         ($transaction_record->gen_lock != 'Y' ? $btn_lock : '') . '
            
-                <button onclick="printSingleJurnal(' . $transaction_record->transaction_id . ')" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-print  pull-left"></i> Voucher</button>
+                <button onclick="printSingleJurnal2(' . $transaction_record->transaction_id . ')" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-print  pull-left"></i> Voucher</button>
          
                         </td>
                         
@@ -167,24 +167,6 @@ class Statement_model extends CI_Model
                             }
                         }
                     }
-
-                    // $sheet->setCellValue('A' . $sheetrow, $transaction_record->naration);
-                    // $sheet->setCellValue('B' . $sheetrow, $transaction_record->no_jurnal);
-
-                    //     $btn_lock = ' <a href="' . base_url() . 'statements/edit_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-pencil  pull-left"></i> Edit</a>';
-                    //     $form_content .= '<tr class="narration" >
-                    //     <td class="border-bottom-journal" colspan="5">
-                    //     <small> <i id="naration_' . $transaction_record->transaction_id . '">' . (empty($transaction_record->naration) ? '-' : $transaction_record->naration) . '</i>
-                    //         </small>
-                    //         <br>
-                    //        <small> <i> No Jurnal : </small> <a id="no_jurnal_' . $transaction_record->transaction_id . '">' . $transaction_record->no_jurnal . '</a> </i> ' .
-                    //         ($transaction_record->gen_lock != 'Y' ? $btn_lock : '') . '
-
-                    // <button onclick="printSingleJurnal(' . $transaction_record->transaction_id . ')" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-print  pull-left"></i> Voucher</button>
-
-                    //         </td>
-
-                    //         </tr>';
                 }
             }
         }
