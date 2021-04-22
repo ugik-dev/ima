@@ -341,7 +341,7 @@
                         <tr style="height: 70px">
                             <td style=" vertical-align: bottom; text-align:center">SETIAWAN R</td>
                             <td></td>
-                            <td style="width: 90px ; text-align:center">${name2}</td>
+                            <td style="vertical-align: bottom; text-align:center">${name2}</td>
                             <td></td>
                             <td></td>
                         </tr>
