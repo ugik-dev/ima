@@ -184,6 +184,11 @@
         var displyhide = true
 
         var tpe = no_jurnal.split("/")[1];
+        if (tpe == 'AM' || tpe == 'KM' || tpe == 'DM') {
+            tpe = 'AM'
+        } else if (tpe == 'AK' || tpe == 'KK' || tpe == 'DK') {
+            tpe = 'AK'
+        }
         if (tpe == undefined) {
 
             tpe = ''
@@ -380,12 +385,12 @@
     PrintForm.form.submit(function(event) {
         event.preventDefault();
         printSingleJurnal2(PrintForm.id_data.val(), PrintForm.name1.val(), PrintForm.name2.val())
-
+        PrintForm.self.modal('hide')
     })
 
-    // PrintForm.close.on('click', function() {
-    // PrintForm.self.modal('hide')
-    // })
+    PrintForm.close.on('click', function() {
+        PrintForm.self.modal('hide')
+    })
 
 
 
