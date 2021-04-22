@@ -71,6 +71,8 @@ class Statement_model extends CI_Model
                         if ($sub_query != NULL) {
                             foreach ($sub_query as $single_trans) {
                                 if ($single_trans->type == 0) {
+                                    // echo $single_trans->amount;
+                                    // die();
                                     $form_content .= '<tr>
                             <td id="date_' . $transaction_record->transaction_id . '">' . $transaction_record->date . '</td>
                             <td>
@@ -610,6 +612,23 @@ class Statement_model extends CI_Model
 
 
     //USED TO CREATE A CHART OF ACCOUNTS LIST 
+    public function patners_cars_list()
+    {
+        $patner_list = '';
+
+        $this->db->select("*");
+        $this->db->from('mp_payee');
+        $this->db->where('mp_payee.type', 'patners');
+        $query = $this->db->get();
+        $result =  $query->result();
+        if ($result != NULL) {
+            foreach ($result as $single_head) {
+                $patner_list .= '<option value="' . $single_head->id . '">' . $single_head->customer_name . '</option>';
+            }
+        }
+        return $patner_list;
+        // die();
+    }
     public function chart_list()
     {
         $accounts_list = '';

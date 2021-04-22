@@ -125,7 +125,7 @@
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
-    $('.mask').mask('000.000.000.000.000', {
+    $('.mask').mask('000.000.000.000.000,00', {
         reverse: true
     });
 </script>

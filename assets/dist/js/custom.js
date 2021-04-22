@@ -963,11 +963,14 @@ $("#Edit_Return_items").validate({
 });
 
 function formatRupiah(angka, prefix) {
-  var number_string = angka.toString(),
-    split = number_string.split(","),
-    sisa = split[0].length % 3,
-    rupiah = split[0].substr(0, sisa),
-    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+  var number_string = angka.toString();
+  split = [];
+  split[0] = number_string.slice(0, -2);
+  split[1] = number_string.slice(-2);
+
+  sisa = split[0].length % 3;
+  (rupiah = split[0].substr(0, sisa)),
+    (ribuan = split[0].substr(sisa).match(/\d{3}/gi));
 
   // tambahkan titik jika yang di input sudah menjadi angka ribuan
   if (ribuan) {
@@ -1090,6 +1093,7 @@ function printJournalEntry(divName) {
 }
 
 function terbilang(bilangan) {
+  bilangan = bilangan.slice(0, -2);
   var kalimat = "";
   var angka = new Array(
     "0",
@@ -1191,6 +1195,6 @@ function terbilang(bilangan) {
     }
   }
   // console.log(kalimat);
-  return kalimat;
+  return kalimat + " Rupiah";
   // document.getElementById("terbilang").innerHTML = kalimat;
 }

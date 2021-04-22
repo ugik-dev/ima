@@ -1,4 +1,5 @@
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"> -->
+  <!-- <script src="https://use.fontawesome.com/4f3417ca28.js"></script> -->
   <link rel="stylesheet" href="<?php echo base_url(); ?>assets/front_menu/css/sidebar-menu.css">
 
 

@@ -48,6 +48,8 @@ function count_credits() {
   }, 800);
 }
 function check_validity() {
+  console.log("r");
+
   var total_debit = $('input[name="total_debit_amount"]').val();
   var total_credit = $('input[name="total_credit_amount"]').val();
   total_debit = parseInt(total_debit.replace(/[^0-9]/g, ""));
@@ -66,23 +68,6 @@ function check_validity() {
     $("#transaction_validity").html("");
     $("#btn_save_transaction").prop("disabled", false);
   }
-}
-
-function formatRupiah(angka, prefix) {
-  var number_string = angka.toString(),
-    split = number_string.split(","),
-    sisa = split[0].length % 3,
-    rupiah = split[0].substr(0, sisa),
-    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-  // tambahkan titik jika yang di input sudah menjadi angka ribuan
-  if (ribuan) {
-    separator = sisa ? "." : "";
-    rupiah += separator + ribuan.join(".");
-  }
-
-  rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
-  return prefix == undefined ? rupiah : rupiah ? "Rp. " + rupiah : "";
 }
 
 function delete_row(row) {

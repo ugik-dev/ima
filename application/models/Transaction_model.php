@@ -984,12 +984,13 @@ class Transaction_model extends CI_Model
         $total_heads = count($data['account_head']);
 
         for ($i = 0; $i < $total_heads; $i++) {
+
             if ($data['account_head'] != 0) {
                 if ($data['debitamount'][$i] != 0) {
                     $sub_data  = array(
                         'parent_id'   => $order_id,
                         'accounthead' => $data['account_head'][$i],
-                        'amount'      => $data['debitamount'][$i],
+                        'amount'      => substr($data['debitamount'][$i], 0, -2) . '.' . substr($data['debitamount'][$i], -2),
                         'type'        => 0,
                         'sub_keterangan' => $data['sub_keterangan'][$i]
                     );
@@ -997,7 +998,7 @@ class Transaction_model extends CI_Model
                     $sub_data  = array(
                         'parent_id'   => $order_id,
                         'accounthead' => $data['account_head'][$i],
-                        'amount'      => $data['creditamount'][$i],
+                        'amount'      => substr($data['creditamount'][$i], 0, -2) . '.' . substr($data['creditamount'][$i], -2),
                         'type'        => 1,
                         'sub_keterangan' => $data['sub_keterangan'][$i]
                     );
@@ -1043,7 +1044,7 @@ class Transaction_model extends CI_Model
                     $sub_data  = array(
                         'parent_id'   =>  $data['id'],
                         'accounthead' => $data['account_head'][$i],
-                        'amount'      => $data['debitamount'][$i],
+                        'amount'      => substr($data['debitamount'][$i], 0, -2) . '.' . substr($data['debitamount'][$i], -2),
                         'type'        => 0,
                         'sub_keterangan' => $data['sub_keterangan'][$i]
                     );
@@ -1051,7 +1052,7 @@ class Transaction_model extends CI_Model
                     $sub_data  = array(
                         'parent_id'   =>  $data['id'],
                         'accounthead' => $data['account_head'][$i],
-                        'amount'      => $data['creditamount'][$i],
+                        'amount'      => substr($data['creditamount'][$i], 0, -2) . '.' . substr($data['creditamount'][$i], -2),
                         'type'        => 1,
                         'sub_keterangan' => $data['sub_keterangan'][$i]
                     );

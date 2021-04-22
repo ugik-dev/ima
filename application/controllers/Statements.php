@@ -145,16 +145,9 @@ class Statements extends CI_Controller
 		$data = $this->Statement_model->getSingelJurnal(array('id' => $uri1));
 
 		$data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
+		// echo json_encode($data);
+		// die();
 
-		//$ledger
-		$from = html_escape($this->input->post('from'));
-		$to   = html_escape($this->input->post('to'));
-
-		if ($from == NULL or $to == NULL) {
-
-			$from = date('Y-m-') . '1';
-			$to =  date('Y-m-') . '31';
-		}
 
 		// DEFINES PAGE TITLE
 		$data['title'] = 'Edit Jurnal';

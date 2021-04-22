@@ -103,7 +103,7 @@
 <script>
     function formatRupiah(angka, prefix) {
         var number_string = angka.toString(),
-            split = number_string.split(","),
+            split = number_string.split("."),
             sisa = split[0].length % 3,
             rupiah = split[0].substr(0, sisa),
             ribuan = split[0].substr(sisa).match(/\d{3}/gi);
@@ -146,12 +146,42 @@
         console.log(date)
         isi = "";
         var consdebit = 0;
+        var show = 0;
         var conskredit = 0;
-        console.log(name[0].innerHTML);
+        var displyhide = true
+
+        var tpe = no_jurnal.split("/")[1];
+        if (tpe == undefined) {
+
+            tpe = ''
+        }
+        console.log(tpe)
         for (var i = 0; i < name.length; i++) {
-            isi += `<tr style="height : 10px">
-                <td>${name[i].innerHTML.substring(1, 13)}</td>
-                <td>${ket[i].innerHTML}</td>
+            if (name[i].innerHTML.substring(1, 5) == '1.11') {
+                if (tpe == 'AM') {
+                    show =
+                        show +
+                        (debit[i].innerHTML ?
+                            parseInt(debit[i].innerHTML.replace(/[^0-9]/g, "")) :
+                            0);
+                    displyhide = false
+                } else if (tpe == 'AK') {
+                    displyhide = false
+
+                    show =
+                        show +
+                        (kredit[i].innerHTML ?
+                            parseInt(kredit[i].innerHTML.replace(/[^0-9]/g, "")) :
+                            0);
+                }
+            }
+            console.log(tpe)
+            console.log(displyhide)
+            isi += `
+            
+            <tr style="height : 10px">
+                <td style="text-align:left; padding-left : 5px ">${name[i].innerHTML.substring(0, 35)}</td>
+                <td style="text-align:left; padding-left : 5px ">${ket[i].innerHTML}</td>
                 <td style="text-align:right ; padding-right : 5px">${
                 debit[i].innerHTML
                 }</td>
@@ -194,31 +224,37 @@
 
         var printContents = `
                             <div class="col-md-12">
-                                            <h2 style="text-align:center">Jurnal Voucher</h2>
-                                            <h3 style="text-align:center">PT. Indometal Asia </h3>
+                            <h4 style="text-align:center">PT. Indometal Asia </h4>
+                                            <h5 style="text-align:center">${tpe == 'AM' ? 'VOUCHER PENERIMAAN' : (tpe == 'AK' ? 'VOUCHER PENGELUARAN' : 'JURNAL UMUM')}</h5>
                            </div>
                             <div class="col-md-12" style="font-size: 11px;">
                             <table style="" border="0">
-                        <tr>
-                            <td style="width: 100px">Deskripsi</td>
-                            <td style="width: 10px">:</td>
-                            <td style="text-align:left ;width: 400px">${naration}</td>
+                              <tr>
+                            <td ${displyhide ? '' : ''} style=";text-align:left ;width: 100px">${tpe == 'AM' ? 'Diterima dari' : (tpe == 'AK' ? 'Dibayar kepada' : '')}</td>
+                            <td style=;width: 10px">${displyhide ? '' : ':'}</td>
+                            <td style=";text-align:left ;width: 400px"> ${displyhide ? '' : ''} </td>
                             <td style="text-align:left ;width: 100px">No Voucher</td>
                             <td style="width: 10px">:</td>
                             <td style="text-align:left; width: 200px">${no_jurnal}</td>
                         </tr>
-                            <tr>
-                            <td style="width: 100px">Sejumlah</td>
+                        <tr>
+                            <td style="text-align:left ;width: 100px"> Deskripsi</td>
                             <td style="width: 10px">:</td>
-                            <td style="text-align:left ;width: 400px">${formatRupiah(conskredit)}</td>
+                            <td style="text-align:left ;width: 400px">${ naration}</td>
                             <td style="text-align:left ;width: 100px">Tanggal</td>
                             <td style="width: 10px">:</td>
                             <td style="text-align:left; width: 200px">${date}</td>
                         </tr>
-                            <tr>
-                            <td style="width: 100px">Terbilang</td>
+                            <tr style="${displyhide ? 'display: none' : ''} ;">
+                            <td style="text-align:left ;width: 100px">Sejumlah</td>
                             <td style="width: 10px">:</td>
-                            <td style="text-align:left ;width: 400px">${terbilang(conskredit.toString())}</td>
+                            <td style="text-align:left ;width: 400px">Rp. ${formatRupiah(show)}</td>
+                            
+                        </tr>
+                            <tr style="${displyhide ? 'display: none' : ''} ;">
+                            <td style="text-align:left ;width: 100px">Terbilang</td>
+                            <td style="width: 10px">:</td>
+                            <td style="text-align:left ;width: 400px;font-style: italic;">${terbilang(show.toString())}</td>
                         
                         </tr>
                         <tr>
@@ -229,8 +265,8 @@
                         <tr>
                             <td style="width: 200px ;text-align:center">No Akun</td>
                             <td style="width: 350px ; text-align:center">Keterangan</td>
-                            <td style="width: 100px ; text-align:center">Debit</td>
-                            <td style="width: 100px; text-align:center">Kredit</td>
+                            <td style="width: 100px ; text-align:center">Debit (Rp)</td>
+                            <td style="width: 100px; text-align:center">Kredit  (Rp)</td>
                         </tr>
                         ${isi}
                     </table>

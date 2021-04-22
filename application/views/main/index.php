@@ -23,7 +23,8 @@ if ($this->session->userdata('user_id') == "") {
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/bootstrap/css/bootstrap.min.css">
     <!-- Font Awesome -->
     <!-- Theme style -->
-    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/fonts/fontawesome/css/font-awesome.css">
+    <!-- <link rel="stylesheet" href="<?php echo base_url(); ?>assets/fonts/fontawesome/css/font-awesome.css"> -->
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/fonts/fontawesome-5.15.3/css/all.css">
 
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/css/import-font.css" />
     <!-- Theme style -->
@@ -112,7 +113,7 @@ if ($this->session->userdata('user_id') == "") {
     <!-- bootstrap color picker -->
     <script src="<?php echo base_url(); ?>assets/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
     <!-- Form Validation -->
-    <script src="<?php echo base_url(); ?>assets/dist/js/custom.js"></script>
+    <script src="<?php echo base_url(); ?>assets/dist/js/custom.js?v=0.0.1"></script>
     <!-- ChartJS 1.0.1 -->
     <script src="<?php echo base_url(); ?>assets/plugins/chartjs/Chart.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>

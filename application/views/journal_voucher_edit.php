@@ -11,7 +11,7 @@
                 <div class="">
                     <div class="row no-print invoice">
                         <h4 class="purchase-heading"> <i class="fa fa-check-circle"></i>
-                            Entri Jurnal Transaksi
+                            Edit Jurnal Transaksi
                         </h4>
                         <div class="col-md-12 ">
                             <div class="form-group">
@@ -160,15 +160,15 @@
 
 
         <?php if ($sub_parents->type == 0) { ?>
-            debit_val[<?= $i ?>].value = '<?= substr($sub_parents->amount, 0, -3) ?>';
+            debit_val[<?= $i ?>].value = '<?= $sub_parents->amount ?>';
         <?php } else { ?>
-            kredit_val[<?= $i ?>].value = '<?= substr($sub_parents->amount, 0, -3) ?>';
+            kredit_val[<?= $i ?>].value = '<?= $sub_parents->amount ?>';
     <?php
         }
         $i++;
     } ?>
 
-    $('.mask').mask('000.000.000.000.000', {
+    $('.mask').mask('000.000.000.000.000,00', {
         reverse: true
     });
     // kredit_val[0].trigger('change');

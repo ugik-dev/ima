@@ -30,7 +30,7 @@
                     jQuery('#transaction_table_body').append(response);
                     $('.select2').select2();
 
-                    $('.mask').mask('000.000.000.000.000', {
+                    $('.mask').mask('000.000.000.000.000,00', {
                         reverse: true
                     });
                     // $('#sub_head').select2('data', {
