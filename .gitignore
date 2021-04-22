@@ -1,1 +1,3 @@
 /application/config/database.php
+/uploads/cars_picture/*
+!/uploads/cars_picture/default.jpg

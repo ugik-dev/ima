@@ -312,6 +312,7 @@ class Statements extends CI_Controller
 
 		$this->load->model('Statement_model');
 		$data['accounts_records'] = $this->Statement_model->chart_list();
+		$data['patner_record'] = $this->Statement_model->patners_cars_list();
 
 		// DEFINES WHICH PAGE TO RENDER
 		$data['main_view'] = 'journal_voucher';
@@ -430,7 +431,7 @@ class Statements extends CI_Controller
 		for ($i = 0; $i < $count_rows; $i++) {
 			$creditamount[$i] = preg_replace("/[^0-9]/", "", $creditamount[$i]);
 			$debitamount[$i] = preg_replace("/[^0-9]/", "", $debitamount[$i]);
-			if ((($debitamount[$i] > 0 and $creditamount[$i] == 0) or ($creditamount[$i] > 0 and $debitamount[$i] == 0)) and $account_head[$i] != 0) {
+			if ((($debitamount[$i] > 0 and $creditamount[$i] == 0) or ($creditamount[$i] > 0 and $debitamount[$i] == 0) or ($account_head[$i] == 0 and $debitamount[$i] == 0 and $creditamount[$i] == 0))) {
 			} else {
 				$status = FALSE;
 			}
@@ -451,11 +452,19 @@ class Statements extends CI_Controller
 		// die();
 
 		if ($status) {
-
 			$this->load->model('Transaction_model');
-
+			if (!empty($data['no_jurnal'])) {
+				$res = $this->Transaction_model->check_no_jurnal($data['no_jurnal']);
+				if ($res != 0) {
+					$array_msg = array(
+						'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Jurnal Sudah Ada',
+						'alert' => 'danger'
+					);
+					$this->session->set_flashdata('status', $array_msg);
+					redirect('statements/journal_voucher');
+				}
+			}
 			$result = $this->Transaction_model->journal_voucher_entry($data);
-
 			if ($result != NULL) {
 				$array_msg = array(
 					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',
@@ -477,7 +486,7 @@ class Statements extends CI_Controller
 				'alert' => 'danger'
 			);
 			$this->session->set_flashdata('status', $array_msg);
-			redirect('vouchers/journal_voucher');
+			redirect('statements/journal_voucher');
 		}
 		redirect('statements');
 	}
@@ -532,6 +541,17 @@ class Statements extends CI_Controller
 		if ($status) {
 
 			$this->load->model('Transaction_model');
+			if (!empty($data['no_jurnal'])) {
+				$res = $this->Transaction_model->check_no_jurnal($data['no_jurnal'], $id);
+				if ($res != 0) {
+					$array_msg = array(
+						'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Jurnal Sudah Ada',
+						'alert' => 'danger'
+					);
+					$this->session->set_flashdata('status', $array_msg);
+					redirect('statements/edit_jurnal/' . $data['id']);
+				}
+			}
 
 			$result = $this->Transaction_model->journal_voucher_edit($data);
 
@@ -561,5 +581,20 @@ class Statements extends CI_Controller
 		}
 		redirect('statements/edit_jurnal/' . $data['id']);
 		// redirect('statements');
+	}
+
+	public function getListCars()
+	{
+		$data = $this->input->get();
+		$this->load->model('Statement_model');
+		$data = $this->Statement_model->getListCars($data);
+		if ($data != NULL) {
+			echo json_encode(array('error' => false, 'data' => $data));
+			return;
+		} else {
+			echo json_encode(array('error' => true, 'data' => $data));
+			return;
+		}
+		echo ($data);
 	}
 }

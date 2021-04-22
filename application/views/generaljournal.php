@@ -39,6 +39,7 @@
         </div>
     </div>
 </div>
+
 <section class="content">
     <div class="box" id="print-section">
         <div class="box-body box-bg ">
@@ -383,12 +384,12 @@
     }
 
     PrintForm.form.submit(function(event) {
+        // PrintForm.self.modal('hide')
         event.preventDefault();
         printSingleJurnal2(PrintForm.id_data.val(), PrintForm.name1.val(), PrintForm.name2.val())
-        PrintForm.self.modal('hide')
     })
 
-    PrintForm.close.on('click', function() {
+    $('#close_modal_print').on('click', function() {
         PrintForm.self.modal('hide')
     })
 

@@ -629,6 +629,26 @@ class Statement_model extends CI_Model
         return $patner_list;
         // die();
     }
+
+    public function getListCars($filter = [])
+    {
+        $patner_list = '';
+
+        $this->db->select("*");
+        $this->db->from('mp_cars');
+        $this->db->where('mp_cars.id_customer', $filter['id_patner']);
+        $query = $this->db->get();
+        $result =  $query->result();
+        if ($result != NULL) {
+            foreach ($result as $single_head) {
+                $patner_list .= '<option value="' . $single_head->id . '">' . $single_head->no_cars . '</option>';
+            }
+        } else {
+            return NULL;
+        }
+        return $patner_list;
+        // die();
+    }
     public function chart_list()
     {
         $accounts_list = '';

@@ -45,42 +45,36 @@
                             </thead>
                             <tbody>
                                 <?php
-                                if ($customer_list != NULL) {
-                                    foreach ($customer_list as $key => $obj_customer_list) {
+                                if ($cars_list != NULL) {
+                                    foreach ($cars_list as $key => $obj_cars_list) {
                                 ?>
                                         <tr>
                                             <td>
                                                 <?php echo $key + 1; ?>
                                             </td>
                                             <td>
-                                                <?php echo $obj_customer_list->customer_name; ?>
+                                                <?php echo $obj_cars_list->patner_name; ?>
                                             </td>
                                             <td>
-                                                <?php echo $obj_customer_list->cus_contact_2; ?>
+                                                <?php echo $obj_cars_list->no_cars; ?>
                                             </td>
                                             <td>
-                                                <?php echo $obj_customer_list->cus_contact_1; ?>
+                                                <?php echo $obj_cars_list->name_cars; ?>
                                             </td>
                                             <td>
-                                                <?php echo $obj_customer_list->cus_email; ?>
-                                            </td>
-
-                                            <td>
-                                                <?php echo $obj_customer_list->cus_type; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $obj_customer_list->cus_region; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $obj_customer_list->cus_town; ?>
+                                                <?php echo $obj_cars_list->description; ?>
                                             </td>
 
                                             <td>
-                                                <?php echo img(array('width' => '40', 'height' => '40', 'class' => 'img-circle', 'src' => 'uploads/customers/' . $obj_customer_list->cus_picture)); ?>
+                                                <?php echo $obj_cars_list->jenis; ?>
+                                            </td>
+
+                                            <td>
+                                                <?php echo img(array('width' => '40', 'height' => '40', 'class' => 'img-circle', 'src' => 'uploads/cars_picture/' . $obj_cars_list->cars_picture)); ?>
                                             </td>
                                             <td>
                                                 <?php
-                                                if ($obj_customer_list->cus_status == 0) {
+                                                if ($obj_cars_list->status == 0) {
                                                     echo "Aktif";
                                                 } else {
                                                     echo "Tidak Aktif";
@@ -96,23 +90,23 @@
                                                     </button>
                                                     <ul class="dropdown-menu" role="menu">
 
-                                                        <li onclick="show_modal_page('<?php echo base_url() . 'patners/popup/edit_patner_model/' . $obj_customer_list->id; ?>')"><a href="#"><i class="fa fa-pencil"></i> Lihat</a></li>
+                                                        <li onclick="show_modal_page('<?php echo base_url() . 'patners/popup/edit_cars_model/' . $obj_cars_list->id; ?>')"><a href="#"><i class="fa fa-pencil"></i> Lihat</a></li>
                                                         <li>
-                                                            <a onclick="confirmation_alert('delete this  ','<?php echo base_url() . 'patners/delete/' . $obj_customer_list->id; ?>')" href="javascript:void(0)"><i class="fa fa-trash-o"></i> Hapus
+                                                            <a onclick="confirmation_alert('delete this  ','<?php echo base_url() . 'patners/delete_cars/' . $obj_cars_list->id; ?>')" href="javascript:void(0)"><i class="fa fa-trash-o"></i> Hapus
                                                             </a>
                                                         </li>
                                                         <?php
-                                                        if ($obj_customer_list->cus_status != 0) {
+                                                        if ($obj_cars_list->status != 0) {
                                                         ?>
                                                             <li>
-                                                                <a onclick="confirmation_alert('make this active','<?php echo base_url(); ?>patners/change_status/<?php echo $obj_customer_list->id; ?>/0')" href="javascript:void(0)"><i class="fa fa-minus"></i> Aktif</a>
+                                                                <a onclick="confirmation_alert('make this active','<?php echo base_url(); ?>patners/change_status_cars/<?php echo $obj_cars_list->id; ?>/0')" href="javascript:void(0)"><i class="fa fa-minus"></i> Aktif</a>
                                                             </li>
                                                         <?php
                                                         }
-                                                        if ($obj_customer_list->cus_status != 1) {
+                                                        if ($obj_cars_list->status != 1) {
                                                         ?>
                                                             <li>
-                                                                <a onclick="confirmation_alert('make this in active','<?php echo base_url(); ?>patners/change_status/<?php echo $obj_customer_list->id; ?>/1')" href="javascript:void(0)"><i class="fa fa-minus"></i> Tidak Aktif</a>
+                                                                <a onclick="confirmation_alert('make this in active','<?php echo base_url(); ?>patners/change_status_cars/<?php echo $obj_cars_list->id; ?>/1')" href="javascript:void(0)"><i class="fa fa-minus"></i> Tidak Aktif</a>
                                                             </li>
                                                         <?php
                                                         }

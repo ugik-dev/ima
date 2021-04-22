@@ -964,6 +964,17 @@ class Transaction_model extends CI_Model
         return $data;
     }
 
+    // CHECK NO JURNAL
+    function check_no_jurnal($data, $id = 'd')
+    {
+        $this->db->select("count(id) as count");
+        $this->db->from('mp_generalentry');
+        if (!empty($id)) $this->db->where('id <> "' . $id . '"');
+        $this->db->where('no_jurnal', $data);
+        $query = $this->db->get();
+        return $query->result_array()[0]['count'];
+    }
+
     //USED TO CREATE A JOURNAL VOUCHER ENTRY
     function journal_voucher_entry($data)
     {
@@ -985,7 +996,7 @@ class Transaction_model extends CI_Model
 
         for ($i = 0; $i < $total_heads; $i++) {
 
-            if ($data['account_head'] != 0) {
+            if (!empty($data['account_head'][$i])) {
                 if ($data['debitamount'][$i] != 0) {
                     $sub_data  = array(
                         'parent_id'   => $order_id,
@@ -1039,7 +1050,7 @@ class Transaction_model extends CI_Model
         $total_heads = count($data['account_head']);
 
         for ($i = 0; $i < $total_heads; $i++) {
-            if ($data['account_head'] != 0) {
+            if ($data['account_head'][$i] != 0) {
                 if ($data['debitamount'][$i] != 0) {
                     $sub_data  = array(
                         'parent_id'   =>  $data['id'],

@@ -73,13 +73,13 @@ class Patners extends CI_Controller
         // DEFINES THE TABLE HEAD
         $data['table_heading_names_of_coloums'] = array(
             'No',
-            'No Kendaraan',
-            'Nama',
             'Pemilik',
+            'No Kendaraan',
+            'Nama Kendaraan',
+            'Description',
             'Jenis',
             'Foto',
-            'Status',
-            'Aksi'
+            'Status', 'Aksi'
         );
 
         // DEFINES TO LOAD THE CATEGORY LIST FROM DATABSE TABLE mp_Categoty
@@ -90,7 +90,8 @@ class Patners extends CI_Controller
         $result = $this->Crud_model->fetch_cars_record('patners', NULL);
         $data['cars_list'] = $result;
 
-
+        // echo json_encode($data['cars_list']);
+        // die();
         // var_dump($data['accounts_records']);
         // die();
         // DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
@@ -131,6 +132,61 @@ class Patners extends CI_Controller
 
         redirect('customers');
     }
+
+    public function add_cars()
+    {
+        // DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
+        $this->load->model('Crud_model');
+        $this->load->model('Transaction_model');
+
+        // DEFINES READ MEDICINE details FORM MEDICINE FORM
+        $id_customer = html_escape($this->input->post('id_customer'));
+        $jenis = html_escape($this->input->post('jenis'));
+        $no_cars = html_escape($this->input->post('no_cars'));
+        $picture = $this->Crud_model->do_upload_picture("cars_picture", "./uploads/cars_picture/");
+
+        // ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY
+        $args = array(
+            'id_customer' => html_escape($this->input->post('id_customer')),
+            'jenis' => html_escape($this->input->post('jenis')),
+            'no_cars' => html_escape($this->input->post('no_cars')),
+            'name_cars' => html_escape($this->input->post('name_cars')),
+            'description' => html_escape($this->input->post('description')),
+            'cars_picture' => $picture,
+        );
+        // echo json_encode($args);
+        // die();
+        // CHECK WEATHER EMAIL ADLREADY EXISTS OR NOT IN THE TABLE
+        // $email_record_data = $this->Crud_model->check_email_address('mp_payee', 'cus_email', $customer_email);
+
+        //	if ($email_record_data == NULL)
+        if (!empty($id_customer)) {
+            // DEFINES CALL THE FUNCTION OF insert_data FORM Crud_model CLASS
+            $result = $this->Crud_model->insert_data('mp_cars', $args);
+            if ($result != NULL) {
+                $array_msg = array(
+                    'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Cars added Successfully',
+                    'alert' => 'info'
+                );
+                $this->session->set_flashdata('status', $array_msg);
+            } else {
+                $array_msg = array(
+                    'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error cars cannot be added',
+                    'alert' => 'danger'
+                );
+                $this->session->set_flashdata('status', $array_msg);
+            }
+        } else {
+            $array_msg = array(
+                'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i>Sorry Fail added !',
+                'alert' => 'danger'
+            );
+            $this->session->set_flashdata('status', $array_msg);
+        }
+
+        redirect('patners/cars_list');
+    }
+
 
     //	Patners/add_customer
     public function add_patner()
@@ -319,6 +375,88 @@ class Patners extends CI_Controller
         redirect('patners');
     }
 
+    function edit_cars()
+    {
+        // DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
+        $this->load->model('Crud_model');
+
+        $id = html_escape($this->input->post('id'));
+        $id_customer = html_escape($this->input->post('id_customer'));
+        $jenis = html_escape($this->input->post('jenis'));
+        $no_cars = html_escape($this->input->post('no_cars'));
+        $name_cars = html_escape($this->input->post('name_cars'));
+        $description = html_escape($this->input->post('description'));
+        $picture = $this->Crud_model->do_upload_picture("cars_picture", "./uploads/cars_picture/");
+
+        // ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY
+        $args = array(
+            'id' => html_escape($this->input->post('id')),
+            'id_customer' => html_escape($this->input->post('id_customer')),
+            'jenis' => html_escape($this->input->post('jenis')),
+            'no_cars' => html_escape($this->input->post('no_cars')),
+            'name_cars' => html_escape($this->input->post('name_cars')),
+            'description' => html_escape($this->input->post('description')),
+            'cars_picture' => $picture,
+        );
+
+        $upload_data = $this->upload->data();
+
+        // TABLENAME AND ID FOR DATABASE Actions
+        $args = array(
+            'table_name' => 'mp_cars',
+            'id' => $id
+        );
+
+        // DATA ARRAY FOR UPDATE QUERY array('abc'=>abc)
+        // DEFINES IF NO IMAGES IS SELECTED SO PRIVIOUS PICTURE REMAINS SAME
+        if (
+            $picture == "default.jpg"
+        ) {
+            // ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY
+            $data = array(
+                'id' => $id,
+                'id_customer' => $id_customer,
+                'jenis' => $jenis,
+                'no_cars' => $no_cars,
+                'name_cars' => $name_cars,
+                'description' => $description,
+            );
+        } else {
+            // ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY
+            $data = array(
+                'id' => $id,
+                'id_customer' => $id_customer,
+                'jenis' => $jenis,
+                'no_cars' => $no_cars,
+                'name_cars' => $name_cars,
+                'description' => $description,
+                'cars_picture' => $picture,
+            );
+
+            // DEFINES TO DELETE IMAGE FROM FOLDER PARAMETER REQIURES ARRAY OF IMAGE PATH AND ID
+            $this->Crud_model->delete_image('./uploads/cars_picture/', $id, 'mp_cars');
+        }
+
+        // CALL THE METHOD FROM Crud_model CLASS FIRST ARG CONTAINES TABLENAME AND OTHER CONTAINS DATA
+        // var_dump($data);
+        // die();
+        $result = $this->Crud_model->edit_record_id($args, $data);
+        if ($result == 1) {
+            $array_msg = array(
+                'msg' => '<i style="color:#fff" class="fa fa-pencil-square-o" aria-hidden="true"></i> Cars Editted',
+                'alert' => 'info'
+            );
+            $this->session->set_flashdata('status', $array_msg);
+        } else {
+            $array_msg = array(
+                'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Cars cannot be Editted',
+                'alert' => 'danger'
+            );
+            $this->session->set_flashdata('status', $array_msg);
+        }
+        redirect('patners/cars_list');
+    }
+
     //Customer/popup
     //DEFINES A POPUP MODEL OG GIVEN PARAMETER
     function popup($page_name = '', $param = '')
@@ -337,6 +475,16 @@ class Patners extends CI_Controller
             $data['cars_record'] = $this->Statement_model->patners_cars_list();
             //model name available in admin models folder
             $this->load->view('admin_models/add_models/add_cars_model.php', $data);
+        } else if ($page_name  == 'edit_cars_model') {
+            //USED TO REDIRECT LINK
+            $data['link'] = 'patners/edit_cars';
+            $this->load->model('Statement_model');
+            $data['cars_record'] = $this->Statement_model->patners_cars_list();
+            $data['single_cars'] = $this->Crud_model->fetch_cars_record('patners', NULL, $param)[0];
+            // echo json_encode($data);
+            // die();
+            //model name available in admin models folder
+            $this->load->view('admin_models/edit_models/edit_cars_model.php', $data);
         } else if ($page_name  == 'add_patner_model') {
             //USED TO REDIRECT LINK
             $data['link'] = 'patners/add_patner';

@@ -12,6 +12,25 @@
                             Entri Jurnal Transaksi
                         </h4>
                         <div class="col-md-12 ">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <?php echo form_label('Patner'); ?>
+                                        <select name="id_customer" id="id_customer" class="form-control select2 input-lg">
+                                            <option value="0"> ------- </option>
+                                            <?php echo $patner_record; ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <?php echo form_label('Kendaraan'); ?>
+                                        <select name="id_cars" id="id_cars" class="form-control select2 input-lg" disabled>
+                                            <option value="0"> ------- </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <?php echo form_label('No Jurnal'); ?>
                                 <?php
@@ -128,5 +147,35 @@
     $('.mask').mask('000.000.000.000.000,00', {
         reverse: true
     });
+    id_custmer = $('#id_customer');
+    id_cars = $('#id_cars');
+    id_custmer.on('change', function() {
+        console.log('s')
+        $.ajax({
+            url: '<?= base_url() ?>Statements/getListCars',
+            type: "get",
+            data: {
+                id_patner: id_custmer.val()
+            },
+            success: function(data) {
+                var json = JSON.parse(data);
+                if (json['error'] == true) {
+                    console.log('data_kosong')
+                    id_cars.prop('disabled', 'true')
+                    id_cars.val('')
+                    id_cars.html('')
+                    return;
+                }
+                console.log(json)
+                id_cars.prop('disabled', '')
+                id_cars.html('<option value="0"> ------- </option>' +
+                    json['data'])
+
+            },
+            error: function(e) {}
+        });
+        // });
+
+    })
 </script>
 <?php $this->load->view('bootstrap_model.php'); ?>

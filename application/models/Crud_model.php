@@ -118,14 +118,19 @@ class Crud_model extends CI_Model
         }
     }
 
-    public function fetch_cars_record($type, $status = '')
+    public function fetch_cars_record($type, $status = '', $id = '')
     {
         // $this->db->where(['type' => $type]);
         // if ($status != '') {
         //     $this->db->where(['cus_status' => 0]);
         // }
 
+        // $query = $this->db->get('mp_cars');
+        $this->db->select('mp_cars.*,p.customer_name as patner_name');
+        $this->db->join('mp_payee as p', 'p.id = mp_cars.id_customer');
         $query = $this->db->get('mp_cars');
+        if (!empty($id)) $this->db->where('id', $id);
+        if (!empty($status)) $this->db->where('status', $status);
 
         if ($query->num_rows() > 0) {
             return $query->result();
