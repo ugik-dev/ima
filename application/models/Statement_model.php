@@ -38,7 +38,7 @@ class Statement_model extends CI_Model
         return $data;
     }
 
-    public function fetch_transasctions($date1, $date2)
+    public function fetch_transasctions($filter)
     {
 
         $total_debit = 0;
@@ -47,8 +47,11 @@ class Statement_model extends CI_Model
 
         $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
         $this->db->from('mp_generalentry');
-        $this->db->where('date >=', $date1);
-        $this->db->where('date <=', $date2);
+        if (!empty($filter['no_jurnal']))
+            $this->db->where('no_jurnal like "%' . $filter['no_jurnal'] . '%"');
+        $this->db->where('date >=', $filter['from']);
+        $this->db->where('date <=', $filter['to']);
+
         $this->db->order_by('mp_generalentry.id', 'DESC');
 
         $query = $this->db->get();
@@ -106,7 +109,8 @@ class Statement_model extends CI_Model
                             }
                         }
                     }
-                    $btn_lock = ' <a href="' . base_url() . 'statements/edit_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-pencil  pull-left"></i> Edit</a> <a href="' . base_url() . 'statements/show/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-eye  pull-left"></i> Show </a>';
+                    $btn_lock = ' <a href="' . base_url() . 'statements/edit_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-pencil pull-left"></i> Edit</a> <a href="' . base_url() . 'statements/show/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-eye  pull-left"></i> Show </a>';
+                    $btn_lock .= ' <a data-id="' . $transaction_record->transaction_id . '" class="print_act btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-print  pull-left"></i> Voucher</a> ';
                     $form_content .= '<tr class="narration" >
                     <td class="border-bottom-journal" colspan="5">
                     <small> <i id="naration_' . $transaction_record->transaction_id . '">' . (empty($transaction_record->naration) ? '-' : $transaction_record->naration) . '</i>
@@ -114,11 +118,7 @@ class Statement_model extends CI_Model
                         <br>
                        <small> <i> No Jurnal : </small> <a id="no_jurnal_' . $transaction_record->transaction_id . '">' . $transaction_record->no_jurnal . '</a> </i> ' .
                         ($transaction_record->gen_lock != 'Y' ? $btn_lock : '') . '
-           
-                <button onclick="printSingleJurnal2(' . $transaction_record->transaction_id . ')" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-print  pull-left"></i> Voucher</button>
-
                         </td>
-                        
                         </tr>';
                 }
             }

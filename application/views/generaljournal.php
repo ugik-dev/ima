@@ -4,25 +4,59 @@
             <div class="pull pull-right">
                 <button onclick="printDiv('print-section')" class="btn btn-default btn-outline-primary   pull-right "><i class="fa fa-print  pull-left"></i> Cetak</button>
             </div>
+
         </div>
     </div>
 </section>
+
+<!-- Modal -->
+<div class="modal fade" id="printModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Print</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form opd="form" id="print_form" onsubmit="return false;" type="multipart" autocomplete="off">
+                    <input type="hidden" id="id_data">
+                    <div class="form-group">
+                        <label for="name1">Diterima / Diberikan Kepada</label>
+                        <input type="text" placeholder="" class="form-control" id="name1">
+                    </div>
+                    <div class="form-group">
+                        <label for="name2">Dibuat Oleh:</label>
+                        <input type="text" placeholder="" class="form-control" id="name2">
+                    </div>
+                    <button class="btn btn-success my-1 mr-sm-2" type="submit" data-loading-text="Loading..."><strong><i class="fa fa-print  pull-left"></i> Print</strong></button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="close_modal_print" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <section class="content">
     <div class="box" id="print-section">
         <div class="box-body box-bg ">
             <div class="make-container-center">
                 <?php
-                // if ($from == NULL and $to == NULL) {
-                //     $tfrom = date('Y-m-' . '01');
-                //     $tto =  date('Y-m-' . '31');
-                // } else {
-                //     $tform = $from;
-                //     $to = $to;
-                // } // echo $to;
                 $attributes = array('id' => 'general_journal', 'method' => 'post', 'class' => '');
                 ?>
                 <?php echo form_open_multipart('statements', $attributes); ?>
                 <div class="row no-print">
+                    <div class="col-md-3 ">
+                        <div class="form-group">
+                            <?php echo form_label('No Jurnal'); ?>
+                            <?php
+                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'id' => 'no_jurnal', 'name' => 'no_jurnal', 'reqiured' => '', 'value' => $no_jurnal);
+                            echo form_input($data);
+                            ?>
+                        </div>
+                    </div>
                     <div class="col-md-3 ">
                         <div class="form-group">
                             <?php echo form_label('Dari Tanggal'); ?>
@@ -131,11 +165,10 @@
         to = $('#to').val()
         url = `<?= base_url('statements/export_excel?from=') ?>` + from + '&to=' + to;
         location.href = url;
-
     })
 
 
-    function printSingleJurnal2(id) {
+    function printSingleJurnal2(id, name1 = '', name2 = '') {
         var naration = document.getElementById("naration_" + id).innerHTML;
         var no_jurnal = document.getElementById("no_jurnal_" + id).innerHTML;
         var name = document.getElementsByClassName("rinc_name_" + id);
@@ -232,7 +265,7 @@
                               <tr>
                             <td ${displyhide ? '' : ''} style=";text-align:left ;width: 100px">${tpe == 'AM' ? 'Diterima dari' : (tpe == 'AK' ? 'Dibayar kepada' : '')}</td>
                             <td style=;width: 10px">${displyhide ? '' : ':'}</td>
-                            <td style=";text-align:left ;width: 400px"> ${displyhide ? '' : ''} </td>
+                            <td style=";text-align:left ;width: 400px"> ${displyhide ? '' : name1} </td>
                             <td style="text-align:left ;width: 100px">No Voucher</td>
                             <td style="width: 10px">:</td>
                             <td style="text-align:left; width: 200px">${no_jurnal}</td>
@@ -308,7 +341,7 @@
                         <tr style="height: 70px">
                             <td style=" vertical-align: bottom; text-align:center">SETIAWAN R</td>
                             <td></td>
-                            <td style="width: 90px ; text-align:center"></td>
+                            <td style="width: 90px ; text-align:center">${name2}</td>
                             <td></td>
                             <td></td>
                         </tr>
@@ -332,7 +365,36 @@
         document.body.innerHTML = printContents;
         window.print();
         document.body.innerHTML = originalContents;
+
     }
+
+    var PrintForm = {
+        'self': $('#printModal'),
+        'form': $('#printModal').find('#print_form'),
+        'id_data': $('#printModal').find('#id_data'),
+        'name1': $('#printModal').find('#name1'),
+        'name2': $('#printModal').find('#name2'),
+        'close': $('#printModal').find('#close_modal_print'),
+    }
+
+    PrintForm.form.submit(function(event) {
+        event.preventDefault();
+        printSingleJurnal2(PrintForm.id_data.val(), PrintForm.name1.val(), PrintForm.name2.val())
+
+    })
+
+    // PrintForm.close.on('click', function() {
+    // PrintForm.self.modal('hide')
+    // })
+
+
+
+    $('.print_act').on('click', function() {
+        var currentData = $(this).data('id');
+        console.log(currentData)
+        PrintForm.self.modal('show')
+        PrintForm.id_data.val(currentData)
+    })
 </script>
 <!-- Bootstrap model  -->
 <?php $this->load->view('bootstrap_model.php'); ?>

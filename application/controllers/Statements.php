@@ -22,19 +22,27 @@ class Statements extends CI_Controller
 		$data['main_view'] = 'generaljournal';
 
 		$from 	 = html_escape($this->input->post('from'));
+		$no_jurnal 	 = html_escape($this->input->post('no_jurnal'));
 		$to 	 = html_escape($this->input->post('to'));
 
 		if ($from == NULL and $to == NULL) {
 			$from = date('Y-m-' . '01');
-			// $to =  date('Y-m-' . '31');
 			$to = date('Y-m-' . date('t', strtotime($from)));
 		}
 
+		if (empty($no_jurnal)) {
+			$no_jurnal = '';
+		}
+		$filter['from'] = $from;
+		$filter['to'] = $to;
+		$filter['no_jurnal'] = $no_jurnal;
+
 		$this->load->model('Statement_model');
-		$data['transaction_records'] = $this->Statement_model->fetch_transasctions($from, $to);
+		$data['transaction_records'] = $this->Statement_model->fetch_transasctions($filter);
 
 		$data['from'] = $from;
 		$data['to'] = $to;
+		$data['no_jurnal'] = $no_jurnal;
 
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
 		$this->load->view('main/index.php', $data);
