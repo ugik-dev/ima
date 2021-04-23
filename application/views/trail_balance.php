@@ -63,6 +63,7 @@
                             <thead>
                                 <tr class="balancesheet-header">
                                     <th class="col-md-10">NAMA AKUN</th>
+                                    <!-- <th class="col-md-3">NO JURNAL</th> -->
                                     <th class="col-md-1">DEBIT</th>
                                     <th class="col-md-1">KREDIT</th>
                                 </tr>

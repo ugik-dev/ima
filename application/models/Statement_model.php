@@ -223,7 +223,7 @@ class Statement_model extends CI_Model
     //USED TO GET THE LEDGER USING NATURE 
     public function get_ledger_transactions($head_id, $date1, $date2)
     {
-        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal,mp_head.name,mp_head.nature,mp_sub_entry.*");
+        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.no_jurnal,mp_generalentry.naration,mp_generalentry.no_jurnal,mp_head.name,mp_head.nature,mp_sub_entry.*");
         $this->db->from('mp_sub_entry');
         $this->db->join('mp_head', "mp_head.id = mp_sub_entry.accounthead");
         $this->db->join('mp_generalentry', 'mp_generalentry.id = mp_sub_entry.parent_id');
@@ -248,12 +248,14 @@ class Statement_model extends CI_Model
             $form_content .= '<h4 class="ledger_head"><b><i class="fa fa-hand-o-right"> ' . $accounts_types[$i] . ' : </i></b></h4>';
             $this->db->select('mp_head.*');
             $this->db->from('mp_head');
+            $this->db->order_by('mp_head.name');
             $this->db->where(['mp_head.nature' => $accounts_types[$i]]);
             $query = $this->db->get();
             if ($query->num_rows() > 0) {
                 $heads_record =  $query->result();
                 foreach ($heads_record as $single_head) {
-                    if ($this->get_ledger_transactions($single_head->id, $date1, $date2) != NULL) {
+                    $data_leadger = $this->get_ledger_transactions($single_head->id, $date1, $date2);
+                    if ($data_leadger != NULL) {
                         $total_ledger = 0;
                         $ledger_query  = array();
                         $form_content .= '<hr />                                       
@@ -265,14 +267,15 @@ class Statement_model extends CI_Model
          
                         <thead class="ledger-table-head">
                              <th class="col-md-2">TANGGAL(Y-m-d)</th>
+                             <th class="col-md-2">NO JURNAL</th>
                              <th class="col-md-4">TRANSAKSI</th>
-                             <th class="col-md-2">DEBIT</th>                
-                             <th class="col-md-2">KREDIT</th>
+                             <th class="col-md-1">DEBIT</th>                
+                             <th class="col-md-1">KREDIT</th>
                              <th class="col-md-2">SALDO</th>
                         </thead>
                         <tbody>';
 
-                        foreach ($this->get_ledger_transactions($single_head->id, $date1, $date2) as $single_ledger) {
+                        foreach ($data_leadger as $single_ledger) {
                             $debitamount = '';
                             $creditamount = '';
 
@@ -288,7 +291,7 @@ class Statement_model extends CI_Model
                             $total_ledger = number_format($total_ledger, '2', '.', '');
 
                             $form_content .= '<tr>
-                        <td>' . $single_ledger->date . '</td><td><a >' . $single_ledger->naration . '</a></td><td>
+                        <td>' . $single_ledger->date . '</td><td>' . $single_ledger->no_jurnal . '</td><td><a >' . $single_ledger->sub_keterangan . '</a></td><td>
                             <a  class="currency">' . $debitamount . '</a>
                         </td>
                         <td>
@@ -309,7 +312,7 @@ class Statement_model extends CI_Model
     public function count_head_amount($head_id, $date1, $date2)
     {
         $count_total_amt = 0;
-        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_sub_entry.*");
+        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal,mp_sub_entry.*");
         $this->db->from('mp_sub_entry');
         $this->db->join('mp_generalentry', 'mp_generalentry.id = mp_sub_entry.parent_id');
         $this->db->where('mp_sub_entry.accounthead', $head_id);
@@ -352,8 +355,9 @@ class Statement_model extends CI_Model
         $total_credit = 0;
         $from_creator = '';
 
-        $this->db->select("*");
-        $this->db->from('mp_head');
+        $this->db->select("h.*");
+        $this->db->from('mp_head as h');
+        // $this->db->join('mp_generalentrys as g', 'g.id = h.id_parent');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             $ledger_data =  $query->result();

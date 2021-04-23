@@ -252,14 +252,12 @@
             `;
         }
         isi += `<tr  style="height : 22px; padding : 10px">
-            <td colspan="2"><bold>Jumlah</bold> </td>
+            <td colspan="2"><strong>Jumlah</strong> </td>
         
-            <td style="text-align:right ; padding-right : 10px">${formatRupiah(consdebit)} </td>
-            <td style="text-align:right ; padding-right : 10px">${formatRupiah(conskredit)} </td>
+            <td style="text-align:right ; padding-right : 10px"><strong>${formatRupiah(consdebit)}</strong> </td>
+            <td style="text-align:right ; padding-right : 10px"><strong>${formatRupiah(conskredit)}</strong> </td>
             </tr>
             `;
-        // <div class="box-body box-bg ">
-        // <div class="make-container-center">
 
         var printContents = `
                             <div class="col-md-12">
@@ -282,7 +280,7 @@
                             <td style="text-align:left ;width: 400px">${ naration}</td>
                             <td style="text-align:left ;width: 100px">Tanggal</td>
                             <td style="width: 10px">:</td>
-                            <td style="text-align:left; width: 200px">${date}</td>
+                            <td style="text-align:left; width: 200px">${date.split('-')[2]}-${date.split('-')[1]}-${date.split('-')[0]}</td>
                         </tr>
                             <tr style="${displyhide ? 'display: none' : ''} ;">
                             <td style="text-align:left ;width: 100px">Sejumlah</td>
