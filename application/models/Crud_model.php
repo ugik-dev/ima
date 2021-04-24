@@ -656,7 +656,9 @@ class Crud_model extends CI_Model
         $this->db->where('user_email =', $Email);
         $this->db->where('user_password =', sha1($password));
         $this->db->where('status = 0');
+        $this->db->join('mp_role', 'mp_users.id_role = mp_role.id_role', 'LEFT');
         $query = $this->db->get('mp_users');
+
         if ($query->num_rows() > 0) {
             return $query->result();
         } else {

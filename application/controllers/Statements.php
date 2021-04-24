@@ -1,7 +1,4 @@
 <?php
-/*
-
-*/
 defined('BASEPATH') or exit('No direct script access allowed');
 
 
@@ -54,18 +51,30 @@ class Statements extends CI_Controller
 		// DEFINES PAGE TITLE
 
 		// DEFINES WHICH PAGE TO RENDER
-		$data['main_view'] = 'generaljournal';
+		$data['main_view'] = 'journal_voucher_detail';
 
 		$from 	 = html_escape($this->input->post('from'));
 		$to 	 = html_escape($this->input->post('to'));
 
 		$this->load->model('Statement_model');
 		$data['transaction'] = $this->Statement_model->detail_fetch_transasctions($id);
-		echo json_encode($data);
-		die();
-		$data['title'] = $data['transaction'];
-
-		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+		$data['acc'] = $this->Statement_model->get_acc($id, true);
+		// echo json_encode($data);
+		// die();
+		$new_arr = [];
+		$arr = explode(']', $data['transaction']['parent']->arr_cars);
+		foreach ($arr as $dat) {
+			if (!empty($dat)) {
+				$tmp = '';
+				$tmp = $this->Statement_model->find_cars(str_replace('[', '', $dat));
+				if (!empty($tmp)) array_push($new_arr, $tmp);
+			}
+		}
+		$data['transaction']['new_arr'] = $new_arr;
+		// echo json_encode($data);
+		// var_dump($data['transaction']['sub']);
+		// die();
+		$data['title'] = $data['transaction']['parent']->no_jurnal;
 		$this->load->view('main/index.php', $data);
 	}
 
@@ -151,17 +160,25 @@ class Statements extends CI_Controller
 		$this->load->model('Crud_model');
 		$this->load->model('Statement_model');
 		$data = $this->Statement_model->getSingelJurnal(array('id' => $uri1));
-
 		$data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
-		// echo json_encode($data);
-		// die();
+		$data['lst'] = $this->Statement_model->getListCars(array('id_patner' => $data['parent']->customer_id));
+		$data['accounts_records'] = $this->Statement_model->chart_list();
+		$data['patner_record'] = $this->Statement_model->patners_cars_list();
+		$data['acc'] = $this->Statement_model->get_acc($uri1);
+		$new_arr = [];
+		$arr = explode(']', $data['parent']->arr_cars);
+		foreach ($arr as $dat) {
+			if (!empty($dat)) array_push($new_arr, str_replace('[', '', $dat));
+		}
+		// var_dump($data['acc']);
+		// die;
+		$data['new_arr'] = $new_arr;
+
 
 
 		// DEFINES PAGE TITLE
 		$data['title'] = 'Edit Jurnal';
 
-		$this->load->model('Statement_model');
-		$data['accounts_records'] = $this->Statement_model->chart_list();
 
 		// DEFINES WHICH PAGE TO RENDER
 		$data['main_view'] = 'journal_voucher_edit';
@@ -419,14 +436,31 @@ class Statements extends CI_Controller
 		$no_jurnal   = html_escape($this->input->post('no_jurnal'));
 		$sub_keterangan   = html_escape($this->input->post('sub_keterangan'));
 
+		$customer_id   = html_escape($this->input->post('customer_id'));
+		$id_cars   = html_escape($this->input->post('id_cars'));
+
+		$acc[1]   = html_escape($this->input->post('acc_1'));
+		$acc[2]   = html_escape($this->input->post('acc_2'));
+		$acc[3]  = html_escape($this->input->post('acc_3'));
+
 
 
 		if ($date == NULL) {
 			$date = date('Y-m-d');
 		}
-
 		$count_rows = count($account_head);
+
+		if (!empty($id_cars)) {
+			$count_cars = count($id_cars);
+		} else {
+			$count_cars = 0;
+		}
 		$status = TRUE;
+		$cars = '';
+		for ($i = 0; $i < $count_cars; $i++) {
+			if (!empty($id_cars[$i])) $cars .= '[' . $id_cars[$i] . ']';
+		}
+
 
 		for ($i = 0; $i < $count_rows; $i++) {
 			$creditamount[$i] = preg_replace("/[^0-9]/", "", $creditamount[$i]);
@@ -440,6 +474,8 @@ class Statements extends CI_Controller
 		$data = array(
 			'description' => $description,
 			'date' => $date,
+			'customer_id' => $customer_id,
+			'arr_cars' => $cars,
 			'account_head' => $account_head,
 			'debitamount' => $debitamount,
 			'creditamount' => $creditamount,
@@ -466,6 +502,7 @@ class Statements extends CI_Controller
 			}
 			$result = $this->Transaction_model->journal_voucher_entry($data);
 			if ($result != NULL) {
+				$this->Transaction_model->activity_edit($result, $acc);
 				$array_msg = array(
 					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',
 					'alert' => 'info'
@@ -502,15 +539,29 @@ class Statements extends CI_Controller
 		$sub_keterangan   = html_escape($this->input->post('sub_keterangan'));
 		$id   = html_escape($this->input->post('id'));
 		$sub_id   = html_escape($this->input->post('sub_id'));
+		$customer_id   = html_escape($this->input->post('customer_id'));
+		$id_cars   = html_escape($this->input->post('id_cars'));
 
-
+		$acc[1]   = html_escape($this->input->post('acc_1'));
+		$acc[2]   = html_escape($this->input->post('acc_2'));
+		$acc[3]  = html_escape($this->input->post('acc_3'));
 
 		if ($date == NULL) {
 			$date = date('Y-m-d');
 		}
 
 		$count_rows = count($account_head);
+
+		if (!empty($id_cars)) {
+			$count_cars = count($id_cars);
+		} else {
+			$count_cars = 0;
+		}
 		$status = TRUE;
+		$cars = '';
+		for ($i = 0; $i < $count_cars; $i++) {
+			if (!empty($id_cars[$i])) $cars .= '[' . $id_cars[$i] . ']';
+		}
 
 		for ($i = 0; $i < $count_rows; $i++) {
 			$creditamount[$i] = preg_replace("/[^0-9]/", "", $creditamount[$i]);
@@ -521,9 +572,10 @@ class Statements extends CI_Controller
 			// 	$status = FALSE;
 			// }
 		}
-
 		$data = array(
 			'id' => $id,
+			'customer_id' => $customer_id,
+			'arr_cars' => $cars,
 			'description' => $description,
 			'date' => $date,
 			'account_head' => $account_head,
@@ -533,11 +585,6 @@ class Statements extends CI_Controller
 			'sub_keterangan' => $sub_keterangan,
 			'sub_id' => $sub_id
 		);
-
-		// echo json_encode($data);
-		// var_dump($status);
-		// die();
-
 		if ($status) {
 
 			$this->load->model('Transaction_model');
@@ -545,7 +592,7 @@ class Statements extends CI_Controller
 				$res = $this->Transaction_model->check_no_jurnal($data['no_jurnal'], $id);
 				if ($res != 0) {
 					$array_msg = array(
-						'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Jurnal Sudah Ada',
+						'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Jurnal Sudah Ada !',
 						'alert' => 'danger'
 					);
 					$this->session->set_flashdata('status', $array_msg);
@@ -553,11 +600,24 @@ class Statements extends CI_Controller
 				}
 			}
 
+			$res = $this->Transaction_model->check_lock($id);
+			// var_dump($res);
+			// die();
+			if ($res == 'Y') {
+				$array_msg = array(
+					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Data Sudah di Kunci! ',
+					'alert' => 'danger'
+				);
+				$this->session->set_flashdata('status', $array_msg);
+				redirect('statements/edit_jurnal/' . $data['id']);
+			}
+
 			$result = $this->Transaction_model->journal_voucher_edit($data);
+			$this->Transaction_model->activity_edit($id, $acc);
 
 			if ($result != NULL) {
 				$array_msg = array(
-					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',
+					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Edit Successfully',
 					'alert' => 'info'
 				);
 				$this->session->set_flashdata('status', $array_msg);
@@ -568,7 +628,7 @@ class Statements extends CI_Controller
 				);
 				$this->session->set_flashdata('status', $array_msg);
 
-				redirect('statements/edit_jurnal/' . $data['id']);
+				redirect('statements/show/' . $data['id']);
 			}
 		} else {
 			$array_msg = array(
@@ -579,7 +639,7 @@ class Statements extends CI_Controller
 			redirect('statements/edit_jurnal/' . $data['id']);
 			// redirect('vouchers/journal_voucher');
 		}
-		redirect('statements/edit_jurnal/' . $data['id']);
+		redirect('statements/show/' . $data['id']);
 		// redirect('statements');
 	}
 

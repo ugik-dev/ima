@@ -153,9 +153,7 @@
         return prefix == undefined ? rupiah : rupiah ? "Rp. " + rupiah : "";
     }
 
-
     var elements = document.getElementsByClassName('currency')
-
     for (var i = 0; i < elements.length; i++) {
         elements[i].innerHTML = formatRupiah(elements[i].innerHTML);
     }

@@ -16,18 +16,23 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <?php echo form_label('Patner'); ?>
-                                        <select name="id_customer" id="id_customer" class="form-control select2 input-lg">
+                                        <select name="customer_id" id="customer_id" class="form-control select2 input-lg">
                                             <option value="0"> ------- </option>
                                             <?php echo $patner_record; ?>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        <?php echo form_label('Kendaraan'); ?>
-                                        <select name="id_cars" id="id_cars" class="form-control select2 input-lg" disabled>
-                                            <option value="0"> ------- </option>
-                                        </select>
+                                    <div class="form-group" id='label_kendaraan' style="display: none">
+                                        <label>Kendaraan</label>
+                                        <div class="row">
+                                            <div class="col-md-10" id='layer_cars'>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button type="button" style="display:none" class="btn btn-primary" id="addcars"> <i class="fa fa-plus-circle"></i> </button>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -124,6 +129,46 @@
                                 </tfoot>
                             </table>
                         </div>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Disetujui</label>
+                                        <select name="acc_1" id="acc_1" class="form-control select2 input-lg">
+                                            <option value="0"> ----- </option>
+                                            <option value="7"> SETIAWAN R </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group" id='label_kendaraan'>
+                                        <label>Diverifikasi</label>
+                                        <select name="acc_2" id="acc_2" class="form-control select2 input-lg">
+                                            <option value="0"> ----- </option>
+                                            <option value="8"> PURWADI </option>
+                                            <option value="10"> RAHMAT </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group" id='label_kendaraan'>
+                                        <label>Dibuat</label>
+                                        <select name="acc_3" id="acc_3" class="form-control select2 input-lg">
+                                            <option value="0"> ----- </option>
+                                            <option value="9"> A SISWANTO </option>
+                                            <option value="11"> NURHASANAH </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group" id='label_kendaraan'>
+                                        <label>Dibukukan</label>
+                                        <input type="text" disabled id="dibukukan" class="form-control input-lg">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-md-12 ">
                             <div class="form-group">
                                 <?php
@@ -147,10 +192,10 @@
     $('.mask').mask('000.000.000.000.000,00', {
         reverse: true
     });
-    id_custmer = $('#id_customer');
+    id_custmer = $('#customer_id');
     id_cars = $('#id_cars');
+    layer_cars = $('#layer_cars');
     id_custmer.on('change', function() {
-        console.log('s')
         $.ajax({
             url: '<?= base_url() ?>Statements/getListCars',
             type: "get",
@@ -160,22 +205,28 @@
             success: function(data) {
                 var json = JSON.parse(data);
                 if (json['error'] == true) {
-                    console.log('data_kosong')
-                    id_cars.prop('disabled', 'true')
-                    id_cars.val('')
-                    id_cars.html('')
+                    layer_cars.html('');
+                    addcars.style.display = 'none';
+                    document.getElementById("label_kendaraan").style.display = "none";
+
                     return;
                 }
-                console.log(json)
-                id_cars.prop('disabled', '')
-                id_cars.html('<option value="0"> ------- </option>' +
-                    json['data'])
-
+                data_cars = json['data'];
+                add_cars();
+                document.getElementById("label_kendaraan").style.display = "block";
+                addcars.style.display = 'block';
             },
             error: function(e) {}
         });
-        // });
-
+    });
+    $('#addcars').on('click', function() {
+        add_cars()
     })
+
+    function add_cars() {
+        layer_cars.append(`<select name="id_cars[]" id="id_cars" class="form-control select2 input-lg">                                          
+                                 <option value="0"> ------- </option>` + data_cars + `</select>`)
+        $('.select2').select2();
+    }
 </script>
 <?php $this->load->view('bootstrap_model.php'); ?>

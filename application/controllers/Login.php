@@ -59,10 +59,13 @@ class Login extends CI_Controller
 			} else {
 				$userdata = array(
 					'id' => $result[0]->id,
-					'name' => $result[0]->user_name
+					'name' => $result[0]->user_name,
+					'role' => $result[0]->nama_role
 				);
 				$this->session->set_userdata('user_id', $userdata);
 				$this->session->userdata('user_id');
+				// echo json_encode($this->session->userdata());
+				// die();
 				$array_msg = array(
 					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Login  Successfully',
 					'alert' => 'info'

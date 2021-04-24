@@ -1094,6 +1094,7 @@ function printJournalEntry(divName) {
 
 function terbilang(bilangan) {
   bilangan = bilangan.slice(0, -2);
+  // console.log(bilangan);
   var kalimat = "";
   var angka = new Array(
     "0",

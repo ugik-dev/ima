@@ -12,7 +12,7 @@ class Statement_model extends CI_Model
         $total_credit = 0;
         $form_content = '';
 
-        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
+        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.customer_id,mp_generalentry.arr_cars,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
         $this->db->from('mp_generalentry');
         // if (!empty($filter['id']))
         $this->db->where('id', $filter['id']);
@@ -126,6 +126,18 @@ class Statement_model extends CI_Model
         return $form_content;
     }
 
+    public function find_cars($id)
+    {
+        $this->db->select('id,id_customer,name_cars,no_cars');
+        $this->db->from('mp_cars');
+        $this->db->where('id', $id);
+        $sub_query = $this->db->get();
+        $subs =  $sub_query->result_array();
+        if (empty($subs[0])) {
+            return;
+        }
+        return $subs[0];
+    }
     public function detail_fetch_transasctions($id)
     {
 
@@ -133,10 +145,11 @@ class Statement_model extends CI_Model
         $total_credit = 0;
         $form_content = '';
 
-        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
+        $this->db->select("mp_generalentry.id as transaction_id,mp_payee.customer_name,mp_generalentry.date,mp_generalentry.customer_id,arr_cars,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
         $this->db->from('mp_generalentry');
         // $this->db->where('date >=', $date1);
-        $this->db->where('id', $id);
+        $this->db->join('mp_payee', 'mp_payee.id = mp_generalentry.customer_id', 'LEFT');
+        $this->db->where('mp_generalentry.id', $id);
         $this->db->order_by('mp_generalentry.id', 'DESC');
         $data = [];
         $query = $this->db->get();
@@ -144,7 +157,7 @@ class Statement_model extends CI_Model
         if (empty($transaction_records[0])) {
             return;
         }
-        $data['transaction'] = $transaction_records[0];
+        $data['parent'] = $transaction_records[0];
         if ($query->num_rows() > 0) {
 
             if ($transaction_records  != NULL) {
@@ -158,7 +171,7 @@ class Statement_model extends CI_Model
                     $this->db->join('mp_head', 'mp_head.id = mp_sub_entry.accounthead');
                     $this->db->where('mp_sub_entry.parent_id =', $transaction_records[0]->transaction_id);
                     $sub_query = $this->db->get();
-                    $subs =  $sub_query->result();
+                    $subs =  $sub_query->result_array();
                     if (empty($subs[0])) {
                         return;
                     }
@@ -614,7 +627,28 @@ class Statement_model extends CI_Model
         return  array('current_assets' => $current_assets, 'noncurrent_assets' => $noncurrent_assets, 'total_assets' => $total_current_nc, 'current_libility' => $current_libility, 'noncurrent_libility' => $noncurrent_libility, 'total_currentnoncurrent_libility' => $total_current_nc_libility, 'equity' => $equity, 'total_libility_equity' => $total_libility_and_equity);
     }
 
+    public function get_acc($id, $name = false)
+    {
+        if ($name) {
+            $this->db->select('ma.*, u1.user_name as name_1, u2.user_name as name_2 ,u3.user_name as name_3');
+            $this->db->join('mp_users as u1', 'ma.acc_1 = u1.id', 'LEFT');
+            $this->db->join('mp_users as u2', 'ma.acc_2 = u2.id', 'LEFT');
+            $this->db->join('mp_users as u3', 'ma.acc_3 = u3.id', 'LEFT');
+            // $this->db->select('*');
+            // $this->db->select('*');
+        } else {
 
+            $this->db->select('*');
+        }
+        $this->db->from('mp_approv as ma');
+        $this->db->where('id_transaction', $id);
+        $query = $this->db->get();
+        $result =  $query->result();
+        if (empty($result)) {
+            return NULL;
+        }
+        return $result[0];
+    }
     //USED TO CREATE A CHART OF ACCOUNTS LIST 
     public function patners_cars_list()
     {
@@ -651,6 +685,22 @@ class Statement_model extends CI_Model
             return NULL;
         }
         return $patner_list;
+        // die();
+    }
+
+    public function getListCars2($filter = [])
+    {
+        $patner_list = '';
+
+        $this->db->select("id,id_customer, name_cars, no_cars");
+        $this->db->from('mp_cars');
+        $this->db->where('mp_cars.id_customer', $filter['id_patner']);
+        $query = $this->db->get();
+        $result =  $query->result_array();
+        if ($result == NULL) {
+            return NULL;
+        }
+        return $result;
         // die();
     }
     public function chart_list()

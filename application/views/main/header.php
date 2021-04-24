@@ -14,17 +14,17 @@
       <nav style="  background-color: #d81b60; " class="navbar navbar-default">
 
           <div class="row header_row">
-              <div class="col-md-4 col-xs-12">
+              <div class="col-md-6 col-xs-12">
                   <div class="sn_cname">
                       <a href="<?php echo base_url('/'); ?>homepage">
-                          <i class="fa fa-globe"> </i> <?php echo $this->db->get_where('mp_langingpage', array('id' => 1))->result_array()[0]['companyname']; ?>
+                          <img src="<?= base_url() ?>assets/img/ima.png" style="width: 250px" alt="Paris" class="center">
                       </a>
                       <a class=" link-setting-header" href="javscript:void(0)">
                           <i class="fa fa-clock-o" aria-hidden="true"></i> <?php echo date('d-m-Y'); ?>
                       </a>
                   </div>
               </div>
-              <div class="col-md-8 col-xs-12 topmenushowhide">
+              <div class="col-md-6 col-xs-12 topmenushowhide">
 
                   <div class="header-nav">
                       <ul class="nav navbar-nav pull-right">

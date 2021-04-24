@@ -975,6 +975,37 @@ class Transaction_model extends CI_Model
         return $query->result_array()[0]['count'];
     }
 
+    function check_lock($id)
+    {
+        $this->db->select("gen_lock as gen_lock");
+        $this->db->from('mp_generalentry');
+        $this->db->where('id',  $id);
+        $query = $this->db->get();
+        return $query->result_array()[0]['gen_lock'];
+    }
+
+    function activity_edit($id, $acc)
+    {
+
+        $this->db->select("id_transaction");
+        $this->db->from('mp_approv');
+        $this->db->where('id_transaction',  $id);
+        $query = $this->db->get();
+        $res = $query->result_array();
+        $this->db->set("acc_1", $acc[1]);
+        $this->db->set("acc_2", $acc[2]);
+        $this->db->set("acc_3", $acc[3]);
+        $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
+        $this->db->set("date_acc_0", date('Y-m-d'));
+        if (empty($res)) {
+            $this->db->set("id_transaction", $id);
+            $this->db->insert('mp_approv');
+        } else {
+            $this->db->where("id_transaction", $id);
+            $this->db->update('mp_approv');
+        }
+    }
+
     //USED TO CREATE A JOURNAL VOUCHER ENTRY
     function journal_voucher_entry($data)
     {
@@ -982,6 +1013,8 @@ class Transaction_model extends CI_Model
         $trans_data = array(
             'date' => $data['date'],
             'naration' => $data['description'],
+            'customer_id' => $data['customer_id'],
+            'arr_cars' => $data['arr_cars'],
             'no_jurnal' => $data['no_jurnal'],
             'generated_source' => 'Journal Voucher'
         );
@@ -1027,7 +1060,7 @@ class Transaction_model extends CI_Model
             $this->db->trans_commit();
         }
 
-        return $data;
+        return $order_id;
     }
 
     function journal_voucher_edit($data)
@@ -1036,6 +1069,8 @@ class Transaction_model extends CI_Model
         $trans_data = array(
             'date' => $data['date'],
             'naration' => $data['description'],
+            'customer_id' => $data['customer_id'],
+            'arr_cars' => $data['arr_cars'],
             'no_jurnal' => $data['no_jurnal'],
             'generated_source' => 'Journal Voucher'
         );
@@ -1057,7 +1092,7 @@ class Transaction_model extends CI_Model
                         'accounthead' => $data['account_head'][$i],
                         'amount'      => substr($data['debitamount'][$i], 0, -2) . '.' . substr($data['debitamount'][$i], -2),
                         'type'        => 0,
-                        'sub_keterangan' => $data['sub_keterangan'][$i]
+                        'sub_keterangan' => $data['sub_keterangan'][$i],
                     );
                 } else if ($data['creditamount'][$i] != 0) {
                     $sub_data  = array(
@@ -1065,7 +1100,7 @@ class Transaction_model extends CI_Model
                         'accounthead' => $data['account_head'][$i],
                         'amount'      => substr($data['creditamount'][$i], 0, -2) . '.' . substr($data['creditamount'][$i], -2),
                         'type'        => 1,
-                        'sub_keterangan' => $data['sub_keterangan'][$i]
+                        'sub_keterangan' => $data['sub_keterangan'][$i],
                     );
                 }
 
