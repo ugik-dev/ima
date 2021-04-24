@@ -110,14 +110,15 @@ class Statement_model extends CI_Model
                         }
                     }
                     $btn_lock = ' 
-                    <a href="' . base_url() . 'statements/show/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-eye  pull-left"></i> Show </a>';
+                     <a href="' . base_url() . 'statements/edit_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-list-alt pull-left"></i> Edit</a> 
+                      ';
                     $form_content .= '<tr class="narration" >
                     <td class="border-bottom-journal" colspan="5">
                     <small> <i id="naration_' . $transaction_record->transaction_id . '">' . (empty($transaction_record->naration) ? '-' : $transaction_record->naration) . '</i>
                         </small>
                         <br>
                        <small> <i> No Jurnal : </small> <a id="no_jurnal_' . $transaction_record->transaction_id . '">' . $transaction_record->no_jurnal . '</a> </i> 
-                       <a href="' . base_url() . 'statements/edit_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-list-alt pull-left"></i> Edit</a> 
+                      <a href="' . base_url() . 'statements/show/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-eye  pull-left"></i> Show </a>
                        ' .
                         ($transaction_record->gen_lock != 'Y' ? $btn_lock : '') . '
                         </td>
