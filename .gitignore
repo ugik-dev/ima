@@ -1,3 +1,15 @@
 /application/config/database.php
 /uploads/cars_picture/*
 !/uploads/cars_picture/default.jpg
+/uploads/customers/*
+!/uploads/customers/default.jpg
+/uploads/drivers/*
+!/uploads/drivers/default.jpg
+/uploads/products/*
+!/uploads/products/default.jpg
+/uploads/users/*
+!/uploads/users/default.jpg
+/uploads/supplier/*
+!/uploads/supplier/default.jpg
+/uploads/purchase/*
+!/uploads/purchase/default.jpg
