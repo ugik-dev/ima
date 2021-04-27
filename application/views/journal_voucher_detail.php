@@ -319,9 +319,9 @@
             `;
 
         var printContents = `
-                            <table style="width: 100%" border="0">
+                            <table style="font-size: 13px;width: 100%" border="0">
                               <tr>
-                                <td style="width: 50%"><img style="heigt: 100px; width : 90%" src="<?= base_url() ?>assets/img/ima4.png" alt="Paris" class="center"></td>                 
+                                <td style="width: 50%"><img style="heigt: 100px; width : 70%" src="<?= base_url() ?>assets/img/ima4.png" alt="Paris" class="center"></td>                 
                                 <td style="width: 50%">
                                             <h3 style="text-align:center">${tpe == 'AM' ? 'VOUCHER PENERIMAAN' : (tpe == 'AK' ? 'VOUCHER PENGELUARAN' : 'JURNAL UMUM')}</h3>
                                 
@@ -330,14 +330,14 @@
                                 </table   
                                 <div class="col-md-12" style="font-size: 11px;">
                                 <br>              
-                            <table style="" border="0">
+                            <table style="font-size: 11px;" border="0">
                               <tr>
                             <td ${displyhide ? '' : ''} style=";text-align:left ;width: 100px">${tpe == 'AM' ? 'Diterima dari' : (tpe == 'AK' ? 'Dibayar kepada' : '')}</td>
                             <td style=;width: 10px">${displyhide ? '' : ':'}</td>
                             <td style=";text-align:left ;width: 400px"> ${displyhide ? '' : mitra_name} </td>
                             <td style="text-align:left ;width: 100px">No Voucher</td>
                             <td style="width: 10px">:</td>
-                            <td style="text-align:left; width: 200px">${no_jurnal}</td>
+                            <td style="text-align:left; width: 200px ${tpe == 'AM' ? '; color: red':''} ">${no_jurnal}</td>
                         </tr>
                         <tr>
                             <td style="text-align:left ;width: 100px"> Deskripsi</td>
@@ -363,7 +363,7 @@
                         </tr>
                     </table>
                     <br>
-                    <table style="" border="1" cellspacing="0">
+                    <table style="font-size: 11px;" border="1" cellspacing="0">
                         <tr>
                             <td style="width: 200px ;text-align:center">No Akun</td>
                             <td style="width: 350px ; text-align:center">Keterangan</td>
