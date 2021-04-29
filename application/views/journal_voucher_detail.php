@@ -114,16 +114,15 @@
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="badge badge-pill badge-info">Sangat Baik</div>
                                     <div class="form-group">
                                         <label>Disetujui</label>
-                                        <h4 id="acc_1" class=""> </h4>
+                                        <h4 id="acc_1" class="form-control input-lg"> </h4>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group" id='label_kendaraan'>
                                         <label>Diverifikasi</label>
-                                        <h4 id="acc_2" class=""> </h4>
+                                        <h4 id="acc_2" class="form-control input-lg"> </h4>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -333,7 +332,7 @@
         var printContents = `
                             <table style="font-size: 13px;width: 100%" border="0">
                               <tr>
-                                <td style="width: 50%"><img style="heigt: 100px; width : 70%" src="<?= base_url() ?>assets/img/ima4.png" alt="Paris" class="center"></td>                 
+                                <td style="width: 50%"><img style="heigt: 100px; width : 80%" src="<?= base_url() ?>assets/img/imadesknew.png" alt="Paris" class="center"></td>                 
                                 <td style="width: 50%">
                                             <h3 style="text-align:center">${tpe == 'AM' ? 'VOUCHER PENERIMAAN' : (tpe == 'AK' ? 'VOUCHER PENGELUARAN' : 'JURNAL UMUM')}</h3>
                                 
@@ -451,13 +450,9 @@
     }
 
     <?php if (!empty($acc)) {
-        $text1 = '';
-        if ($acc->st_acc_1 == '1') {
-            $text1 = 'Approved in ' . $acc->date_acc_1;
-        }
 
     ?>
-        document.getElementById("acc_1").innerHTML = '<?= $acc->name_1 . '<br>' . $text1 ?>';
+        document.getElementById("acc_1").innerHTML = '<?= $acc->name_1 ?>';
         document.getElementById("acc_2").innerHTML = '<?= $acc->name_2 ?>';
         document.getElementById("acc_3").innerHTML = '<?= $acc->name_3 ?>';
         document.getElementById("dibukukan").innerHTML = '<?= $acc->acc_0 ?>';
