@@ -393,6 +393,66 @@ class Statements extends CI_Controller
 		$this->load->view('main/index.php', $data);
 	}
 
+	function marge_jurnal()
+	{
+		$data['title'] = 'Entri Jurnal';
+		$data['main_view'] = 'marge_jurnal';
+		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+		$this->load->view('main/index.php', $data);
+	}
+
+	function marge_jurnal_process()
+	{
+		$no_jurnal  = html_escape($this->input->post('no_jurnal'));
+
+		// var_dump($no_jurnal);
+		// die();
+		$count_rows = count($no_jurnal);
+		$j = 0;
+		// echo 'row =  ' . $count_rows;
+		for ($i = 0; $i < $count_rows; $i++) {
+			// echo "\n i=" . $i;
+			$res_detail = NULL;
+			if (!empty($no_jurnal[$i])) {
+				$this->load->model('Statement_model');
+				$res_detail = $this->Statement_model->detail_fetch_transasctions_filter(array('no_jurnal' => $no_jurnal[$i]));
+				$countsub = count($res_detail['sub']);
+				for ($k = 0; $k < $countsub; $k++) {
+					$accounthead[$j] = $res_detail['sub'][$k]['accounthead'];
+					$sub_keterangan[$j] = $res_detail['sub'][$k]['sub_keterangan'];
+					if ($res_detail['sub'][$k]['type'] == 0) {
+						$creditamount[$j] = '';
+						$debitamount[$j] = $res_detail['sub'][$k]['amount'];
+					} else {
+						$creditamount[$j] = $res_detail['sub'][$k]['amount'];
+						$debitamount[$j] = '';
+					}
+					$j++;
+				}
+			}
+		}
+		$acc[1] = '';
+		$acc[2] = '';
+		$acc[3] = '';
+
+		$data = array(
+			'description' => '',
+			'date' => '',
+			'customer_id' => '',
+			'arr_cars' => '',
+			'no_jurnal' => '',
+			'account_head' => $accounthead,
+			'debitamount' => $debitamount,
+			'creditamount' => $creditamount,
+			'sub_keterangan' => $sub_keterangan,
+			'acc' => $acc
+		);
+		// echo json_encode($data);
+		// die();
+		$this->journal_voucher($data);
+	}
+
+
 	//USED TO ADD STARTING BALANCES 
 	function opening_balance()
 	{

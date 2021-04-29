@@ -196,6 +196,49 @@ class Statement_model extends CI_Model
         return $data;
     }
 
+    public function detail_fetch_transasctions_filter($filter = [])
+    {
+
+
+        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.customer_id,arr_cars,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
+        $this->db->from('mp_generalentry');
+        if (!empty($filter['id'])) $this->db->where('mp_generalentry.id', $filter['id']);
+        if (!empty($filter['no_jurnal'])) $this->db->where('mp_generalentry.no_jurnal', $filter['no_jurnal']);
+        $this->db->order_by('mp_generalentry.id', 'DESC');
+        $data = [];
+        $query = $this->db->get();
+        $transaction_records =  $query->result();
+        if (empty($transaction_records[0])) {
+            return NULL;
+        }
+        $data['parent'] = $transaction_records[0];
+        if ($query->num_rows() > 0) {
+
+            if ($transaction_records  != NULL) {
+
+                foreach ($transaction_records as $transaction_record) {
+                    $debit_amt = NULL;
+                    $credit_amt = NULL;
+
+                    $this->db->select("mp_sub_entry.*,mp_head.name");
+                    $this->db->from('mp_sub_entry');
+                    $this->db->join('mp_head', 'mp_head.id = mp_sub_entry.accounthead');
+                    $this->db->where('mp_sub_entry.parent_id =', $transaction_records[0]->transaction_id);
+                    $sub_query = $this->db->get();
+                    $subs =  $sub_query->result_array();
+                    if (empty($subs[0])) {
+                        return;
+                    }
+                    $data['sub'] = $subs;
+                    // $data['transaction'] = $transaction_records[0];
+                }
+            }
+        }
+        // echo json_encode($data);
+        // die();
+        return $data;
+    }
+
     public function export_excel($date1, $date2, $sheet)
     {
         $sheetrow = 6;
