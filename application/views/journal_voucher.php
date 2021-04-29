@@ -3,6 +3,7 @@
         <div class="box-body ">
             <div class="">
                 <?php
+                var_dump($data_return);
                 $attributes = array('id' => 'journal_voucher', 'method' => 'post', 'class' => '');
                 ?>
                 <?php echo form_open('statements/create_journal_voucher', $attributes); ?>
@@ -39,21 +40,21 @@
                             <div class="form-group">
                                 <?php echo form_label('No Jurnal'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_jurnal',);
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_jurnal', 'id' => 'no_jurnal');
                                 echo form_input($data);
                                 ?>
                             </div>
                             <div class="form-group">
                                 <?php echo form_label('Rincian Transaksi'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'description', 'reqiured' => '');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'description', 'id' => 'description', 'reqiured' => '');
                                 echo form_input($data);
                                 ?>
                             </div>
                             <div class="form-group">
                                 <?php echo form_label('Tanggal'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'date', 'name' => 'date', 'reqiured' => '', 'value' => Date('d/m/Y'));
+                                $data = array('class' => 'form-control input-lg', 'type' => 'date', 'name' => 'date', 'id' => 'date', 'reqiured' => '', 'value' => Date('d/m/Y'));
                                 echo form_input($data);
                                 ?>
                             </div>
@@ -93,11 +94,46 @@
                                         </td>
                                         <td>
                                             <?php
-                                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'sub_keterangan[]', 'value' => '');
+                                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'sub_keterangan[]', 'id' => 'sub_keterangan[]', 'value' => '');
                                             echo form_input($data);
                                             ?>
                                         </td>
                                     </tr>
+
+                                    <?php if ($data_return != NULL) {
+                                        $count_rows = count($data_return['account_head']);
+                                        for ($i = 0; $i < $count_rows - 1; $i++) {
+                                    ?>
+                                            <tr>
+                                                <td>
+                                                    <select name="account_head[]" class="form-control select2 input-lg">
+                                                        <?php echo $accounts_records; ?>
+                                                    </select>
+                                                </td>
+                                                <!-- <td>
+                                        </td> -->
+                                                <td>
+                                                    <?php
+                                                    $data = array('class' => 'form-control input-lg mask', 'name' => 'debitamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_debits()');
+                                                    echo form_input($data);
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $data = array('class' => 'form-control input-lg mask',  'name' => 'creditamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_credits()');
+                                                    echo form_input($data);
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $data = array('class' => 'form-control input-lg sub_keterangan', 'type' => 'text', 'name' => 'sub_keterangan[]', 'id' => 'sub_keterangan[]', 'value' => '');
+                                                    echo form_input($data);
+                                                    ?>
+                                                </td>
+                                            </tr>
+
+                                    <?php }
+                                    }  ?>
                                 </tbody>
                                 <tfoot>
                                     <tr>
@@ -189,9 +225,22 @@
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
-    $('.mask').mask('000.000.000.000.000,00', {
-        reverse: true
-    });
+    no_jurnal = $('#no_jurnal');
+    description = $('#description');
+    date_jurnal = $('#date');
+    acc_1 = $('#acc_1');
+    acc_2 = $('#acc_2');
+    acc_3 = $('#acc_3');
+    var sub_keterangan = document.getElementsByName('sub_keterangan[]');
+    var account_head = document.getElementsByName('account_head[]');
+    var debitamount = document.getElementsByName('debitamount[]');
+    var creditamount = document.getElementsByName('creditamount[]');
+
+
+    // sub_keterangan = $('.sub_keterangan');
+    // sub_keterangan[1].val('2');
+    // console.log(sub_keterangan)
+    // sub_keterangan[0].val('s');
     id_custmer = $('#customer_id');
     id_cars = $('#id_cars');
     layer_cars = $('#layer_cars');
@@ -228,5 +277,27 @@
                                  <option value="0"> ------- </option>` + data_cars + `</select>`)
         $('.select2').select2();
     }
+
+    <?php if ($data_return != NULL) {    ?>
+        no_jurnal.val('<?= $data_return['no_jurnal'] ?>');
+        id_custmer.val('<?= $data_return['customer_id'] ?>');
+        date_jurnal.val('<?= $data_return['date'] ?>');
+        description.val('<?= $data_return['description'] ?>');
+        <?php
+        $count_rows = count($data_return['account_head']);
+
+        for ($i = 0; $i < $count_rows; $i++) { ?>
+            sub_keterangan[<?= $i ?>].value = '<?= $data_return['sub_keterangan'][$i] ?>';
+            account_head[<?= $i ?>].value = '<?= $data_return['account_head'][$i] ?>';
+            debitamount[<?= $i ?>].value = '<?= $data_return['debitamount'][$i] ?>';
+            creditamount[<?= $i ?>].value = '<?= $data_return['creditamount'][$i] ?>';
+
+    <?php
+        }
+    }  ?>
+
+    $('.mask').mask('000.000.000.000.000,00', {
+        reverse: true
+    });
 </script>
 <?php $this->load->view('bootstrap_model.php'); ?>

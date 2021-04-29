@@ -60,7 +60,7 @@ class Login extends CI_Controller
 				$userdata = array(
 					'id' => $result[0]->id,
 					'name' => $result[0]->user_name,
-					'role' => $result[0]->nama_role
+					'nama_role' => $result[0]->nama_role
 				);
 				$this->session->set_userdata('user_id', $userdata);
 				$this->session->userdata('user_id');

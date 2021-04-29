@@ -12,7 +12,6 @@
 
   <header class="main-header">
       <nav style="  background-color: #d81b60; " class="navbar navbar-default">
-
           <div class="row header_row">
               <div class="col-md-6 col-xs-12">
                   <div class="sn_cname">

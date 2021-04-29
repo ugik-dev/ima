@@ -681,6 +681,16 @@ class Crud_model extends CI_Model
         }
     }
 
+    public function email_config()
+    {
+        $this->db->select("*");
+        $this->db->from("mp_config_email as ssk");
+        $this->db->where("ssk.type", 'stmp_mail');
+        $res = $this->db->get();
+        $res = $res->result_array();
+        return $res['0'];
+    }
+
     public function get_user_details_menus()
     {
         $this->db->select("mp_users.id as user_id , mp_users.user_name , mp_users.user_email , mp_users.user_description ,mp_menu.name,mp_multipleroles.id as rolesid");

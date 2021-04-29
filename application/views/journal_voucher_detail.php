@@ -114,15 +114,16 @@
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-3">
+                                    <div class="badge badge-pill badge-info">Sangat Baik</div>
                                     <div class="form-group">
                                         <label>Disetujui</label>
-                                        <h4 id="acc_1" class="form-control input-lg"> </h4>
+                                        <h4 id="acc_1" class=""> </h4>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group" id='label_kendaraan'>
                                         <label>Diverifikasi</label>
-                                        <h4 id="acc_2" class="form-control input-lg"> </h4>
+                                        <h4 id="acc_2" class=""> </h4>
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -144,8 +145,19 @@
                             <div class="form-group">
 
                                 <a onclick="printSingleJurnal2()" class="btn btn-secondary  margin btn-lg pull-right" style="float: right"> <i class="fa fa-print" aria-hidden="true"></i>
-                                    Print</a> <a href="<?= base_url() . 'statements/edit_jurnal/' . $transaction['parent']->transaction_id ?>" class="btn btn-info  margin btn-lg pull-right" style="float: right"> <i class="fa fa-list-alt" aria-hidden="true"></i>
-                                    Edit</a>
+                                    Print</a>
+                                <?php
+                                if ($this->session->userdata('user_id')['nama_role'] != 'direktur') {
+                                ?>
+                                    <a href="<?= base_url() . 'statements/edit_jurnal/' . $transaction['parent']->transaction_id ?>" class="btn btn-info  margin btn-lg pull-right" style="float: right"> <i class="fa fa-list-alt" aria-hidden="true"></i>
+                                        Edit</a>
+                                <?php } else { ?>
+                                    <a onclick="show_modal_page('<?php echo base_url() . 'DirectionController/popup/' . $this->session->userdata('user_id')['nama_role'] . '/' . $transaction['parent']->transaction_id ?>')" class="btn btn-info  margin btn-lg pull-right"><i class="fa fa-pencil"></i> Approv Jurnal</a>
+                                    <!-- <a onclick="show_modal_page('<?php echo base_url() . 'DirectionController/popup/add_cars_model/' . $this->session->userdata('user_id')['nama_role'] ?>')"><i class="fa fa-pencil"></i> Approv Jurnal</a> -->
+
+                                <?php
+                                };
+                                ?>
                             </div>
                         </div>
                     </div>
@@ -430,7 +442,6 @@
                         </table>
              </div>
              `;
-        // console.log(printContents);
         var originalContents = document.body.innerHTML;
         document.body.innerHTML = printContents;
         setTimeout(() => {
@@ -440,8 +451,13 @@
     }
 
     <?php if (!empty($acc)) {
+        $text1 = '';
+        if ($acc->st_acc_1 == '1') {
+            $text1 = 'Approved in ' . $acc->date_acc_1;
+        }
+
     ?>
-        document.getElementById("acc_1").innerHTML = '<?= $acc->name_1 ?>';
+        document.getElementById("acc_1").innerHTML = '<?= $acc->name_1 . '<br>' . $text1 ?>';
         document.getElementById("acc_2").innerHTML = '<?= $acc->name_2 ?>';
         document.getElementById("acc_3").innerHTML = '<?= $acc->name_3 ?>';
         document.getElementById("dibukukan").innerHTML = '<?= $acc->acc_0 ?>';

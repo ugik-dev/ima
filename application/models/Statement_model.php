@@ -109,9 +109,16 @@ class Statement_model extends CI_Model
                             }
                         }
                     }
-                    $btn_lock = ' 
-                     <a href="' . base_url() . 'statements/edit_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-list-alt pull-left"></i> Edit</a> 
-                      ';
+                    // var_dump($this->session->userdata('user_id'));
+                    // die();
+                    if ($this->session->userdata('user_id')['nama_role'] != 'direktur') {
+                        $btn_lock = ' 
+                        <a href="' . base_url() . 'statements/edit_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-list-alt pull-left"></i> Edit</a> 
+                          ';
+                    } else {
+                        $btn_lock = '';
+                    };
+                    // die();
                     $form_content .= '<tr class="narration" >
                     <td class="border-bottom-journal" colspan="5">
                     <small> <i id="naration_' . $transaction_record->transaction_id . '">' . (empty($transaction_record->naration) ? '-' : $transaction_record->naration) . '</i>

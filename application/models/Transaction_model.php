@@ -984,6 +984,58 @@ class Transaction_model extends CI_Model
         return $query->result_array()[0]['gen_lock'];
     }
 
+
+    function check_direktur($filter = [])
+    {
+        // var_dump($filter);
+        // die();
+        $this->db->select("*");
+        $this->db->from('mp_approv');
+        $this->db->where('id_transaction',  $filter['id']);
+        if (!empty($filter['acc_1'])) $this->db->where('acc_1',  $filter['acc_1']);
+        if (!empty($filter['acc_2'])) $this->db->where('acc_2',  $filter['acc_2']);
+        if (!empty($filter['acc_3'])) $this->db->where('acc_3',  $filter['acc_3']);
+        $query = $this->db->get();
+        return $query->result_array()[0];
+    }
+
+
+    function approv_process($data)
+    {
+
+        $this->db->select("id_transaction");
+        $this->db->from('mp_approv');
+        $this->db->where('id_transaction',  $data['id']);
+        $query = $this->db->get();
+        $res = $query->result_array();
+        if (!empty($data['acc_1'])) {
+            $this->db->set("st_acc_1", $data['keputusan']);
+            $this->db->set("catatan_1", $data['catatan']);
+            $this->db->set("date_acc_1", date('Y-m-d'));
+        }
+
+        if (!empty($data['acc_2'])) {
+            $this->db->set("st_acc_2", $data['keputusan']);
+            $this->db->set("catatan_2", $data['catatan']);
+            $this->db->set("date_acc_2", date('Y-m-d'));
+        }
+
+        if (!empty($data['acc_3'])) {
+            $this->db->set("st_acc_3", $data['keputusan']);
+            $this->db->set("catatan_3", $data['catatan']);
+            $this->db->set("date_acc_3", date('Y-m-d'));
+        }
+
+        if (empty($res)) {
+            $this->db->set("id_transaction", $data['id']);
+            $this->db->insert('mp_approv');
+        } else {
+            $this->db->where("id_transaction", $data['id']);
+            $this->db->update('mp_approv');
+        }
+    }
+
+
     function activity_edit($id, $acc)
     {
 

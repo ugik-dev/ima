@@ -307,7 +307,7 @@ class Statements extends CI_Controller
 
 	//USED TO GENERATE JOURNAL VOUCHER 
 	//Vouchers/journal_voucher
-	function journal_voucher()
+	function journal_voucher($data_return = NULL)
 	{
 
 		$this->load->model('Crud_model');
@@ -326,7 +326,7 @@ class Statements extends CI_Controller
 
 		// DEFINES PAGE TITLE
 		$data['title'] = 'Entri Jurnal';
-
+		$data['data_return'] = $data_return;
 		$this->load->model('Statement_model');
 		$data['accounts_records'] = $this->Statement_model->chart_list();
 		$data['patner_record'] = $this->Statement_model->patners_cars_list();
@@ -418,8 +418,6 @@ class Statements extends CI_Controller
 		if ($page_name  == 'new_row') {
 			$this->load->model('Statement_model');
 			$data['accounts_records'] = $this->Statement_model->chart_list();
-
-			//model name available in admin models folder
 			$this->load->view('admin_models/accounts/new_row.php', $data);
 		}
 	}
@@ -442,8 +440,6 @@ class Statements extends CI_Controller
 		$acc[1]   = html_escape($this->input->post('acc_1'));
 		$acc[2]   = html_escape($this->input->post('acc_2'));
 		$acc[3]  = html_escape($this->input->post('acc_3'));
-
-
 
 		if ($date == NULL) {
 			$date = date('Y-m-d');
@@ -480,7 +476,8 @@ class Statements extends CI_Controller
 			'debitamount' => $debitamount,
 			'creditamount' => $creditamount,
 			'no_jurnal' => $no_jurnal,
-			'sub_keterangan' => $sub_keterangan
+			'sub_keterangan' => $sub_keterangan,
+			'acc' => $acc
 		);
 
 		// var_dump($data);
@@ -497,7 +494,9 @@ class Statements extends CI_Controller
 						'alert' => 'danger'
 					);
 					$this->session->set_flashdata('status', $array_msg);
-					redirect('statements/journal_voucher');
+					$this->journal_voucher($data);
+					return;
+					// redirect('statements/journal_voucher');
 				}
 			}
 			$result = $this->Transaction_model->journal_voucher_entry($data);
@@ -514,8 +513,9 @@ class Statements extends CI_Controller
 					'alert' => 'danger'
 				);
 				$this->session->set_flashdata('status', $array_msg);
-
-				redirect('statements/journal_voucher');
+				$this->journal_voucher($data);
+				return;
+				// redirect('statements/journal_voucher');
 			}
 		} else {
 			$array_msg = array(
@@ -523,7 +523,9 @@ class Statements extends CI_Controller
 				'alert' => 'danger'
 			);
 			$this->session->set_flashdata('status', $array_msg);
-			redirect('statements/journal_voucher');
+			$this->journal_voucher($data);
+			return;
+			// redirect('statements/journal_voucher');
 		}
 		redirect('statements');
 	}
@@ -586,7 +588,6 @@ class Statements extends CI_Controller
 			'sub_id' => $sub_id
 		);
 		if ($status) {
-
 			$this->load->model('Transaction_model');
 			if (!empty($data['no_jurnal'])) {
 				$res = $this->Transaction_model->check_no_jurnal($data['no_jurnal'], $id);
