@@ -78,6 +78,61 @@ class Statements extends CI_Controller
 		$this->load->view('main/index.php', $data);
 	}
 
+	public function copy_jurnal($id)
+	{
+
+		$this->load->model('Statement_model');
+		$res_detail = $this->Statement_model->detail_fetch_transasctions($id);
+		$res_acc = $this->Statement_model->get_acc($id, true);
+		$countsub = count($res_detail['sub']);
+		for ($i = 0; $i < $countsub; $i++) {
+			$accounthead[$i] = $res_detail['sub'][$i]['accounthead'];
+			$sub_keterangan[$i] = $res_detail['sub'][$i]['sub_keterangan'];
+			if ($res_detail['sub'][$i]['type'] == 0) {
+				$creditamount[$i] = '';
+				$debitamount[$i] = $res_detail['sub'][$i]['amount'];
+			} else {
+				$creditamount[$i] = $res_detail['sub'][$i]['amount'];
+				$debitamount[$i] = '';
+			}
+		}
+		// echo json_encode($res_detail['sub']);
+		// die();
+		if (!empty($res_acc)) {
+
+			$acc[1] = $res_acc->acc_1;
+			$acc[2] = $res_acc->acc_2;
+			$acc[3] = $res_acc->acc_3;
+		} else {
+			$acc[1] = '';
+			$acc[2] = '';
+			$acc[3] = '';
+		}
+		$new_arr = [];
+		$arr = explode(']', $res_detail['parent']->arr_cars);
+		foreach ($arr as $dat) {
+			if (!empty($dat)) {
+				$tmp = '';
+				$tmp = $this->Statement_model->find_cars(str_replace('[', '', $dat));
+				if (!empty($tmp)) array_push($new_arr, $tmp);
+			}
+		}
+		$data = array(
+			'description' => $res_detail['parent']->naration,
+			'date' => $res_detail['parent']->date,
+			'customer_id' => $res_detail['parent']->customer_id,
+			'arr_cars' => $res_detail['parent']->arr_cars,
+			'no_jurnal' => $res_detail['parent']->no_jurnal,
+			'account_head' => $accounthead,
+			'debitamount' => $debitamount,
+			'creditamount' => $creditamount,
+			'sub_keterangan' => $sub_keterangan,
+			'acc' => $acc
+		);
+		$this->journal_voucher($data);
+	}
+
+
 
 	public function export_excel()
 	{

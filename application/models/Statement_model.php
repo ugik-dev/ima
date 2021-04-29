@@ -125,6 +125,7 @@ class Statement_model extends CI_Model
                         </small>
                         <br>
                        <small> <i> No Jurnal : </small> <a id="no_jurnal_' . $transaction_record->transaction_id . '">' . $transaction_record->no_jurnal . '</a> </i> 
+                      <a href="' . base_url() . 'statements/copy_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-copy  pull-left"></i> Copy </a>
                       <a href="' . base_url() . 'statements/show/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-eye  pull-left"></i> Show </a>
                        ' .
                         ($transaction_record->gen_lock != 'Y' ? $btn_lock : '') . '

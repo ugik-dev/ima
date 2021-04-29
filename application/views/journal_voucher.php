@@ -3,7 +3,6 @@
         <div class="box-body ">
             <div class="">
                 <?php
-                var_dump($data_return);
                 $attributes = array('id' => 'journal_voucher', 'method' => 'post', 'class' => '');
                 ?>
                 <?php echo form_open('statements/create_journal_voucher', $attributes); ?>
@@ -283,6 +282,9 @@
         id_custmer.val('<?= $data_return['customer_id'] ?>');
         date_jurnal.val('<?= $data_return['date'] ?>');
         description.val('<?= $data_return['description'] ?>');
+        acc_1.val('<?= $data_return['acc'][1] ?>');
+        acc_2.val('<?= $data_return['acc'][2] ?>');
+        acc_3.val('<?= $data_return['acc'][3] ?>');
         <?php
         $count_rows = count($data_return['account_head']);
 
@@ -299,5 +301,7 @@
     $('.mask').mask('000.000.000.000.000,00', {
         reverse: true
     });
+
+    count_debits(true);
 </script>
 <?php $this->load->view('bootstrap_model.php'); ?>
