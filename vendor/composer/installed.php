@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => 'e0deb90c848f328db6a1ccd94ca193c41d1c2e6b',
+    'reference' => 'ed38c16d8a8fce56d2de52a42c4d6ca125961da6',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => 'e0deb90c848f328db6a1ccd94ca193c41d1c2e6b',
+      'reference' => 'ed38c16d8a8fce56d2de52a42c4d6ca125961da6',
     ),
     'ezyang/htmlpurifier' => 
     array (
@@ -28,6 +28,24 @@
       array (
       ),
       'reference' => '08e27c97e4c6ed02f37c5b2b20488046c8d90d75',
+    ),
+    'laminas/laminas-escaper' => 
+    array (
+      'pretty_version' => '2.7.0',
+      'version' => '2.7.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '5e04bc5ae5990b17159d79d331055e2c645e5cc5',
+    ),
+    'laminas/laminas-zendframework-bridge' => 
+    array (
+      'pretty_version' => '1.2.0',
+      'version' => '1.2.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '6cccbddfcfc742eb02158d6137ca5687d92cee32',
     ),
     'maennchen/zipstream-php' => 
     array (
@@ -83,6 +101,15 @@
       ),
       'reference' => 'c55269cb06911575a126dc225a05c0e4626e5fb4',
     ),
+    'phpoffice/phpword' => 
+    array (
+      'pretty_version' => '0.18.1',
+      'version' => '0.18.1.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '06b90e39a36872c6ee73534e1a073f4b3132fc6a',
+    ),
     'psr/http-client' => 
     array (
       'pretty_version' => '1.0.1',
@@ -127,6 +154,13 @@
       array (
       ),
       'reference' => '5232de97ee3b75b0360528dae24e73db49566ab1',
+    ),
+    'zendframework/zend-escaper' => 
+    array (
+      'replaced' => 
+      array (
+        0 => '^2.6.1',
+      ),
     ),
   ),
 );

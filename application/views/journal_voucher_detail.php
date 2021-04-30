@@ -72,10 +72,16 @@
                                     $totdeb = 0;
                                     $totkredit = 0;
                                     $i = 0;
-                                    foreach ($transaction['sub'] as  $key => $sub_parents) { ?>
+                                    $doc = false;
+                                    foreach ($transaction['sub'] as  $key => $sub_parents) {
+
+                                        if ($sub_parents['accounthead'] == '13') {
+                                            $doc = true;
+                                        }
+                                    ?>
 
                                         <tr>
-                                            <td class="rinc_name"><?= $sub_parents['name'] ?></td>
+                                            <td class="rinc_name"><?= $sub_parents['name'] ?> </td>
                                             <?php if ($sub_parents['type'] == '0') {
                                                 $totdeb = $totdeb + floatval($sub_parents['amount']);
                                             ?>
@@ -142,21 +148,21 @@
 
                         <div class="col-md-12 ">
                             <div class="form-group">
-
+                                <?php
+                                if ($doc) {
+                                ?>
+                                    <a href="<?= base_url() . 'statements/export_doc/' . $transaction['parent']->transaction_id ?>" class="btn btn-secondary  margin btn-lg pull-right" style="float: right"> <i class="fa fa-download" aria-hidden="true"></i>
+                                        DoC</a>
+                                <?php } ?>
                                 <a onclick="printSingleJurnal2()" class="btn btn-secondary  margin btn-lg pull-right" style="float: right"> <i class="fa fa-print" aria-hidden="true"></i>
                                     Print</a>
                                 <?php
-                                if ($this->session->userdata('user_id')['nama_role'] != 'direktur') {
+                                if ($this->session->userdata('user_id')['nama_role'] == 'accounting') {
                                 ?>
                                     <a href="<?= base_url() . 'statements/edit_jurnal/' . $transaction['parent']->transaction_id ?>" class="btn btn-info  margin btn-lg pull-right" style="float: right"> <i class="fa fa-list-alt" aria-hidden="true"></i>
                                         Edit</a>
-                                <?php } else { ?>
-                                    <a onclick="show_modal_page('<?php echo base_url() . 'DirectionController/popup/' . $this->session->userdata('user_id')['nama_role'] . '/' . $transaction['parent']->transaction_id ?>')" class="btn btn-info  margin btn-lg pull-right"><i class="fa fa-pencil"></i> Approv Jurnal</a>
-                                    <!-- <a onclick="show_modal_page('<?php echo base_url() . 'DirectionController/popup/add_cars_model/' . $this->session->userdata('user_id')['nama_role'] ?>')"><i class="fa fa-pencil"></i> Approv Jurnal</a> -->
+                                <?php } ?>
 
-                                <?php
-                                };
-                                ?>
                             </div>
                         </div>
                     </div>

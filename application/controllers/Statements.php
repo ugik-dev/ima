@@ -4,6 +4,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Writer\Word2007;
 
 class Statements extends CI_Controller
 {
@@ -181,6 +183,476 @@ class Statements extends CI_Controller
 
 		$writer->save('php://output'); // download file 
 	}
+	public function export_word2()
+	{
+		$phpWord = new \PhpOffice\PhpWord\PhpWord();
+		$section = $phpWord->addSection();
+		$header = array('size' => 16, 'bold' => true);
+
+		// 1. Basic table
+
+		$rows = 10;
+		$cols = 5;
+		$section->addText('Basic table', $header);
+
+		$table = $section->addTable();
+		for ($r = 1; $r <= $rows; $r++) {
+			$table->addRow();
+			for ($c = 1; $c <= $cols; $c++) {
+				$table->addCell(1750)->addText("Row {$r}, Cell {$c}");
+			}
+		}
+
+		// 2. Advanced table
+
+		$section->addTextBreak(1);
+		$section->addText('Fancy table', $header);
+
+		$fancyTableStyleName = 'Fancy Table';
+		$fancyTableStyle = array('borderSize' => 6, 'borderColor' => '006699', 'cellMargin' => 80, 'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 'cellSpacing' => 50);
+		$fancyTableFirstRowStyle = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => '66BBFF');
+		$fancyTableCellStyle = array('valign' => 'center');
+		$fancyTableCellBtlrStyle = array('valign' => 'center', 'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR);
+		$fancyTableFontStyle = array('bold' => true);
+		$phpWord->addTableStyle($fancyTableStyleName, $fancyTableStyle, $fancyTableFirstRowStyle);
+		$table = $section->addTable($fancyTableStyleName);
+		$table->addRow(900);
+		$table->addCell(2000, $fancyTableCellStyle)->addText('Row 1', $fancyTableFontStyle);
+		$table->addCell(2000, $fancyTableCellStyle)->addText('Row 2', $fancyTableFontStyle);
+		$table->addCell(2000, $fancyTableCellStyle)->addText('Row 3', $fancyTableFontStyle);
+		$table->addCell(2000, $fancyTableCellStyle)->addText('Row 4', $fancyTableFontStyle);
+		$table->addCell(500, $fancyTableCellBtlrStyle)->addText('Row 5', $fancyTableFontStyle);
+		for ($i = 1; $i <= 8; $i++) {
+			$table->addRow();
+			$table->addCell(2000)->addText("Cell {$i}");
+			$table->addCell(2000)->addText("Cell {$i}");
+			$table->addCell(2000)->addText("Cell {$i}");
+			$table->addCell(2000)->addText("Cell {$i}");
+			$text = (0 == $i % 2) ? 'X' : '';
+			$table->addCell(500)->addText($text);
+		}
+
+		/*
+ 
+
+		$section->addPageBreak();
+		$section->addText('Table with colspan and rowspan', $header);
+
+		$fancyTableStyle = array('borderSize' => 6, 'borderColor' => '999999');
+		$cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center', 'bgColor' => 'FFFF00');
+		$cellRowContinue = array('vMerge' => 'continue');
+		$cellColSpan = array('gridSpan' => 2, 'valign' => 'center');
+		$cellHCentered = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
+		$cellVCentered = array('valign' => 'center');
+
+		$spanTableStyleName = 'Colspan Rowspan';
+		$phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
+		$table = $section->addTable($spanTableStyleName);
+
+		$table->addRow();
+
+		$cell1 = $table->addCell(2000, $cellRowSpan);
+		$textrun1 = $cell1->addTextRun($cellHCentered);
+		$textrun1->addText('A');
+		$textrun1->addFootnote()->addText('Row span');
+
+		$cell2 = $table->addCell(4000, $cellColSpan);
+		$textrun2 = $cell2->addTextRun($cellHCentered);
+		$textrun2->addText('B');
+		$textrun2->addFootnote()->addText('Column span');
+
+		$table->addCell(2000, $cellRowSpan)->addText('E', null, $cellHCentered);
+
+		$table->addRow();
+		$table->addCell(null, $cellRowContinue);
+		$table->addCell(2000, $cellVCentered)->addText('C', null, $cellHCentered);
+		$table->addCell(2000, $cellVCentered)->addText('D', null, $cellHCentered);
+		$table->addCell(null, $cellRowContinue);
+
+		/*
+ *  4. colspan (gridSpan) and rowspan (vMerge)
+ *  ---------------------
+ *  |     |   B    |  1 |
+ *  |  A  |        |----|
+ *  |     |        |  2 |
+ *  |     |---|----|----|
+ *  |     | C |  D |  3 |
+ *  ---------------------
+ * @see https://github.com/PHPOffice/PHPWord/issues/806
+ */
+
+		$section->addPageBreak();
+		$section->addText('Table with colspan and rowspan', $header);
+
+		$styleTable = array('borderSize' => 6, 'borderColor' => '999999');
+		$phpWord->addTableStyle('Colspan Rowspan', $styleTable);
+		$table = $section->addTable('Colspan Rowspan');
+
+		$row = $table->addRow();
+		$row->addCell(1000, array('vMerge' => 'restart'))->addText('A');
+		$row->addCell(1000, array('gridSpan' => 2, 'vMerge' => 'restart'))->addText('B');
+		$row->addCell(1000)->addText('1');
+
+		$row = $table->addRow();
+		$row->addCell(1000, array('vMerge' => 'continue'));
+		$row->addCell(1000, array('vMerge' => 'continue', 'gridSpan' => 2));
+		$row->addCell(1000)->addText('2');
+
+		$row = $table->addRow();
+		$row->addCell(1000, array('vMerge' => 'continue'));
+		$row->addCell(1000)->addText('C');
+		$row->addCell(1000)->addText('D');
+		$row->addCell(1000)->addText('3');
+
+		// 5. Nested table
+
+		$section->addTextBreak(2);
+		$section->addText('Nested table in a centered and 50% width table.', $header);
+
+		$table = $section->addTable(array('width' => 50 * 50, 'unit' => 'pct', 'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER));
+		$cell = $table->addRow()->addCell();
+		$cell->addText('This cell contains nested table.');
+		$innerCell = $cell->addTable(array('alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER))->addRow()->addCell();
+		$innerCell->addText('Inside nested table');
+
+		// 6. Table with floating position
+
+		$section->addTextBreak(2);
+		$section->addText('Table with floating positioning.', $header);
+
+
+		$writer = new Word2007($phpWord);
+
+		$filename = 'simple';
+
+		header('Content-Type: application/msword');
+		header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
+		header('Cache-Control: max-age=0');
+
+		$writer->save('php://output');
+	}
+	public function export_word()
+	{
+		// require_once 'bootstrap.php';
+
+		// Creating the new document...
+		$phpWord = new \PhpOffice\PhpWord\PhpWord();
+		// $from = $this->input->get()['from'];
+		// $to = $this->input->get()['to'];
+		// $phpWord = new PhpWord();
+		// $section->addText('Hello World !');
+		$phpWord->addFontStyle('h3', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true));
+		$phpWord->addFontStyle('paragraph', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'spaceAfter' => 0));
+		// $PHPWord->addParagraphStyle('p3Style', array('align'=>'center', 'spaceAfter'=>100));
+		$phpWord->addFontStyle('paragraph_bold', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true));
+		$phpWord->addFontStyle('paragraph_bold_c', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true));
+		$phpWord->addFontStyle('paragraph2', array(
+			'name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'underline' => 'single'
+		));
+		$phpWord->addFontStyle('paragraph3', array(
+			'name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true, 'underline' => 'single'
+		));
+		$phpWord->addFontStyle('paragraph4', array(
+			'name' => 'Times New Roman', 'size' => 13, 'color' => '000000', 'bold' => true, 'underline' => 'single'
+		));
+		$noSpace = array('spaceAfter' => 0);
+		$noSpaceTables = array('spaceAfter' => 0, 'alignment' => \PhpOffice\PhpWord\SimpleType\VerticalJc::TOP);
+		$noSpace_center = array('spaceAfter' => 0, 'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
+
+		$fancyTableStyle = array('lineStyle' => 'no border', 'borderColor' => 'no border', 'height' => 800, 'cellMargin' => 50);
+		$cellVCentered = array('valign' => 'center', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
+		$spanTableStyleName = 'Colspan Rowspan';
+
+		$section = $phpWord->addSection();
+		$section = $phpWord->addSection(array(
+			'colsNum' => 2,
+			'colsSpace' => 500,
+			'breakType' => 'continuous'
+		));
+		$table = $section->addTable($spanTableStyleName);
+
+		$table->addRow(450);
+		$table->addCell(2000, $cellVCentered)->addText('Nomor', 'paragraph', $noSpace);
+		$table->addCell(150, $cellVCentered)->addText(':', 'paragraph', $noSpace);
+		$table->addCell(5000, $cellVCentered)->addText('189/UM/IA-A0000/2021-S4', 'paragraph', $noSpace);
+
+		$table->addRow(450);
+		$table->addCell(2000, $cellVCentered)->addText('Tanggal', 'paragraph', $noSpace);
+		$table->addCell(150, $cellVCentered)->addText(':', 'paragraph', $noSpace);
+		$table->addCell(2000, $cellVCentered)->addText('', 'paragraph', $noSpace);
+
+		$table->addRow(450);
+		$table->addCell(2000, $cellVCentered)->addText('Lampiran', 'paragraph', $noSpace);
+		$table->addCell(150, $cellVCentered)->addText(':', 'paragraph', $noSpace);
+		$table->addCell(5000, $cellVCentered)->addText('', 'paragraph', $noSpace);
+
+		$table->addRow(450);
+		$table->addCell(2000, $cellVCentered)->addText('Perihal', 'paragraph', $noSpace);
+		$table->addCell(150, $cellVCentered)->addText(':', 'paragraph', $noSpace);
+		$table->addCell(5000, $cellVCentered)->addText('', 'paragraph', $noSpace);
+
+		$section->addTextBreak();
+
+		$section->addText("\tKepada Yth. :");
+		$section->addText("\tPT Bank Mandiri (Persero) Tbk. ", 'paragraph', $noSpace);
+		$section->addText("\tKantor Cabang Pangkalpinang", 'paragraph', $noSpace);
+		$section->addText("\tUp. Kepala Bagian Kas", 'paragraph', $noSpace);
+		$section->addText("\tJl. Jendral Sudirman no.31", 'paragraph');
+		// $section->addTextBreak();
+		$textrun = $section->addTextRun();
+		$textrun->addText("\t");
+
+		$textrun->addText("PANGKALPINANG", array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'spaceAfter' => 0, 'bold' => false, 'underline' => 'single'));
+
+
+		// Normal
+		$section = $phpWord->addSection(array('breakType' => 'continuous'));
+		$section->addTextBreak();
+		$section->addTextBreak();
+
+		$section->addText('Mohon bantuan melakukan transfer dana dari rekening :');
+
+		$table = $section->addTable();
+
+		$table->addRow(450);
+		$table->addCell(2000, array('vMerge' => 'restart'))->addText('Atas Nama', 'paragraph', $noSpace);
+		$table->addCell(300, array('vMerge' => 'restart'))->addText(':', 'paragraph', $noSpace);
+		$table->addCell(8000, array('vMerge' => 'restart'))->addText(
+			'PT INDOETAL ASIA',
+			'paragraph',
+			$noSpace
+		);
+
+		$table->addRow(450);
+		$table->addCell(2000, array('vMerge' => 'restart'))->addText('Nomor Rekening', 'paragraph', $noSpace);
+		$table->addCell(300, array('vMerge' => 'restart'))->addText(':', 'paragraph', $noSpace);
+		$table->addCell(8000, array('vMerge' => 'restart'))->addText(
+			'112-0098146017',
+			'paragraph',
+			$noSpace
+		);
+
+
+		$table->addRow(450);
+		$table->addCell(2000, array('vMerge' => 'restart'))->addText('Jumlah', 'paragraph', $noSpace);
+		$table->addCell(300, array('vMerge' => 'restart'))->addText(':', 'paragraph', $noSpace);
+		$table->addCell(8000, array('vMerge' => 'restart'))->addText(
+			'Rp. 123.12391283.2318 (a asd asdjasd asdjasd asdjasd asdjsad asdhasd asdhasdasd adshasdhh asdh asdh asdkjasd asd jasd jasd jasd )',
+			'paragraph',
+			$noSpace
+
+		);
+
+		$section->addText('Table with colspan and rowspan');
+
+		// $styleTable = array('borderSize' => 0, 'borderColor' => '999999');
+		// $phpWord->addTableStyle('Colspan Rowspan', $styleTable);
+		$table = $section->addTable('Colspan Rowspan');
+
+		$row = $table->addRow();
+		$row->addCell(1000, array('vMerge' => 'restart'))->addText('A');
+		$row->addCell(1000, array('gridSpan' => 2, 'vMerge' => 'restart'))->addText('B');
+		$row->addCell(1000)->addText('1');
+
+		$row = $table->addRow();
+		$row->addCell(1000, array('vMerge' => 'continue'));
+		$row->addCell(
+			1000,
+			array('vMerge' => 'continue', 'gridSpan' => 2)
+		);
+		$row->addCell(1000)->addText('2');
+
+		$row = $table->addRow();
+		$row->addCell(1000, array('vMerge' => 'continue'));
+		$row->addCell(1000)->addText('C');
+		$row->addCell(1000)->addText('D');
+		$row->addCell(1000)->addText('3');
+
+
+
+		$section->addTextBreak();
+		// $phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
+
+
+
+		// $writer = new Word2007($phpWord);
+		$writer = new Word2007($phpWord);
+
+		$filename = 'simple';
+
+		header('Content-Type: application/msword');
+		header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
+		header('Cache-Control: max-age=0');
+
+		$writer->save('php://output');
+	}
+
+	public function export_doc()
+	{
+		// require_once 'bootstrap.php';
+
+		// Creating the new document...
+		$phpWord = new \PhpOffice\PhpWord\PhpWord();
+		// $from = $this->input->get()['from'];
+		// $to = $this->input->get()['to'];
+		// $phpWord = new PhpWord();
+		// $section->addText('Hello World !');
+		$phpWord->addFontStyle('h3', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true));
+		$phpWord->addFontStyle('paragraph', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'spaceAfter' => 0));
+		// $PHPWord->addParagraphStyle('p3Style', array('align'=>'center', 'spaceAfter'=>100));
+		$phpWord->addFontStyle('paragraph_bold', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true));
+		$phpWord->addFontStyle('paragraph_bold_c', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true));
+		$phpWord->addFontStyle('paragraph2', array(
+			'name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'underline' => 'single'
+		));
+		$phpWord->addFontStyle('paragraph3', array(
+			'name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true, 'underline' => 'single'
+		));
+		$phpWord->addFontStyle('paragraph4', array(
+			'name' => 'Times New Roman', 'size' => 13, 'color' => '000000', 'bold' => true, 'underline' => 'single'
+		));
+		$noSpace = array('spaceAfter' => 0);
+		$noSpaceTables = array('spaceAfter' => 0, 'alignment' => \PhpOffice\PhpWord\SimpleType\VerticalJc::TOP);
+		$noSpace_center = array('spaceAfter' => 0, 'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
+
+		$fancyTableStyle = array(
+			'lineStyle' => 'no border', 'borderColor' => 'no border', 'height' => 800, 'cellMargin' => 50
+		);
+		$cellVCentered = array('valign' => 'center', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
+		$spanTableStyleName = 'Colspan Rowspan';
+
+		$section = $phpWord->addSection();
+		$section = $phpWord->addSection(array(
+			'colsNum' => 2,
+			'colsSpace' => 500,
+			'breakType' => 'continuous'
+		));
+		$table = $section->addTable($spanTableStyleName);
+
+		$table->addRow(450);
+		$table->addCell(2000, $cellVCentered)->addText('Nomor', 'paragraph', $noSpace);
+		$table->addCell(150, $cellVCentered)->addText(':', 'paragraph', $noSpace);
+		$table->addCell(5000, $cellVCentered)->addText('189/UM/IA-A0000/2021-S4', 'paragraph', $noSpace);
+
+		$table->addRow(450);
+		$table->addCell(2000, $cellVCentered)->addText('Tanggal', 'paragraph', $noSpace);
+		$table->addCell(150, $cellVCentered)->addText(':', 'paragraph', $noSpace);
+		$table->addCell(2000, $cellVCentered)->addText('', 'paragraph', $noSpace);
+
+		$table->addRow(450);
+		$table->addCell(2000, $cellVCentered)->addText('Lampiran', 'paragraph', $noSpace);
+		$table->addCell(150, $cellVCentered)->addText(':', 'paragraph', $noSpace);
+		$table->addCell(5000, $cellVCentered)->addText('', 'paragraph', $noSpace);
+
+		$table->addRow(450);
+		$table->addCell(2000, $cellVCentered)->addText('Perihal', 'paragraph', $noSpace);
+		$table->addCell(150, $cellVCentered)->addText(':', 'paragraph', $noSpace);
+		$table->addCell(5000, $cellVCentered)->addText('', 'paragraph', $noSpace);
+
+		$section->addTextBreak();
+
+		$section->addText("\tKepada Yth. :");
+		$section->addText(
+			"\tPT Bank Mandiri (Persero) Tbk. ",
+			'paragraph',
+			$noSpace
+		);
+		$section->addText("\tKantor Cabang Pangkalpinang", 'paragraph', $noSpace);
+		$section->addText("\tUp. Kepala Bagian Kas", 'paragraph', $noSpace);
+		$section->addText("\tJl. Jendral Sudirman no.31", 'paragraph');
+		// $section->addTextBreak();
+		$textrun = $section->addTextRun();
+		$textrun->addText("\t");
+
+		$textrun->addText("PANGKALPINANG", array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'spaceAfter' => 0, 'bold' => false, 'underline' => 'single'));
+
+
+		// Normal
+		$section = $phpWord->addSection(array('breakType' => 'continuous'));
+		$section->addTextBreak();
+		$section->addTextBreak();
+
+		$section->addText('Mohon bantuan melakukan transfer dana dari rekening :');
+
+		$table = $section->addTable();
+
+		$table->addRow(450);
+		$table->addCell(2000, array('vMerge' => 'restart'))->addText('Atas Nama', 'paragraph', $noSpace);
+		$table->addCell(300, array('vMerge' => 'restart'))->addText(':', 'paragraph', $noSpace);
+		$table->addCell(8000, array('vMerge' => 'restart'))->addText(
+			'PT INDOETAL ASIA',
+			'paragraph',
+			$noSpace
+		);
+
+		$table->addRow(450);
+		$table->addCell(
+			2000,
+			array('vMerge' => 'restart')
+		)->addText('Nomor Rekening', 'paragraph', $noSpace);
+		$table->addCell(300, array('vMerge' => 'restart'))->addText(':', 'paragraph', $noSpace);
+		$table->addCell(8000, array('vMerge' => 'restart'))->addText(
+			'112-0098146017',
+			'paragraph',
+			$noSpace
+		);
+
+
+		$table->addRow(450);
+		$table->addCell(2000, array('vMerge' => 'restart'))->addText('Jumlah', 'paragraph', $noSpace);
+		$table->addCell(300, array('vMerge' => 'restart'))->addText(':', 'paragraph', $noSpace);
+		$table->addCell(8000, array('vMerge' => 'restart'))->addText(
+			'Rp. 123.12391283.2318 (a asd asdjasd asdjasd asdjasd asdjsad asdhasd asdhasdasd adshasdhh asdh asdh asdkjasd asd jasd jasd jasd )',
+			'paragraph',
+			$noSpace
+
+		);
+
+		$section->addText('Table with colspan and rowspan');
+
+		// $styleTable = array('borderSize' => 0, 'borderColor' => '999999');
+		// $phpWord->addTableStyle('Colspan Rowspan', $styleTable);
+		$table = $section->addTable('Colspan Rowspan');
+
+		$row = $table->addRow();
+		$row->addCell(1000, array('vMerge' => 'restart'))->addText('A');
+		$row->addCell(1000, array('gridSpan' => 2, 'vMerge' => 'restart'))->addText('B');
+		$row->addCell(1000)->addText('1');
+
+		$row = $table->addRow();
+		$row->addCell(1000, array('vMerge' => 'continue'));
+		$row->addCell(
+			1000,
+			array('vMerge' => 'continue', 'gridSpan' => 2)
+		);
+		$row->addCell(1000)->addText('2');
+
+		$row = $table->addRow();
+		$row->addCell(1000, array('vMerge' => 'continue'));
+		$row->addCell(1000)->addText('C');
+		$row->addCell(1000)->addText('D');
+		$row->addCell(1000)->addText('3');
+
+
+
+		$section->addTextBreak();
+		// $phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
+
+
+
+		// $writer = new Word2007($phpWord);
+		$writer = new Word2007($phpWord);
+
+		$filename = 'simple';
+
+		header('Content-Type: application/msword');
+		header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
+		header('Cache-Control: max-age=0');
+
+		$writer->save('php://output');
+	}
+
+
 	public function v2()
 	{
 
