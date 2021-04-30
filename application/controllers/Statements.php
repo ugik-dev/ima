@@ -232,54 +232,7 @@ class Statements extends CI_Controller
 			$table->addCell(500)->addText($text);
 		}
 
-		/*
- 
 
-		$section->addPageBreak();
-		$section->addText('Table with colspan and rowspan', $header);
-
-		$fancyTableStyle = array('borderSize' => 6, 'borderColor' => '999999');
-		$cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center', 'bgColor' => 'FFFF00');
-		$cellRowContinue = array('vMerge' => 'continue');
-		$cellColSpan = array('gridSpan' => 2, 'valign' => 'center');
-		$cellHCentered = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
-		$cellVCentered = array('valign' => 'center');
-
-		$spanTableStyleName = 'Colspan Rowspan';
-		$phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
-		$table = $section->addTable($spanTableStyleName);
-
-		$table->addRow();
-
-		$cell1 = $table->addCell(2000, $cellRowSpan);
-		$textrun1 = $cell1->addTextRun($cellHCentered);
-		$textrun1->addText('A');
-		$textrun1->addFootnote()->addText('Row span');
-
-		$cell2 = $table->addCell(4000, $cellColSpan);
-		$textrun2 = $cell2->addTextRun($cellHCentered);
-		$textrun2->addText('B');
-		$textrun2->addFootnote()->addText('Column span');
-
-		$table->addCell(2000, $cellRowSpan)->addText('E', null, $cellHCentered);
-
-		$table->addRow();
-		$table->addCell(null, $cellRowContinue);
-		$table->addCell(2000, $cellVCentered)->addText('C', null, $cellHCentered);
-		$table->addCell(2000, $cellVCentered)->addText('D', null, $cellHCentered);
-		$table->addCell(null, $cellRowContinue);
-
-		/*
- *  4. colspan (gridSpan) and rowspan (vMerge)
- *  ---------------------
- *  |     |   B    |  1 |
- *  |  A  |        |----|
- *  |     |        |  2 |
- *  |     |---|----|----|
- *  |     | C |  D |  3 |
- *  ---------------------
- * @see https://github.com/PHPOffice/PHPWord/issues/806
- */
 
 		$section->addPageBreak();
 		$section->addText('Table with colspan and rowspan', $header);
@@ -487,11 +440,48 @@ class Statements extends CI_Controller
 		$writer->save('php://output');
 	}
 
-	public function export_doc()
+	public function export_doc($id)
 	{
-		// require_once 'bootstrap.php';
 
-		// Creating the new document...
+		$this->load->model('Statement_model');
+		$res_detail = $this->Statement_model->detail_fetch_transasctions($id);
+		$res_acc = $this->Statement_model->get_acc($id, true);
+		$countsub = count($res_detail['sub']);
+		for ($i = 0; $i < $countsub; $i++) {
+			if ($res_detail['sub'][$i]['accounthead'] == 13) {
+				$nominal = $res_detail['sub'][$i]['amount'];
+				$nominal = number_format($nominal, 2, ',', '.');
+				$angka = $res_detail['sub'][$i]['amount'];;
+				$terbilang = $this->terbilang($angka);
+			}
+
+			if ($res_detail['sub'][$i]['accounthead'] == 8) {
+				$bank = 'Mandiri A';
+			}
+		}
+		// echo json_encode($res_detail['sub']);
+		// die();
+		if (!empty($res_acc)) {
+
+			$acc[1] = $res_acc->acc_1;
+			$acc[2] = $res_acc->acc_2;
+			$acc[3] = $res_acc->acc_3;
+		} else {
+			$acc[1] = '';
+			$acc[2] = '';
+			$acc[3] = '';
+		}
+		$new_arr = [];
+		$arr = explode(']', $res_detail['parent']->arr_cars);
+		foreach ($arr as $dat) {
+			if (!empty($dat)) {
+				$tmp = '';
+				$tmp = $this->Statement_model->find_cars(str_replace('[', '', $dat));
+				if (!empty($tmp)) array_push($new_arr, $tmp);
+			}
+		}
+
+
 		$phpWord = new \PhpOffice\PhpWord\PhpWord();
 		// $from = $this->input->get()['from'];
 		// $to = $this->input->get()['to'];
@@ -501,7 +491,7 @@ class Statements extends CI_Controller
 		$phpWord->addFontStyle('paragraph', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'spaceAfter' => 0));
 		// $PHPWord->addParagraphStyle('p3Style', array('align'=>'center', 'spaceAfter'=>100));
 		$phpWord->addFontStyle('paragraph_bold', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true));
-		$phpWord->addFontStyle('paragraph_bold_c', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true));
+		$phpWord->addFontStyle('paragraph_bold_c', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true, 'spaceAfter' => 0));
 		$phpWord->addFontStyle('paragraph2', array(
 			'name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'underline' => 'single'
 		));
@@ -547,16 +537,13 @@ class Statements extends CI_Controller
 		$table->addRow(450);
 		$table->addCell(2000, $cellVCentered)->addText('Perihal', 'paragraph', $noSpace);
 		$table->addCell(150, $cellVCentered)->addText(':', 'paragraph', $noSpace);
-		$table->addCell(5000, $cellVCentered)->addText('', 'paragraph', $noSpace);
+		$table->addCell(5000, $cellVCentered)->addText('Penerbitan Deposito On Call', 'paragraph_bold', $noSpace);
 
 		$section->addTextBreak();
 
-		$section->addText("\tKepada Yth. :");
-		$section->addText(
-			"\tPT Bank Mandiri (Persero) Tbk. ",
-			'paragraph',
-			$noSpace
-		);
+		$section->addText("\tKepada Yth. ", 'paragraph', $noSpace);
+		$section->addText("\tPimpinan Cabang", 'paragraph', $noSpace);
+		$section->addText("\tPT Bank Mandiri (Persero) Tbk. ", 'paragraph', $noSpace);
 		$section->addText("\tKantor Cabang Pangkalpinang", 'paragraph', $noSpace);
 		$section->addText("\tUp. Kepala Bagian Kas", 'paragraph', $noSpace);
 		$section->addText("\tJl. Jendral Sudirman no.31", 'paragraph');
@@ -571,69 +558,41 @@ class Statements extends CI_Controller
 		$section = $phpWord->addSection(array('breakType' => 'continuous'));
 		$section->addTextBreak();
 		$section->addTextBreak();
+		$textrun = $section->addTextRun();
+		// $textrun->addText("\t");
+		$textrun->addText('Dengan ini kami mohon bantuan kepada Bank Mandiri untuk menerbitkan Deposito on Call dengan jangka waktu 12 hari TMT. 30 April 2021 sebesar');
+		$textrun->addText(' Rp ' . $nominal, array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'spaceAfter' => 0, 'bold' => true,));
+		$textrun->addText(' ( ' . $terbilang . ' rupiah )', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'spaceAfter' => 0, 'bold' => true, 'italic' => true));
+		$textrun->addText('dengan Debet Rekening PT. Indometal Asia No. 112-0098146017');
 
-		$section->addText('Mohon bantuan melakukan transfer dana dari rekening :');
-
+		$section->addText('Pencairan Deposito On Call beserta bunganya agar di kreditkan ke Rekening atas nama PT. Indometal Asia seperti tercantum di atas.');
+		$section->addText('Demikian disampaikan, atas perhatian dan kerjasamanya kami ucapkan terima kasih');
+		$section->addTextBreak(2);
 		$table = $section->addTable();
 
-		$table->addRow(450);
-		$table->addCell(2000, array('vMerge' => 'restart'))->addText('Atas Nama', 'paragraph', $noSpace);
-		$table->addCell(300, array('vMerge' => 'restart'))->addText(':', 'paragraph', $noSpace);
-		$table->addCell(8000, array('vMerge' => 'restart'))->addText(
+		$table->addRow();
+		$table->addCell(4000)->addText(
+			'',
+			'paragraph_bold_c',
+			$noSpace_center
+		);;
+		$table->addCell(4000)->addText(
 			'PT INDOETAL ASIA',
-			'paragraph',
-			$noSpace
+			'paragraph_bold_c',
+			$noSpace_center
 		);
 
-		$table->addRow(450);
-		$table->addCell(
-			2000,
-			array('vMerge' => 'restart')
-		)->addText('Nomor Rekening', 'paragraph', $noSpace);
-		$table->addCell(300, array('vMerge' => 'restart'))->addText(':', 'paragraph', $noSpace);
-		$table->addCell(8000, array('vMerge' => 'restart'))->addText(
-			'112-0098146017',
-			'paragraph',
-			$noSpace
+		$table->addRow();
+		$table->addCell(4000)->addText(
+			'',
+			'paragraph_bold_c',
+			$noSpace_center
+		);;
+		$table->addCell(4000)->addText(
+			'Direktur',
+			'paragraph_bold_c',
+			$noSpace_center
 		);
-
-
-		$table->addRow(450);
-		$table->addCell(2000, array('vMerge' => 'restart'))->addText('Jumlah', 'paragraph', $noSpace);
-		$table->addCell(300, array('vMerge' => 'restart'))->addText(':', 'paragraph', $noSpace);
-		$table->addCell(8000, array('vMerge' => 'restart'))->addText(
-			'Rp. 123.12391283.2318 (a asd asdjasd asdjasd asdjasd asdjsad asdhasd asdhasdasd adshasdhh asdh asdh asdkjasd asd jasd jasd jasd )',
-			'paragraph',
-			$noSpace
-
-		);
-
-		$section->addText('Table with colspan and rowspan');
-
-		// $styleTable = array('borderSize' => 0, 'borderColor' => '999999');
-		// $phpWord->addTableStyle('Colspan Rowspan', $styleTable);
-		$table = $section->addTable('Colspan Rowspan');
-
-		$row = $table->addRow();
-		$row->addCell(1000, array('vMerge' => 'restart'))->addText('A');
-		$row->addCell(1000, array('gridSpan' => 2, 'vMerge' => 'restart'))->addText('B');
-		$row->addCell(1000)->addText('1');
-
-		$row = $table->addRow();
-		$row->addCell(1000, array('vMerge' => 'continue'));
-		$row->addCell(
-			1000,
-			array('vMerge' => 'continue', 'gridSpan' => 2)
-		);
-		$row->addCell(1000)->addText('2');
-
-		$row = $table->addRow();
-		$row->addCell(1000, array('vMerge' => 'continue'));
-		$row->addCell(1000)->addText('C');
-		$row->addCell(1000)->addText('D');
-		$row->addCell(1000)->addText('3');
-
-
 
 		$section->addTextBreak();
 		// $phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
@@ -1244,5 +1203,45 @@ class Statements extends CI_Controller
 			return;
 		}
 		echo ($data);
+	}
+
+
+	function penyebut($nilai)
+	{
+		$nilai = abs($nilai);
+		$huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
+		$temp = "";
+		if ($nilai < 12) {
+			$temp = " " . $huruf[$nilai];
+		} else if ($nilai < 20) {
+			$temp = $this->penyebut($nilai - 10) . " belas";
+		} else if ($nilai < 100) {
+			$temp = $this->penyebut($nilai / 10) . " puluh" . $this->penyebut($nilai % 10);
+		} else if ($nilai < 200) {
+			$temp = " seratus" . $this->penyebut($nilai - 100);
+		} else if ($nilai < 1000) {
+			$temp = $this->penyebut($nilai / 100) . " ratus" . $this->penyebut($nilai % 100);
+		} else if ($nilai < 2000) {
+			$temp = " seribu" . $this->penyebut($nilai - 1000);
+		} else if ($nilai < 1000000) {
+			$temp = $this->penyebut($nilai / 1000) . " ribu" . $this->penyebut($nilai % 1000);
+		} else if ($nilai < 1000000000) {
+			$temp = $this->penyebut($nilai / 1000000) . " juta" . $this->penyebut($nilai % 1000000);
+		} else if ($nilai < 1000000000000) {
+			$temp = $this->penyebut($nilai / 1000000000) . " milyar" . $this->penyebut(fmod($nilai, 1000000000));
+		} else if ($nilai < 1000000000000000) {
+			$temp = $this->penyebut($nilai / 1000000000000) . " trilyun" . $this->penyebut(fmod($nilai, 1000000000000));
+		}
+		return $temp;
+	}
+
+	function terbilang($nilai)
+	{
+		if ($nilai < 0) {
+			$hasil = "minus " . trim($this->penyebut($nilai));
+		} else {
+			$hasil = trim($this->penyebut($nilai));
+		}
+		return $hasil;
 	}
 }

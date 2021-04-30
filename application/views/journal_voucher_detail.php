@@ -81,7 +81,7 @@
                                     ?>
 
                                         <tr>
-                                            <td class="rinc_name"><?= $sub_parents['name'] ?> </td>
+                                            <td class="rinc_name"><?= $sub_parents['name'] ?> <?= $sub_parents['accounthead'] ?> </td>
                                             <?php if ($sub_parents['type'] == '0') {
                                                 $totdeb = $totdeb + floatval($sub_parents['amount']);
                                             ?>
