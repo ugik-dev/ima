@@ -15,8 +15,10 @@
                 </a> -->
                 <!---------- End new button ------------>
                 <button onclick="printDiv('print-section')" class="btn btn-default btn-outline-primary   pull-right "><i class="fa fa-print  pull-left"></i> Cetak</button>
+
             </div>
         </div>
+
     </div>
 </section>
 <section class="content">

@@ -61,10 +61,10 @@
                             <table class="table table-striped table-hover  ">
                                 <thead>
                                     <tr>
-                                        <th class="col-md-5 ">Akun</th>
-                                        <th class="col-md-2">Debit</th>
-                                        <th class="col-md-2">Kredit</th>
-                                        <th class="col-md-3">Keterangan</th>
+                                        <th class="">Akun</th>
+                                        <th class="">Debit</th>
+                                        <th class="">Kredit</th>
+                                        <th class="">Keterangan</th>
                                     </tr>
                                 </thead>
                                 <tbody id="transaction_table_body">
@@ -176,6 +176,9 @@
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
+    $('#menu_id_24').addClass('menu-item-active menu-item-open menu-item-here"')
+    $('#submenu_id_59').addClass('menu-item-active')
+
     function formatRupiah(angka, prefix) {
         var number_string = angka.toString();
         split = number_string.split(".");

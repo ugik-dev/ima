@@ -20,10 +20,13 @@
         echo form_input($data);
         ?>
     </td>
-    <td>
+
+</tr>
+<tr>
+    <td colspan="3">
         <?php
-        $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'sub_keterangan[]', 'value' => '');
+        $data = array('class' => 'form-control input-lg', 'type' => 'text', 'placeholder' => 'keterangan', 'name' => 'sub_keterangan[]', 'value' => '');
         echo form_input($data);
         ?>
-    </td>
+        </tdc>
 </tr>

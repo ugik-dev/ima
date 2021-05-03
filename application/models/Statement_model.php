@@ -44,6 +44,54 @@ class Statement_model extends CI_Model
         $total_debit = 0;
         $total_credit = 0;
         $form_content = '';
+        $return_data = [];
+
+        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
+        $this->db->from('mp_generalentry');
+        if (!empty($filter['no_jurnal']))
+            $this->db->where('no_jurnal like "%' . $filter['no_jurnal'] . '%"');
+        $this->db->where('date >=', $filter['from']);
+        $this->db->where('date <=', $filter['to']);
+
+        $this->db->order_by('mp_generalentry.id', 'DESC');
+
+        $query = $this->db->get();
+        $i = 0;
+        if ($query->num_rows() > 0) {
+            $transaction_records =  $query->result_array();
+            if ($transaction_records  != NULL) {
+
+                foreach ($transaction_records as $transaction_record) {
+                    $debit_amt = NULL;
+                    $credit_amt = NULL;
+
+                    $return_data[$i] = $transaction_record;
+                    $this->db->select("mp_sub_entry.*,mp_head.name");
+                    $this->db->from('mp_sub_entry');
+                    $this->db->join('mp_head', 'mp_head.id = mp_sub_entry.accounthead');
+                    $this->db->where('mp_sub_entry.parent_id =', $transaction_record['transaction_id']);
+                    $sub_query = $this->db->get();
+                    if ($sub_query->num_rows() > 0) {
+                        $sub_query =  $sub_query->result_array();
+                        if ($sub_query != NULL) {
+                            $return_data[$i]['data_sub'] = $sub_query;
+                        }
+                    }
+                    // echo json_encode($return_data);
+                    // die();
+                    $i++;
+                }
+            }
+        }
+        return $return_data;
+    }
+
+    public function fetch_transasctions_old($filter)
+    {
+
+        $total_debit = 0;
+        $total_credit = 0;
+        $form_content = '';
 
         $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
         $this->db->from('mp_generalentry');
@@ -74,59 +122,55 @@ class Statement_model extends CI_Model
                         if ($sub_query != NULL) {
                             foreach ($sub_query as $single_trans) {
                                 if ($single_trans->type == 0) {
-                                    // echo $single_trans->amount;
-                                    // die();
                                     $form_content .= '<tr>
                             <td id="date_' . $transaction_record->transaction_id . '">' . $transaction_record->date . '</td>
                             <td>
-                            <a  class="rinc_name_' . $transaction_record->transaction_id . '">' . $single_trans->name . '</a>
+                            <p  class="rinc_name_' . $transaction_record->transaction_id . '">' . $single_trans->name . '</p>
                             </td>
                             <td>
-                            <a class="rinc_ket_' . $transaction_record->transaction_id . '">' . $single_trans->sub_keterangan . '</a>
+                            <p class="rinc_ket_' . $transaction_record->transaction_id . '">' . $single_trans->sub_keterangan . '</p>
                                 </td>
                             <td>
-                                <a  class="currency rinc_debit_' . $transaction_record->transaction_id . '">' . $single_trans->amount . '</a>
+                                <p  class="currency rinc_debit_' . $transaction_record->transaction_id . '">' . $single_trans->amount . '</p>
                             </td>
                             <td>
-                                <a class="rinc_kredit_' . $transaction_record->transaction_id . '"></a>
+                                <p class="rinc_kredit_' . $transaction_record->transaction_id . '"></p>
                             </td>          
                             </tr>';
                                 } else if ($single_trans->type == 1) {
                                     $form_content .= '<tr>
-                            <td>' . $transaction_record->date . '</td><td ><a class="general-journal-credit rinc_name_' . $transaction_record->transaction_id . '" >' . $single_trans->name . '</a>
+                            <td>' . $transaction_record->date . '</td><td ><p class="general-journal-credit rinc_name_' . $transaction_record->transaction_id . '" >' . $single_trans->name . '</p>
                             </td>
                             <td>
-                            <a class="rinc_ket_' . $transaction_record->transaction_id . '" >' . $single_trans->sub_keterangan . '</a>
+                            <p class="rinc_ket_' . $transaction_record->transaction_id . '" >' . $single_trans->sub_keterangan . '</p>
                                 </td>
                             <td>
-                                <a class="rinc_debit_' . $transaction_record->transaction_id . '"></a>
+                                <p class="rinc_debit_' . $transaction_record->transaction_id . '"></p>
                             </td>
                             <td>
-                                <a  class="currency rinc_kredit_' . $transaction_record->transaction_id . '">' . $single_trans->amount . '</a>
+                                <p  class="currency rinc_kredit_' . $transaction_record->transaction_id . '">' . $single_trans->amount . '</p>
                             </td>           
                             </tr>';
                                 }
                             }
                         }
                     }
-                    // var_dump($this->session->userdata('user_id'));
-                    // die();
                     if ($this->session->userdata('user_id')['nama_role'] != 'direktur') {
                         $btn_lock = ' 
-                        <a href="' . base_url() . 'statements/edit_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-list-alt pull-left"></i> Edit</a> 
+                        <a href="' . base_url() . 'statements/edit_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  mr-1 my-1  no-print" style="float: right"><i class="fa fa-list-alt pull-left"></i> Edit</a> 
                           ';
                     } else {
                         $btn_lock = '';
                     };
-                    // die();
                     $form_content .= '<tr class="narration" >
                     <td class="border-bottom-journal" colspan="5">
-                    <small> <i id="naration_' . $transaction_record->transaction_id . '">' . (empty($transaction_record->naration) ? '-' : $transaction_record->naration) . '</i>
-                        </small>
-                        <br>
-                       <small> <i> No Jurnal : </small> <a id="no_jurnal_' . $transaction_record->transaction_id . '">' . $transaction_record->no_jurnal . '</a> </i> 
-                      <a href="' . base_url() . 'statements/copy_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-copy  pull-left"></i> Copy </a>
-                      <a href="' . base_url() . 'statements/show/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  no-print" style="float: right"><i class="fa fa-eye  pull-left"></i> Show </a>
+                     <h6 id="naration_' . $transaction_record->transaction_id . '">' . (empty($transaction_record->naration) ? '-' : $transaction_record->naration) . '</h6>
+                       
+                       <h7> No Jurnal : ' . $transaction_record->no_jurnal . '</h7> 
+                       <br>
+                       <a href="' . base_url() . 'statements/delete_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-danger mr-1 my-1 no-print" style="float: right"><i class="fa fa-trash  pull-left"></i> Delete </a>
+                      <a href="' . base_url() . 'statements/copy_jurnal/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  mr-1 my-1  no-print" style="float: right"><i class="fa fa-copy  pull-left"></i> Copy </a>
+                      <a href="' . base_url() . 'statements/show/' . $transaction_record->transaction_id . '" class="btn btn-default btn-outline-primary  mr-1 my-1  no-print" style="float: right"><i class="fa fa-eye  pull-left"></i> Show </a>
                        ' .
                         ($transaction_record->gen_lock != 'Y' ? $btn_lock : '') . '
                         </td>
@@ -312,7 +356,7 @@ class Statement_model extends CI_Model
         $accounts_types = array('Assets', 'Liability', 'Equity', 'Revenue', 'Expense');
         $form_content = '';
         for ($i = 0; $i  < count($accounts_types); $i++) {
-            $form_content .= '<h4 class="ledger_head"><b><i class="fa fa-hand-o-right"> ' . $accounts_types[$i] . ' : </i></b></h4>';
+            $form_content .= '<h4 class=""><b>' . $accounts_types[$i] . ' : </b></h4>';
             $this->db->select('mp_head.*');
             $this->db->from('mp_head');
             $this->db->order_by('mp_head.name');
@@ -333,12 +377,12 @@ class Statement_model extends CI_Model
                         </div>
          
                         <thead class="ledger-table-head">
-                             <th class="col-md-2">TANGGAL(Y-m-d)</th>
-                             <th class="col-md-2">NO JURNAL</th>
-                             <th class="col-md-4">TRANSAKSI</th>
-                             <th class="col-md-1">DEBIT</th>                
-                             <th class="col-md-1">KREDIT</th>
-                             <th class="col-md-2">SALDO</th>
+                             <th class="">TANGGAL</th>
+                             <th class="">NO JURNAL</th>
+                             <th class="">TRANSAKSI</th>
+                             <th class="">DEBIT</th>                
+                             <th class="">KREDIT</th>
+                             <th class="">SALDO</th>
                         </thead>
                         <tbody>';
 
@@ -359,12 +403,16 @@ class Statement_model extends CI_Model
 
                             $form_content .= '<tr>
                         <td>' . $single_ledger->date . '</td><td>' . $single_ledger->no_jurnal . '</td><td><a >' . $single_ledger->sub_keterangan . '</a></td><td>
-                            <a  class="currency">' . $debitamount . '</a>
+                            <a  class="currency">' .
+                                (!empty($debitamount) ? number_format($debitamount, 2, ',', '.') : '') .
+                                '</a>
                         </td>
                         <td>
-                            <a   class="currency">' . $creditamount . '</a>
+                            <a   class="currency">' .
+                                (!empty($creditamount) ? number_format($creditamount, 2, ',', '.') : '')
+                                . '</a>
                         </td>
-                        <td  >' . ($total_ledger < 0 ? '( <a class="currency">' . -$total_ledger . '</a>)' : '<a class="currency">' . $total_ledger . '</a>') . '</td>            
+                        <td  >' . ($total_ledger < 0 ? '( <a class="currency">' . number_format(-$total_ledger, 2, ',', '.') . '</a>)' : '<a class="currency">' . $total_ledger . '</a>') . '</td>            
                     </tr>';
                         }
                     }

@@ -46,7 +46,10 @@
         </div>
     </div>
 </section>
-
+<script>
+    $('#menu_id_23').addClass('menu-item-active menu-item-open menu-item-here"')
+    $('#submenu_id_78').addClass('menu-item-active')
+</script>
 <script>
     no_jurnal = $('#no_jurnal');
     description = $('#description');

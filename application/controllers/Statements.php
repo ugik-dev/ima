@@ -596,9 +596,6 @@ class Statements extends CI_Controller
 
 		$section->addTextBreak();
 		// $phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
-
-
-
 		// $writer = new Word2007($phpWord);
 		$writer = new Word2007($phpWord);
 
@@ -1188,6 +1185,27 @@ class Statements extends CI_Controller
 		}
 		redirect('statements/show/' . $data['id']);
 		// redirect('statements');
+	}
+
+	public function delete_jurnal($id)
+	{
+		$this->load->model('Transaction_model');
+		if (!empty($id)) {
+			$res = $this->Transaction_model->check_lock($id);
+			// var_dump($res);
+			// die();
+			if ($res == 'Y') {
+				$array_msg = array(
+					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Data Sudah di Kunci! ',
+					'alert' => 'danger'
+				);
+				$this->session->set_flashdata('status', $array_msg);
+				redirect('statements');
+			}
+		}
+
+		$result = $this->Transaction_model->delete_jurnal($id);
+		// $this->Transaction_model->activity_edit($id, $acc);
 	}
 
 	public function getListCars()

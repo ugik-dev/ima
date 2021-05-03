@@ -17,9 +17,9 @@
                         <?php if (!empty($acc)) {
                             // var_dump($acc->acc_1);
                         } ?>
-                        <div class="col-md-12 ">
+                        <div class="col-lg-12 ">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <?php echo form_label('Patner'); ?>
                                         <select name="customer_id" id="customer_id" class="form-control select2 input-lg">
@@ -28,11 +28,11 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-lg-6">
                                     <div class="form-group" id='label_kendaraan' style="display: none">
                                         <label>Kendaraan</label>
                                         <div class="row">
-                                            <div class="col-md-10" id='layer_cars'>
+                                            <div class="col-lg-10" id='layer_cars'>
                                                 <?php
                                                 if (!empty($new_arr)) {
 
@@ -47,7 +47,7 @@
                                                 };
                                                 ?>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-lg-2">
                                                 <button type="button" style="display:none" class="btn btn-primary" id="addcars"> <i class="fa fa-plus-circle"></i> </button>
                                             </div>
                                         </div>
@@ -84,14 +84,14 @@
                         </div>
                     </div>
                     <div class="row invoice">
-                        <div class="col-md-12 table-responsive">
+                        <div class="col-lg-12 table-responsive">
                             <table class="table table-striped table-hover  ">
                                 <thead>
                                     <tr>
-                                        <th class="col-md-5 ">Akun</th>
-                                        <th class="col-md-2">Debit</th>
-                                        <th class="col-md-2">Kredit</th>
-                                        <th class="col-md-3">Keterangan</th>
+                                        <th class="col-lg-5 ">Akun</th>
+                                        <th class="col-lg-2">Debit</th>
+                                        <th class="col-lg-2">Kredit</th>
+                                        <!-- <th class="col-lg-3">Keterangan</th> -->
                                     </tr>
                                 </thead>
                                 <tbody id="transaction_table_body">
@@ -117,22 +117,35 @@
                                                 echo form_input($data);
                                                 ?>
                                             </td>
-                                            <td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3">
+                                                <div class="row col-lg-12">
+                                                    <div class="col-lg-10">
+                                                        <?php
 
-                                                <?php
 
+                                                        $data = array('class' => 'ket_val form-control input-lg', 'type' => 'text', 'name' => 'sub_keterangan[]');
+                                                        echo form_input($data);
+                                                        ?>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <?php
+                                                        $data = array('class' => 'sub_id form-control input-lg', 'type' => 'hidden', 'name' => 'sub_id[]');
+                                                        echo form_input($data);
+                                                        ?>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" value="" data-row="1" name="delete_row[<?= $i ?>]" id="delete_row[<?= $i ?>]" onchange="delete_row(<?= $i ?>)">
+                                                            <label class="form-check-label" for="delete_row[<?= $i ?>]">
+                                                                Delete
+                                                            </label>
+                                                        </div>
+                                                    </div>
 
-                                                $data = array('class' => 'ket_val form-control input-lg', 'type' => 'text', 'name' => 'sub_keterangan[]');
-                                                echo form_input($data);
-                                                $data = array('class' => 'sub_id form-control input-lg', 'type' => 'hidden', 'name' => 'sub_id[]');
-                                                echo form_input($data);
-                                                ?>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="" data-row="1" name="delete_row[<?= $i ?>]" id="delete_row[<?= $i ?>]" onchange="delete_row(<?= $i ?>)">
-                                                    <label class="form-check-label" for="delete_row[<?= $i ?>]">
-                                                        Delete
-                                                    </label>
+                                                    <hr>
+                                                    <hr>
                                                 </div>
+
                                             </td>
                                         </tr>
                                     <?php
@@ -169,9 +182,9 @@
                                 </tfoot>
                             </table>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-lg-12">
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-lg-3">
                                     <div class="form-group">
                                         <label>Disetujui</label>
                                         <select name="acc_1" id="acc_1" class="form-control select2 input-lg">
@@ -180,7 +193,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-lg-3">
                                     <div class="form-group" id='label_kendaraan'>
                                         <label>Diverifikasi</label>
                                         <select name="acc_2" id="acc_2" class="form-control select2 input-lg">
@@ -190,7 +203,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-lg-3">
                                     <div class="form-group" id='label_kendaraan'>
                                         <label>Dibuat</label>
                                         <select name="acc_3" id="acc_3" class="form-control select2 input-lg">
@@ -201,7 +214,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-lg-3">
                                     <div class="form-group" id='label_kendaraan'>
                                         <label>Dibukukan</label>
                                         <input type="text" disabled id="dibukukan" class="form-control input-lg">
@@ -209,7 +222,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class=" col-md-12 ">
+                        <div class=" col-lg-12 ">
                             <div class=" form-group">
                                 <?php
                                 $data = array('class' => 'btn btn-info  margin btn-lg pull-right ', 'type' => 'submit', 'name' => 'btn_submit_customer', 'value' => 'true', 'id' => 'btn_save_transaction', 'content' => '<i class="fa fa-floppy-o" aria-hidden="true"></i> 
@@ -230,6 +243,8 @@
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
+    $('#menu_id_24').addClass('menu-item-active menu-item-open menu-item-here"')
+    $('#submenu_id_59').addClass('menu-item-active')
     data_cars = [];
     id_custmer = $('#customer_id');
     id_cars = $('#id_cars');

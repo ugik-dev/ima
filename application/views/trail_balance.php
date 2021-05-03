@@ -80,6 +80,9 @@
     </div>
 </section>
 <script>
+    $('#menu_id_24').addClass('menu-item-active menu-item-open menu-item-here"')
+    $('#submenu_id_61').addClass('menu-item-active')
+
     function formatRupiah(angka, prefix) {
         var number_string = angka.toString(),
             split = number_string.split(","),

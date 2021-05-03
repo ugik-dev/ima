@@ -1218,6 +1218,65 @@ class Transaction_model extends CI_Model
         return $data;
     }
 
+    public function delete_jurnal($id)
+    {
+        $logs = $this->session->userdata('user_id')['name'] . '|' . $this->session->userdata('user_id')['name'] . '|' . date('Y-m-d');
+        $this->db->select("*");
+        $this->db->from('mp_generalentry');
+        $this->db->where('id ', $id);
+        $this->db->order_by('mp_generalentry.id',);
+
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            $transaction_records =  $query->result()[0];
+            // die();
+            $data1  = array(
+                'id'             => $transaction_records->id,
+                'date'                 => $transaction_records->date,
+                'customer_id'             => $transaction_records->customer_id,
+                'generated_source'             => $transaction_records->generated_source,
+                'no_jurnal'             => $transaction_records->no_jurnal,
+                'gen_lock'             => $transaction_records->gen_lock,
+                'arr_cars'             => $transaction_records->arr_cars,
+                'naration'             => $transaction_records->naration,
+                'logs_delete'             => $logs,
+            );
+            $this->db->insert('mp_generalentry_delete', $data1);
+            $this->db->where('id ', $id);
+            $this->db->where('mp_generalentry.id =', $id);
+            $this->db->delete('mp_generalentry');
+        }
+
+
+        // sub 
+        $this->db->select("*");
+        $this->db->from('mp_sub_entry');
+        $this->db->where('mp_sub_entry.parent_id =', $id);
+        $sub_query = $this->db->get();
+        if ($sub_query->num_rows() > 0) {
+            $sub_query =  $sub_query->result();
+            if ($sub_query != NULL) {
+                foreach ($sub_query as $single_trans) {
+                    var_dump($single_trans);
+                    $data2  = array(
+                        'id'             => $single_trans->id,
+                        'parent_id'                 => $single_trans->parent_id,
+                        'accounthead'             => $single_trans->accounthead,
+                        'amount'             => $single_trans->amount,
+                        'type'             => $single_trans->type,
+                        'sub_keterangan'             => $single_trans->sub_keterangan,
+                        'pos_lock'             => $single_trans->pos_lock,
+                        'logs_delete'             => $logs,
+                    );
+                    $this->db->insert('mp_sub_entry_delete', $data2);
+
+                    $this->db->where('mp_sub_entry.parent_id =', $id);
+                    $this->db->delete('mp_sub_entry');
+                }
+            }
+        }
+    }
+
     public function create_cheque($data_fields)
     {
         $this->db->trans_start();
