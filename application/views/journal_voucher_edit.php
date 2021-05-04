@@ -311,10 +311,10 @@
 
     getData()
     m = 0;
-    $('[name="id_cars[]"]').each(function() {
-        $(this).val(array_cars[m]);
-        m++;
-    });
+    // $('[name="id_cars[]"]').each(function() {
+    //     $(this).val(array_cars[m]);
+    //     m++;
+    // });
 
     function getData() {
 
