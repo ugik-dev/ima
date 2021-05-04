@@ -308,13 +308,15 @@
         }
         $i++;
     } ?>
-
-    getData()
+    <?php if (!empty($parent->customer_id)) {
+    ?>
+        getData()
+        $('[name="id_cars[]"]').each(function() {
+            $(this).val(array_cars[m]);
+            m++;
+        });
+    <?php } ?>
     m = 0;
-    // $('[name="id_cars[]"]').each(function() {
-    //     $(this).val(array_cars[m]);
-    //     m++;
-    // });
 
     function getData() {
 
@@ -322,7 +324,8 @@
             url: '<?= base_url() ?>Statements/getListCars',
             type: "get",
             data: {
-                id_patner: <?= $parent->customer_id ?>
+                id_patner: '<?= $parent->customer_id ?>'
+
             },
             success: function(data) {
                 var json = JSON.parse(data);
