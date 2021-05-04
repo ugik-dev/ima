@@ -227,7 +227,7 @@
         </div>
     </div>
     </section>
-    <script src="<?php echo base_url(); ?>assets/dist/js/backend/journal_voucher.js"></script>
+    <script src="<?php echo base_url(); ?>assets/dist/js/backend/journal_voucher.js?v=0.2"></script>
     <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
     <script>
@@ -245,10 +245,6 @@
         var creditamount = document.getElementsByName('creditamount[]');
 
 
-        // sub_keterangan = $('.sub_keterangan');
-        // sub_keterangan[1].val('2');
-        // console.log(sub_keterangan)
-        // sub_keterangan[0].val('s');
         id_custmer = $('#customer_id');
         id_cars = $('#id_cars');
         layer_cars = $('#layer_cars');
