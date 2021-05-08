@@ -81,7 +81,7 @@
                                         ?>
 
                                           <tr>
-                                              <td class="rinc_name"><?= $sub_parents['name'] ?> <?= $sub_parents['accounthead'] ?> </td>
+                                              <td class="rinc_name"><?= $sub_parents['name'] ?> </td>
                                               <?php if ($sub_parents['type'] == '0') {
                                                     $totdeb = $totdeb + floatval($sub_parents['amount']);
                                                 ?>
@@ -273,7 +273,8 @@
 
               tpe = ''
           }
-          console.log(tpe)
+          //   console.log(tpe)
+          no_rek = '112-0098146017';
           for (var i = 0; i < name.length; i++) {
               if (name[i].innerHTML.substring(1, 5) == '1.11') {
                   if (tpe == 'AM') {
@@ -292,6 +293,9 @@
                               parseInt(kredit[i].innerHTML.replace(/[^0-9]/g, "")) :
                               0);
                   }
+              }
+              if (name[i].innerHTML.substring(1, 9) == '1.11.240') {
+                  no_rek = '169-00-0207756-5';
               }
               console.log(name[i].innerHTML)
               console.log(displyhide)
@@ -412,7 +416,7 @@
                                 </tr>
                                 <tr>
                                     <td style="width: 130 ;text-align:left; padding : 3px">A/C No.</td>
-                                    <td style="width: 130 ; text-align:left ; padding : 3px">112-0098146017</td>
+                                    <td style="width: 130 ; text-align:left ; padding : 3px">${no_rek}</td>
                                 </tr>
                             </table>
                     

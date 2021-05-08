@@ -447,7 +447,13 @@ class Statements extends CI_Controller
 		$res_detail = $this->Statement_model->detail_fetch_transasctions($id);
 		$res_acc = $this->Statement_model->get_acc($id, true);
 		$countsub = count($res_detail['sub']);
+		$bank = '112-0098146017';
+
 		for ($i = 0; $i < $countsub; $i++) {
+			// 1575 Mandiri C rek = 169-00-0207756-5
+			// 8 Mandiri A rek = 112-0098146017 
+			// 1311 Mandiri B rek = 
+			// 
 			if ($res_detail['sub'][$i]['accounthead'] == 13) {
 				$nominal = $res_detail['sub'][$i]['amount'];
 				$nominal = number_format($nominal, 2, ',', '.');
@@ -456,7 +462,13 @@ class Statements extends CI_Controller
 			}
 
 			if ($res_detail['sub'][$i]['accounthead'] == 8) {
-				$bank = 'Mandiri A';
+				$bank = '112-0098146017';
+			} else if ($res_detail['sub'][$i]['accounthead'] == 1575) {
+				$bank = '169-00-0207756-5';
+			} else if ($res_detail['sub'][$i]['accounthead'] = 1311) {
+				$bank = '-';
+			} else {
+				$bank = '-';
 			}
 		}
 		// echo json_encode($res_detail['sub']);
@@ -563,7 +575,7 @@ class Statements extends CI_Controller
 		$textrun->addText('Dengan ini kami mohon bantuan kepada Bank Mandiri untuk menerbitkan Deposito on Call dengan jangka waktu 12 hari TMT. 30 April 2021 sebesar');
 		$textrun->addText(' Rp ' . $nominal, array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'spaceAfter' => 0, 'bold' => true,));
 		$textrun->addText(' ( ' . $terbilang . ' rupiah )', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'spaceAfter' => 0, 'bold' => true, 'italic' => true));
-		$textrun->addText('dengan Debet Rekening PT. Indometal Asia No. 112-0098146017');
+		$textrun->addText('dengan Debet Rekening PT. Indometal Asia No. ' . $bank);
 
 		$section->addText('Pencairan Deposito On Call beserta bunganya agar di kreditkan ke Rekening atas nama PT. Indometal Asia seperti tercantum di atas.');
 		$section->addText('Demikian disampaikan, atas perhatian dan kerjasamanya kami ucapkan terima kasih');

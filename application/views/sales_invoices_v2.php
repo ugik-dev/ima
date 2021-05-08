@@ -17,7 +17,8 @@
                                 <i class="fa fa-calendar "></i>
                             </div>
                             <?php
-                            $data = array('class' => 'form-control  input-lg', 'type' => 'date', 'id' => 'datepicker', 'name' => 'date1', 'placeholder' => 'e.g 12-08-2018', 'reqiured' => '');
+                            // echo $filter['first_date'];
+                            $data = array('class' => 'form-control  input-lg', 'type' => 'date', 'id' => 'datepicker', 'name' => 'date1', 'value' => $filter['first_date'], 'reqiured' => '');
                             echo form_input($data);
                             ?>
                         </div>
@@ -31,7 +32,7 @@
                                 <i class="fa fa-calendar"></i>
                             </div>
                             <?php
-                            $data = array('class' => 'form-control  input-lg', 'type' => 'date', 'id' => 'datepicker', 'name' => 'date2', 'placeholder' => 'e.g 12-08-2018', 'reqiured' => '');
+                            $data = array('class' => 'form-control  input-lg', 'type' => 'date', 'id' => 'datepicker', 'name' => 'date2', 'value' => $filter['second_date'], 'reqiured' => '');
                             echo form_input($data);
                             ?>
                         </div>
@@ -41,7 +42,7 @@
                     <div class="form-group margin ">
                         <?php echo form_label('Atau Masukan No Invoice:'); ?>
                         <?php
-                        $data = array('class' => 'form-control input-lg', 'type' => 'number', 'name' => 'invoice_no', 'reqiured' => '');
+                        $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'invoice_no', 'value' => $filter['no_invoice'],);
                         echo form_input($data);
                         ?>
                     </div>

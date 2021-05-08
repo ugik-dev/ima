@@ -10,9 +10,12 @@ class InvoiceModel extends CI_Model
         $this->db->from('mp_invoice_v2');
         // if (!empty($filter['id']))
         if (!empty($filter['id'])) $this->db->where('mp_invoice_v2.id', $filter['id']);
-        if (!empty($filter['no_invoice'])) $this->db->where('no_invoice', $filter['no_invoice']);
-        if (!empty($filter['first_date'])) $this->db->where('date >=', $filter['first_date']);
-        if (!empty($filter['second_date'])) $this->db->where('date <=', $filter['second_date']);
+        if (!empty($filter['no_invoice'])) {
+            $this->db->where('no_invoice like "%' . $filter['no_invoice'] . '%"');
+        } else {
+            if (!empty($filter['first_date'])) $this->db->where('date >=', $filter['first_date']);
+            if (!empty($filter['second_date'])) $this->db->where('date <=', $filter['second_date']);
+        }
         $this->db->join('mp_banks', 'mp_banks.id = mp_invoice_v2.payment_metode', 'LEFT');
         $this->db->join('mp_payee', 'mp_payee.id = mp_invoice_v2.customer_id');
         $this->db->join('mp_users', 'mp_users.id = mp_invoice_v2.acc_1', 'LEFT');

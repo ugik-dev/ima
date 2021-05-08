@@ -323,18 +323,14 @@ class Invoice extends CI_Controller
 		$filter['second_date'] = html_escape($this->input->post('date2'));
 		$filter['no_invoice'] = html_escape($this->input->post('invoice_no'));
 
-
 		if ($filter['first_date'] == NULL && $filter['second_date'] == NULL) {
-			$filter['first_date'] = date('Y-m-1');
+			$filter['first_date'] = date('Y-m-01');
 			$filter['second_date'] = date('Y-m-31');
 
 			// FETCH SALES RECORD FROM invoices TABLE
 			// $result_invoices = $this->Accounts_model->get('mp_invoices', $first_date, $second_date);
-		} else {
-
-			// FETCH SALES RECORD FROM invoices TABLE
-			// $result_invoices = $this->Accounts_model->fetch_record_date('mp_invoices', $first_date, $second_date);
 		}
+		$data['filter'] = $filter;
 		$this->load->model(array('InvoiceModel'));
 		// $this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
 
@@ -455,6 +451,37 @@ class Invoice extends CI_Controller
 		// echo json_encode($dataContent);
 		$this->index($dataContent);
 	}
+
+	function head_invoice($pdf, $dataContent)
+	{
+		$pdf->Image(base_url() . 'assets/img/bg-invoice.jpg', 10, 10, 190, 50);
+		$pdf->Image(base_url() . "assets/img/ima-outline-blue.png", 20, 15, 20, 20);
+		$pdf->Image(base_url() . "assets/img/ima-text-white.png", 40, 15, 76, 20);
+
+		$pdf->Cell(173, 20, '', 0, 1, 'C');
+		$pdf->SetDrawColor(255, 255, 225);
+		$pdf->SetTextColor(255, 255, 225);
+		$pdf->Cell(10, 30, '', 0, 0, 'C');
+		$pdf->Cell(173, 6, 'Jalan Sanggul Dewa No.6 Pangkalpinang', 0, 1);
+		$pdf->Cell(10, 30, '', 0, 0, 'C');
+		$pdf->Cell(173, 6, 'Bangka Belitung - Indonesia', 0, 1);
+		$pdf->SetLineWidth(1);
+		$pdf->Line(116, 20, 116, 53);
+		$pdf->SetXY(0, 0);
+		$pdf->Cell(179, 20, '', 0, 1, 'C');
+		$pdf->SetFont('Arial', 'B', 30);
+		$pdf->Cell(96, 12, '', 0, 0, 'R');
+		$pdf->Cell(77, 12, 'INVOICE', 0, 1, 'R');
+		$pdf->SetFont('Arial', 'B', 15);
+		$pdf->Cell(96, 6, '', 0, 0, 'R');
+		$pdf->Cell(77, 6, 'Number#', 0, 1, 'R');
+		$pdf->Cell(96, 6, '', 0, 0, 'R');
+		$pdf->Cell(77, 6,  $dataContent['no_invoice'], 0, 1, 'R');
+		$pdf->SetFont('Arial', 'BI', 14);
+		$pdf->SetDrawColor(0, 0, 0);
+		$pdf->SetXY(12, 65);
+	}
+
 	public function download($id)
 	{
 		$this->load->model(array('SecurityModel', 'InvoiceModel'));
@@ -482,35 +509,13 @@ class Invoice extends CI_Controller
 		$pdf = new FPDF('p', 'mm', 'A4');
 		$pdf->SetMargins(12, 15, 10, 10);
 		$pdf->AddPage();
-		$pdf->Image(base_url() . 'assets/img/bg-invoice.jpg', 10, 10, 190, 60);
-		$pdf->Image(base_url() . "assets/img/ima-outline-blue.png", 20, 20, 20, 20);
-		$pdf->Image(base_url() . "assets/img/ima-text-white.png", 40, 20, 76, 20);
-
 		$pdf->SetFont('Arial', 'B', 13);
-		$pdf->Cell(173, 25, '', 0, 1, 'C');
-		$pdf->SetDrawColor(255, 255, 225);
-		$pdf->SetTextColor(255, 255, 225);
-		$pdf->Cell(10, 30, '', 0, 0, 'C');
-		$pdf->Cell(173, 6, 'Jalan Sanggul Dewa No.6 Pangkalpinang', 0, 1);
-		$pdf->Cell(10, 30, '', 0, 0, 'C');
-		$pdf->Cell(173, 6, 'Bangka Belitung - Indonesia', 0, 1);
-		$pdf->SetLineWidth(1);
-		$pdf->Line(116, 27, 116, 60);
-		$pdf->SetXY(0, 0);
-		$pdf->Cell(179, 30, '', 0, 1, 'C');
-		$pdf->SetFont('Arial', 'B', 30);
-		$pdf->Cell(96, 12, '', 0, 0, 'R');
-		$pdf->Cell(77, 12, 'INVOICE', 0, 1, 'R');
-		$pdf->SetFont('Arial', 'B', 15);
-		$pdf->Cell(96, 6, '', 0, 0, 'R');
-		$pdf->Cell(77, 6, 'Number#', 0, 1, 'R');
-		$pdf->Cell(96, 6, '', 0, 0, 'R');
-		$pdf->Cell(77, 6,  $dataContent['no_invoice'], 0, 1, 'R');
-		$pdf->SetFont('Arial', 'BI', 14);
-		$pdf->SetDrawColor(0, 0, 0);
+		// 
+		$this->head_invoice($pdf, $dataContent);
 		$pdf->SetFont('Arial', '', 9.5);
 
-		$pdf->SetXY(12, 75);
+
+
 		$pdf->SetTextColor(107, 104, 104);
 		$pdf->Cell(40, 6, 'INVOICE TO. ', 0, 1);
 		$pdf->SetTextColor(20, 20, 20);
@@ -518,14 +523,14 @@ class Invoice extends CI_Controller
 		$pdf->MultiCell(40, 6, $dataContent['customer_name'], 0, 1);
 		$pdf->Cell(5, 6, '', 0, 0, 'C');
 		$pdf->MultiCell(40, 6, $dataContent['cus_address'], 0, 1);
-		$pdf->Cell(5, 6, '', 0, 1);
+		// $pdf->Cell(5, 6, '', 0, 1);
 
 		$pdf->SetTextColor(107, 104, 104);
 		$pdf->Cell(35, 6, 'INVOICE NO. ', 0, 1);
 		$pdf->SetTextColor(20, 20, 20);
 		$pdf->Cell(5, 6, '', 0, 0, 'C');
 		$pdf->MultiCell(40, 6,  $dataContent['no_invoice'], 0, 1);
-		$pdf->Cell(5, 6, '', 0, 1);
+		// $pdf->Cell(5, 6, '', 0, 1);
 
 		$pdf->SetTextColor(107, 104, 104);
 		$pdf->Cell(40, 6, 'TANGGAL', 0, 1);
@@ -536,9 +541,19 @@ class Invoice extends CI_Controller
 
 		// $pdf->Circle(110, 47, 7, 'F');
 
+		$pdf->SetTextColor(107, 104, 104);
+		$pdf->Cell(35, 6, 'DESKRIPSI. ', 0, 1);
+		$pdf->SetTextColor(20, 20, 20);
+		$pdf->Cell(5, 6, '', 0, 0, 'C');
+		$pdf->MultiCell(40, 6,  $dataContent['description'], 0, 1);
+		// $pdf->Cell(5, 6, '', 0, 1);
+		// $pdf->Cell(5, 6, '', 1, 1);
+
 		$cur_x = $pdf->GetX();
 		$cur_y = $pdf->GetY();
-		$pdf->SetXY(12, 75);
+		$f1_y = $pdf->GetY();
+
+		$pdf->SetXY(12, 65);
 		$pdf->Cell(50, 6, '', 0, 0, 'C');
 		$pdf->SetTextColor(107, 104, 104);
 		$pdf->SetDrawColor(107, 104, 104);
@@ -550,7 +565,7 @@ class Invoice extends CI_Controller
 			$pdf->Cell(25, 6, 'SUB TOTAL', 0, 0, 'C');
 			$pdf->Cell(1, 8, '', 0, 0, 'C');
 			$pdf->SetLineWidth(0.5);
-			$pdf->Line(68, 82, 197, 82);
+			$pdf->Line(68, 72.5, 197, 72.5);
 
 			$pdf->SetTextColor(20, 20, 20);
 			$pdf->Cell(50, 6, '', 0, 0, 'C');
@@ -589,19 +604,14 @@ class Invoice extends CI_Controller
 				$pdf->SetFont('Arial', '', 10);
 				$pdf->Cell(35, 8, 'Rp ' . number_format($total, '0', ',', '.'), 0, 1, 'R');
 			}
-			if ($pdf->GetY() > $cur_y)
-				$cur_y =  $pdf->GetY();
-			$pdf->SetLineWidth(0.5);
-			$pdf->Line(60, 75, 60, $cur_y);
 		} else {
 			$pdf->Cell(60, 6, 'KETERANGAN', 0, 0, 'C');
-			// $pdf->Cell(29, 6, 'TANGGAL', 0, 0, 'C');
 			$pdf->Cell(14, 6, 'QYT', 0, 0, 'C');
 			$pdf->Cell(30, 6, 'HARGA', 0, 0, 'C');
 			$pdf->Cell(30, 6, 'SUB TOTAL', 0, 0, 'C');
 			$pdf->Cell(1, 8, '', 0, 0, 'C');
 			$pdf->SetLineWidth(0.5);
-			$pdf->Line(68, 82, 197, 82);
+			$pdf->Line(68, 72.5, 197, 72.5);
 
 			$pdf->SetTextColor(20, 20, 20);
 			$pdf->Cell(50, 6, '', 0, 0, 'C');
@@ -630,63 +640,88 @@ class Invoice extends CI_Controller
 					$pdf->Line(68, $tmp_y, 197, $tmp_y);
 				}
 
-				$pdf->Cell(76, 8, '', 0, 0, 'C');
+				$pdf->Cell(60, 8, '', 0, 0, 'C');
 				$pdf->Cell(15, 8, $total_qyt, 0, 0, 'C');
-				$pdf->Cell(10, 8, '', 0, 0, 'C');
+				$pdf->Cell(25, 8, '', 0, 0, 'C');
 				$pdf->SetFont('Arial', '', 10);
 				$pdf->Cell(35, 8, 'Rp ' . number_format($total, '0', ',', '.'), 0, 1, 'R');
 			}
-			if ($pdf->GetY() > $cur_y)
-				$cur_y =  $pdf->GetY();
-			$pdf->SetLineWidth(0.5);
-			$pdf->Line(60, 75, 60, $cur_y);
+		}
+		if ($pdf->GetY() < $f1_y) {
+			$pdf->Line(20, $f1_y + 5, 110, $f1_y + 5);
+			$pdf->Line(60, 65, 60, $f1_y);
+			$pdf->SetXY(20, $f1_y);
+		} else {
+			$pdf->Line(20, $pdf->GetY() + 2, 110, $pdf->GetY() + 2);
+			$pdf->Line(60, 65, 60, $pdf->GetY() - 2);
+		}
+		$cur_y =  $pdf->GetY();
+		$pdf->SetLineWidth(0.5);
+		// $pdf->Line(60, 75, 60, $cur_y);
+		$crop = 0;
+		$crop2 = 0;
+		$crop3 = 0;
+		$pdf->AliasNbPages();
+		if ($cur_y > 165) {
+			// $pdf->AddPage();
+			// $this->head_invoice($pdf, $dataContent);
+			// $pdf->SetPage(1);
+			// $pdf->page = 1;
+			// $pdf->SetY($cur_y);
+			$crop = -5;
+			$crop2 = -2;
+			$crop3 = -1;
 		}
 
-		$pdf->Line(20, $cur_y + 5, 110, $cur_y + 5);
-		$pdf->Cell(30, 15, '', 0, 1, 'C');
+		// 	$cur_y =  $pdf->GetY();
+
+
+		$pdf->Cell(30, 10 + $crop, '', 0, 1, 'C');
+		// $pdf->Cell(30, 10, $cur_y, 1, 1, 'C');
 		$pdf->SetTextColor(40, 41, 40);
 		$pdf->SetFont('Arial', 'B', 10);
 		$cur_y =  $pdf->GetY();
 		$cur_x =  $pdf->GetX();
+		// $pdf->Line(20, 145, 110, 145);
 
 		if ($dataContent['payment_metode'] != 99) {
-			$pdf->Cell(5, 7, '', 0, 0, 'C');
-			$pdf->Cell(50, 7, 'BANK TRANSFER', 0, 1, 'C');
-			$pdf->Cell(5, 7, '', 0, 0, 'C');
+			$pdf->Cell(5, 7 + $crop2, '', 0, 0, 'C');
+			$pdf->Cell(50, 7 + $crop2, 'BANK TRANSFER', 0, 1, 'C');
+			$pdf->Cell(5, 7 + $crop2, '', 0, 0, 'C');
 			$pdf->Cell(15, 7, 'Bank :', 0, 0, 'L');
-			$pdf->MultiCell(60, 7, $dataContent['bank_name'], 0, 'R');
+			$pdf->MultiCell(60, 7 + $crop2, $dataContent['bank_name'], 0, 'R');
 
 			$pdf->Cell(5, 7, '', 0, 0, 'C');
 			$pdf->Cell(30, 7, 'Account Name :', 0, 0, 'L');
-			$pdf->MultiCell(45, 7, $dataContent['title_bank'], 0, 'R');
+			$pdf->MultiCell(45, 7 + $crop2, $dataContent['title_bank'], 0, 'R');
 
 			$pdf->Cell(5, 7, '', 0, 0, 'C');
 			$pdf->Cell(35, 7, 'Account Number :', 0, 0, 'L');
-			$pdf->MultiCell(40, 7, $dataContent['bank_number'], 0, 'R');
+			$pdf->MultiCell(40, 7 + $crop2, $dataContent['bank_number'], 0, 'R');
 		}
 		$bank_xy = array($pdf->GetX(), $pdf->GetY());
 		$pdf->SetXY($cur_x + 120, $cur_y);
 
 		if ($dataContent['ppn_pph'] == 1) {
 
-			$pdf->Cell(40, 17, $pdf->Image(base_url() . "assets/img/bg-3.jpg", 120, $pdf->GetY(), 77, 14), 0, 1, 'C');
-			$pdf->Cell(40, 17, $pdf->Image(base_url() . "assets/img/bg-2.jpg", 120, $pdf->GetY(), 77, 14), 0, 1, 'C');
-			$pdf->Cell(40, 17, $pdf->Image(base_url() . "assets/img/bg-1.jpg", 120, $pdf->GetY(), 77, 14), 0, 1, 'C');
+			$pdf->Cell(40, 17 + $crop, $pdf->Image(base_url() . "assets/img/bg-3.jpg", 120, $pdf->GetY(), 77, 14 + $crop2), 0, 1, 'C');
+			$pdf->Cell(40, 17 + $crop, $pdf->Image(base_url() . "assets/img/bg-2.jpg", 120, $pdf->GetY(), 77, 14 + $crop2), 0, 1, 'C');
+			$pdf->Cell(40, 17 + $crop, $pdf->Image(base_url() . "assets/img/bg-1.jpg", 120, $pdf->GetY(), 77, 14 + $crop2), 0, 1, 'C');
 			$pdf->SetXY($cur_x + 100, $cur_y);
 			$pdf->Cell(10, 17, '', 0, 0);
 			$pdf->SetTextColor(255, 255, 255);
 			$pdf->SetFont('Arial', 'B', 13);
 
-			$pdf->Cell(30, 14, 'SUB TOTAL', 0, 0, 'L');
-			$pdf->Cell(42, 14, 'Rp ' . number_format(ceil($total), '0', ',', '.'), 0, 1, 'R');
-			$pdf->Cell(1, 3, '', 0, 1);
+			$pdf->Cell(30, 14 + $crop2, 'SUB TOTAL', 0, 0, 'L');
+			$pdf->Cell(42, 14 + $crop2, 'Rp ' . number_format(ceil($total), '0', ',', '.'), 0, 1, 'R');
+			$pdf->Cell(1, 3 + $crop2, '', 0, 1);
 			$pdf->Cell(110, 14, '', 0, 0);
-			$pdf->Cell(25, 14, 'PPN 10%', 0, 0, 'L');
-			$pdf->Cell(47, 14, 'Rp ' . number_format(ceil($total * 0.10), '0', ',', '.'), 0, 1, 'R');
-			$pdf->Cell(1, 3, '', 0, 1);
-			$pdf->Cell(110, 14, '', 0, 0);
-			$pdf->Cell(22, 14, 'TOTAL', 0, 0, 'L');
-			$pdf->Cell(50, 14, 'Rp ' . number_format(ceil($total * 0.10) + ceil($total)), 0, 1, 'R');
+			$pdf->Cell(25, 14 + $crop, 'PPN 10%', 0, 0, 'L');
+			$pdf->Cell(47, 14 + $crop, 'Rp ' . number_format(ceil($total * 0.10), '0', ',', '.'), 0, 1, 'R');
+			$pdf->Cell(1, 3 + $crop3, '', 0, 1);
+			$pdf->Cell(110, 14 + $crop2, '', 0, 0);
+			$pdf->Cell(22, 14 + $crop2, 'TOTAL', 0, 0, 'L');
+			$pdf->Cell(50, 14 + $crop2, 'Rp ' . number_format(ceil($total * 0.10) + ceil($total)), 0, 1, 'R');
 			$terbilang = ceil($total * 0.10) + ceil($total);
 		} else {
 			$pdf->Cell(40, 17, $pdf->Image(base_url() . "assets/img/bg-1.jpg", 120, $pdf->GetY(), 77, 14), 0, 1, 'C');
@@ -700,21 +735,21 @@ class Invoice extends CI_Controller
 		}
 
 		$cur_y = $pdf->GetY();
-		$pdf->SetXY($bank_xy[0], $bank_xy[1]);
+		$pdf->SetXY($bank_xy[0], $bank_xy[1] + $crop);
 		$pdf->SetTextColor(40, 41, 40);
 		$pdf->SetFont('Arial', 'B', 10);
-		$pdf->Cell(5, 6, '', 0, 1);
+		$pdf->Cell(5, 6 + $crop3, '', 0, 1);
 		$pdf->Cell(5, 8, '', 0, 0);
 
 		$pdf->Cell(100, 8, 'Terbilang : ', 0, 1);
 		$pdf->Cell(5, 8, '', 0, 0);
 		$pdf->SetFont('Arial', 'I', 10);
-		$pdf->MultiCell(88, 6, $this->terbilang($terbilang) . ' Rupiah', 0, 1);
+		$pdf->MultiCell(88, 6 + $crop2, $this->terbilang($terbilang) . ' Rupiah', 0, 1);
 
 		if ($cur_y > $pdf->GetY()) {
 			$pdf->SetY($cur_y);
 		}
-		$pdf->Cell(1, 10, '', 0, 1);
+		$pdf->Cell(1, 10 + $crop, '', 0, 1);
 		$pdf->Cell(115, 6, '', 0, 0);
 		$pdf->SetFont('Arial', 'B', 10);
 		$pdf->Cell(60, 4, 'PT. INDOMETAL ASIA', 0, 1, 'C');
@@ -726,6 +761,99 @@ class Invoice extends CI_Controller
 		$pdf->SetFont('Arial', 'BU', 10);
 		$pdf->Cell(60, 6, $dataContent['name_acc_1'], 0, 1, 'C');
 
+
+		$pdf->AddPage();
+
+		// KWINTANSI
+
+		$pdf->Cell(173, 16, $pdf->Image(base_url() . "assets/img/ima.jpg", 15, 16, 100, 14), 0, 1);
+		$pdf->Cell(10, 30, '', 0, 0, 'C');
+		$pdf->SetFont('Times', 'B', 12);
+
+		$pdf->Cell(173, 6, 'KWITANSI', 0, 1, 'C');
+		$pdf->SetFont('Times', '', 12);
+
+		$pdf->Cell(173, 6, '', 0, 1);
+		$pdf->Cell(5, 6, '', 0, 0);
+		$pdf->Cell(50, 6, 'Sudah Terima Dari', 0, 0, 'L');
+		$pdf->Cell(3, 6, ':', 0, 0);
+		$pdf->SetFont('Times', 'B', 12);
+
+		$pdf->Cell(120, 6, $dataContent['customer_name'], 0, 1, 'L');
+		$pdf->SetFont('Times', '', 12);
+
+		$pdf->Cell(5, 6, '', 0, 0);
+		$pdf->Cell(50, 6, 'Sejumlah', 0, 0, 'L');
+		$pdf->Cell(3, 6, ':', 0, 0);
+		$pdf->SetFont('Times', 'I', 12);
+
+		$pdf->MultiCell(120, 6, $this->terbilang($terbilang) . ' Rupiah', 0, 'L');
+		$pdf->SetFont('Times', '', 12);
+
+		$pdf->Cell(5, 6, '', 0, 0);
+		$pdf->Cell(50, 6, 'Untuk Pembayaran', 0, 0, 'L');
+		$pdf->Cell(3, 6, ':', 0, 0);
+		$pdf->MultiCell(120, 6, $dataContent['description'], 0, 'L');
+
+		if ($dataContent['ppn_pph'] == 1) {
+
+			$pdf->Cell(100, 6, '', 0, 0, 'L');
+			$pdf->Cell(30, 6, 'SUB TOTAL', 0, 0, 'L');
+			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
+			$pdf->Cell(38, 6,  number_format(ceil($total), '0', ',', '.'), 0, 1, 'R');
+			$pdf->Cell(100, 6, '', 0, 0);
+			$pdf->Cell(30, 6, 'PPN 10%', 0, 0, 'L');
+			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
+			$pdf->Cell(38, 6, number_format(ceil($total * 0.10), '0', ',', '.'), 0, 1, 'R');
+			$pdf->SetLineWidth(0.5);
+			$pdf->Line(110, $pdf->GetY(), 190, $pdf->GetY());
+			$pdf->Cell(100, 6, '', 0, 0);
+			$pdf->Cell(30, 6, 'TOTAL', 0, 0, 'L');
+			$pdf->SetFont('Times', 'B', 12);
+
+			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
+			$pdf->Cell(38, 6, number_format(ceil($total * 0.10) + ceil($total)), 0, 1, 'R');
+		} else {
+			$pdf->Cell(100, 6, '', 0, 0, 'L');
+			$pdf->Cell(30, 6, 'SUB TOTAL', 0, 0, 'L');
+			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
+			$pdf->Cell(38, 6,  number_format(ceil($total), '0', ',', '.'), 0, 1, 'R');
+			$pdf->Cell(100, 6, '', 0, 0);
+			$pdf->Cell(30, 6, 'PPN', 0, 0, 'L');
+			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
+			$pdf->Cell(38, 6, '-', 0, 1, 'R');
+			$pdf->SetLineWidth(0.5);
+			$pdf->Line(110, $pdf->GetY(), 190, $pdf->GetY());
+			$pdf->Cell(100, 6, '', 0, 0);
+			$pdf->Cell(30, 6, 'TOTAL', 0, 0, 'L');
+			$pdf->SetFont('Times', 'B', 12);
+
+			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
+			$pdf->Cell(38, 6, number_format(ceil($total)), 0, 1, 'R');
+		}
+		$pdf->SetFont('Times', '', 12);
+
+		$pdf->Cell(1, 5, '', 0, 1);
+		$pdf->Cell(115, 6, '', 0, 0);
+		$pdf->Cell(60, 4, 'Pangkalpinang, ' . $this->tanggal_indo($dataContent['date']), 0, 1, 'C');
+
+		$pdf->SetFont('Times', 'B', 16);
+		$pdf->Cell(1, 13, '', 0, 1);
+		$pdf->Cell(1, 10, '                    Rp    ' . number_format(ceil($terbilang)), 0, 1);
+
+		$pdf->Cell(115, 6, '', 0, 0);
+		// $pdf->SetFont('Arial', 'BU', 10);
+		$pdf->SetFont('Times', 'B', 12);
+
+
+		$pdf->Cell(60, 6, $dataContent['name_acc_1'], 0, 1, 'C');
+		$cur_y = $pdf->GetY();
+		$pdf->SetXY(10, 13);
+		// $pdf->Cell(190, $cur_y - 10, '', 1, 0);
+		$pdf->Rect(11, 14, 190, $cur_y - 10, 'D');
+		$pdf->Rect(10, 13, 190, $cur_y - 10, 'D');
+
+		// END KWITANSI
 		$filename = 'INV_' .
 			$dataContent['no_invoice'] . '.pdf';
 
@@ -806,19 +934,8 @@ class Invoice extends CI_Controller
 			$this->load->view('main/index.php', $data);
 			return;
 		} else {
-			echo 'ngapain cok';
+			echo 'NOT FOUND';
 			return;
-			if ($first_date == NULL or $second_date == NULL) {
-				$first_date = date('Y-m-d');
-				$second_date = date('Y-m-d');
-
-				// FETCH SALES RECORD FROM invoices TABLE
-				$result_invoices = $this->Accounts_model->fetch_record_date('mp_invoices', $first_date, $second_date);
-			} else {
-
-				// FETCH SALES RECORD FROM invoices TABLE
-				$result_invoices = $this->Accounts_model->fetch_record_date('mp_invoices', $first_date, $second_date);
-			}
 		}
 
 		if ($result_invoices != NULL) {
