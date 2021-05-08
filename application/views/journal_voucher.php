@@ -1,4 +1,4 @@
-<div class="card card-custom" id="print-section">
+<div class="card card-custom">
     <div class="card-body">
         <div class="box-body ">
             <div class="">
@@ -226,87 +226,88 @@
             </div>
         </div>
     </div>
-    </section>
-    <script src="<?php echo base_url(); ?>assets/dist/js/backend/journal_voucher.js?v=0.2"></script>
-    <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
+</div>
 
-    <script>
-        $('#menu_id_23').addClass('menu-item-active menu-item-open menu-item-here"')
-        $('#submenu_id_64').addClass('menu-item-active')
-        no_jurnal = $('#no_jurnal');
-        description = $('#description');
-        date_jurnal = $('#date');
-        acc_1 = $('#acc_1');
-        acc_2 = $('#acc_2');
-        acc_3 = $('#acc_3');
-        var sub_keterangan = document.getElementsByName('sub_keterangan[]');
-        var account_head = document.getElementsByName('account_head[]');
-        var debitamount = document.getElementsByName('debitamount[]');
-        var creditamount = document.getElementsByName('creditamount[]');
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/journal_voucher.js?v=0.2"></script>
+<script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
+
+<script>
+    $('#menu_id_23').addClass('menu-item-active menu-item-open menu-item-here"')
+    $('#submenu_id_64').addClass('menu-item-active')
+    no_jurnal = $('#no_jurnal');
+    description = $('#description');
+    date_jurnal = $('#date');
+    acc_1 = $('#acc_1');
+    acc_2 = $('#acc_2');
+    acc_3 = $('#acc_3');
+    var sub_keterangan = document.getElementsByName('sub_keterangan[]');
+    var account_head = document.getElementsByName('account_head[]');
+    var debitamount = document.getElementsByName('debitamount[]');
+    var creditamount = document.getElementsByName('creditamount[]');
 
 
-        id_custmer = $('#customer_id');
-        id_cars = $('#id_cars');
-        layer_cars = $('#layer_cars');
-        id_custmer.on('change', function() {
-            $.ajax({
-                url: '<?= base_url() ?>Statements/getListCars',
-                type: "get",
-                data: {
-                    id_patner: id_custmer.val()
-                },
-                success: function(data) {
-                    var json = JSON.parse(data);
-                    if (json['error'] == true) {
-                        layer_cars.html('');
-                        addcars.style.display = 'none';
-                        document.getElementById("label_kendaraan").style.display = "none";
+    id_custmer = $('#customer_id');
+    id_cars = $('#id_cars');
+    layer_cars = $('#layer_cars');
+    id_custmer.on('change', function() {
+        $.ajax({
+            url: '<?= base_url() ?>Statements/getListCars',
+            type: "get",
+            data: {
+                id_patner: id_custmer.val()
+            },
+            success: function(data) {
+                var json = JSON.parse(data);
+                if (json['error'] == true) {
+                    layer_cars.html('');
+                    addcars.style.display = 'none';
+                    document.getElementById("label_kendaraan").style.display = "none";
 
-                        return;
-                    }
-                    data_cars = json['data'];
-                    add_cars();
-                    document.getElementById("label_kendaraan").style.display = "block";
-                    addcars.style.display = 'block';
-                },
-                error: function(e) {}
-            });
+                    return;
+                }
+                data_cars = json['data'];
+                add_cars();
+                document.getElementById("label_kendaraan").style.display = "block";
+                addcars.style.display = 'block';
+            },
+            error: function(e) {}
         });
-        $('#addcars').on('click', function() {
-            add_cars()
-        })
+    });
+    $('#addcars').on('click', function() {
+        add_cars()
+    })
 
-        function add_cars() {
-            layer_cars.append(`<select name="id_cars[]" id="id_cars" class="form-control select2 input-lg">                                          
+    function add_cars() {
+        layer_cars.append(`<select name="id_cars[]" id="id_cars" class="form-control select2 input-lg">                                          
                                  <option value="0"> ------- </option>` + data_cars + `</select>`)
-            $('.select2').select2();
-        }
+        $('.select2').select2();
+    }
 
-        <?php if ($data_return != NULL) {    ?>
-            no_jurnal.val('<?= $data_return['no_jurnal'] ?>');
-            id_custmer.val('<?= $data_return['customer_id'] ?>');
-            date_jurnal.val('<?= $data_return['date'] ?>');
-            description.val('<?= $data_return['description'] ?>');
-            acc_1.val('<?= $data_return['acc'][1] ?>');
-            acc_2.val('<?= $data_return['acc'][2] ?>');
-            acc_3.val('<?= $data_return['acc'][3] ?>');
-            <?php
-            $count_rows = count($data_return['account_head']);
-
-            for ($i = 0; $i < $count_rows; $i++) { ?>
-                sub_keterangan[<?= $i ?>].value = '<?= $data_return['sub_keterangan'][$i] ?>';
-                account_head[<?= $i ?>].value = '<?= $data_return['account_head'][$i] ?>';
-                debitamount[<?= $i ?>].value = '<?= $data_return['debitamount'][$i] ?>';
-                creditamount[<?= $i ?>].value = '<?= $data_return['creditamount'][$i] ?>';
-
+    <?php if ($data_return != NULL) {    ?>
+        no_jurnal.val('<?= $data_return['no_jurnal'] ?>');
+        id_custmer.val('<?= $data_return['customer_id'] ?>');
+        date_jurnal.val('<?= $data_return['date'] ?>');
+        description.val('<?= $data_return['description'] ?>');
+        acc_1.val('<?= $data_return['acc'][1] ?>');
+        acc_2.val('<?= $data_return['acc'][2] ?>');
+        acc_3.val('<?= $data_return['acc'][3] ?>');
         <?php
-            }
-        }  ?>
+        $count_rows = count($data_return['account_head']);
 
-        $('.mask').mask('000.000.000.000.000,00', {
-            reverse: true
-        });
+        for ($i = 0; $i < $count_rows; $i++) { ?>
+            sub_keterangan[<?= $i ?>].value = '<?= $data_return['sub_keterangan'][$i] ?>';
+            account_head[<?= $i ?>].value = '<?= $data_return['account_head'][$i] ?>';
+            debitamount[<?= $i ?>].value = '<?= $data_return['debitamount'][$i] ?>';
+            creditamount[<?= $i ?>].value = '<?= $data_return['creditamount'][$i] ?>';
 
-        count_debits(true);
-    </script>
-    <?php $this->load->view('bootstrap_model.php'); ?>
+    <?php
+        }
+    }  ?>
+
+    $('.mask').mask('000.000.000.000.000,00', {
+        reverse: true
+    });
+
+    count_debits(true);
+</script>
+<?php $this->load->view('bootstrap_model.php'); ?>

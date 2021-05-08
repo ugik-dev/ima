@@ -18,12 +18,12 @@
                 <!--end::Container-->
             </div>
             <div class="content d-flex flex-column flex-column-fluid" id="kt_content">
-                <div class="container">
-                    <?php
-                    $this->load->view($main_view);
-                    ?>
-                    <!-- </div> -->
-                </div>
+                <!-- <div class="container"> -->
+                <?php
+                $this->load->view($main_view);
+                ?>
+                <!-- </div> -->
+                <!-- </div> -->
                 <!-- </div> -->
             </div>
 

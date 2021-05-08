@@ -118,6 +118,20 @@ class Crud_model extends CI_Model
         }
     }
 
+    public function fetch_payee_record2($filter = [])
+    {
+        if (!empty($filter['type'])) $this->db->where(['type' => $filter['type']]);
+        if (!empty($filter['cus_status'])) $this->db->where(['cus_status' => $filter['cus_status']]);
+
+        $query = $this->db->get('mp_payee');
+
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return NULL;
+        }
+    }
+
     public function fetch_cars_record($type, $status = '', $id = '')
     {
         // $this->db->where(['type' => $type]);

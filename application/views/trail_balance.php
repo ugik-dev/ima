@@ -1,24 +1,35 @@
-<section class="content-header">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="pull pull-right">
-                <button onclick="printDiv('print-section')" class="btn btn-default btn-outline-primary   pull-right "><i class="fa fa-print  pull-left"></i> Cetak</button>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="content">
-    <div class="box" id="print-section">
-        <div class="box-body box-bg ">
-            <div class="make-container-center">
-                <?php
-                $attributes = array('id' => 'leadgerAccounst', 'method' => 'post', 'class' => '');
-                ?>
-                <?php echo form_open_multipart('statements/trail_balance', $attributes); ?>
-                <div class="row no-print">
-                    <div class="col-md-3">
-                        <div class="form-group">
+<div class="card card-custom position-relative overflow-hidden">
+    <!--begin::Shape-->
+    <div class="container">
+        <div class="alert alert-custom alert-white alert-shadow gutter-b" role="alert">
+            <div class="col-lg-12">
+                <div class="col-lg-12">
+                    <!-- <div class="col-lg-3"> -->
+                    <div style="float: right" class="form-group" style="margin-top: 16px;">
+                        <?php
+                        // $data = array('class' => 'btn btn-default btn-outline-primary  mr-2', 'type' => 'button', 'id' => 'btn_export_excel', 'value' => 'true', 'content' => '<i class="fa fa-download" aria-hidden="true"></i> Export Excel');
+                        // echo form_button($data);
+                        ?>
+                    </div>
+                    <!-- </div> -->
+                    <!-- <div class="col-lg-3"> -->
+                    <div style="float: right" class="form-group" style="margin-top: 16px;">
+                        <a onclick="printDiv('print-section')" class="btn btn-default btn-outline-primary  mr-2"><i class="fa fa-print  pull-left"></i> Cetak</a>
+                    </div>
+                    <!-- </div> -->
+                </div>
+                <div class="row col-lg-12">
+                    <?php
+                    $attributes = array('id' => 'leadgerAccounst', 'method' => 'post', 'class' => 'col-lg-12');
+                    ?>
+                    <?php echo form_open_multipart('statements/trail_balance', $attributes); ?>
+                    <div class="row">
+                        <!-- <div class="col-lg-3"> -->
+                        <div class="form-group mr-2">
                             <?php echo form_label('Pilih Tahun Priodik'); ?>
+                        </div>
+                        <!-- </div> -->
+                        <div class="form-group mr-2">
                             <select class="form-control input-lg" name="year">
                                 <option value="2019"> 2019</option>
                                 <option value="2020"> 2020</option>
@@ -30,53 +41,64 @@
                                 <option value="2026"> 2026</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group" style="margin-top:16px;">
+                        <!-- </div> -->
+                        <!-- <div class="col-lg-3"> -->
+                        <div class="form-group mr-2">
                             <?php
-                            $data = array('class' => 'btn btn-info btn-flat margin btn-lg pull-right ', 'type' => 'submit', 'name' => 'btn_submit_customer', 'value' => 'true', 'content' => '<i class="fa fa-floppy-o" aria-hidden="true"></i> 
+                            $data = array('class' => 'btn btn-info btn-flat btn-lg pull-right ', 'type' => 'submit', 'name' => 'btn_submit_customer', 'value' => 'true', 'content' => '<i class="fa fa-floppy-o" aria-hidden="true"></i> 
                                 Buat Statement');
                             echo form_button($data);
                             ?>
+                            <!-- </div> -->
                         </div>
                     </div>
                     <?php form_close(); ?>
                 </div>
-                <div class="row">
-                    <div class="col-md-3"></div>
-                    <div class="col-md-6">
-                        <h2 style="text-align:center">NERACA SALDO </h2>
-                        <h3 style="text-align:center">
-                            <?php echo $this->db->get_where('mp_langingpage', array('id' => 1))->result_array()[0]['companyname'];
-                            ?>
-                        </h3>
-                        <h4 style="text-align:center">Hingga : <?php echo $year; ?> <b>
-                        </h4>
-                        <h4 style="text-align:center">Dibuat : <?php echo Date('Y-m-d'); ?> <b>
-                        </h4>
-                    </div>
-                    <div class="col-md-3"></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <table class="table table-striped table-hover">
-                            <thead>
-                                <tr class="balancesheet-header">
-                                    <th class="col-md-10">NAMA AKUN</th>
-                                    <!-- <th class="col-md-3">NO JURNAL</th> -->
-                                    <th class="col-md-1">DEBIT</th>
-                                    <th class="col-md-1">KREDIT</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php echo $trail_records; ?>
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
             </div>
         </div>
+    </div>
+</div>
+<section class="content">
+    <div class="box" id="print-section">
+        <div class="box-body box-bg ">
+            <div class="make-container-center">
+
+            </div>
+            <div class="row">
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6">
+                    <h2 style="text-align:center">NERACA SALDO </h2>
+                    <h3 style="text-align:center">
+                        <?php echo $this->db->get_where('mp_langingpage', array('id' => 1))->result_array()[0]['companyname'];
+                        ?>
+                    </h3>
+                    <h4 style="text-align:center">Hingga : <?php echo $year; ?> <b>
+                    </h4>
+                    <h4 style="text-align:center">Dibuat : <?php echo Date('Y-m-d'); ?> <b>
+                    </h4>
+                </div>
+                <div class="col-lg-3"></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr class="balancesheet-header">
+                                <th class="col-lg-10">NAMA AKUN</th>
+                                <!-- <th class="col-lg-3">NO JURNAL</th> -->
+                                <th class="col-lg-1">DEBIT</th>
+                                <th class="col-lg-1">KREDIT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php echo $trail_records; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
     </div>
 </section>
 <script>

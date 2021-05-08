@@ -965,7 +965,7 @@ class Transaction_model extends CI_Model
     }
 
     // CHECK NO JURNAL
-    function check_no_jurnal($data, $id = 'd')
+    function check_no_jurnal($data, $id = '')
     {
         $this->db->select("count(id) as count");
         $this->db->from('mp_generalentry');
@@ -974,6 +974,18 @@ class Transaction_model extends CI_Model
         $query = $this->db->get();
         return $query->result_array()[0]['count'];
     }
+
+    function check_no_invoice($data, $id = '')
+    {
+        $this->db->select("count(id) as count");
+        $this->db->from('mp_invoice_v2');
+        if (!empty($id)) $this->db->where('id <> "' . $id . '"');
+        $this->db->where('no_invoice', $data);
+        $query = $this->db->get();
+        return $query->result_array()[0]['count'];
+    }
+
+
 
     function check_lock($id)
     {
@@ -1113,6 +1125,120 @@ class Transaction_model extends CI_Model
         }
 
         return $order_id;
+    }
+
+    function invoice_entry($data)
+    {
+
+        // $trans_data = $data;
+        $trans_data = array(
+            'date' => $data['date'],
+            'description' => $data['description'],
+            'customer_id' => $data['customer_id'],
+            'no_invoice' => $data['no_invoice'],
+            'payment_metode' => $data['payment_metode'],
+            'ppn_pph' => $data['ppn_pph'],
+            'acc_1' => $data['acc_1'],
+            'acc_2' => $data['acc_2'],
+            'acc_3' => $data['acc_3'],
+            'acc_0' => $this->session->userdata('user_id')['name'],
+        );
+
+        $this->db->trans_start();
+        $this->db->insert('mp_invoice_v2', $trans_data);
+        $order_id = $this->db->insert_id();
+        $total_heads = count($data['amount']);
+
+        for ($i = 0; $i < $total_heads; $i++) {
+
+            if (!empty($data['amount'][$i] && !empty($data['qyt'][$i]))) {
+                $trans_data  = array(
+                    'parent_id'   => $order_id,
+                    'qyt' => $data['qyt'][$i],
+                    'satuan' => $data['satuan'][$i],
+                    'date_item' => $data['date_item'][$i],
+                    'keterangan_item' => $data['keterangan_item'][$i],
+                    'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
+                );
+                $this->db->insert('mp_sub_invoice', $trans_data);
+            }
+        }
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $data = NULL;
+        } else {
+            $this->db->trans_commit();
+        }
+
+        return $order_id;
+    }
+
+
+    function invoice_edit($data)
+    {
+
+        // $trans_data = $data;
+        $trans_data = array(
+            'date' => $data['date'],
+            'description' => $data['description'],
+            'customer_id' => $data['customer_id'],
+            'no_invoice' => $data['no_invoice'],
+            'payment_metode' => $data['payment_metode'],
+            'ppn_pph' => $data['ppn_pph'],
+            'acc_1' => $data['acc_1'],
+            'acc_2' => $data['acc_2'],
+            'acc_3' => $data['acc_3'],
+            'acc_0' => $this->session->userdata('user_id')['name'],
+        );
+
+        $this->db->trans_start();
+        $this->db->where('id', $data['id']);
+        $this->db->update('mp_invoice_v2', $trans_data);
+        $total_heads = count($data['amount']);
+
+        for ($i = 0; $i < $total_heads; $i++) {
+            if (!empty($data['id_item'][$i])) {
+                if (!empty($data['amount'][$i] && !empty($data['qyt'][$i]))) {
+                    $trans_data  = array(
+                        'qyt' => $data['qyt'][$i],
+                        'satuan' => $data['satuan'][$i],
+                        'date_item' => $data['date_item'][$i],
+                        'keterangan_item' => $data['keterangan_item'][$i],
+                        'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
+                    );
+                    $this->db->where('mp_sub_invoice.id', $data['id_item'][$i]);
+                    $this->db->where('mp_sub_invoice.parent_id', $data['id']);
+                    $this->db->update('mp_sub_invoice', $trans_data);
+                } else {
+                    $this->db->where('mp_sub_invoice.id', $data['id_item'][$i]);
+                    // $this->db->where('mp_sub_invoice.parent_id', $data['id']);
+                    $this->db->delete('mp_sub_invoice');
+                }
+            } else if (!empty($data['amount'][$i] && !empty($data['qyt'][$i]))) {
+                $trans_data  = array(
+                    'parent_id'   => $data['id'],
+                    'satuan' => $data['satuan'][$i],
+                    'qyt' => $data['qyt'][$i],
+                    'date_item' => $data['date_item'][$i],
+                    'keterangan_item' => $data['keterangan_item'][$i],
+                    'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
+                );
+                $this->db->insert('mp_sub_invoice', $trans_data);
+            }
+        }
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $data = NULL;
+            return NULL;
+        } else {
+            $this->db->trans_commit();
+        }
+
+        return $data['id'];
     }
 
     function journal_voucher_edit($data)

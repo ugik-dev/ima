@@ -194,7 +194,7 @@ class Patners extends CI_Controller
         // DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
         $this->load->model('Crud_model');
         $this->load->model('Transaction_model');
-
+        die();
         // DEFINES READ MEDICINE details FORM MEDICINE FORM
         $customer_name = html_escape($this->input->post('customer_name'));
         $customer_email = html_escape($this->input->post('customer_email'));
@@ -290,7 +290,8 @@ class Patners extends CI_Controller
     {
         // DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
         $this->load->model('Crud_model');
-
+        // echo json_encode($this->input->post());
+        // die();
         // DEFINES READ MEDICINE details FORM MEDICINE FORM
         $edit_customer_id = html_escape($this->input->post('edit_customer_id'));
         $customer_name = html_escape($this->input->post('customer_name'));
@@ -373,6 +374,61 @@ class Patners extends CI_Controller
             $this->session->set_flashdata('status', $array_msg);
         }
         redirect('patners');
+    }
+
+    function popup($page_name = '', $param = '')
+    {
+        $this->load->model('Crud_model');
+        if ($page_name  == 'edit_patner_model') {
+            //USED TO REDIRECT LINK
+            $data['link'] = 'patners/edit';
+            $data['single_customer'] = $this->Crud_model->fetch_record_by_id('mp_payee', $param);
+            //model name available in admin models folder
+            $this->load->view(
+                'admin_models/edit_models/edit_patner_model.php',
+                $data
+            );
+        } else if (
+            $page_name  == 'add_patner_model'
+        ) {
+            //USED TO REDIRECT LINK
+            $data['link'] = 'patners/add_patner';
+            //model name available in admin models folder
+            $this->load->view(
+                'admin_models/add_models/add_patner_model.php',
+                $data
+            );
+        } else if (
+            $page_name  == 'add_csv_model'
+        ) {
+            $data['path'] = 'customers/upload_csv';
+            //model name available in admin models folder
+            $this->load->view('admin_models/add_models/add_csv_model.php', $data);
+        } else if (
+            $page_name  == 'add_customer_payment_model'
+        ) {
+            //DEFINES TO FETCH THE LIST OF BANK ACCOUNTS 
+            $data['bank_list'] = $this->Crud_model->fetch_record('mp_banks', 'status');
+
+            $data['customer_list'] = $this->Crud_model->fetch_payee_record('customer', NULL);
+            $this->load->view(
+                'admin_models/add_models/add_customer_payment_model.php',
+                $data
+            );
+        } else if (
+            $page_name  == 'edit_customer_payment_model'
+        ) {
+            //DEFINES TO FETCH THE LIST OF BANK ACCOUNTS 
+            $data['bank_list'] = $this->Crud_model->fetch_record('mp_banks', 'status');
+
+            $data['customer_list'] = $this->Crud_model->fetch_payee_record('customer', NULL);
+
+            $data['customer_payments'] = $this->Crud_model->fetch_record_by_id('mp_customer_payments', $param);
+            $this->load->view(
+                'admin_models/edit_models/edit_customer_payment_model.php',
+                $data
+            );
+        }
     }
 
     function edit_cars()
@@ -459,58 +515,6 @@ class Patners extends CI_Controller
 
     //Customer/popup
     //DEFINES A POPUP MODEL OG GIVEN PARAMETER
-    function popup($page_name = '', $param = '')
-    {
-        $this->load->model('Crud_model');
-        if ($page_name  == 'edit_patner_model') {
-            //USED TO REDIRECT LINK
-            $data['link'] = 'patners/edit';
-            $data['single_customer'] = $this->Crud_model->fetch_record_by_id('mp_payee', $param);
-            //model name available in admin models folder
-            $this->load->view('admin_models/edit_models/edit_patner_model.php', $data);
-        } else if ($page_name  == 'add_cars_model') {
-            //USED TO REDIRECT LINK
-            $data['link'] = 'patners/add_cars';
-            $this->load->model('Statement_model');
-            $data['cars_record'] = $this->Statement_model->patners_cars_list();
-            //model name available in admin models folder
-            $this->load->view('admin_models/add_models/add_cars_model.php', $data);
-        } else if ($page_name  == 'edit_cars_model') {
-            //USED TO REDIRECT LINK
-            $data['link'] = 'patners/edit_cars';
-            $this->load->model('Statement_model');
-            $data['cars_record'] = $this->Statement_model->patners_cars_list();
-            $data['single_cars'] = $this->Crud_model->fetch_cars_record('patners', NULL, $param)[0];
-            // echo json_encode($data);
-            // die();
-            //model name available in admin models folder
-            $this->load->view('admin_models/edit_models/edit_cars_model.php', $data);
-        } else if ($page_name  == 'add_patner_model') {
-            //USED TO REDIRECT LINK
-            $data['link'] = 'patners/add_patner';
-            //model name available in admin models folder
-            $this->load->view('admin_models/add_models/add_patner_model.php', $data);
-        } else if ($page_name  == 'add_csv_model') {
-            $data['path'] = 'customers/upload_csv';
-            //model name available in admin models folder
-            $this->load->view('admin_models/add_models/add_csv_model.php', $data);
-        } else if ($page_name  == 'add_customer_payment_model') {
-            //DEFINES TO FETCH THE LIST OF BANK ACCOUNTS 
-            $data['bank_list'] = $this->Crud_model->fetch_record('mp_banks', 'status');
-
-            $data['customer_list'] = $this->Crud_model->fetch_payee_record('customer', NULL);
-            $this->load->view('admin_models/add_models/add_customer_payment_model.php', $data);
-        } else if ($page_name  == 'edit_customer_payment_model') {
-            //DEFINES TO FETCH THE LIST OF BANK ACCOUNTS 
-            $data['bank_list'] = $this->Crud_model->fetch_record('mp_banks', 'status');
-
-            $data['customer_list'] = $this->Crud_model->fetch_payee_record('customer', NULL);
-
-            $data['customer_payments'] = $this->Crud_model->fetch_record_by_id('mp_customer_payments', $param);
-            $this->load->view('admin_models/edit_models/edit_customer_payment_model.php', $data);
-        }
-    }
-
 
     function upload_csv()
     {

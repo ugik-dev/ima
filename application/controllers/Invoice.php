@@ -2,57 +2,89 @@
 /*
 
 */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 class Invoice extends CI_Controller
 {
-	//invoice
-	public function index()
+	function index($data_return = NULL)
 	{
-		// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
+
 		$this->load->model('Crud_model');
 
+		$data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
+
+		//$ledger
+		$from = html_escape($this->input->post('from'));
+		$to   = html_escape($this->input->post('to'));
+
+		if ($from == NULL or $to == NULL) {
+
+			$from = date('Y-m-') . '1';
+			$to =  date('Y-m-') . '31';
+		}
+		$this->load->model('Accounts_model');
+
+		$data['banks'] = $this->Accounts_model->getAllBank();
 		// DEFINES PAGE TITLE
-		$data['title'] = 'Invoice';
+		$data['title'] = 'Entri Jurnal';
+		$data['data_return'] = $data_return;
+		$this->load->model('Statement_model');
+		$data['accounts_records'] = $this->Statement_model->chart_list();
+		$data['patner_record'] = $this->Statement_model->patners_cars_list();
 
-		$data['main_view'] = 'invoice';
-
-		$user_name = $this->session->userdata('user_id');
-		// DEFINES PAGE invoice NUMBER
-		$invoice = $this->Crud_model->fetch_last_record("mp_invoices");
-
-		if ($invoice == NULL)
-		{
-			$data['invoice'] = 1;
-		}
-		else
-		{
-			$value = $invoice[0]->id;
-			$data['invoice'] = $value + 1;
-		}
-		//FETCHING THE LIST OF CUSTOMERS
-		$customer_record = $this->Crud_model->fetch_payee_record('customer','status');
-		$data['customer_record'] = $customer_record;
-
-		//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice','pos',$user_name['id']);
-		$data['temp_view'] = 'invoice_template';
+		// DEFINES WHICH PAGE TO RENDER
+		$data['main_view'] = 'invoice_v2';
 
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
 		$this->load->view('main/index.php', $data);
 	}
 
+
+	//invoice
+	// public function index()
+	// {
+	// 	// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
+	// 	$this->load->model('Crud_model');
+
+	// 	// DEFINES PAGE TITLE
+	// 	$data['title'] = 'Invoice';
+
+	// 	$data['main_view'] = 'invoice';
+
+	// 	$user_name = $this->session->userdata('user_id');
+	// 	// DEFINES PAGE invoice NUMBER
+	// 	$invoice = $this->Crud_model->fetch_last_record("mp_invoices");
+
+	// 	if ($invoice == NULL) {
+	// 		$data['invoice'] = 1;
+	// 	} else {
+	// 		$value = $invoice[0]->id;
+	// 		$data['invoice'] = $value + 1;
+	// 	}
+	// 	//FETCHING THE LIST OF CUSTOMERS
+	// 	$customer_record = $this->Crud_model->fetch_payee_record2(array('cus_status' => 0));
+	// 	$data['customer_record'] = $customer_record;
+
+	// 	//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
+	// 	$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
+	// 	$data['temp_view'] = 'invoice_template';
+
+	// 	// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+	// 	// $this->load->view('invoice', $data);
+	// 	$this->load->view('invoice_v2', $data);
+	// }
+
 	//invoice/delete_item_temporary
 	//USED TO DELETE AN ITEM FROM TEMPORARY TABLE OF BARCODE ITEMS
 	function delete_item_temporary($item_id)
-	{	
+	{
 		// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
 		$this->load->model('Crud_model');
 
 		//FETCH THE ITEM FROM DATABSE TABLE TO ADD AGAIN TO STOCK
-		$result = $this->Crud_model->fetch_record_by_id('mp_temp_barcoder_invoice',$item_id);		
+		$result = $this->Crud_model->fetch_record_by_id('mp_temp_barcoder_invoice', $item_id);
 
 		//FETCH THE ITEM FROM STOCK TABLE 
-		$result_stock = $this->Crud_model->fetch_record_by_id('mp_productslist',$result[0]->product_id);
+		$result_stock = $this->Crud_model->fetch_record_by_id('mp_productslist', $result[0]->product_id);
 
 		// TABLENAME AND ID FOR DATABASE Actions
 		$args = array(
@@ -61,7 +93,7 @@ class Invoice extends CI_Controller
 		);
 
 		$data = array(
-			'quantity' => $result_stock[0]->quantity+$result[0]->qty
+			'quantity' => $result_stock[0]->quantity + $result[0]->qty
 		);
 
 		// CALL THE METHOD FROM Crud_model CLASS FIRST ARG CONTAINES TABLENAME AND OTHER CONTAINS DATA
@@ -69,14 +101,14 @@ class Invoice extends CI_Controller
 
 		// DEFINES TO DELETE THE ROW FROM TABLE AGAINST ID
 		$this->Crud_model->delete_record('mp_temp_barcoder_invoice', $item_id);
-		
+
 		//USER ID
 		$user_name = $this->session->userdata('user_id');
 
 		//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice','pos',$user_name['id']);
-		
-		$this->load->view('invoice_template.php',$data);
+		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
+
+		$this->load->view('invoice_template.php', $data);
 	}
 
 	//invoice/clear_temp_invoice
@@ -90,15 +122,13 @@ class Invoice extends CI_Controller
 		$user_name = $this->session->userdata('user_id');
 
 		//FETCH THE ITEM FROM DATABSE TABLE TO ADD AGAIN TO STOCK
-		$result = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice','pos',$user_name['id']);
+		$result = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
 
-		if($result  != NULL)
-		{
+		if ($result  != NULL) {
 
-			foreach ($result as $single_item) 
-			{
+			foreach ($result as $single_item) {
 				//FETCH THE ITEM FROM STOCK TABLE 
-				$result_stock = $this->Crud_model->fetch_record_by_id('mp_productslist',$single_item->product_id);
+				$result_stock = $this->Crud_model->fetch_record_by_id('mp_productslist', $single_item->product_id);
 
 				// TABLENAME AND ID FOR DATABASE Actions
 				$args = array(
@@ -108,21 +138,20 @@ class Invoice extends CI_Controller
 
 
 				$data = array(
-					'quantity' => $result_stock[0]->quantity+$single_item->qty
+					'quantity' => $result_stock[0]->quantity + $single_item->qty
 				);
 
 				// CALL THE METHOD FROM Crud_model CLASS FIRST ARG CONTAINES TABLENAME AND OTHER CONTAINS DATA
 				$this->Crud_model->edit_record_id($args, $data);
-
 			}
 
-			$this->Crud_model->delete_record_by_userid('mp_temp_barcoder_invoice','pos',$user_name['id']);
+			$this->Crud_model->delete_record_by_userid('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
 		}
 
-			//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-			$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice','pos',$user_name['id']);
+		//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
+		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
 
-			$this->load->view('invoice_template.php',$data);
+		$this->load->view('invoice_template.php', $data);
 	}
 
 	//invoice/add_barcode_item
@@ -134,30 +163,27 @@ class Invoice extends CI_Controller
 
 		$user_name = $this->session->userdata('user_id');
 
-		$result = $this->Crud_model->fetch_attr_record_by_id('mp_productslist','barcode',$barcode);
-		if($result != NULL)
-		{
+		$result = $this->Crud_model->fetch_attr_record_by_id('mp_productslist', 'barcode', $barcode);
+		if ($result != NULL) {
 
-			$check_item_in_temp = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_invoice','barcode',$barcode,$user_name['id'],'pos');
+			$check_item_in_temp = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_invoice', 'barcode', $barcode, $user_name['id'], 'pos');
 
-			if($result[0]->quantity > 0)
-			{
+			if ($result[0]->quantity > 0) {
 				$stockargs   = array(
-					'table_name' =>'mp_productslist', 
-					'id' =>$result[0]->id, 
+					'table_name' => 'mp_productslist',
+					'id' => $result[0]->id,
 				);
 
 				$stockdata = array(
-					'quantity' => $result[0]->quantity-1
+					'quantity' => $result[0]->quantity - 1
 				);
 
 				$this->Crud_model->edit_record_id($stockargs, $stockdata);
 
-				if($check_item_in_temp != NULL)
-				{
+				if ($check_item_in_temp != NULL) {
 					$qty = '';
 
-					$qty = $check_item_in_temp[0]->qty+1;
+					$qty = $check_item_in_temp[0]->qty + 1;
 
 					$args = array(
 						'table_name' => 'mp_temp_barcoder_invoice',
@@ -169,24 +195,22 @@ class Invoice extends CI_Controller
 					);
 
 					$this->Crud_model->edit_record_id($args, $data);
-				}
-				else
-				{
-					$tax_amount = ($result[0]->tax/100)*$result[0]->retail;
+				} else {
+					$tax_amount = ($result[0]->tax / 100) * $result[0]->retail;
 
 					// ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY FOR EVERY ITERATION
 					$temp_data = array(
-					'barcode' => $result[0]->barcode,
-					'product_no' => $result[0]->sku,
-					'product_id' => $result[0]->id,
-					'product_name' => $result[0]->product_name,
-					'mg' => $result[0]->mg,
-					'price' => $result[0]->retail,
-					'purchase' => $result[0]->purchase,
-					'qty' => 1,
-					'tax' => $tax_amount,
-					'agentid' => $user_name['id'],
-					'source' => 'pos'
+						'barcode' => $result[0]->barcode,
+						'product_no' => $result[0]->sku,
+						'product_id' => $result[0]->id,
+						'product_name' => $result[0]->product_name,
+						'mg' => $result[0]->mg,
+						'price' => $result[0]->retail,
+						'purchase' => $result[0]->purchase,
+						'qty' => 1,
+						'tax' => $tax_amount,
+						'agentid' => $user_name['id'],
+						'source' => 'pos'
 					);
 
 					// DEFINES CALL THE FUNCTION OF insert_data FORM Crud_model CLASS
@@ -195,9 +219,9 @@ class Invoice extends CI_Controller
 			}
 		}
 		//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice','pos',$user_name['id']);
-		
-		$this->load->view('invoice_template.php',$data);
+		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
+		// echo json_encode($data);
+		// $this->load->view('invoice_template.php', $data);
 	}
 
 	//invoice/add_selected_item
@@ -208,71 +232,64 @@ class Invoice extends CI_Controller
 		$this->load->model('Crud_model');
 		$user_name = $this->session->userdata('user_id');
 
-		if($id != '')
-		{
-			$result = $this->Crud_model->fetch_record_by_id('mp_productslist',$id);
+		if ($id != '') {
+			$result = $this->Crud_model->fetch_record_by_id('mp_productslist', $id);
 
-			$check_item_in_temp = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_invoice','product_id',$id,$user_name['id'],'pos');
+			$check_item_in_temp = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_invoice', 'product_id', $id, $user_name['id'], 'pos');
 
 
-				if($result[0]->quantity >= 0)
-				{
-					$stockargs   = array(
-						'table_name' =>'mp_productslist', 
-						'id' =>$result[0]->id, 
+			if ($result[0]->quantity >= 0) {
+				$stockargs   = array(
+					'table_name' => 'mp_productslist',
+					'id' => $result[0]->id,
+				);
+
+				$stockdata = array(
+					'quantity' => $result[0]->quantity - 1
+				);
+
+				$this->Crud_model->edit_record_id($stockargs, $stockdata);
+
+				if ($check_item_in_temp != NULL) {
+					$qty = $check_item_in_temp[0]->qty + 1;
+
+					$args = array(
+						'table_name' => 'mp_temp_barcoder_invoice',
+						'id' => $check_item_in_temp[0]->id
 					);
 
-					$stockdata = array(
-						'quantity' => $result[0]->quantity-1
+					$data = array(
+						'qty' => $qty
 					);
 
-					$this->Crud_model->edit_record_id($stockargs, $stockdata);
+					$this->Crud_model->edit_record_id($args, $data);
+				} else {
+					if ($result != NULL) {
+						$tax_amount = ($result[0]->tax / 100) * $result[0]->retail;
 
-					if($check_item_in_temp != NULL)
-					{
-						$qty = $check_item_in_temp[0]->qty+1;
-
+						// ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY FOR EVERY ITERATION
 						$args = array(
-							'table_name' => 'mp_temp_barcoder_invoice',
-							'id' => $check_item_in_temp[0]->id
+							'barcode' => $result[0]->barcode,
+							'product_no' => $result[0]->sku,
+							'product_id' => $result[0]->id,
+							'product_name' => $result[0]->product_name,
+							'mg' => $result[0]->mg,
+							'price' => $result[0]->retail,
+							'purchase' => $result[0]->purchase,
+							'qty' => 1,
+							'tax' => $tax_amount,
+							'agentid' => $user_name['id'],
+							'source' => 'pos'
 						);
-
-						$data = array(
-							'qty' => $qty
-						);
-
-						$this->Crud_model->edit_record_id($args, $data);
+						// DEFINES CALL THE FUNCTION OF insert_data FORM Crud_model CLASS
+						$result = $this->Crud_model->insert_data('mp_temp_barcoder_invoice', $args);
 					}
-					else
-					{
-						if($result != NULL)
-						{
-							$tax_amount = ($result[0]->tax/100)*$result[0]->retail;
-
-							// ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY FOR EVERY ITERATION
-								$args = array(
-									'barcode' => $result[0]->barcode,
-									'product_no' => $result[0]->sku,
-									'product_id' => $result[0]->id,
-									'product_name' => $result[0]->product_name,
-									'mg' => $result[0]->mg,
-									'price' => $result[0]->retail,
-									'purchase' => $result[0]->purchase,
-									'qty' => 1,
-									'tax' => $tax_amount,
-									'agentid' => $user_name['id'],
-									'source' => 'pos'
-								);
-								// DEFINES CALL THE FUNCTION OF insert_data FORM Crud_model CLASS
-								$result = $this->Crud_model->insert_data('mp_temp_barcoder_invoice', $args);
-						}
 				}
-
 			}
-				//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-				$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice','pos',$user_name['id']);
-
-				$this->load->view('invoice_template.php',$data);
+			//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
+			$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
+			// echo json_encode(array('error' => false, 'data' => $id));
+			$this->load->view('invoice_template.php', $data);
 		}
 	}
 
@@ -280,15 +297,14 @@ class Invoice extends CI_Controller
 	//USED TO SEARCH MANUAL ITEMS
 	function search_result_manual($search_result)
 	{
-		if($search_result != NULL)
-		{
+		if ($search_result != NULL) {
 			// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
 			$this->load->model('Crud_model');
 
 			$result = $this->Crud_model->search_items_stock($search_result);
 			//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
 			$data['search_result'] = $result;
-			$this->load->view('search_list.php',$data);
+			$this->load->view('search_list.php', $data);
 		}
 	}
 
@@ -303,45 +319,517 @@ class Invoice extends CI_Controller
 
 		// DEFINES TO LOAD THE MODEL
 		$this->load->model('Accounts_model');
-		$first_date = html_escape($this->input->post('date1'));
-		$second_date = html_escape($this->input->post('date2'));
-		$invoice_no = html_escape($this->input->post('invoice_no'));
-		if ($invoice_no != NULL)
-		{
-			$this->load->model('Crud_model');
-			$result_invoices = $this->Crud_model->fetch_record_by_id('mp_invoices', $invoice_no);
+		$filter['first_date'] = html_escape($this->input->post('date1'));
+		$filter['second_date'] = html_escape($this->input->post('date2'));
+		$filter['no_invoice'] = html_escape($this->input->post('invoice_no'));
+
+
+		if ($filter['first_date'] == NULL or $filter['second_date'] == NULL) {
+			$filter['first_date'] = date('Y-m-1');
+			$filter['second_date'] = date('Y-m-31');
+
+			// FETCH SALES RECORD FROM invoices TABLE
+			// $result_invoices = $this->Accounts_model->get('mp_invoices', $first_date, $second_date);
+		} else {
+
+			// FETCH SALES RECORD FROM invoices TABLE
+			// $result_invoices = $this->Accounts_model->fetch_record_date('mp_invoices', $first_date, $second_date);
 		}
-		else
-		{
-			
-			if ($first_date == NULL OR $second_date == NULL)
-			{
+		$this->load->model(array('InvoiceModel'));
+		// $this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
+
+		$result_invoices = $this->InvoiceModel->getAllInvoice($filter);
+		// echo json_encode($result_invoices);
+		// die();
+
+		if ($result_invoices != NULL) {
+			$count = 0;
+			// print "<pre>";
+			// print_r($result_invoices);
+			// foreach ($result_invoices as $obj_result_invoices) {
+
+			// 	// FETCH SALES RECORD FROM SALES TABLE
+			// 	$result_sales = $this->Accounts_model->fetch_record_sales('mp_sales', 'order_id', $obj_result_invoices->id);
+			// 	if ($result_sales != NULL) {
+			// 		$collection[$count] = $result_sales;
+			// 		$count++;
+			// 	}
+			// }
+			// // print "<pre>";
+			// print_r($collection);
+			// ASSIGNED THE FETCHED RECORD TO DATA ARRAY TO VIEW
+			// $data['Sales_Record'] = $collection;
+			$data['Model_Title'] = "Edit invoice";
+			$data['Model_Button_Title'] = "Update invoices";
+			$data['invoices_Record'] = $result_invoices;
+
+			// DEFINES WHICH PAGE TO RENDER
+			$data['main_view'] = 'sales_invoices_v2';
+
+			// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+			$this->load->view('main/index.php', $data);
+		} else {
+			// DEFINES WHICH PAGE TO RENDER
+			$data['main_view'] = 'main/error_invoices.php';
+			$data['actionresult'] = "invoice/manage";
+			$data['heading1'] = "Tidak ada faktur yang tersedia. ";
+			$data['heading2'] = "Ups! Maaf tidak ada catatan faktur yang tersedia di detail yang diberikan";
+			$data['details'] = "Kami akan segera memperbaikinya. Sementara itu, Anda dapat kembali atau mencoba menggunakan formulir pencarian.";
+			// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+			$this->load->view('main/index.php', $data);
+		}
+	}
+
+	public function edit($id)
+	{
+		$this->load->model(array('SecurityModel', 'InvoiceModel'));
+		$this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
+
+		if ($id != NULL) {
+			$dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
+			$item = count($dataContent['item']);
+			for ($i = 0; $i < $item; $i++) {
+				// if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
+				// 	$status = TRUE;
+				$dataContent['id_item'][$i] =  $dataContent['item'][$i]->id;
+				$dataContent['amount'][$i] = preg_replace("/[^0-9]/", "", $dataContent['item'][$i]->amount);
+				$dataContent['date_item'][$i] =  $dataContent['item'][$i]->date_item;
+				$dataContent['satuan'][$i] =  $dataContent['item'][$i]->satuan;
+
+				$dataContent['keterangan_item'][$i] =  $dataContent['item'][$i]->keterangan_item;
+				$dataContent['qyt'][$i] =  $dataContent['item'][$i]->qyt;
+				// $dataContent['qyt'][$i] = preg_replace("/[^0-9]/", "", $dataContent['item'][$i]->qyt);
+			}
+		} else {
+			echo 'ngapain cok';
+			return;
+		}
+		// echo json_encode($item);
+		// echo json_encode($dataContent);
+		// $this->index($dataContent);
+		$this->load->model('Crud_model');
+
+		$data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
+
+		$this->load->model('Accounts_model');
+
+		$data['banks'] = $this->Accounts_model->getAllBank();
+		// DEFINES PAGE TITLE
+		$data['title'] = 'Edit Jurnal';
+		$data['data_return'] = $dataContent;
+		$this->load->model('Statement_model');
+		$data['accounts_records'] = $this->Statement_model->chart_list();
+		$data['patner_record'] = $this->Statement_model->patners_cars_list();
+
+		// DEFINES WHICH PAGE TO RENDER
+		$data['main_view'] = 'invoice_v2_edit';
+
+		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+		$this->load->view('main/index.php', $data);
+	}
+
+	public function copy($id)
+	{
+		$this->load->model(array('SecurityModel', 'InvoiceModel'));
+		$this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
+
+		if ($id != NULL) {
+			$dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
+			$item = count($dataContent['item']);
+			for ($i = 0; $i < $item; $i++) {
+				// if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
+				// 	$status = TRUE;
+				$dataContent['amount'][$i] = preg_replace("/[^0-9]/", "", $dataContent['item'][$i]->amount);
+				$dataContent['date_item'][$i] =  $dataContent['item'][$i]->date_item;
+				$dataContent['keterangan_item'][$i] =  $dataContent['item'][$i]->keterangan_item;
+				$dataContent['satuan'][$i] =  $dataContent['item'][$i]->satuan;
+
+				$dataContent['qyt'][$i] =  $dataContent['item'][$i]->qyt;
+				// $dataContent['qyt'][$i] = preg_replace("/[^0-9]/", "", $dataContent['item'][$i]->qyt);
+			}
+		} else {
+			echo 'ngapain cok';
+			return;
+		}
+		// echo json_encode($item);
+		// echo json_encode($dataContent);
+		$this->index($dataContent);
+	}
+	public function download($id)
+	{
+		$this->load->model(array('SecurityModel', 'InvoiceModel'));
+		$this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
+
+		if ($id != NULL) {
+			$dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
+		} else {
+			echo 'ngapain cok';
+			return;
+		}
+		$date_item = false;
+		$total = 0;
+		$total_qyt = 0;
+		if ($dataContent['item']  != NULL) {
+			foreach ($dataContent['item'] as $item) {
+				$total = $total + (ceil($item->amount) * $item->qyt);
+				$total_qyt =  $total_qyt + ($item->qyt);
+				if (!empty($item->date_item))
+					$date_item = true;
+			}
+		}
+
+		require('assets/fpdf/fpdf.php');
+		$pdf = new FPDF('p', 'mm', 'A4');
+		$pdf->SetMargins(12, 15, 10, 10);
+		$pdf->AddPage();
+		$pdf->Image(base_url() . 'assets/img/bg-invoice.jpg', 10, 10, 190, 60);
+		$pdf->Image(base_url() . "assets/img/ima-outline-blue.png", 20, 20, 20, 20);
+		$pdf->Image(base_url() . "assets/img/ima-text-white.png", 40, 20, 76, 20);
+
+		$pdf->SetFont('Arial', 'B', 13);
+		$pdf->Cell(173, 25, '', 0, 1, 'C');
+		$pdf->SetDrawColor(255, 255, 225);
+		$pdf->SetTextColor(255, 255, 225);
+		$pdf->Cell(10, 30, '', 0, 0, 'C');
+		$pdf->Cell(173, 6, 'Jalan Sanggul Dewa No.6 Pangkalpinang', 0, 1);
+		$pdf->Cell(10, 30, '', 0, 0, 'C');
+		$pdf->Cell(173, 6, 'Bangka Belitung - Indonesia', 0, 1);
+		$pdf->SetLineWidth(1);
+		$pdf->Line(116, 27, 116, 60);
+		$pdf->SetXY(0, 0);
+		$pdf->Cell(179, 30, '', 0, 1, 'C');
+		$pdf->SetFont('Arial', 'B', 30);
+		$pdf->Cell(96, 12, '', 0, 0, 'R');
+		$pdf->Cell(77, 12, 'INVOICE', 0, 1, 'R');
+		$pdf->SetFont('Arial', 'B', 15);
+		$pdf->Cell(96, 6, '', 0, 0, 'R');
+		$pdf->Cell(77, 6, 'Number#', 0, 1, 'R');
+		$pdf->Cell(96, 6, '', 0, 0, 'R');
+		$pdf->Cell(77, 6,  $dataContent['no_invoice'], 0, 1, 'R');
+		$pdf->SetFont('Arial', 'BI', 14);
+		$pdf->SetDrawColor(0, 0, 0);
+		$pdf->SetFont('Arial', '', 9.5);
+
+		$pdf->SetXY(12, 75);
+		$pdf->SetTextColor(107, 104, 104);
+		$pdf->Cell(40, 6, 'INVOICE TO. ', 0, 1);
+		$pdf->SetTextColor(20, 20, 20);
+		$pdf->Cell(5, 6, '', 0, 0, 'C');
+		$pdf->MultiCell(40, 6, $dataContent['customer_name'], 0, 1);
+		$pdf->Cell(5, 6, '', 0, 0, 'C');
+		$pdf->MultiCell(40, 6, $dataContent['cus_address'], 0, 1);
+		$pdf->Cell(5, 6, '', 0, 1);
+
+		$pdf->SetTextColor(107, 104, 104);
+		$pdf->Cell(35, 6, 'INVOICE NO. ', 0, 1);
+		$pdf->SetTextColor(20, 20, 20);
+		$pdf->Cell(5, 6, '', 0, 0, 'C');
+		$pdf->MultiCell(40, 6,  $dataContent['no_invoice'], 0, 1);
+		$pdf->Cell(5, 6, '', 0, 1);
+
+		$pdf->SetTextColor(107, 104, 104);
+		$pdf->Cell(40, 6, 'TANGGAL', 0, 1);
+		$pdf->SetTextColor(20, 20, 20);
+		$pdf->Cell(5, 6, '', 0, 0, 'C');
+		$pdf->MultiCell(40, 6, $this->tanggal_indo($dataContent['date']), 0, 1);
+		// $pdf->Cell(5, 6, '', 0, 1);
+
+		// $pdf->Circle(110, 47, 7, 'F');
+
+		$cur_x = $pdf->GetX();
+		$cur_y = $pdf->GetY();
+		$pdf->SetXY(12, 75);
+		$pdf->Cell(50, 6, '', 0, 0, 'C');
+		$pdf->SetTextColor(107, 104, 104);
+		$pdf->SetDrawColor(107, 104, 104);
+		if ($date_item) {
+			$pdf->Cell(48, 6, 'KETERANGAN', 0, 0, 'C');
+			$pdf->Cell(29, 6, 'TANGGAL', 0, 0, 'C');
+			$pdf->Cell(12, 6, 'QYT', 0, 0, 'C');
+			$pdf->Cell(25, 6, 'HARGA', 0, 0, 'C');
+			$pdf->Cell(25, 6, 'SUB TOTAL', 0, 0, 'C');
+			$pdf->Cell(1, 8, '', 0, 0, 'C');
+			$pdf->SetLineWidth(0.5);
+			$pdf->Line(68, 82, 197, 82);
+
+			$pdf->SetTextColor(20, 20, 20);
+			$pdf->Cell(50, 6, '', 0, 0, 'C');
+			$image1 = base_url() . "assets/img/blue_dot.jpg";
+			if ($dataContent['item']  != NULL) {
+				foreach ($dataContent['item'] as $item) {
+					$x = $pdf->GetX();
+					$y = $pdf->GetY();
+					$tmp_y = $pdf->GetY();
+					$pdf->Cell(4, 6, $pdf->Image($image1, $pdf->GetX(), $pdf->GetY() + 1.6, 4), 0, 0);
+					$pdf->MultiCell(45, 8, $item->keterangan_item, 0, 1);
+					if ($pdf->GetY() > $tmp_y)
+						$tmp_y = $pdf->GetY();
+					$pdf->SetXY($x + 49, $y);
+					$pdf->MultiCell(28, 8, $item->date_item, 0, 1);
+					if ($pdf->GetY() > $tmp_y)
+						$tmp_y = $pdf->GetY();
+					$pdf->SetXY($x + 77, $y);
+					$pdf->MultiCell(12, 8, $item->qyt . '' . $item->satuan, 0, 'C',	 0);
+					if ($pdf->GetY() > $tmp_y)
+						$tmp_y = $pdf->GetY();
+					$pdf->SetXY($x + 89, $y);
+					$pdf->MultiCell(24, 8, number_format(ceil($item->amount), '0', ',', '.'), 0, 'R', 0);
+					if ($pdf->GetY() > $tmp_y)
+						$tmp_y = $pdf->GetY();
+					$pdf->SetXY($x + 113, $y);
+					$pdf->MultiCell(24, 8, number_format($item->qyt * ceil($item->amount), '0', ',', '.'), 0, 'R', 0);
+					$pdf->SetXY(62, $tmp_y);
+					$pdf->SetLineWidth(0.1);
+					$pdf->Line(68, $tmp_y, 197, $tmp_y);
+				}
+
+				$pdf->Cell(76, 8, '', 0, 0, 'C');
+				$pdf->Cell(15, 8, $total_qyt, 0, 0, 'C');
+				$pdf->Cell(10, 8, '', 0, 0, 'C');
+				$pdf->SetFont('Arial', '', 10);
+				$pdf->Cell(35, 8, 'Rp ' . number_format($total, '0', ',', '.'), 0, 1, 'R');
+			}
+			if ($pdf->GetY() > $cur_y)
+				$cur_y =  $pdf->GetY();
+			$pdf->SetLineWidth(0.5);
+			$pdf->Line(60, 75, 60, $cur_y);
+		} else {
+			$pdf->Cell(60, 6, 'KETERANGAN', 0, 0, 'C');
+			// $pdf->Cell(29, 6, 'TANGGAL', 0, 0, 'C');
+			$pdf->Cell(14, 6, 'QYT', 0, 0, 'C');
+			$pdf->Cell(30, 6, 'HARGA', 0, 0, 'C');
+			$pdf->Cell(30, 6, 'SUB TOTAL', 0, 0, 'C');
+			$pdf->Cell(1, 8, '', 0, 0, 'C');
+			$pdf->SetLineWidth(0.5);
+			$pdf->Line(68, 82, 197, 82);
+
+			$pdf->SetTextColor(20, 20, 20);
+			$pdf->Cell(50, 6, '', 0, 0, 'C');
+			$image1 = base_url() . "assets/img/blue_dot.jpg";
+			if ($dataContent['item']  != NULL) {
+				foreach ($dataContent['item'] as $item) {
+					$x = $pdf->GetX();
+					$y = $pdf->GetY();
+					$tmp_y = $pdf->GetY();
+					$pdf->Cell(4, 6, $pdf->Image($image1, $pdf->GetX(), $pdf->GetY() + 1.7, 4), 0, 0);
+					$pdf->MultiCell(56, 8, $item->keterangan_item, 0, 1);
+					if ($pdf->GetY() > $tmp_y)
+						$tmp_y = $pdf->GetY();
+					$pdf->SetXY($x + 60, $y);
+					$pdf->MultiCell(14, 8, $item->qyt . '' . $item->satuan, 0, 'C',	 0);
+					if ($pdf->GetY() > $tmp_y)
+						$tmp_y = $pdf->GetY();
+					$pdf->SetXY($x + 74, $y);
+					$pdf->MultiCell(30, 8, number_format(ceil($item->amount), '0', ',', '.'), 0, 'R', 0);
+					if ($pdf->GetY() > $tmp_y)
+						$tmp_y = $pdf->GetY();
+					$pdf->SetXY($x + 104, $y);
+					$pdf->MultiCell(30, 8, number_format($item->qyt * ceil($item->amount), '0', ',', '.'), 0, 'R', 0);
+					$pdf->SetXY(62, $tmp_y);
+					$pdf->SetLineWidth(0.1);
+					$pdf->Line(68, $tmp_y, 197, $tmp_y);
+				}
+
+				$pdf->Cell(76, 8, '', 0, 0, 'C');
+				$pdf->Cell(15, 8, $total_qyt, 0, 0, 'C');
+				$pdf->Cell(10, 8, '', 0, 0, 'C');
+				$pdf->SetFont('Arial', '', 10);
+				$pdf->Cell(35, 8, 'Rp ' . number_format($total, '0', ',', '.'), 0, 1, 'R');
+			}
+			if ($pdf->GetY() > $cur_y)
+				$cur_y =  $pdf->GetY();
+			$pdf->SetLineWidth(0.5);
+			$pdf->Line(60, 75, 60, $cur_y);
+		}
+
+		$pdf->Line(20, $cur_y + 5, 110, $cur_y + 5);
+		$pdf->Cell(30, 15, '', 0, 1, 'C');
+		$pdf->SetTextColor(40, 41, 40);
+		$pdf->SetFont('Arial', 'B', 10);
+		$cur_y =  $pdf->GetY();
+		$cur_x =  $pdf->GetX();
+
+		if ($dataContent['payment_metode'] != 99) {
+			$pdf->Cell(5, 7, '', 0, 0, 'C');
+			$pdf->Cell(50, 7, 'BANK TRANSFER', 0, 1, 'C');
+			$pdf->Cell(5, 7, '', 0, 0, 'C');
+			$pdf->Cell(15, 7, 'Bank :', 0, 0, 'L');
+			$pdf->MultiCell(60, 7, $dataContent['bank_name'], 0, 'R');
+
+			$pdf->Cell(5, 7, '', 0, 0, 'C');
+			$pdf->Cell(30, 7, 'Account Name :', 0, 0, 'L');
+			$pdf->MultiCell(45, 7, $dataContent['title_bank'], 0, 'R');
+
+			$pdf->Cell(5, 7, '', 0, 0, 'C');
+			$pdf->Cell(35, 7, 'Account Number :', 0, 0, 'L');
+			$pdf->MultiCell(40, 7, $dataContent['bank_number'], 0, 'R');
+		}
+		$bank_xy = array($pdf->GetX(), $pdf->GetY());
+		$pdf->SetXY($cur_x + 120, $cur_y);
+
+		if ($dataContent['ppn_pph'] == 1) {
+
+			$pdf->Cell(40, 17, $pdf->Image(base_url() . "assets/img/bg-3.jpg", 120, $pdf->GetY(), 77, 14), 0, 1, 'C');
+			$pdf->Cell(40, 17, $pdf->Image(base_url() . "assets/img/bg-2.jpg", 120, $pdf->GetY(), 77, 14), 0, 1, 'C');
+			$pdf->Cell(40, 17, $pdf->Image(base_url() . "assets/img/bg-1.jpg", 120, $pdf->GetY(), 77, 14), 0, 1, 'C');
+			$pdf->SetXY($cur_x + 100, $cur_y);
+			$pdf->Cell(10, 17, '', 0, 0);
+			$pdf->SetTextColor(255, 255, 255);
+			$pdf->SetFont('Arial', 'B', 13);
+
+			$pdf->Cell(30, 14, 'SUB TOTAL', 0, 0, 'L');
+			$pdf->Cell(42, 14, 'Rp ' . number_format(ceil($total), '0', ',', '.'), 0, 1, 'R');
+			$pdf->Cell(1, 3, '', 0, 1);
+			$pdf->Cell(110, 14, '', 0, 0);
+			$pdf->Cell(25, 14, 'PPN 10%', 0, 0, 'L');
+			$pdf->Cell(47, 14, 'Rp ' . number_format(ceil($total * 0.10), '0', ',', '.'), 0, 1, 'R');
+			$pdf->Cell(1, 3, '', 0, 1);
+			$pdf->Cell(110, 14, '', 0, 0);
+			$pdf->Cell(22, 14, 'TOTAL', 0, 0, 'L');
+			$pdf->Cell(50, 14, 'Rp ' . number_format(ceil($total * 0.10) + ceil($total)), 0, 1, 'R');
+			$terbilang = ceil($total * 0.10) + ceil($total);
+		} else {
+			$pdf->Cell(40, 17, $pdf->Image(base_url() . "assets/img/bg-1.jpg", 120, $pdf->GetY(), 77, 14), 0, 1, 'C');
+			$pdf->SetXY($cur_x + 100, $cur_y);
+			$pdf->Cell(10, 17, '', 0, 0);
+			$pdf->SetTextColor(255, 255, 255);
+			$pdf->SetFont('Arial', 'B', 13);
+			$pdf->Cell(30, 14, 'TOTAL', 0, 0, 'L');
+			$pdf->Cell(42, 14, 'Rp ' . number_format(ceil($total), '0', ',', '.'), 0, 1, 'R');
+			$terbilang = ceil($total);
+		}
+
+		$cur_y = $pdf->GetY();
+		$pdf->SetXY($bank_xy[0], $bank_xy[1]);
+		$pdf->SetTextColor(40, 41, 40);
+		$pdf->SetFont('Arial', 'B', 10);
+		$pdf->Cell(5, 6, '', 0, 1);
+		$pdf->Cell(5, 8, '', 0, 0);
+
+		$pdf->Cell(100, 8, 'Terbilang : ', 0, 1);
+		$pdf->Cell(5, 8, '', 0, 0);
+		$pdf->SetFont('Arial', 'I', 10);
+		$pdf->MultiCell(88, 6, $this->terbilang($terbilang) . ' Rupiah', 0, 1);
+
+		if ($cur_y > $pdf->GetY()) {
+			$pdf->SetY($cur_y);
+		}
+		$pdf->Cell(1, 10, '', 0, 1);
+		$pdf->Cell(115, 6, '', 0, 0);
+		$pdf->SetFont('Arial', 'B', 10);
+		$pdf->Cell(60, 4, 'PT. INDOMETAL ASIA', 0, 1, 'C');
+		$pdf->Cell(115, 3, '', 0, 0);
+		$pdf->Cell(60, 3, $dataContent['title_acc_1'], 0, 1, 'C');
+
+		$pdf->Cell(1, 22, '', 0, 1);
+		$pdf->Cell(115, 6, '', 0, 0);
+		$pdf->SetFont('Arial', 'BU', 10);
+		$pdf->Cell(60, 6, $dataContent['name_acc_1'], 0, 1, 'C');
+
+		$filename = 'INV_' .
+			$dataContent['no_invoice'] . '.pdf';
+
+		$pdf->Output('', $filename, false);
+	}
+	function penyebut($nilai)
+	{
+		$nilai = abs($nilai);
+		$huruf = array("", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas");
+		$temp = "";
+		if ($nilai < 12) {
+			$temp = " " . $huruf[$nilai];
+		} else if ($nilai < 20) {
+			$temp = $this->penyebut($nilai - 10) . " Belas";
+		} else if ($nilai < 100) {
+			$temp = $this->penyebut($nilai / 10) . " Puluh" . $this->penyebut($nilai % 10);
+		} else if ($nilai < 200) {
+			$temp = " Seratus" . $this->penyebut($nilai - 100);
+		} else if ($nilai < 1000) {
+			$temp = $this->penyebut($nilai / 100) . " Ratus" . $this->penyebut($nilai % 100);
+		} else if ($nilai < 2000) {
+			$temp = " Seribu" . $this->penyebut($nilai - 1000);
+		} else if ($nilai < 1000000) {
+			$temp = $this->penyebut($nilai / 1000) . " Ribu" . $this->penyebut($nilai % 1000);
+		} else if ($nilai < 1000000000) {
+			$temp = $this->penyebut($nilai / 1000000) . " Juta" . $this->penyebut($nilai % 1000000);
+		} else if ($nilai < 1000000000000) {
+			$temp = $this->penyebut($nilai / 1000000000) . " Milyar" . $this->penyebut(fmod($nilai, 1000000000));
+		} else if ($nilai < 1000000000000000) {
+			$temp = $this->penyebut($nilai / 1000000000000) . " Trilyun" . $this->penyebut(fmod($nilai, 1000000000000));
+		}
+		return $temp;
+	}
+
+	function terbilang($nilai)
+	{
+		if ($nilai < 0) {
+			$hasil = "minus " . trim($this->penyebut($nilai));
+		} else {
+			$hasil = trim($this->penyebut($nilai));
+		}
+		return $hasil;
+	}
+
+	function tanggal_indo($tanggal)
+	{
+		$bulan = array(
+			1 =>   'Januari',
+			'Februari',
+			'Maret',
+			'April',
+			'Mei',
+			'Juni',
+			'Juli',
+			'Agustus',
+			'September',
+			'Oktober',
+			'November',
+			'Desember'
+		);
+		$split = explode('-', $tanggal);
+		return $split[2] . ' ' . $bulan[(int)$split[1]] . ' ' . $split[0];
+	}
+	public function show($invoice_no)
+	{
+
+		// DEFINES PAGE TITLE
+		$data['title'] = 'Invoice';
+
+		$collection = array();
+
+		// DEFINES TO LOAD THE MODEL
+		$this->load->model('InvoiceModel');
+		if ($invoice_no != NULL) {
+			$data['dataContent'] = $this->InvoiceModel->getAllInvoice(array('id' =>  $invoice_no))[0];
+			$data['main_view'] = 'invoice_detail';
+			// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+			$this->load->view('main/index.php', $data);
+			return;
+		} else {
+			echo 'ngapain cok';
+			return;
+			if ($first_date == NULL or $second_date == NULL) {
 				$first_date = date('Y-m-d');
 				$second_date = date('Y-m-d');
 
 				// FETCH SALES RECORD FROM invoices TABLE
 				$result_invoices = $this->Accounts_model->fetch_record_date('mp_invoices', $first_date, $second_date);
-			}
-			else
-			{
+			} else {
 
 				// FETCH SALES RECORD FROM invoices TABLE
 				$result_invoices = $this->Accounts_model->fetch_record_date('mp_invoices', $first_date, $second_date);
 			}
 		}
 
-		if ($result_invoices != NULL)
-		{
+		if ($result_invoices != NULL) {
 			$count = 0;
 			// print "<pre>";
 			// print_r($result_invoices);
-			foreach($result_invoices as $obj_result_invoices)
-			{
+			foreach ($result_invoices as $obj_result_invoices) {
 
 				// FETCH SALES RECORD FROM SALES TABLE
 				$result_sales = $this->Accounts_model->fetch_record_sales('mp_sales', 'order_id', $obj_result_invoices->id);
-				if ($result_sales != NULL)
-				{
+				if ($result_sales != NULL) {
 					$collection[$count] = $result_sales;
 					$count++;
 				}
@@ -355,13 +843,11 @@ class Invoice extends CI_Controller
 			$data['invoices_Record'] = $result_invoices;
 
 			// DEFINES WHICH PAGE TO RENDER
-			$data['main_view'] = 'sales_invoices';
+			$data['main_view'] = 'invoice_detail';
 
 			// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
 			$this->load->view('main/index.php', $data);
-		}
-		else
-		{
+		} else {
 			// DEFINES WHICH PAGE TO RENDER
 			$data['main_view'] = 'main/error_invoices.php';
 			$data['actionresult'] = "invoice/manage";
@@ -373,45 +859,44 @@ class Invoice extends CI_Controller
 		}
 	}
 
+
 	//invoice/popup
 	//DEFINES A POPUP MODEL OG GIVEN PARAMETER
-	function popup($page_name = '',$param = '')
+	function popup($page_name = '', $param = '')
 	{
 		$this->load->model('Crud_model');
-
-		if($page_name  == 'add_customer_model')
-		{
+		if ($page_name  == 'new_row') {
+			$this->load->model('Statement_model');
+			$data['accounts_records'] = $this->Statement_model->chart_list();
+			$this->load->view('admin_models/accounts/new_row_invoice.php', $data);
+		} else		if ($page_name  == 'add_patner_model') {
 			//USED TO REDIRECT LINK
-			$data['link'] = 'customers/add_customer';
+			$data['link'] = 'patners/add_patner';
 
 			//model name available in admin models folder
-			$this->load->view('admin_models/add_models/add_customer_model.php',$data);
-		}
-		else if($page_name  == 'edit_invoice_model')
-		{
+			$this->load->view('admin_models/add_models/add_patner_model.php', $data);
+		} else if ($page_name  == 'edit_invoice_model') {
 			// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
 			$this->load->model('Accounts_model');
 
 			// GET THE ROW FROM DATABASE FROM TABLE ID
-			$data['invoice_data'] = $this->Accounts_model->get_by_id("mp_invoices","mp_sales",$param);
+			$data['invoice_data'] = $this->Accounts_model->get_by_id("mp_invoices", "mp_sales", $param);
 
 			//model name available in admin models folder
-			$this->load->view('admin_models/edit_models/edit_invoice_model.php',$data);
-		}
-		else if($page_name  == 'add_customer_payment_pos_model')
-		{
+			$this->load->view('admin_models/edit_models/edit_invoice_model.php', $data);
+		} else if ($page_name  == 'add_customer_payment_pos_model') {
 			$this->load->model('Accounts_model');
 
 			$data['previous_amt'] = $this->Accounts_model->previous_balance($param);
 
 			$data['cus_id'] = $param;
 
-			$data['customer_list'] = $this->Crud_model->fetch_payee_record('customer',NULL);
+			$data['customer_list'] = $this->Crud_model->fetch_payee_record('customer', NULL);
 			//DEFINES TO FETCH THE LIST OF BANK ACCOUNTS 
-			$data['bank_list'] = $this->Crud_model->fetch_record('mp_banks','status');
-			
-			$this->load->view( 'admin_models/add_models/add_customer_payment_pos_model.php',$data);
-		}	
+			$data['bank_list'] = $this->Crud_model->fetch_record('mp_banks', 'status');
+
+			$this->load->view('admin_models/add_models/add_customer_payment_pos_model.php', $data);
+		}
 	}
 
 	public function add_customer()
@@ -448,30 +933,24 @@ class Invoice extends CI_Controller
 
 		// CHECK WEATHER EMAIL ADLREADY EXISTS OR NOT IN THE TABLE
 		$email_record_data = $this->Crud_model->check_email_address('mp_customer', 'cus_email', $customer_email);
-		if ($email_record_data == NULL)
-		{
+		if ($email_record_data == NULL) {
 
 			// DEFINES CALL THE FUNCTION OF insert_data FORM Crud_model CLASS
 			$result = $this->Crud_model->insert_data('mp_customer', $args);
-			if ($result == 1)
-			{
+			if ($result == 1) {
 				$array_msg = array(
 					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Customer added Successfully',
 					'alert' => 'info'
 				);
 				$this->session->set_flashdata('status', $array_msg);
-			}
-			else
-			{
+			} else {
 				$array_msg = array(
 					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error Customer cannot be added',
 					'alert' => 'danger'
 				);
 				$this->session->set_flashdata('status', $array_msg);
 			}
-		}
-		else
-		{
+		} else {
 			$array_msg = array(
 				'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i>Sorry Email already exists !',
 				'alert' => 'danger'
@@ -504,9 +983,8 @@ class Invoice extends CI_Controller
 			'bill_paid' =>  $amountpaid
 		);
 
-		$result = $this->Transaction_model->edit_invoice_transaction($data,$edit_invoice_id);
-		if($result != NULL)
-		{
+		$result = $this->Transaction_model->edit_invoice_transaction($data, $edit_invoice_id);
+		if ($result != NULL) {
 
 			$product_quantity = html_escape($this->input->post('product_quantity'));
 
@@ -516,8 +994,7 @@ class Invoice extends CI_Controller
 
 			// DEFINES TO CALCULATE THAT HOW MUCH THE LOOP SHOULD ITERATE
 			$i = 0;
-			while ($i < count($product_quantity))
-			{
+			while ($i < count($product_quantity)) {
 
 				// GETTING THE VALUES FROM TEXTFIELD .THE ARRAYS OF VALUES WHICH WE CREATED
 				// BY USING DOM
@@ -526,7 +1003,7 @@ class Invoice extends CI_Controller
 				$get_med_quantity = $get_result[0]->qty;
 
 				//RETURNED STOCK BY CUSTOMER
-				$get_med_quantity = $get_med_quantity-$product_quantity[$i];
+				$get_med_quantity = $get_med_quantity - $product_quantity[$i];
 
 				// ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY FOR EVERY ITERATION
 				$args1 = array(
@@ -540,30 +1017,27 @@ class Invoice extends CI_Controller
 				// DEFINES CALL THE FUNCTION OF insert_data FORM Crud_model CLASS
 				$result = $this->Crud_model->edit_record_given_field('id', $args1, $data1);
 
-				if($get_med_quantity > 0)
-				{
+				if ($get_med_quantity > 0) {
 
-				//UPDATING PARTS STOCK
-				$this->Crud_model->add_return_item_stock($edit_product_id[$i],$get_med_quantity);
-
+					//UPDATING PARTS STOCK
+					$this->Crud_model->add_return_item_stock($edit_product_id[$i], $get_med_quantity);
 				}
 				$i++;
 			}
 		}
 
-		if ($result != NULL)
-		{
+		if ($result != NULL) {
 
-			$get_invoice_result = $this->Crud_model->fetch_record_by_id('mp_invoices',$edit_invoice_id);
+			$get_invoice_result = $this->Crud_model->fetch_record_by_id('mp_invoices', $edit_invoice_id);
 
 			//ASSIGNING DATA TO ARRAY
 			$data  = array(
-				'invoice_id' => $edit_invoice_id, 
-				'discount' => $edit_discount, 
+				'invoice_id' => $edit_invoice_id,
+				'discount' => $edit_discount,
 				'description' => $edit_description,
-				'date' => $get_invoice_result[0]->date, 
-				'status' => $get_invoice_result[0]->status, 
-				'agentname' => $user_name['name'], 
+				'date' => $get_invoice_result[0]->date,
+				'status' => $get_invoice_result[0]->status,
+				'agentname' => $user_name['name'],
 				'cus_id' => $get_invoice_result[0]->cus_id,
 				'total_bill' => $total_bill,
 				'bill_paid' => $amountpaid,
@@ -571,29 +1045,26 @@ class Invoice extends CI_Controller
 			);
 
 			//FETCHING UPDATED SALE TO PRINT
-			 $data['item_data']   =  $this->Crud_model->fetch_attr_record_by_id('mp_sales','order_id',$edit_invoice_id);
+			$data['item_data']   =  $this->Crud_model->fetch_attr_record_by_id('mp_sales', 'order_id', $edit_invoice_id);
 
 			//CUSTOMER NAME
-			$result = $this->Crud_model->fetch_record_by_id('mp_payee',$get_invoice_result[0]->cus_id);
-			$cus_name = $result[0]->customer_name;  
+			$result = $this->Crud_model->fetch_record_by_id('mp_payee', $get_invoice_result[0]->cus_id);
+			$cus_name = $result[0]->customer_name;
 
 			//COMPANY NAME
-			$result = $this->Crud_model->fetch_record_by_id('mp_langingpage',1);
-			$company_name = $result[0]->companyname; 
+			$result = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1);
+			$company_name = $result[0]->companyname;
 
 			//PRINTER NAME
-			$result = $this->Crud_model->fetch_attr_record_by_id('mp_printer','set_default',1);
-			if($result != NULL)
-			{
-			  $printer_name = $result[0]->printer_name; 
+			$result = $this->Crud_model->fetch_attr_record_by_id('mp_printer', 'set_default', 1);
+			if ($result != NULL) {
+				$printer_name = $result[0]->printer_name;
+			} else {
+				$printer_name = '';
 			}
-			else
-			{
-			  $printer_name = '';
-			}
-			
-        	//ADDRESS 
-			$result = $this->Crud_model->fetch_record_by_id('mp_contactabout',1);
+
+			//ADDRESS 
+			$result = $this->Crud_model->fetch_record_by_id('mp_contactabout', 1);
 			$address = $result[0]->address;
 			/* Hapus Tanda ini jika aplikasi sudah terkoneksi dengan printer Thermal
 			if($printer_name != '')
@@ -634,16 +1105,14 @@ class Invoice extends CI_Controller
 				'alert' => 'info'
 				);
 			}
-			*/ 
+			*/
 
 			$array_msg = array(
 				'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Invoice editted',
 				'alert' => 'info'
-				);
+			);
 			$this->session->set_flashdata('status', $array_msg);
-		}
-		else
-		{
+		} else {
 			$array_msg = array(
 				'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"/> Error invoice cannot be Editted',
 				'alert' => 'danger'
@@ -660,7 +1129,7 @@ class Invoice extends CI_Controller
 	{
 
 		$this->load->model('Transaction_model');
-	    $customer_id 	 = html_escape($this->input->post('customer_id'));
+		$customer_id 	 = html_escape($this->input->post('customer_id'));
 		$discountfield 	 = html_escape($this->input->post('discountfield'));
 		$total_bill 	 = html_escape($this->input->post('total_bill'));
 		$bill_paid 	 	 = html_escape($this->input->post('bill_paid'));
@@ -668,20 +1137,19 @@ class Invoice extends CI_Controller
 		$status 		 = 0;
 		$user_name 	     = $this->session->userdata('user_id');
 		$agent 			 = $user_name['name'];
-		
+
 		$this->load->model('Crud_model');
-		$result = $this->Crud_model->fetch_attr_record_by_id('mp_temp_barcoder_invoice','agentid',$user_name['id']);
+		$result = $this->Crud_model->fetch_attr_record_by_id('mp_temp_barcoder_invoice', 'agentid', $user_name['id']);
 
 		$customer_previous = $this->return_previous_cus_balance($customer_id);
 
-		if($result != NULL)
-		{
+		if ($result != NULL) {
 			//ASSIGNING DATA TO ARRAY
 			$data1  = array(
-				'discount' => $discountfield, 
-				'date' => $date, 
-				'status' => $status, 
-				'agentname' => $agent, 
+				'discount' => $discountfield,
+				'date' => $date,
+				'status' => $status,
+				'agentname' => $agent,
 				'cus_id' => $customer_id,
 				'total_bill' => $total_bill,
 				'bill_paid' => $bill_paid,
@@ -689,33 +1157,29 @@ class Invoice extends CI_Controller
 			);
 
 			//USED TO CREATE A TRANSACTION FOR SALE AND ACCOUNTS
-			$data = $this->Transaction_model->single_pos_transaction($data1); 
+			$data = $this->Transaction_model->single_pos_transaction($data1);
 
-			if ($data != NULL)
-			{
+			if ($data != NULL) {
 				//CUSTOMER NAME
-				$result = $this->Crud_model->fetch_record_by_id('mp_payee',$customer_id);
-				$cus_name = $result[0]->customer_name;  
+				$result = $this->Crud_model->fetch_record_by_id('mp_payee', $customer_id);
+				$cus_name = $result[0]->customer_name;
 
 				//COMPANY NAME
-				$result = $this->Crud_model->fetch_record_by_id('mp_langingpage',1);
-				$company_name = $result[0]->companyname; 
+				$result = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1);
+				$company_name = $result[0]->companyname;
 
 				//PRINTER NAME
-				$result = $this->Crud_model->fetch_attr_record_by_id('mp_printer','set_default',1);
-				if($result != NULL)
-				{
-				  $printer_name = $result[0]->printer_name; 
+				$result = $this->Crud_model->fetch_attr_record_by_id('mp_printer', 'set_default', 1);
+				if ($result != NULL) {
+					$printer_name = $result[0]->printer_name;
+				} else {
+					$printer_name = '';
 				}
-				else
-				{
-				  $printer_name = '';
-				}
-				
-            	//ADDRESS 
-				$result = $this->Crud_model->fetch_record_by_id('mp_contactabout',1);
+
+				//ADDRESS 
+				$result = $this->Crud_model->fetch_record_by_id('mp_contactabout', 1);
 				$address = $result[0]->address;
-				
+
 
 				/* Hapus Tanda ini jika aplikasi sudah terkoneksi dengan printer Thermal
 				if($printer_name != '')
@@ -757,34 +1221,30 @@ class Invoice extends CI_Controller
 					);
 				}
 				*/
-				
+
 
 				$array_msg = array(
 					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created successfully',
 					'alert' => 'info'
-					);
+				);
 
 				$this->session->set_flashdata('status', $array_msg);
-			}
-			else
-			{
+			} else {
 				$array_msg = array(
 					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error cannot be added',
 					'alert' => 'danger'
 				);
 				$this->session->set_flashdata('status', $array_msg);
 			}
-		}
-		else
-		{
+		} else {
 			$array_msg = array(
 				'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Sorry no items selected',
 				'alert' => 'danger'
 			);
 			$this->session->set_flashdata('status', $array_msg);
 		}
-			
-		redirect('invoice'); 
+
+		redirect('invoice');
 	}
 
 	//USED TO SEARCH CUSTOMERS PRIVIOUS BALANCE 
@@ -792,166 +1252,288 @@ class Invoice extends CI_Controller
 	function search_previous_cus_balance($cus_id)
 	{
 		$this->load->model('Accounts_model');
-	    $result = $this->Accounts_model->previous_balance($cus_id);
+		$result = $this->Accounts_model->previous_balance($cus_id);
 		echo $result;
-	}	
+	}
 
 	//USED TO SEARCH CUSTOMERS PRIVIOUS BALANCE 
 	//Invoice/search_previous_cus_balance
 	function return_previous_cus_balance($cus_id)
 	{
 		$this->load->model('Accounts_model');
-	    return $this->Accounts_model->previous_balance($cus_id);
+		return $this->Accounts_model->previous_balance($cus_id);
 	}
 
 	//USED TO UPDATE QUANTITY 
-    //Invoice/update_qty
-    function update_qty($val = '' , $id = '', $customprice = null)
-    {	
-    	
-      $this->load->model('Crud_model'); 
-      $this->load->model('Pos_transaction_model'); 
-      $user_name = $this->session->userdata('user_id');
-      $val = intval($val);
+	//Invoice/update_qty
+	function update_qty($val = '', $id = '', $customprice = null)
+	{
 
-      if($val != '' AND $id != '' AND  $val > -1)
-      {
+		$this->load->model('Crud_model');
+		$this->load->model('Pos_transaction_model');
+		$user_name = $this->session->userdata('user_id');
+		$val = intval($val);
 
-        $result = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_invoice','id',$id,$user_name['id'],'pos');
+		if ($val != '' and $id != '' and  $val > -1) {
 
-        $result_stk = $this->Crud_model->fetch_record_by_id('mp_productslist',$result['0']->product_id);
+			$result = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_invoice', 'id', $id, $user_name['id'], 'pos');
 
-        $bal = 0;
-        $new_qty = 0;
+			$result_stk = $this->Crud_model->fetch_record_by_id('mp_productslist', $result['0']->product_id);
 
-        if($result[0]->qty > $val)
-        {
-			
-          $bal = $result[0]->qty-$val;
-          $new_qty = $result_stk[0]->quantity+$bal;
-        }
-        else if($result[0]->qty < $val)
-        {
-           $bal = $val-$result[0]->qty;
-           $new_qty = $result_stk[0]->quantity-$bal;
+			$bal = 0;
+			$new_qty = 0;
 
-        }
+			if ($result[0]->qty > $val) {
 
-        if($result[0]->qty != $val AND $new_qty >= 0)
-        {
-	          $new_args = array(
-	            'table_name' => 'mp_productslist',
-	            'id' => $result['0']->product_id
-	          );
+				$bal = $result[0]->qty - $val;
+				$new_qty = $result_stk[0]->quantity + $bal;
+			} else if ($result[0]->qty < $val) {
+				$bal = $val - $result[0]->qty;
+				$new_qty = $result_stk[0]->quantity - $bal;
+			}
 
-              $new_data = array(
-                'quantity' => $new_qty
-              );
+			if ($result[0]->qty != $val and $new_qty >= 0) {
+				$new_args = array(
+					'table_name' => 'mp_productslist',
+					'id' => $result['0']->product_id
+				);
 
-              $temp_args = array(
-                  'table_name' => 'mp_temp_barcoder_invoice',
-                  'id' => $id
-                );
+				$new_data = array(
+					'quantity' => $new_qty
+				);
 
-			
+				$temp_args = array(
+					'table_name' => 'mp_temp_barcoder_invoice',
+					'id' => $id
+				);
+
+
 				$temp_data = array(
 					'qty' => $val
-				);	
-			
-			 
+				);
 
-            $this->Pos_transaction_model->general_pos_transaction($new_args, $new_data ,$temp_args ,$temp_data);
-        }
 
-      }
-        //LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice','pos',$user_name['id']);
-		
-        $this->load->view('invoice_template.php',$data);
+
+				$this->Pos_transaction_model->general_pos_transaction($new_args, $new_data, $temp_args, $temp_data);
+			}
+		}
+		//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
+		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
+
+		$this->load->view('invoice_template.php', $data);
 	}
 
 	//USED TO UPDATE QUANTITY 
-    //Invoice/update_qty
-    function update_price($val = '', $id = '')
-    {	
-    	
-      $this->load->model('Crud_model'); 
-      $this->load->model('Pos_transaction_model'); 
-      $user_name = $this->session->userdata('user_id');
-      $val = intval($val);
+	//Invoice/update_qty
+	function update_price($val = '', $id = '')
+	{
 
-      if($val != '' AND $id != '' AND  $val > -1)
-      {
+		$this->load->model('Crud_model');
+		$this->load->model('Pos_transaction_model');
+		$user_name = $this->session->userdata('user_id');
+		$val = intval($val);
 
-        $result = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_invoice','id',$id,$user_name['id'],'pos');
+		if ($val != '' and $id != '' and  $val > -1) {
 
-        $result_stk = $this->Crud_model->fetch_record_by_id('mp_productslist',$result['0']->product_id);
+			$result = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_invoice', 'id', $id, $user_name['id'], 'pos');
 
-        $bal = 0;
-        $new_qty = 0;
+			$result_stk = $this->Crud_model->fetch_record_by_id('mp_productslist', $result['0']->product_id);
 
-        if($result[0]->qty > $val)
-        {
-			
-          $bal = $result[0]->qty-$val;
-          $new_qty = $result_stk[0]->quantity+$bal;
-        }
-        else if($result[0]->qty < $val)
-        {
-           $bal = $val-$result[0]->qty;
-           $new_qty = $result_stk[0]->quantity-$bal;
+			$bal = 0;
+			$new_qty = 0;
 
-        }
+			if ($result[0]->qty > $val) {
 
-        if($result[0]->qty != $val AND $new_qty >= 0)
-        {
-	          $new_args = array(
-	            'table_name' => 'mp_productslist',
-	            'id' => $result['0']->product_id
-	          );
+				$bal = $result[0]->qty - $val;
+				$new_qty = $result_stk[0]->quantity + $bal;
+			} else if ($result[0]->qty < $val) {
+				$bal = $val - $result[0]->qty;
+				$new_qty = $result_stk[0]->quantity - $bal;
+			}
 
-              $new_data = array(
-                'quantity' => $new_qty
-              );
+			if ($result[0]->qty != $val and $new_qty >= 0) {
+				$new_args = array(
+					'table_name' => 'mp_productslist',
+					'id' => $result['0']->product_id
+				);
 
-              $temp_args = array(
-                  'table_name' => 'mp_temp_barcoder_invoice',
-                  'id' => $id
-                );
+				$new_data = array(
+					'quantity' => $new_qty
+				);
+
+				$temp_args = array(
+					'table_name' => 'mp_temp_barcoder_invoice',
+					'id' => $id
+				);
 
 				$temp_data = array(
-					'price'=>$val
+					'price' => $val
 				);
-			 
 
-            $this->Pos_transaction_model->general_pos_transaction($new_args, $new_data ,$temp_args ,$temp_data);
-        }
 
-      }
-        //LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice','pos',$user_name['id']);
-		
-        $this->load->view('invoice_template.php',$data);
+				$this->Pos_transaction_model->general_pos_transaction($new_args, $new_data, $temp_args, $temp_data);
+			}
+		}
+		//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
+		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
+
+		$this->load->view('invoice_template.php', $data);
 	}
-	
-	
 
-    //USED TO SHOW THE DETAIL OF  RETURN INVOICE 
-    //Invoice/single_invoice/ID
-    function single_invoice($return_id)
-    {
-    	// DEFINES PAGE TITLE
+
+
+	//USED TO SHOW THE DETAIL OF  RETURN INVOICE 
+	//Invoice/single_invoice/ID
+	function single_invoice($return_id)
+	{
+		// DEFINES PAGE TITLE
 		$data['title'] = 'Invoice';
 
-		$this->load->model('Accounts_model'); 
+		$this->load->model('Accounts_model');
 		$data['invoice_data'] = $this->Accounts_model->fetch_single_invoice_items($return_id);
 
-    	// DEFINES WHICH PAGE TO RENDER
+		// DEFINES WHICH PAGE TO RENDER
 		$data['main_view'] = 'single_invoice';
 
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
 		$this->load->view('main/index.php', $data);
+	}
 
+	function create_invoice()
+	{
+		$status = FALSE;
+		$data = $this->input->post();
+		$count_rows = count($data['amount']);
+		// if()
+		if (empty($data['ppn_pph'])) {
+			$data['ppn_pph'] = '0';
+		} else {
+			$data['ppn_pph'] = '1';
+		}
+		if (empty($data['date'])) {
+			$data['date'] = date('Y-m-d');
+		}
+		for ($i = 0; $i < $count_rows; $i++) {
+			if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
+				$status = TRUE;
+			$data['amount'][$i] = preg_replace("/[^0-9]/", "", $data['amount'][$i]);
+		}
 
-    }
+		if ($status) {
+			$this->load->model('Transaction_model');
+			// if (!empty($data['no_jurnal'])) {
+			$res = $this->Transaction_model->check_no_invoice($data['no_invoice']);
+			// die();
+			if ($res != 0) {
+				$array_msg = array(
+					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Invoice Sudah Ada',
+					'alert' => 'danger'
+				);
+				$this->session->set_flashdata('status', $array_msg);
+				$this->index($data);
+				return;
+				// redirect('statements/journal_voucher');
+			}
+			// }
+			$result = $this->Transaction_model->invoice_entry($data);
+			// die();
+			if ($result != NULL) {
+				// $this->Transaction_model->activity_edit($result, $acc);
+				$array_msg = array(
+					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',
+					'alert' => 'info'
+				);
+				$this->session->set_flashdata('status', $array_msg);
+				redirect('invoice/show/' . $result);
+			} else {
+				$array_msg = array(
+					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
+					'alert' => 'danger'
+				);
+				$this->session->set_flashdata('status', $array_msg);
+				$this->index($data);
+				return;
+			}
+		} else {
+			$array_msg = array(
+				'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
+				'alert' => 'danger'
+			);
+			$this->session->set_flashdata('status', $array_msg);
+			$this->index($data);
+			return;
+			// redirect('statements/journal_voucher');
+		}
+		redirect('invoice');
+	}
+
+	function edit_process_invoice()
+	{
+		$status = FALSE;
+		$data = $this->input->post();
+		// echo json_encode($data);
+		// die();
+		$count_rows = count($data['amount']);
+		// if()
+		if (empty($data['ppn_pph'])) {
+			$data['ppn_pph'] = '0';
+		} else {
+			$data['ppn_pph'] = '1';
+		}
+		if (empty($data['date'])) {
+			$data['date'] = date('Y-m-d');
+		}
+		for ($i = 0; $i < $count_rows; $i++) {
+			if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
+				$status = TRUE;
+			$data['amount'][$i] = preg_replace("/[^0-9]/", "", $data['amount'][$i]);
+		}
+
+		if ($status) {
+			$this->load->model('Transaction_model');
+			// if (!empty($data['no_jurnal'])) {
+			$res = $this->Transaction_model->check_no_invoice($data['no_invoice'], $data['id']);
+			// die();
+			if ($res != 0) {
+				$array_msg = array(
+					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Invoice Sudah Ada',
+					'alert' => 'danger'
+				);
+				$this->session->set_flashdata('status', $array_msg);
+				$this->index($data);
+				return;
+				// redirect('statements/journal_voucher');
+			}
+			// }
+			$result = $this->Transaction_model->invoice_edit($data);
+			// die();
+			if ($result != NULL) {
+				// $this->Transaction_model->activity_edit($result, $acc);
+				$array_msg = array(
+					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',
+					'alert' => 'info'
+				);
+				$this->session->set_flashdata('status', $array_msg);
+				redirect('invoice/show/' . $result);
+			} else {
+				$array_msg = array(
+					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
+					'alert' => 'danger'
+				);
+				$this->session->set_flashdata('status', $array_msg);
+				$this->index($data);
+				return;
+			}
+		} else {
+			$array_msg = array(
+				'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
+				'alert' => 'danger'
+			);
+			$this->session->set_flashdata('status', $array_msg);
+			$this->index($data);
+			return;
+			// redirect('statements/journal_voucher');
+		}
+		redirect('invoice');
+	}
 }

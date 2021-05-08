@@ -75,7 +75,7 @@ class SecurityModel extends CI_Model
 
   public function rolesOnlyGuard($roles = [], $ajax = false)
   {
-    if (!in_array(strtolower($this->session->userdata('nama_role')), $roles)) {
+    if (!in_array(strtolower($this->session->userdata('user_id')['nama_role']), $roles)) {
       if ($ajax) throw new UserException('Kamu tidak berhak mengakses resource ini', UNAUTHORIZED_CODE);
       redirect($this->session->userdata('nama_controller'));
     }

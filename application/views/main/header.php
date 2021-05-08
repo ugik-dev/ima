@@ -7,7 +7,7 @@
     <title>PT Indometal Asia</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <link rel="canonical" href="https://keenthemes.com/metronic" />
+    <link rel="canonical" href="ugikdev.id" />
     <!--begin::Fonts-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
     <!--end::Fonts-->
@@ -49,7 +49,8 @@
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
     <!-- END OLD -->
     <!--end::Layout Themes-->
-    <link rel="shortcut icon" href="<?= base_url() ?>assets/metronic/media/logos/favicon.ico" />
+    <!-- <link rel="shortcut icon" href="<?= base_url() ?>assets/img/favicon.ico" /> -->
+    <link rel="icon" type="image/png" sizes="96x96" href="<?php echo base_url(); ?>assets/img/favicon.png">
     <script src="<?php echo base_url(); ?>assets/plugins/jQuery/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/js/jquery.calculator.min.js">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js">

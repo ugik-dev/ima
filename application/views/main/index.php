@@ -19,25 +19,10 @@ if ($this->session->userdata('user_id') == "") {
     $this->load->view('main/header_mobile.php');
     $this->load->view('main/page1.php');
     $this->load->view('main/kt_quick_user.php');
-    $this->load->view('main/kt_quick_cart.php');
-    $this->load->view('main/kt_quick_panel.php');
-    $this->load->view('main/kt_chat_modal.php');
+    // $this->load->view('main/kt_quick_cart.php');
+    // $this->load->view('main/kt_quick_panel.php');
+    // $this->load->view('main/kt_chat_modal.php');
     // $this->load->view('main/kt_scrolltop.php');
     // $this->load->view('main/sticky-toolbar.php');
     $this->load->view('main/footer.php');
 }
-    ?>
-
-    <!--end::Main-->
-
-
-
-    <!--begin::Scrolltop-->
-
-    <!--end::Scrolltop-->
-    <!--begin::Sticky Toolbar-->
-
-    <!--end::Sticky Toolbar-->
-    <!--begin::Demo Panel-->
-
-    <!--end::Demo Panel-->

@@ -984,6 +984,13 @@ function formatRupiah(angka, prefix) {
 
 function printDiv(divName) {
   var printContents = document.getElementById(divName).innerHTML;
+  printContents =
+    printContents +
+    `<style>
+    .no-print {
+        display: none !important;
+    }
+</style>`;
   var originalContents = document.body.innerHTML;
   document.body.innerHTML = printContents;
   window.print();

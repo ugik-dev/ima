@@ -26,7 +26,7 @@
 
                             <div class="col-md-12">
                                 <div class="col-md-6">
-                                    <h4><label class="box-label"><b>INFORMASI CUSTOMER</b></label></h4>
+                                    <h4><label class="box-label"><b>INFORMASI PATNER</b></label></h4>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="col-md-8 pull-right row">
