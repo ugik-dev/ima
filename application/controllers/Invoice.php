@@ -111,6 +111,21 @@ class Invoice extends CI_Controller
 		$this->load->view('invoice_template.php', $data);
 	}
 
+	public function delete($id)
+	{
+		$this->load->model(array('SecurityModel', 'InvoiceModel'));
+		$this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
+		$this->InvoiceModel->delete($id);
+		$array_msg = array(
+			'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Delete Successfully',
+			'alert' => 'info'
+		);
+		$this->session->set_flashdata('status', $array_msg);
+		// $this->index($data);
+		// return;
+		redirect('invoice/manage');
+	}
+
 	//invoice/clear_temp_invoice
 	//USED TO CLEAR TEMP INVOICE
 	function clear_temp_invoice()
@@ -568,10 +583,12 @@ class Invoice extends CI_Controller
 			$pdf->Line(68, 72.5, 197, 72.5);
 
 			$pdf->SetTextColor(20, 20, 20);
-			$pdf->Cell(50, 6, '', 0, 0, 'C');
+			$pdf->Cell(50, 6, '', 0, 1, 'C');
 			$image1 = base_url() . "assets/img/blue_dot.jpg";
 			if ($dataContent['item']  != NULL) {
 				foreach ($dataContent['item'] as $item) {
+					$pdf->SetX(60);
+
 					$x = $pdf->GetX();
 					$y = $pdf->GetY();
 					$tmp_y = $pdf->GetY();
@@ -614,12 +631,14 @@ class Invoice extends CI_Controller
 			$pdf->Line(68, 72.5, 197, 72.5);
 
 			$pdf->SetTextColor(20, 20, 20);
-			$pdf->Cell(50, 6, '', 0, 0, 'C');
+			$pdf->Cell(50, 6, '', 0, 1, 'C');
 			$image1 = base_url() . "assets/img/blue_dot.jpg";
 			if ($dataContent['item']  != NULL) {
 				foreach ($dataContent['item'] as $item) {
+					$pdf->SetX(60);
 					$x = $pdf->GetX();
 					$y = $pdf->GetY();
+
 					$tmp_y = $pdf->GetY();
 					$pdf->Cell(4, 6, $pdf->Image($image1, $pdf->GetX(), $pdf->GetY() + 1.7, 4), 0, 0);
 					$pdf->MultiCell(56, 8, $item->keterangan_item, 0, 1);

@@ -58,4 +58,10 @@ class InvoiceModel extends CI_Model
         // die();
         return $transaction_records;
     }
+
+    public function delete($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete('mp_invoice_v2');
+    }
 }
