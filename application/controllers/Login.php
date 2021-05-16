@@ -31,7 +31,7 @@ class Login extends CI_Controller
 			$data['page_add_button_name'] = 'Tambah Login';
 
 			// DEFINES WHICH PAGE TO RENDER
-			$this->load->view('login', $data);
+			$this->load->view('loginnew', $data);
 		} else {
 			redirect('dashboard');
 		}
@@ -42,20 +42,24 @@ class Login extends CI_Controller
 	{
 
 		// DEFINES READ CATEROTY NAME FORM Login FORM
-		$user_email = html_escape($this->input->post('user_email'));
-		$user_password = html_escape($this->input->post('user_password'));
+		// $user_email = html_escape($this->input->post('user_email'));
+		$user_password = html_escape($this->input->post('password'));
+		$user_email = html_escape($this->input->post('username'));
+
 		if (!empty($user_email) && !empty($user_password)) {
 
 			// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
 			$this->load->model('Crud_model');
 			$result = $this->Crud_model->authenticate_user($user_email, $user_password);
 			if ($result == NULL) {
-				$array_msg = array(
-					'msg' => '<i style="color:#fff" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Email atau Kata Sandi yang anda masukkan salah',
-					'alert' => 'danger'
-				);
-				$this->session->set_flashdata('status', $array_msg);
-				redirect('login');
+				// $array_msg = array(
+				// 	'msg' => '<i style="color:#fff" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Email atau Kata Sandi yang anda masukkan salah',
+				// 	'alert' => 'danger'
+				// );
+				// $this->session->set_flashdata('status', $array_msg);
+				// redirect('login');
+				echo json_encode(array('error' => true, 'message' => 'Email atau Kata Sandi yang anda masukkan salah'));
+				return;
 			} else {
 				$userdata = array(
 					'id' => $result[0]->id,
@@ -68,20 +72,23 @@ class Login extends CI_Controller
 				$this->session->userdata('user_id');
 				// echo json_encode($this->session->userdata());
 				// die();
-				$array_msg = array(
-					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Login  Successfully',
-					'alert' => 'info'
-				);
-				$this->session->set_flashdata('status', $array_msg);
-				redirect('dashboard');
+				// $array_msg = array(
+				// 	'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Login  Successfully',
+				// 	'alert' => 'info'
+				// );
+				// $this->session->set_flashdata('status', $array_msg);
+				// redirect('dashboard');
+				echo json_encode(array('error' => false, 'message' => 'Login Success'));
 			}
 		} else {
-			$array_msg = array(
-				'msg' => '<i style="color:#fff" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Enter Email & Password',
-				'alert' => 'danger'
-			);
-			$this->session->set_flashdata('status', $array_msg);
-			redirect('login');
+			// $array_msg = array(
+			// 	'msg' => '<i style="color:#fff" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Enter Email & Password',
+			// 	'alert' => 'danger'
+			// );
+			// $this->session->set_flashdata('status', $array_msg);
+			// redirect('login');
+			echo json_encode(array('error' => true, 'message' => 'Enter Email & Password'));
+			return;
 		}
 	}
 

@@ -3,7 +3,7 @@
        <a href="index.html">
            <!-- <img alt="Logo" src="<?= base_url() ?>assets/img/ima.png" /> -->
 
-           <img alt="Logo" style='max-width : 100% ' src="<?= base_url() ?>assets/img/ima.png" />
+           <img alt="Logo" style='max-width : 40px ' src="<?= base_url() ?>assets/img/favicon.png" />
        </a>
        <!--end::Logo-->
        <!--begin::Toolbar-->
@@ -14,9 +14,9 @@
            </button>
            <!--end::Aside Mobile Toggle-->
            <!--begin::Header Menu Mobile Toggle-->
-           <button class="btn p-0 burger-icon ml-4" id="kt_header_mobile_toggle">
+           <!-- <button class="btn p-0 burger-icon ml-4" id="kt_header_mobile_toggle">
                <span></span>
-           </button>
+           </button> -->
            <!--end::Header Menu Mobile Toggle-->
            <!--begin::Topbar Mobile Toggle-->
            <button class="btn btn-hover-text-primary p-0 ml-2" id="kt_header_mobile_topbar_toggle">

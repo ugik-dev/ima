@@ -83,7 +83,7 @@ class Forget_password extends CI_Controller
 
 	public function forget_password_administrator()
 	{
-		$user_email = html_escape($this->input->post('user_email'));
+		$user_email = html_escape($this->input->post('username'));
 		if (!empty($user_email)) {
 
 			// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
@@ -116,35 +116,26 @@ class Forget_password extends CI_Controller
 				$this->email->subject("Lupa Kata Sandi ");
 				$this->email->message($email_desc);
 				$result = $this->email->send();
+				// $result = 1;
 
 				if ($result == 1) {
-					$array_msg = array(
-						'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Email berhasil dikirim',
-						'alert' => 'info'
-					);
-					$this->session->set_flashdata('status', $array_msg);
+
+					echo json_encode(array('error' => false, 'message' => 'Permintaan berhasil, harap cek email untuk konfirmasi!.'));
+					return;
 				} else {
-					$array_msg = array(
-						'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Email gagal dikirim',
-						'alert' => 'danger'
-					);
-					$this->session->set_flashdata('status', $array_msg);
+					echo json_encode(array('error' => true, 'message' => 'Permintaan berhasil, harap cek email untuk konfirmasi!.'));
+					return;
 				}
 			} else {
-				$array_msg = array(
-					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Alamat email tidak valid',
-					'alert' => 'danger'
-				);
-				$this->session->set_flashdata('status', $array_msg);
+				echo json_encode(array('error' => true, 'message' => 'Email tidak ditemukan!.'));
+				return;
 			}
 		} else {
-			$array_msg = array(
-				'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Masukkan Alamat Email',
-				'alert' => 'danger'
-			);
-			$this->session->set_flashdata('status', $array_msg);
+			echo json_encode(array('error' => true, 'message' => 'Masukkan email dengan benar!.'));
+			return;
 		}
-
-		redirect('Login/');
+		echo json_encode(array('error' => true, 'message' => 'Masukkan email dengan benar!.'));
+		return;
+		// redirect('Login/');
 	}
 }

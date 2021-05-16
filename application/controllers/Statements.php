@@ -64,19 +64,24 @@ class Statements extends CI_Controller
 		// echo json_encode($data);
 		// die();
 		$new_arr = [];
-		$arr = explode(']', $data['transaction']['parent']->arr_cars);
-		foreach ($arr as $dat) {
-			if (!empty($dat)) {
-				$tmp = '';
-				$tmp = $this->Statement_model->find_cars(str_replace('[', '', $dat));
-				if (!empty($tmp)) array_push($new_arr, $tmp);
+		if (empty($data['transaction'])) {
+			$data['main_view'] = 'error-5';
+			$data['message'] = 'Sepertinya data yang anda cari tidak ditemukan atau sudah di hapus.';
+		} else {
+			$arr = explode(']', $data['transaction']['parent']->arr_cars);
+			foreach ($arr as $dat) {
+				if (!empty($dat)) {
+					$tmp = '';
+					$tmp = $this->Statement_model->find_cars(str_replace('[', '', $dat));
+					if (!empty($tmp)) array_push($new_arr, $tmp);
+				}
 			}
+			$data['transaction']['new_arr'] = $new_arr;
+			$data['title'] = $data['transaction']['parent']->no_jurnal;
 		}
-		$data['transaction']['new_arr'] = $new_arr;
 		// echo json_encode($data);
 		// var_dump($data['transaction']['sub']);
 		// die();
-		$data['title'] = $data['transaction']['parent']->no_jurnal;
 		$this->load->view('main/index.php', $data);
 	}
 
@@ -1213,10 +1218,17 @@ class Statements extends CI_Controller
 				);
 				$this->session->set_flashdata('status', $array_msg);
 				redirect('statements');
+				return;
 			}
 		}
 
-		$result = $this->Transaction_model->delete_jurnal($id);
+		$this->Transaction_model->delete_jurnal($id);
+		$array_msg = array(
+			'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Delet Successfully',
+			'alert' => 'info'
+		);
+		$this->session->set_flashdata('status', $array_msg);
+		redirect('statements');
 		// $this->Transaction_model->activity_edit($id, $acc);
 	}
 

@@ -1122,6 +1122,7 @@ class Transaction_model extends CI_Model
             $data = NULL;
         } else {
             $this->db->trans_commit();
+            $this->record_activity(array('jenis' => 1, 'sub_id' => $order_id, 'desk' => 'Entry Jurnal'));
         }
 
         return $order_id;
@@ -1170,6 +1171,7 @@ class Transaction_model extends CI_Model
             $data = NULL;
         } else {
             $this->db->trans_commit();
+            $this->record_activity(array('jenis' => 4, 'sub_id' => $order_id, 'desk' => 'Entry Invoice'));
         }
 
         return $order_id;
@@ -1236,6 +1238,7 @@ class Transaction_model extends CI_Model
             return NULL;
         } else {
             $this->db->trans_commit();
+            $this->record_activity(array('jenis' => 5, 'sub_id' => $data['id'], 'desk' => 'Edit Invoice'));
         }
 
         return $data['id'];
@@ -1302,6 +1305,7 @@ class Transaction_model extends CI_Model
             $data = NULL;
         } else {
             $this->db->trans_commit();
+            $this->record_activity(array('jenis' => 2, 'sub_id' => $data['id'], 'desk' => 'Edit Jurnal'));
         }
 
         return $data;
@@ -1369,7 +1373,7 @@ class Transaction_model extends CI_Model
             );
             $this->db->insert('mp_generalentry_delete', $data1);
             $this->db->where('id ', $id);
-            $this->db->where('mp_generalentry.id =', $id);
+            // $this->db->where('mp_generalentry.id =', $id);
             $this->db->delete('mp_generalentry');
         }
 
@@ -1383,7 +1387,7 @@ class Transaction_model extends CI_Model
             $sub_query =  $sub_query->result();
             if ($sub_query != NULL) {
                 foreach ($sub_query as $single_trans) {
-                    var_dump($single_trans);
+                    // var_dump($single_trans);
                     $data2  = array(
                         'id'             => $single_trans->id,
                         'parent_id'                 => $single_trans->parent_id,
@@ -1401,6 +1405,8 @@ class Transaction_model extends CI_Model
                 }
             }
         }
+
+        $this->record_activity(array('jenis' => 3, 'sub_id' => $id, 'desk' => 'Delete Jurnal'));
     }
 
     public function create_cheque($data_fields)
@@ -1756,5 +1762,17 @@ class Transaction_model extends CI_Model
         }
 
         return $result;
+    }
+
+    function record_activity($data)
+    {
+        $sub_data  = array(
+            'user_id'   => $this->session->userdata('user_id')['id'],
+            'jenis'   => $data['jenis'],
+            'desk'   => $data['desk'],
+            'sub_id'   => $data['sub_id']
+        );
+
+        $this->db->insert('mp_activity', $sub_data);
     }
 }

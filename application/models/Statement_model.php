@@ -86,6 +86,39 @@ class Statement_model extends CI_Model
         return $return_data;
     }
 
+
+    public function my_activity($filter)
+    {
+
+        $total_debit = 0;
+        $total_credit = 0;
+        $form_content = '';
+        $return_data = [];
+
+        $this->db->select("mp_activity.*, mp_users.agentname as user_name");
+        $this->db->from('mp_activity');
+        $this->db->join('mp_users', 'mp_activity.user_id = mp_users.id');
+        // if (!empty($filter['no_jurnal']))
+        //     $this->db->where('no_jurnal like "%' . $filter['no_jurnal'] . '%"');
+        if (!empty($filter['from'])) $this->db->where('date_activity >=', $filter['from']);
+        if (!empty($filter['to'])) $this->db->where('date_activity <=', $filter['to']);
+        if (!empty($filter['user_id'])) $this->db->where('user_id', $filter['user_id']);
+
+        // $this->db->order_by('mp_generalentry.id', 'DESC');
+
+        $query = $this->db->get();
+        $i = 0;
+        if ($query->num_rows() > 0) {
+            $transaction_records =  $query->result_array();
+        } else {
+            return NULL;
+        }
+        // echo json_encode($transaction_records);
+        // die();
+        return $transaction_records;
+    }
+
+
     public function fetch_transasctions_old($filter)
     {
 

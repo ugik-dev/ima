@@ -63,5 +63,19 @@ class InvoiceModel extends CI_Model
     {
         $this->db->where('id', $id);
         $this->db->delete('mp_invoice_v2');
+
+        $this->record_activity(array('jenis' => 6, 'sub_id' => $id, 'desk' => 'Delete Invoice'));
+    }
+
+    function record_activity($data)
+    {
+        $sub_data  = array(
+            'user_id'   => $this->session->userdata('user_id')['id'],
+            'jenis'   => $data['jenis'],
+            'desk'   => $data['desk'],
+            'sub_id'   => $data['sub_id']
+        );
+
+        $this->db->insert('mp_activity', $sub_data);
     }
 }

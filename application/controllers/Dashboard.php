@@ -66,6 +66,8 @@ class Dashboard extends CI_Controller
 		//PAYABLES
 		$data['payables'] = $this->Statement_model->count_head_amount_by_id(5);
 
+		$data['activity_today'] = $this->Statement_model->my_activity(array('from' => date('Y-m-d'), 'to' => date('Y-m-d') . ' 23.59.59'));
+
 		//STOCK ALERT
 		$data['out_of_stock'] = $this->Accounts_model->out_of_stock();
 
@@ -129,5 +131,24 @@ class Dashboard extends CI_Controller
 	{
 		$this->session->unset_userdata('user_id');
 		redirect('/Login');
+	}
+
+	public function getActivity()
+	{
+		$filter = $this->input->get();
+		if (!empty($filter['bulanan'])) {
+			$filter['from'] = date('Y-m-d' . ' 00.00.00', strtotime('-30 days'));
+			$filter['to'] =  date('Y-m-d' . ' 23.59.59');
+		} else if (!empty($filter['mingguan'])) {
+			$filter['from'] = date('Y-m-d' . ' 00.00.00', strtotime('-7 days'));
+			$filter['to'] =  date('Y-m-d' . ' 23.59.59');
+		} else if (!empty($filter['harian'])) {
+			$filter['from'] = date('Y-m-d' . ' 00.00.00');
+			$filter['to'] =  date('Y-m-d' . ' 23.59.59');
+		}
+		$this->load->model('Statement_model');
+		$data = $this->Statement_model->my_activity($filter);
+		echo json_encode(array('data' => $data));
+		// $this->load->model('Statement_model');
 	}
 }
