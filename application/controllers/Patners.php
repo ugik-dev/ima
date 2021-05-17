@@ -194,7 +194,7 @@ class Patners extends CI_Controller
         // DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
         $this->load->model('Crud_model');
         $this->load->model('Transaction_model');
-        die();
+        // die();
         // DEFINES READ MEDICINE details FORM MEDICINE FORM
         $customer_name = html_escape($this->input->post('customer_name'));
         $customer_email = html_escape($this->input->post('customer_email'));
