@@ -158,8 +158,118 @@
              },
              error: function(e) {}
          });
-
      })
+     getCalendarEvent()
+
+     function getCalendarEvent() {
+         return $.ajax({
+             url: "<?php echo site_url('Dashboard/getEvent') ?>",
+             data: {
+                 'mingguan': true
+             },
+             type: 'GET',
+             success: function(data) {
+                 var json = JSON.parse(data);
+                 if (json['error']) {
+                     return;
+                 }
+                 console.log('ac');
+                 data = json['data'];
+                 //  if (data != NULL)
+                 //  renderAcitvity(data);
+                 //  KTCalendarBasic.init();
+                 newdata = [];
+                 i = 0;
+                 Object.values(data).forEach((dat) => {
+                     //  newdata[i]['title'] = dat['nama_event'];
+                     //  newdata[i]['title'] = dat['nama_event'];
+                     newdata[i] = {
+                         title: dat['nama_event'],
+                         start: dat['start_event'],
+                         end: dat['end_event'],
+                         url: dat['url'],
+                         description: dat['keterangan'],
+                         className: `fc-event-${dat["label_event"]} fc-event-solid-${dat["label_event"]}`
+                     }
+                     i++;
+                 });
+                 console.log(newdata);
+                 renderCalendarEvent(newdata)
+
+             },
+             error: function(e) {}
+         });
+
+     }
+
+
+
+     function renderCalendarEvent(data) {
+         var todayDate = moment().startOf('day');
+         var YM = todayDate.format('YYYY-MM');
+         var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
+         var TODAY = todayDate.format('YYYY-MM-DD');
+         var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
+
+         var calendarEl = document.getElementById('kt_calendar');
+         var calendar = new FullCalendar.Calendar(calendarEl, {
+             plugins: ['bootstrap', 'interaction', 'dayGrid', 'timeGrid', 'list'],
+             themeSystem: 'bootstrap',
+
+             isRTL: KTUtil.isRTL(),
+
+             header: {
+                 left: 'prev,next today',
+                 center: 'title',
+                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
+             },
+
+             height: 1000,
+             contentHeight: 800,
+             aspectRatio: 1, // see: https://fullcalendar.io/docs/aspectRatio
+
+             nowIndicator: true,
+             now: TODAY + 'T09:25:00', // just for demo
+
+             views: {
+                 dayGridMonth: {
+                     buttonText: 'month'
+                 },
+                 timeGridWeek: {
+                     buttonText: 'week'
+                 },
+                 timeGridDay: {
+                     buttonText: 'day'
+                 }
+             },
+
+             defaultView: 'dayGridMonth',
+             defaultDate: TODAY,
+
+             editable: true,
+             eventLimit: true, // allow "more" link when too many events
+             navLinks: true,
+             events: data,
+
+             eventRender: function(info) {
+                 var element = $(info.el);
+
+                 if (info.event.extendedProps && info.event.extendedProps.description) {
+                     if (element.hasClass('fc-day-grid-event')) {
+                         element.data('content', info.event.extendedProps.description);
+                         element.data('placement', 'top');
+                         KTApp.initPopover(element);
+                     } else if (element.hasClass('fc-time-grid-event')) {
+                         element.find('.fc-title').append('<div class="fc-description">' + info.event.extendedProps.description + '</div>');
+                     } else if (element.find('.fc-list-item-title').lenght !== 0) {
+                         element.find('.fc-list-item-title').append('<div class="fc-description">' + info.event.extendedProps.description + '</div>');
+                     }
+                 }
+             }
+         });
+
+         calendar.render();
+     };
 
 
      $('#btn_act_hari').on('click', () => {

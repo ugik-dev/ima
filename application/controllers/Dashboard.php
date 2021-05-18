@@ -151,4 +151,49 @@ class Dashboard extends CI_Controller
 		echo json_encode(array('data' => $data));
 		// $this->load->model('Statement_model');
 	}
+
+	public function getEvent()
+	{
+		$filter = $this->input->get();
+		if (!empty($filter['bulanan'])) {
+			$filter['from'] = date('Y-m-d' . ' 00.00.00', strtotime('-30 days'));
+			$filter['to'] =  date('Y-m-d' . ' 23.59.59');
+		} else if (!empty($filter['mingguan'])) {
+			$filter['from'] = date('Y-m-d' . ' 00.00.00', strtotime('-7 days'));
+			$filter['to'] =  date('Y-m-d' . ' 23.59.59');
+		} else if (!empty($filter['harian'])) {
+			$filter['from'] = date('Y-m-d' . ' 00.00.00');
+			$filter['to'] =  date('Y-m-d' . ' 23.59.59');
+		}
+		$this->load->model('Statement_model');
+		$data = $this->Statement_model->getEvent($filter);
+		echo json_encode(array('data' => $data));
+		// $this->load->model('Statement_model');
+	}
+
+
+	function popup($page_name = '', $param = '')
+	{
+		$this->load->model('Crud_model');
+		if ($page_name  == 'add_event') {
+			//USED TO REDIRECT LINK
+			$data['link'] = 'dashboard/add_event';
+			// $data['single_customer'] = $this->Crud_model->fetch_record_by_id('mp_payee', $param);
+			//model name available in admin models folder
+			$this->load->view(
+				'admin_models/add_models/add_event.php',
+				$data
+			);
+		}
+	}
+
+	public function add_event()
+	{
+		$data = $this->input->post();
+		$this->load->model('Crud_model');
+		$data['user_input'] = $this->session->userdata('user_id')['id'];
+		if (!empty($data['label_event']) && !empty($data['nama_event']) && !empty($data['start_event']) && !empty($data['end_event']))
+			$this->Crud_model->insert_data('mp_event', $data);
+		echo json_encode(array('error' => false, 'data' => $data));
+	}
 }

@@ -458,6 +458,26 @@
 
      </div>
  </div>
+ <div class="card card-custom">
+     <div class="card-header">
+         <div class="card-title">
+             <h3 class="card-label">
+                 Calendar
+             </h3>
+         </div>
+         <div class="card-toolbar">
+             <button onclick="show_modal_page('<?php echo base_url() . 'dashboard/popup/add_event/'; ?>')" type="button" class="btn btn-light-primary font-weight-bold">
+                 <i class="ki ki-plus "></i> Add E-Note
+             </button>
+         </div>
+     </div>
+     <div class="card-body">
+         <div id="kt_calendar"></div>
+     </div>
+ </div>
+ <?php $this->load->view('bootstrap_model.php'); ?>
+
+
  <style>
      .small-box>.inner {
          padding: 20px;
