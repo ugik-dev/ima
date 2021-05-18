@@ -188,6 +188,58 @@ class Statements extends CI_Controller
 
 		$writer->save('php://output'); // download file 
 	}
+
+
+	public function export_excel_ledger()
+	{
+
+		$filter = $this->input->get();
+		$spreadsheet = new Spreadsheet();
+
+		$sheet = $spreadsheet->getActiveSheet();
+		$sheet->getColumnDimension('A')->setWidth(12);
+		$sheet->getColumnDimension('B')->setWidth(20);
+		$sheet->getColumnDimension('C')->setWidth(37);
+		$sheet->getColumnDimension('D')->setWidth(23);
+		$sheet->getColumnDimension('E')->setWidth(23);
+		$sheet->getColumnDimension('F')->setWidth(23);
+		$spreadsheet->getActiveSheet()->getStyle('A5:F5')->getAlignment()->setHorizontal('center')->setWrapText(true);
+		$spreadsheet->getActiveSheet()->getStyle('A5:F5')->getFont()->setSize(13)->setBold(true);
+		$spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->setSize(13)->setBold(true);
+		$spreadsheet->getActiveSheet()->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
+
+		$sheet->getStyle('D:F')->getNumberFormat()->setFormatCode("_(* #,##0.00_);_(* \(#,##0.00\);_(* \"-\"??_);_(@_)");
+
+		$this->load->model('Statement_model');
+		$data['transaction_records'] = $this->Statement_model->export_excel_ledger($filter, $sheet, $spreadsheet);
+		$sheet->mergeCells("A1:F1");
+		$sheet->mergeCells("A2:F2");
+		$sheet->mergeCells("A3:F3");
+		$sheet->setCellValue('A1', 'PT INDOMETAL ASIA');
+		$sheet->setCellValue('A2', 'Buku Besar');
+		$sheet->setCellValue('A3', 'Periode : ' . $filter['from'] . ' s.d. ' . $filter['to']);
+
+		$sheet->setCellValue('A5', 'TANGGAL');
+		$sheet->setCellValue('B5', 'NO JURNAL');
+		// $sheet->setCellValue('C5', 'NO AKUN');
+		$sheet->setCellValue('C5', 'KETERANGAN');
+		$sheet->setCellValue('D5', 'DEBIT');
+		$sheet->setCellValue('E5', 'KREDIT');
+		$sheet->setCellValue('F5', 'SALDO');
+
+
+		$writer = new Xlsx($spreadsheet);
+
+		$filename = 'jurnal_umum_' . $filter['from'] . '_sd_' . $filter['to'];
+
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+		header('Cache-Control: max-age=0');
+
+		$writer->save('php://output'); // download file 
+	}
+
+
 	public function export_word2()
 	{
 		$phpWord = new \PhpOffice\PhpWord\PhpWord();
@@ -694,11 +746,11 @@ class Statements extends CI_Controller
 		//$ledger
 		$from = html_escape($this->input->post('from'));
 		$to   = html_escape($this->input->post('to'));
+		$data['account_head']   = html_escape($this->input->post('account_head'));
 
 		if ($from == NULL or $to == NULL) {
-
-			$from = date('Y-m-') . '1';
-			$to =  date('Y-m-') . '31';
+			$from = date('Y-m-') . '01';
+			$to = date('Y-m-' . date('t', strtotime($from)));
 		}
 
 		$data['from'] = $from;
@@ -711,7 +763,8 @@ class Statements extends CI_Controller
 		$this->load->model('Crud_model');
 
 		$this->load->model('Statement_model');
-		$data['ledger_records'] = $this->Statement_model->the_ledger($from, $to);
+		$data['accounts_records'] = $this->Statement_model->chart_list();
+		$data['ledger_records'] = $this->Statement_model->the_ledger($data);
 
 		// DEFINES WHICH PAGE TO RENDER
 		$data['main_view'] = 'ledger';

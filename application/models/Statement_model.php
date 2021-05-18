@@ -390,6 +390,126 @@ class Statement_model extends CI_Model
         }
     }
 
+    public function export_excel_ledger($filter, $sheet, $spreadsheet)
+    {
+        // var_dump($filter['account_head']);
+        // die();
+        $sheetrow = 6;
+        $accounts_types = array('Assets', 'Liability', 'Equity', 'Revenue', 'Expense');
+        for ($i = 0; $i  < count($accounts_types); $i++) {
+            $k = 0;
+            $this->db->select('mp_head.*');
+            $this->db->from('mp_head');
+            $this->db->order_by('mp_head.name');
+            if (!empty($filter['account_head'])) $this->db->where('mp_head.id', $filter['account_head']);
+            $this->db->where(['mp_head.nature' => $accounts_types[$i]]);
+            $query = $this->db->get();
+            if ($query->num_rows() > 0) {
+
+                // $form_content .= '<h4 class=""><b>' . $accounts_types[$i] . ' : </b></h4>';
+                $heads_record =  $query->result();
+                foreach ($heads_record as $single_head) {
+                    // die();
+                    $data_leadger = $this->get_ledger_transactions($single_head->id, $filter['from'], $filter['to']);
+                    if ($data_leadger != NULL) {
+                        $j = 0;
+                        $total_ledger = 0;
+                        $ledger_query  = array();
+                        foreach ($data_leadger as $single_ledger) {
+                            // echo ($single_head->name);
+                            if ($k == 0) {
+                                $sheet->mergeCells("A" . $sheetrow . ":F" . $sheetrow);
+                                $sheet->setCellValue('A' . $sheetrow, $accounts_types[$i]);
+
+                                $sheet->getRowDimension('6')->setRowHeight(23);
+                                // $sheet->getActiveSheet()->getStyle('A' . $sheetrow)->getAlignment()->setHorizontal('center')->setWrapText(true);
+                                $sheet->getStyle('A' . $sheetrow)->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
+                                $sheet->getStyle('A' . $sheetrow)->getFont()->setSize(16)->setBold(true);
+                                $sheetrow++;
+                            }
+                            $k++;
+
+                            if ($j == 0) {
+                                $sheet->mergeCells("A" . $sheetrow . ":F" . $sheetrow);
+                                $sheet->setCellValue('A' . $sheetrow, $single_head->name);
+
+                                $sheet->getRowDimension('6')->setRowHeight(40);
+                                // $sheet->getActiveSheet()->getStyle('A' . $sheetrow)->getAlignment()->setHorizontal('center')->setWrapText(true);
+                                $sheet->getStyle('A' . $sheetrow)->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
+                                $sheet->getStyle('A' . $sheetrow)->getFont()->setBold(true);
+                                $sheetrow++;
+                            }
+                            $j++;
+                            $debitamount = '';
+                            $creditamount = '';
+                            $total_ledger = number_format($total_ledger, '2', '.', '');
+                            $sheet->setCellValue('A' . $sheetrow, $single_ledger->date);
+                            $sheet->setCellValue('B' . $sheetrow, $single_ledger->no_jurnal);
+                            $sheet->setCellValue('C' . $sheetrow, $single_ledger->sub_keterangan);
+                            if ($single_ledger->type == 0) {
+                                $debitamount = $single_ledger->amount;
+                                $sheet->setCellValue('D' . $sheetrow, $single_ledger->amount);
+                                $total_ledger = $total_ledger + $debitamount;
+                            } else if (
+                                $single_ledger->type == 1
+                            ) {
+                                $creditamount = $single_ledger->amount;
+                                $sheet->setCellValue('E' . $sheetrow, $single_ledger->amount);
+                                $total_ledger = $total_ledger - $creditamount;
+                            }
+                            $sheet->setCellValue('F' . $sheetrow, $total_ledger);
+
+                            $sheetrow++;
+                        }
+                    }
+                }
+
+                //         $ledger_query  = array();
+
+                //         $form_content .= '<hr />                                       
+
+                //         <div class=" ledger_row_head" style=" text-transform:uppercase;">
+                //                 <b>' . $single_head->name . '</b>
+
+
+                //             $debitamount = '';
+                //             $creditamount = '';
+
+                //             if ($single_ledger->type == 0) {
+                //                 $debitamount = $single_ledger->amount;
+                //                 $total_ledger = $total_ledger + $debitamount;
+                //             } else if (
+                //                 $single_ledger->type == 1
+                //             ) {
+                //                 $creditamount = $single_ledger->amount;
+                //                 $total_ledger = $total_ledger - $creditamount;
+                //             } else {
+                //             }
+
+                //             $total_ledger = number_format($total_ledger, '2', '.', '');
+
+                //             $form_content .= '<tr>
+                //         <td>' . $single_ledger->date . '</td><td>' . $single_ledger->no_jurnal . '</td><td><a >' . $single_ledger->sub_keterangan . '</a></td><td>
+                //             <a  class="currency">' .
+                //                 (!empty($debitamount) ? number_format($debitamount, 2, ',', '.') : '') .
+                //                 '</a>
+                //         </td>
+                //         <td>
+                //             <a   class="currency">' .
+                //                 (!empty($creditamount) ? number_format($creditamount, 2, ',', '.') : '')
+                //                 . '</a>
+                //         </td>
+                //     </tr>';
+                //         }
+                //     }
+                //     $form_content .= '</tbody></table>';
+                // }
+            }
+        }
+        // return $form_content;
+    }
+
+
     //USED TO GET THE LEDGER USING NATURE 
     public function get_ledger_transactions($head_id, $date1, $date2)
     {
@@ -410,8 +530,10 @@ class Statement_model extends CI_Model
     }
 
     //USED TO GET THE LEDGER USING NATURE 
-    public function the_ledger($date1, $date2)
+    public function the_ledger($filter)
     {
+        // var_dump($filter['account_head']);
+        // die();
         $accounts_types = array('Assets', 'Liability', 'Equity', 'Revenue', 'Expense');
         $form_content = '';
         for ($i = 0; $i  < count($accounts_types); $i++) {
@@ -419,12 +541,13 @@ class Statement_model extends CI_Model
             $this->db->select('mp_head.*');
             $this->db->from('mp_head');
             $this->db->order_by('mp_head.name');
+            if (!empty($filter['account_head'])) $this->db->where('mp_head.id', $filter['account_head']);
             $this->db->where(['mp_head.nature' => $accounts_types[$i]]);
             $query = $this->db->get();
             if ($query->num_rows() > 0) {
                 $heads_record =  $query->result();
                 foreach ($heads_record as $single_head) {
-                    $data_leadger = $this->get_ledger_transactions($single_head->id, $date1, $date2);
+                    $data_leadger = $this->get_ledger_transactions($single_head->id, $filter['from'], $filter['to']);
                     if ($data_leadger != NULL) {
                         $total_ledger = 0;
                         $ledger_query  = array();

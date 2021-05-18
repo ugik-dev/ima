@@ -872,7 +872,7 @@ class Invoice extends CI_Controller
 		$pdf->Rect(11, 14, 190, $cur_y - 10, 'D');
 		$pdf->Rect(10, 13, 190, $cur_y - 10, 'D');
 
-		// END KWITANSI
+
 		$filename = 'INV_' .
 			$dataContent['no_invoice'] . '.pdf';
 
