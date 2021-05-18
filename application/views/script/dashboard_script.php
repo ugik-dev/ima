@@ -184,6 +184,7 @@
                      //  newdata[i]['title'] = dat['nama_event'];
                      //  newdata[i]['title'] = dat['nama_event'];
                      newdata[i] = {
+                         id: dat['nama_event'],
                          title: dat['nama_event'],
                          start: dat['start_event'],
                          end: dat['end_event'],
@@ -247,9 +248,16 @@
              defaultDate: TODAY,
 
              editable: true,
-             eventLimit: true, // allow "more" link when too many events
+             eventLimit: false, // allow "more" link when too many events
              navLinks: true,
              events: data,
+             eventClick: function(info) {
+                 info.jsEvent.preventDefault(); // don't let the browser navigate
+
+                 if (info.event.url) {
+                     window.open(info.event.url);
+                 }
+             },
 
              eventRender: function(info) {
                  var element = $(info.el);
@@ -285,9 +293,7 @@
                  if (json['error']) {
                      return;
                  }
-                 console.log('ac');
                  data = json['data'];
-                 console.log(data);
                  //  if (data != NULL)
                  renderAcitvity(data);
              },

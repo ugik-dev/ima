@@ -1,5 +1,5 @@
   <script>
-      var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";
+      var HOST_URL = "https://ugikdev.id";
   </script>
   <!--begin::Global Config(global config for global JS scripts)-->
   <script>

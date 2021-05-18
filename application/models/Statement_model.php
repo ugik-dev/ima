@@ -817,7 +817,7 @@ class Statement_model extends CI_Model
 
         $this->db->select("*");
         $this->db->from('mp_payee');
-        $this->db->where('mp_payee.type', 'patners');
+        // $this->db->where('mp_payee.type', 'patners');
         $query = $this->db->get();
         $result =  $query->result();
         if ($result != NULL) {
