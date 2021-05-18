@@ -230,7 +230,7 @@ class Statements extends CI_Controller
 
 		$writer = new Xlsx($spreadsheet);
 
-		$filename = 'jurnal_umum_' . $filter['from'] . '_sd_' . $filter['to'];
+		$filename = 'buku_besar_' . $filter['from'] . '_sd_' . $filter['to'];
 
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
