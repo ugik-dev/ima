@@ -414,7 +414,7 @@ class Statement_model extends CI_Model
                             if ($k == 0) {
                                 $sheet->mergeCells("A" . $sheetrow . ":F" . $sheetrow);
                                 $sheet->setCellValue('A' . $sheetrow, $accounts_types[$i]);
-                                $sheet->getRowDimension('6')->setRowHeight(23);
+                                $sheet->getRowDimension($sheetrow)->setRowHeight(23);
                                 $sheet->getStyle('A' . $sheetrow)->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
                                 $sheet->getStyle('A' . $sheetrow)->getFont()->setSize(16)->setBold(true);
                                 $sheetrow++;
@@ -423,7 +423,7 @@ class Statement_model extends CI_Model
                             if ($j == 0) {
                                 $sheet->mergeCells("A" . $sheetrow . ":F" . $sheetrow);
                                 $sheet->setCellValue('A' . $sheetrow, $single_head->name);
-                                $sheet->getRowDimension('6')->setRowHeight(40);
+                                // $sheet->getRowDimension('6')->setRowHeight(40);
                                 $sheet->getStyle('A' . $sheetrow)->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
                                 $sheet->getStyle('A' . $sheetrow)->getFont()->setBold(true);
                                 $sheetrow++;
