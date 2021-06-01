@@ -283,6 +283,8 @@ class Statement_model extends CI_Model
                     $this->db->select("mp_sub_entry.*,mp_head.name");
                     $this->db->from('mp_sub_entry');
                     $this->db->join('mp_head', 'mp_head.id = mp_sub_entry.accounthead');
+                    $this->db->order_by('mp_sub_entry.type');
+
                     $this->db->where('mp_sub_entry.parent_id =', $transaction_records[0]->transaction_id);
                     $sub_query = $this->db->get();
                     $subs =  $sub_query->result_array();

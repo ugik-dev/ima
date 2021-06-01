@@ -300,9 +300,8 @@
               console.log(name[i].innerHTML)
               console.log(displyhide)
               isi += `
-            
             <tr style="height : 10px">
-                <td style="text-align:left; padding-left : 5px ">${name[i].innerHTML.substring(0, 35)}</td>
+                <td style="text-align:center; padding-left : 5px ">${name[i].innerHTML.substring(0, 14)}</td>
                 <td style="text-align:left; padding-left : 5px ">${ket[i].innerHTML}</td>
                 <td style="text-align:right ; padding-right : 5px">${
                 debit[i].innerHTML
@@ -337,22 +336,21 @@
           isi += `<tr  style="height : 22px; padding : 10px">
             <td colspan="2"><strong>Jumlah</strong> </td>
         
-            <td style="text-align:right ; padding-right : 10px"><strong>${formatRupiah(consdebit)}</strong> </td>
-            <td style="text-align:right ; padding-right : 10px"><strong>${formatRupiah(conskredit)}</strong> </td>
+            <td style="text-align:right ; padding-right : 5px"><strong>${formatRupiah(consdebit)}</strong> </td>
+            <td style="text-align:right ; padding-right : 5px"><strong>${formatRupiah(conskredit)}</strong> </td>
             </tr>
             `;
 
           var printContents = `
-            <table style="font-size: 13px;width: 100%" border="0">
+            <table style="font-size: 14px;width: 100%" border="0">
                 <tr>
                     <td style="width: 50%"><img style="heigt: 100px; width : 80%" src="<?= base_url() ?>assets/img/imadesknew.png" alt="Paris" class="center"></td>                 
                     <td style="width: 50%">
                                 <h3 style="text-align:center">${tpe == 'AM' ? 'VOUCHER PENERIMAAN' : (tpe == 'AK' ? 'VOUCHER PENGELUARAN' : 'JURNAL UMUM')}</h3>    
                     </td>                 
                 </tr>
-            </table   
-            div class="col-md-12" style="font-size: 13px;">
-            <br>              
+            </table>   
+            <br>
                     <table style="font-size: 13px;" border="0">
                               <tr>
                             <td ${displyhide ? '' : ''} style=";text-align:left ;width: 100px">${tpe == 'AM' ? 'Diterima dari' : (tpe == 'AK' ? 'Dibayar kepada' : '')}</td>
@@ -382,21 +380,20 @@
                             <td style="text-align:left ;width: 400px;font-style: italic;">${terbilang(show.toString())}</td>
                         
                         </tr>
-                        <tr>
-                        </tr>
                     </table>
-                   
-                    <table style="font-size: 13px;" border="1" cellspacing="0">
+                   <br>
+                    <table style="font-size: 14px;" border="1" cellspacing="0">
                         <tr>
-                            <td style="width: 200px ;text-align:center">No Akun</td>
-                            <td style="width: 350px ; text-align:center">Keterangan</td>
+                            <td style="width: 100px ;text-align:center">No Akun</td>
+                            <td style="width: 450px ; text-align:center">Keterangan</td>
                             <td style="width: 100px ; text-align:center">Debit (Rp)</td>
                             <td style="width: 100px; text-align:center">Kredit  (Rp)</td>
                         </tr>
                         ${isi}
+                        
                     </table>
-                    
-                    <table style="font-size: 11px; width: 100%" border="0" cellspacing="0">
+                    <br>
+                    <table style="font-size: 12px; width: 100%" border="0" cellspacing="0">
                         <tr>
                             <td style="width: 400 ;text-align:left; padding : 0px">
                             
@@ -418,8 +415,6 @@
                                         <td style="width: 130 ; text-align:left ; padding : 3px">${no_rek}</td>
                                     </tr>
                                 </table>
-                    
-
                             </td>
                             <td style="width: 130 ; align:right ; padding : 0px">
                                 <table style="float: right"  border="1" cellspacing="0">
@@ -443,15 +438,13 @@
                                         <td style="text-align:left">Tgl</td>
                                         <td style="text-align:left">Tgl</td>
                                         <td style="text-align:left">Tgl</td>
-                                        <td style="text-align:left">Tgl : <?php if (!empty($acc->date_acc_0)) echo explode('-', $acc->date_acc_0)[2] . '-' . explode('-', $acc->date_acc_0)[1] . '-' . explode('-', $acc->date_acc_0)[0]; ?></td>
-                                    
+                                        <td style="text-align:left">Tgl : <?php if (!empty($acc->date_acc_0)) echo explode('-', $acc->date_acc_0)[2] . '-' . explode('-', $acc->date_acc_0)[1] . '-' . explode('-', $acc->date_acc_0)[0]; ?></td>                             
                                     </tr>
                             
                                 </table>
                             </td>
                         </tr>
                     </table>
-             </div>
              `;
           var originalContents = document.body.innerHTML;
           document.body.innerHTML = printContents;
