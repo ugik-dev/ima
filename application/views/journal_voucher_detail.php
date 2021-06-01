@@ -386,8 +386,8 @@
                         <tr>
                         </tr>
                     </table>
-                    <br>
-                    <table style="font-size: 14px;" border="1" cellspacing="0">
+                   
+                    <table style="font-size: 13px;" border="1" cellspacing="0">
                         <tr>
                             <td style="width: 200px ;text-align:center">No Akun</td>
                             <td style="width: 350px ; text-align:center">Keterangan</td>
@@ -396,8 +396,8 @@
                         </tr>
                         ${isi}
                     </table>
-                    <br>
-                    <table style="font-size: 14px; width: 100%" border="0" cellspacing="0">
+                    
+                    <table style="font-size: 11px; width: 100%" border="0" cellspacing="0">
                         <tr>
                             <td style="width: 400 ;text-align:left; padding : 3px">
                             
