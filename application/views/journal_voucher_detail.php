@@ -343,7 +343,7 @@
             `;
 
           var printContents = `
-                            <table style="font-size: 13px;width: 100%" border="0">
+                            <table style="font-size: 14px;width: 100%" border="0">
                               <tr>
                                 <td style="width: 50%"><img style="heigt: 100px; width : 80%" src="<?= base_url() ?>assets/img/imadesknew.png" alt="Paris" class="center"></td>                 
                                 <td style="width: 50%">
@@ -352,9 +352,9 @@
                                 </td>                 
                                 </tr>
                                 </table   
-                                <div class="col-md-12" style="font-size: 11px;">
+                                <div class="col-md-12" style="font-size: 14px;">
                                 <br>              
-                            <table style="font-size: 11px;" border="0">
+                            <table style="font-size: 14px;" border="0">
                               <tr>
                             <td ${displyhide ? '' : ''} style=";text-align:left ;width: 100px">${tpe == 'AM' ? 'Diterima dari' : (tpe == 'AK' ? 'Dibayar kepada' : '')}</td>
                             <td style=;width: 10px">${displyhide ? '' : ':'}</td>
@@ -387,7 +387,7 @@
                         </tr>
                     </table>
                     <br>
-                    <table style="font-size: 11px;" border="1" cellspacing="0">
+                    <table style="font-size: 14px;" border="1" cellspacing="0">
                         <tr>
                             <td style="width: 200px ;text-align:center">No Akun</td>
                             <td style="width: 350px ; text-align:center">Keterangan</td>
@@ -397,7 +397,7 @@
                         ${isi}
                     </table>
                     <br>
-                    <table style="font-size: 11px; width: 100%" border="0" cellspacing="0">
+                    <table style="font-size: 14px; width: 100%" border="0" cellspacing="0">
                         <tr>
                             <td style="width: 400 ;text-align:left; padding : 3px">
                             
