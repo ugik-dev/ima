@@ -342,7 +342,7 @@
             `;
 
           var printContents = `
-            <table style="font-size: 14px;width: 100%" border="0">
+            <table style="font-size: 17px;width: 100%" border="0">
                 <tr>
                     <td style="width: 50%"><img style="heigt: 100px; width : 80%" src="<?= base_url() ?>assets/img/imadesknew.png" alt="Paris" class="center"></td>                 
                     <td style="width: 50%">
@@ -351,7 +351,7 @@
                 </tr>
             </table>   
             <br>
-                    <table style="font-size: 13px;" border="0">
+                    <table style="font-size: 15px;" border="0">
                               <tr>
                             <td ${displyhide ? '' : ''} style=";text-align:left ;width: 100px">${tpe == 'AM' ? 'Diterima dari' : (tpe == 'AK' ? 'Dibayar kepada' : '')}</td>
                             <td style=;width: 10px">${displyhide ? '' : ':'}</td>
@@ -382,18 +382,18 @@
                         </tr>
                     </table>
                    <br>
-                    <table style="font-size: 14px;" border="1" cellspacing="0">
+                    <table style="font-size: 15;" border="1" cellspacing="0">
                         <tr>
                             <td style="width: 100px ;text-align:center">No Akun</td>
-                            <td style="width: 450px ; text-align:center">Keterangan</td>
-                            <td style="width: 100px ; text-align:center">Debit (Rp)</td>
-                            <td style="width: 100px; text-align:center">Kredit  (Rp)</td>
+                            <td style="width: 390px ; text-align:center">Keterangan</td>
+                            <td style="width: 130px ; text-align:center">Debit (Rp)</td>
+                            <td style="width: 130px; text-align:center">Kredit  (Rp)</td>
                         </tr>
                         ${isi}
                         
                     </table>
                     <br>
-                    <table style="font-size: 12px; width: 100%" border="0" cellspacing="0">
+                    <table style="font-size: 15; width: 100%" border="0" cellspacing="0">
                         <tr>
                             <td style="width: 400 ;text-align:left; padding : 0px">
                             
@@ -416,16 +416,16 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td style="width: 130 ; align:right ; padding : 0px">
+                            <td style="width: 160 ; align:right ; padding : 0px">
                                 <table style="float: right"  border="1" cellspacing="0">
                                     <tr>
-                                        <td style="width: 90px ;text-align:center">Disetujui</td>
-                                        <td style="width: 90px ; text-align:center">Diverifikasi</td>
-                                        <td style="width: 90px ; text-align:center">Dibuat Oleh</td>
-                                        <td style="width: 90px ; text-align:center">Diterima</td>
-                                        <td style="width: 90px ; text-align:center">Dibukukan</td>
+                                        <td style="width: 130px ;text-align:center">Disetujui</td>
+                                        <td style="width: 130px ; text-align:center">Diverifikasi</td>
+                                        <td style="width: 130px ; text-align:center">Dibuat Oleh</td>
+                                        <td style="width: 130px ; text-align:center">Diterima</td>
+                                        <td style="width: 130px ; text-align:center">Dibukukan</td>
                                     </tr>
-                                    <tr style="height: 70px">
+                                    <tr style="height: 90px">
                                         <td style="vertical-align: bottom; text-align:center">${acc_1}</td>
                                         <td style="vertical-align: bottom; text-align:center">${acc_2}</td>
                                         <td style="vertical-align: bottom; text-align:center">${acc_3}</td>

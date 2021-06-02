@@ -28,7 +28,8 @@
         <div class="col-md-9">
             <div class="d-flex font-size-sm flex-wrap">
                 <!-- <button type="button" class="btn btn-primary font-weight-bolder py-4 mr-3 mr-sm-14 my-1" onclick="printDiv('print-section')">Print Invoice</button> -->
-                <a type="button" href="<?= base_url('invoice/download/') . $dataContent['id'] ?>" class="btn btn-primary font-weight-bolder py-4 mr-3 mr-sm-14 my-1">Print Invoice</a>
+                <a type="button" href="<?= base_url('invoice/download/') . $dataContent['id'] ?>" class="btn btn-primary font-weight-bolder py-3 mr-3 mr-sm-14 my-1">Pdf Doc</a>
+                <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>" class="btn btn-primary font-weight-bolder py-3 mr-3 mr-sm-14 my-1">Word Doc</a>
                 <a type="button" href="<?php echo base_url() . 'invoice/edit/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-pencil-alt mr-3 my-1"></i> Edit</a>
                 <a type="button" href="<?php echo base_url() . 'invoice/copy/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-copy mr-3 my-1"> </i> Copy</a>
                 <a type="button" href="<?= base_url('invoice') ?>" class="btn btn-warning font-weight-bolder ml-sm-auto my-1">Create New Invoice</a>
