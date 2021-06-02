@@ -382,7 +382,7 @@
                         </tr>
                     </table>
                    <br>
-                    <table style="font-size: 15;" border="1" cellspacing="0">
+                    <table style="font-size: 15; width : 990px" border="1" cellspacing="0">
                         <tr>
                             <td style="width: 100px ;text-align:center">No Akun</td>
                             <td style="width: 390px ; text-align:center">Keterangan</td>
