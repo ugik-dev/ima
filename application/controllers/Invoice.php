@@ -558,7 +558,7 @@ class Invoice extends CI_Controller
 		$table = $section->addTable($spanTableStyleName);
 		if ($dataContent['item']  != NULL) {
 			foreach ($dataContent['item'] as $item) {
-				$total = $total + (ceil($item->amount) * $item->qyt);
+				$total = $total + (floor($item->amount) * $item->qyt);
 				$total_qyt =  $total_qyt + ($item->qyt);
 				if (!empty($item->date_item))
 					$date_item = true;
@@ -592,8 +592,8 @@ class Invoice extends CI_Controller
 				$table->addCell(3500, $cellVCentered)->addText($item->keterangan_item);
 				$table->addCell(1200, $cellVCentered)->addText($item->date_item);
 				$table->addCell(1000, $cellVCentered)->addText($item->qyt . ' ' . $item->satuan, null, array('align' => 'center'));
-				$table->addCell(1500, $cellVCentered)->addText(number_format(ceil($item->amount)), null, array('align' => 'right'));
-				$table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * ceil($item->amount)), null, array('align' => 'right'));
+				$table->addCell(1500, $cellVCentered)->addText(number_format(floor($item->amount)), null, array('align' => 'right'));
+				$table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount)), null, array('align' => 'right'));
 			}
 			$table->addRow();
 			$cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
@@ -609,9 +609,7 @@ class Invoice extends CI_Controller
 				$table->addCell(200, $cellColSpan)->addText('TOTAL   ', 'paragraph_bold', array('align' => 'right'));
 				$table->addCell(500, $cellVCentered)->addText('' . number_format(floor($total * 0.10) + floor($total)), 'paragraph_bold', array('align' => 'right'));
 				$terbilang = floor($total * 0.10) + floor($total);
-				// number_format(ceil($total * 0.10) + ceil($total))
 			}
-			// }
 		}
 		$section->addTextBreak();
 		$textrun = $section->addTextRun();
@@ -677,7 +675,7 @@ class Invoice extends CI_Controller
 		$total_qyt = 0;
 		if ($dataContent['item']  != NULL) {
 			foreach ($dataContent['item'] as $item) {
-				$total = $total + (ceil($item->amount) * $item->qyt);
+				$total = $total + (floor($item->amount) * $item->qyt);
 				$total_qyt =  $total_qyt + ($item->qyt);
 				if (!empty($item->date_item))
 					$date_item = true;
@@ -767,11 +765,11 @@ class Invoice extends CI_Controller
 					if ($pdf->GetY() > $tmp_y)
 						$tmp_y = $pdf->GetY();
 					$pdf->SetXY($x + 89, $y);
-					$pdf->MultiCell(24, 8, number_format(ceil($item->amount), '0', ',', '.'), 0, 'R', 0);
+					$pdf->MultiCell(24, 8, number_format(floor($item->amount), '0', ',', '.'), 0, 'R', 0);
 					if ($pdf->GetY() > $tmp_y)
 						$tmp_y = $pdf->GetY();
 					$pdf->SetXY($x + 113, $y);
-					$pdf->MultiCell(24, 8, number_format($item->qyt * ceil($item->amount), '0', ',', '.'), 0, 'R', 0);
+					$pdf->MultiCell(24, 8, number_format($item->qyt * floor($item->amount), '0', ',', '.'), 0, 'R', 0);
 					$pdf->SetXY(62, $tmp_y);
 					$pdf->SetLineWidth(0.1);
 					$pdf->Line(68, $tmp_y, 197, $tmp_y);
@@ -811,11 +809,11 @@ class Invoice extends CI_Controller
 					if ($pdf->GetY() > $tmp_y)
 						$tmp_y = $pdf->GetY();
 					$pdf->SetXY($x + 74, $y);
-					$pdf->MultiCell(30, 8, number_format(ceil($item->amount), '0', ',', '.'), 0, 'R', 0);
+					$pdf->MultiCell(30, 8, number_format(floor($item->amount), '0', ',', '.'), 0, 'R', 0);
 					if ($pdf->GetY() > $tmp_y)
 						$tmp_y = $pdf->GetY();
 					$pdf->SetXY($x + 104, $y);
-					$pdf->MultiCell(30, 8, number_format($item->qyt * ceil($item->amount), '0', ',', '.'), 0, 'R', 0);
+					$pdf->MultiCell(30, 8, number_format($item->qyt * floor($item->amount), '0', ',', '.'), 0, 'R', 0);
 					$pdf->SetXY(62, $tmp_y);
 					$pdf->SetLineWidth(0.1);
 					$pdf->Line(68, $tmp_y, 197, $tmp_y);
@@ -968,11 +966,11 @@ class Invoice extends CI_Controller
 			$pdf->Cell(100, 6, '', 0, 0, 'L');
 			$pdf->Cell(30, 6, 'SUB TOTAL', 0, 0, 'L');
 			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-			$pdf->Cell(38, 6,  number_format(ceil($total), '0', ',', '.'), 0, 1, 'R');
+			$pdf->Cell(38, 6,  number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
 			$pdf->Cell(100, 6, '', 0, 0);
 			$pdf->Cell(30, 6, 'PPN 10%', 0, 0, 'L');
 			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-			$pdf->Cell(38, 6, number_format(ceil($total * 0.10), '0', ',', '.'), 0, 1, 'R');
+			$pdf->Cell(38, 6, number_format(floor($total * 0.10), '0', ',', '.'), 0, 1, 'R');
 			$pdf->SetLineWidth(0.5);
 			$pdf->Line(110, $pdf->GetY(), 190, $pdf->GetY());
 			$pdf->Cell(100, 6, '', 0, 0);
@@ -980,12 +978,12 @@ class Invoice extends CI_Controller
 			$pdf->SetFont('Times', 'B', 12);
 
 			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-			$pdf->Cell(38, 6, number_format(ceil($total * 0.10) + ceil($total)), 0, 1, 'R');
+			$pdf->Cell(38, 6, number_format(floor($total * 0.10) + floor($total)), 0, 1, 'R');
 		} else {
 			$pdf->Cell(100, 6, '', 0, 0, 'L');
 			$pdf->Cell(30, 6, 'SUB TOTAL', 0, 0, 'L');
 			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-			$pdf->Cell(38, 6,  number_format(ceil($total), '0', ',', '.'), 0, 1, 'R');
+			$pdf->Cell(38, 6,  number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
 			$pdf->Cell(100, 6, '', 0, 0);
 			$pdf->Cell(30, 6, 'PPN', 0, 0, 'L');
 			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
@@ -997,7 +995,7 @@ class Invoice extends CI_Controller
 			$pdf->SetFont('Times', 'B', 12);
 
 			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-			$pdf->Cell(38, 6, number_format(ceil($total)), 0, 1, 'R');
+			$pdf->Cell(38, 6, number_format(floor($total)), 0, 1, 'R');
 		}
 		$pdf->SetFont('Times', '', 12);
 
@@ -1007,7 +1005,7 @@ class Invoice extends CI_Controller
 
 		$pdf->SetFont('Times', 'B', 16);
 		$pdf->Cell(1, 13, '', 0, 1);
-		$pdf->Cell(1, 10, '                    Rp    ' . number_format(ceil($terbilang)), 0, 1);
+		$pdf->Cell(1, 10, '                    Rp    ' . number_format(floor($terbilang)), 0, 1);
 
 		$pdf->Cell(115, 6, '', 0, 0);
 		// $pdf->SetFont('Arial', 'BU', 10);
