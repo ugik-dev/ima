@@ -883,16 +883,16 @@ class Invoice extends CI_Controller
 			$pdf->SetFont('Arial', 'B', 13);
 
 			$pdf->Cell(30, 14 + $crop2, 'SUB TOTAL', 0, 0, 'L');
-			$pdf->Cell(42, 14 + $crop2, 'Rp ' . number_format(ceil($total), '0', ',', '.'), 0, 1, 'R');
+			$pdf->Cell(42, 14 + $crop2, 'Rp ' . number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
 			$pdf->Cell(1, 3 + $crop2, '', 0, 1);
 			$pdf->Cell(110, 14, '', 0, 0);
 			$pdf->Cell(25, 14 + $crop, 'PPN 10%', 0, 0, 'L');
-			$pdf->Cell(47, 14 + $crop, 'Rp ' . number_format(ceil($total * 0.10), '0', ',', '.'), 0, 1, 'R');
+			$pdf->Cell(47, 14 + $crop, 'Rp ' . number_format(floor($total * 0.10), '0', ',', '.'), 0, 1, 'R');
 			$pdf->Cell(1, 3 + $crop3, '', 0, 1);
 			$pdf->Cell(110, 14 + $crop2, '', 0, 0);
 			$pdf->Cell(22, 14 + $crop2, 'TOTAL', 0, 0, 'L');
-			$pdf->Cell(50, 14 + $crop2, 'Rp ' . number_format(ceil($total * 0.10) + ceil($total)), 0, 1, 'R');
-			$terbilang = ceil($total * 0.10) + ceil($total);
+			$pdf->Cell(50, 14 + $crop2, 'Rp ' . number_format(floor($total * 0.10) + floor($total)), 0, 1, 'R');
+			$terbilang = floor($total * 0.10) + floor($total);
 		} else {
 			$pdf->Cell(40, 17, $pdf->Image(base_url() . "assets/img/bg-1.jpg", 120, $pdf->GetY(), 77, 14), 0, 1, 'C');
 			$pdf->SetXY($cur_x + 100, $cur_y);
@@ -900,8 +900,8 @@ class Invoice extends CI_Controller
 			$pdf->SetTextColor(255, 255, 255);
 			$pdf->SetFont('Arial', 'B', 13);
 			$pdf->Cell(30, 14, 'TOTAL', 0, 0, 'L');
-			$pdf->Cell(42, 14, 'Rp ' . number_format(ceil($total), '0', ',', '.'), 0, 1, 'R');
-			$terbilang = ceil($total);
+			$pdf->Cell(42, 14, 'Rp ' . number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
+			$terbilang = floor($total);
 		}
 
 		$cur_y = $pdf->GetY();
