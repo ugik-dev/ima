@@ -602,13 +602,13 @@ class Invoice extends CI_Controller
 			if ($dataContent['ppn_pph'] == 1) {
 				$table->addRow();
 				$cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
-				$table->addCell(200, $cellColSpan)->addText('PPh 10%    ', 'paragraph_bold', array('align' => 'right'));
+				$table->addCell(200, $cellColSpan)->addText('PPn 10%    ', 'paragraph_bold', array('align' => 'right'));
 				$table->addCell(500, $cellVCentered)->addText('' . number_format($total * 0.10, '0', ',', '.'), 'paragraph_bold', array('align' => 'right'));
 				$table->addRow();
 				$cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
 				$table->addCell(200, $cellColSpan)->addText('TOTAL   ', 'paragraph_bold', array('align' => 'right'));
-				$table->addCell(500, $cellVCentered)->addText('' . number_format(ceil($total * 0.10) + ceil($total)), 'paragraph_bold', array('align' => 'right'));
-				$terbilang = ceil($total * 0.10) + ceil($total);
+				$table->addCell(500, $cellVCentered)->addText('' . number_format(floor($total * 0.10) + floor($total)), 'paragraph_bold', array('align' => 'right'));
+				$terbilang = floor($total * 0.10) + floor($total);
 				// number_format(ceil($total * 0.10) + ceil($total))
 			}
 			// }
@@ -635,10 +635,10 @@ class Invoice extends CI_Controller
 			'pageSizeH' =>
 			\PhpOffice\PhpWord\Shared\Converter::inchToTwip(14),
 		]);
-		// $textrun = $section->addTextRun();
+
 		$section->addTextBreak(6);
 		$section->addText("PT INDOETAL ASIA,", 'paragraph_bold', array('spaceAfter' => 0));
-		// $section->addTextBreak();
+
 		$section->addText("Direktur", 'paragraph_bold');
 		$section->addTextBreak(3);
 		$section->addText($dataContent['name_acc_1'], 'paragraph_bold_underline');
