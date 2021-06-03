@@ -474,7 +474,7 @@ class Invoice extends CI_Controller
 		if ($id != NULL) {
 			$dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
 		} else {
-			echo 'ngapain cok';
+			echo 'ERROR';
 			return;
 		}
 		$date_item = false;
@@ -502,14 +502,14 @@ class Invoice extends CI_Controller
 			\PhpOffice\PhpWord\Shared\Converter::inchToTwip(14),
 		]);
 		$year = explode("-", $dataContent['input_date'])[0];
-		$section->addText("Nomor\t: " . $dataContent['no_invoice'], 'paragraph', array('spaceAfter' => 100));
+		$section->addText("Nomor\t\t: " . $dataContent['no_invoice'], 'paragraph', array('spaceAfter' => 100));
 		// $section->addTextBreak(2);
 		$section->addText("Tanggal\t: " . $tanggal, 'paragraph', array('spaceAfter' => 100));
 		// $section->addTextBreak(2);
 		$section->addText("Lampiran\t: 1 (satu) berkas", 'paragraph', array('spaceAfter' => 100));
 		// $section->addTextBreak();
 		$textrun = $section->addTextRun();
-		$textrun->addText("Perihal\t: ", 'paragraph');
+		$textrun->addText("Perihal\t\t: ", 'paragraph');
 		$textrun->addText("Permohonan Pembayaran", 'paragraph_bold');
 		$section->addTextBreak();
 
