@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
     <!--end::Fonts-->
     <!--begin::Page Vendors Styles(used by this page)-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css" rel="stylesheet">
     <link href="<?= base_url() ?>assets/metronic/plugins/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
     <!--end::Page Vendors Styles-->
     <!--begin::Global Theme Styles(used by all pages)-->
@@ -31,7 +33,12 @@
     <!-- <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/css/AdminLTE.css"> -->
     <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" /> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script> -->
+    <!-- <link href="<?= base_url() ?>assets/metronic/plugins/custom/jstree/jstree.bundle.css" rel="stylesheet" type="text/css" /> -->
+
     <!-- iCheck -->
+
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/iCheck/flat/blue.css">
     <!-- Date Picker -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/datepicker/datepicker3.css">
@@ -55,6 +62,24 @@
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/js/jquery.calculator.min.js">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/js/core.js">
+    <!-- trree -->
+    <script type='text/javascript' src='http://code.jquery.com/jquery-2.1.0.js'></script>
+    <script type='text/javascript' src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
 
+
+    <script src="<?= base_url() ?>assets/dist/js/jstreetable.js"></script>
+
+    <style type="text/css">
+        /* @import url('http://getbootstrap.com/dist/css/bootstrap.css'); */
+
+        body {
+            margin: 1em;
+        }
+
+        .jstree-table-wrapper {
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 <!--end::Head-->

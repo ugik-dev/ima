@@ -356,6 +356,7 @@ class Statements extends CI_Controller
 		// $PHPWord->addParagraphStyle('p3Style', array('align'=>'center', 'spaceAfter'=>100));
 		$phpWord->addFontStyle('paragraph_bold', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true));
 		$phpWord->addFontStyle('paragraph_bold_c', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true));
+		$phpWord->addFontStyle('paragraph_bold_d', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'underline' => 'single',));
 		$phpWord->addFontStyle('paragraph2', array(
 			'name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'underline' => 'single'
 		));
@@ -428,7 +429,7 @@ class Statements extends CI_Controller
 		$table->addCell(2000, array('vMerge' => 'restart'))->addText('Atas Nama', 'paragraph', $noSpace);
 		$table->addCell(300, array('vMerge' => 'restart'))->addText(':', 'paragraph', $noSpace);
 		$table->addCell(8000, array('vMerge' => 'restart'))->addText(
-			'PT INDOETAL ASIA',
+			'PT INDOMETAL ASIA',
 			'paragraph',
 			$noSpace
 		);
@@ -528,7 +529,7 @@ class Statements extends CI_Controller
 				$bank = '-';
 			}
 		}
-		// echo json_encode($res_detail['sub']);
+		// echo json_encode($res_acc->name_1);
 		// die();
 		if (!empty($res_acc)) {
 
@@ -561,6 +562,7 @@ class Statements extends CI_Controller
 		// $PHPWord->addParagraphStyle('p3Style', array('align'=>'center', 'spaceAfter'=>100));
 		$phpWord->addFontStyle('paragraph_bold', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true));
 		$phpWord->addFontStyle('paragraph_bold_c', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true, 'spaceAfter' => 0));
+		$phpWord->addFontStyle('paragraph_bold_d', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true, 'underline' => 'single'));
 		$phpWord->addFontStyle('paragraph2', array(
 			'name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'underline' => 'single'
 		));
@@ -591,7 +593,7 @@ class Statements extends CI_Controller
 		$table->addRow(450);
 		$table->addCell(2000, $cellVCentered)->addText('Nomor', 'paragraph', $noSpace);
 		$table->addCell(150, $cellVCentered)->addText(':', 'paragraph', $noSpace);
-		$table->addCell(5000, $cellVCentered)->addText('189/UM/IA-A0000/2021-S4', 'paragraph', $noSpace);
+		$table->addCell(5000, $cellVCentered)->addText('     ', 'paragraph', $noSpace);
 
 		$table->addRow(450);
 		$table->addCell(2000, $cellVCentered)->addText('Tanggal', 'paragraph', $noSpace);
@@ -601,7 +603,7 @@ class Statements extends CI_Controller
 		$table->addRow(450);
 		$table->addCell(2000, $cellVCentered)->addText('Lampiran', 'paragraph', $noSpace);
 		$table->addCell(150, $cellVCentered)->addText(':', 'paragraph', $noSpace);
-		$table->addCell(5000, $cellVCentered)->addText('', 'paragraph', $noSpace);
+		$table->addCell(5000, $cellVCentered)->addText('1 (satu) berkas', 'paragraph', $noSpace);
 
 		$table->addRow(450);
 		$table->addCell(2000, $cellVCentered)->addText('Perihal', 'paragraph', $noSpace);
@@ -646,7 +648,7 @@ class Statements extends CI_Controller
 			$noSpace_center
 		);;
 		$table->addCell(4000)->addText(
-			'PT INDOETAL ASIA',
+			'PT INDOMETAL ASIA',
 			'paragraph_bold_c',
 			$noSpace_center
 		);
@@ -656,10 +658,29 @@ class Statements extends CI_Controller
 			'',
 			'paragraph_bold_c',
 			$noSpace_center
-		);;
+		);
 		$table->addCell(4000)->addText(
 			'Direktur',
 			'paragraph_bold_c',
+			$noSpace_center
+		);
+		// $section->addTextBreak(3);
+
+		$table->addRow();
+		$table->addCell(4000);
+		$table->addRow();
+		$table->addCell(4000);
+		$table->addRow();
+		$table->addCell(4000);
+		$table->addRow();
+		$table->addCell(4000)->addText(
+			'',
+			'paragraph_bold_c',
+			$noSpace_center
+		);
+		$table->addCell(4000)->addText(
+			$res_acc->name_1,
+			'paragraph_bold_d',
 			$noSpace_center
 		);
 
@@ -1338,5 +1359,91 @@ class Statements extends CI_Controller
 			$hasil = trim($this->penyebut($nilai));
 		}
 		return $hasil;
+	}
+
+	public function three_laporan_labarugi()
+	{
+		$this->load->model('Statement_model');
+		$account_head   = html_escape($this->input->post('account_head'));
+		$data['accounts_records'] = $this->Statement_model->account_tree(array());
+		// var_dump($data);
+		// die();
+		$year = html_escape($this->input->post('year'));
+		if ($year == NULL) {
+			$startyear = date('Y') . '-1-1';
+			$endyear = date('Y') . '-12-31';
+		} else {
+			$startyear = $year . '-1-1';
+			$endyear =   $year . '-12-31';
+		}
+
+		$data['from'] = $startyear;
+
+		$data['to'] = $endyear;
+
+		// DEFINES PAGE TITLE
+		$data['title'] = 'Laporan Laba Rugi';
+
+		// DEFINES WHICH PAGE TO RENDER
+		$data['main_view'] = 'three_laba_rugi';
+
+		// $data['income_records'] = $this->Statement_model->income_statement($startyear, $endyear);
+
+
+		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+		$this->load->view('main/index.php', $data);
+		// $this->load->view('test.php');
+	}
+
+	public function three_laporan_neraca()
+	{
+		$this->load->model('Statement_model');
+		$account_head   = html_escape($this->input->post('account_head'));
+		// var_dump($data);
+		// die();
+		$year = html_escape($this->input->post('year'));
+		$data['from'] = html_escape($this->input->post('from'));
+		$data['to'] = html_escape($this->input->post('to'));
+		if ($data['from'] == NULL and $data['to'] == NULL) {
+			$data['from'] = date('Y') . '-01-01';
+			$data['to'] = date('Y') . '-12-31';
+		}
+		if ($data['from'] == NULL) {
+			$data['from'] = date('Y') . '-01-01';
+		}
+		if ($data['to'] == NULL) {
+			$data['to'] = date('Y') . '-12-31';
+		}
+
+		$data['accounts_records'] = $this->Statement_model->account_tree_trail_balance($data);
+
+		// $data['from'] = $startyear;
+
+		// $data['to'] = $endyear;
+
+		// DEFINES PAGE TITLE
+		$data['title'] = 'Tree Neraca Saldo';
+
+		// DEFINES WHICH PAGE TO RENDER
+		$data['main_view'] = 'three_laporan_neraca';
+
+		// $data['income_records'] = $this->Statement_model->income_statement($startyear, $endyear);
+
+
+		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+		$this->load->view('main/index.php', $data);
+		// $this->load->view('test.php');
+	}
+
+
+	public function getTreeAccount()
+	{
+		$filter = $this->input->get();
+		$this->load->model('Statement_model');
+		$data['accounts_records'] = $this->Statement_model->account_tree(array());
+
+		// $data = $this->Statement_model->getTreeAccount($filter);
+		// $data = $this->Statement_model->count_head_amount_like_name($filter);
+		echo json_encode($data);
 	}
 }

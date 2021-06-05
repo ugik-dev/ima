@@ -65,6 +65,8 @@
   <!--end::Global Config-->
   <!--begin::Global Theme Bundle(used by all pages)-->
   <script src="<?= base_url() ?>assets/metronic/plugins/global/plugins.bundle.js"></script>
+  <!-- <script type="text/javascript" src="<?= base_url() ?>assets/dist/js/jstreetable.js"></script> -->
+
   <script src="<?= base_url() ?>assets/metronic/plugins/custom/prismjs/prismjs.bundle.js"></script>
   <script src="<?= base_url() ?>assets/metronic/js/scripts.bundle.js"></script>
   <!--end::Global Theme Bundle-->
@@ -95,6 +97,12 @@
   <!-- Select2 -->
   <script src="<?php echo base_url(); ?>assets/plugins/select2/select2.full.min.js"></script>
   <script src="<?php echo base_url(); ?>assets/jquery/jquery.validate.js"></script>
+  <!-- <script src="<?= base_url() ?>assets/metronic/plugins/custom/jstree/jstree.bundle.js"></script> -->
+  <!-- <script src="<?= base_url() ?>assets/metronic/plugins/custom/jstree/jstreetable.js"></script> -->
+  <!-- <script type="text/javascript" src="<?= base_url() ?>assets/dist/js/jstreetable.js"></script> -->
+
+  <!-- <script src="<?= base_url() ?>assets/metronic /js/pages/features/miscellaneous/treeview.js"></script> -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script> -->
   <!-- bootstrap color picker -->
   <script src="<?php echo base_url(); ?>assets/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
   <!-- Form Validation -->

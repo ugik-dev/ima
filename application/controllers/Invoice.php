@@ -1111,43 +1111,6 @@ class Invoice extends CI_Controller
 			echo 'NOT FOUND';
 			return;
 		}
-
-		if ($result_invoices != NULL) {
-			$count = 0;
-			// print "<pre>";
-			// print_r($result_invoices);
-			foreach ($result_invoices as $obj_result_invoices) {
-
-				// FETCH SALES RECORD FROM SALES TABLE
-				$result_sales = $this->Accounts_model->fetch_record_sales('mp_sales', 'order_id', $obj_result_invoices->id);
-				if ($result_sales != NULL) {
-					$collection[$count] = $result_sales;
-					$count++;
-				}
-			}
-			// print "<pre>";
-			// print_r($collection);
-			// ASSIGNED THE FETCHED RECORD TO DATA ARRAY TO VIEW
-			$data['Sales_Record'] = $collection;
-			$data['Model_Title'] = "Edit invoice";
-			$data['Model_Button_Title'] = "Update invoices";
-			$data['invoices_Record'] = $result_invoices;
-
-			// DEFINES WHICH PAGE TO RENDER
-			$data['main_view'] = 'invoice_detail';
-
-			// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
-			$this->load->view('main/index.php', $data);
-		} else {
-			// DEFINES WHICH PAGE TO RENDER
-			$data['main_view'] = 'main/error_invoices.php';
-			$data['actionresult'] = "invoice/manage";
-			$data['heading1'] = "Tidak ada faktur yang tersedia. ";
-			$data['heading2'] = "Ups! Maaf tidak ada catatan faktur yang tersedia di detail yang diberikan";
-			$data['details'] = "Kami akan segera memperbaikinya. Sementara itu, Anda dapat kembali atau mencoba menggunakan formulir pencarian.";
-			// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
-			$this->load->view('main/index.php', $data);
-		}
 	}
 
 

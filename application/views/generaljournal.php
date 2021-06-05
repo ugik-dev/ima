@@ -57,8 +57,8 @@
                     </div>
                     <!-- </div> -->
                 </div>
-                <?php form_close(); ?>
             </div>
+            <?php form_close(); ?>
         </div>
         <div class="card card-custom" id="print-section">
             <div class="card-body">

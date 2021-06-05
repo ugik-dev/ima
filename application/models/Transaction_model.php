@@ -975,6 +975,18 @@ class Transaction_model extends CI_Model
         return $query->result_array()[0]['count'];
     }
 
+    function check_last_transaction_usaha()
+    {
+        $this->db->select("count(id) as count");
+        $this->db->from('mp_invoice_usaha');
+        // if (!empty($id)) $this->db->where('id <> "' . $id . '"');
+        if (!empty($id)) $this->db->where('date like "' . date('Y-m') . '%"');
+        // $this->db->order_by('id', 'desc');
+        // $this->db->limit(1);
+        $query = $this->db->get();
+        return $query->result_array()[0]['count'];
+    }
+
     function check_no_invoice($data, $id = '')
     {
         $this->db->select("count(id) as count");
@@ -1176,6 +1188,51 @@ class Transaction_model extends CI_Model
 
         return $order_id;
     }
+
+    function invoice_entry_usaha($data)
+    {
+
+        // $trans_data = $data;
+        $trans_data = array(
+            'date' => $data['date'],
+            'description' => 'Car Wash',
+            'no_invoice' => $data['no_invoice'],
+            'payment_metode' => $data['payment_metode'],
+            'ppn_pph' => $data['ppn_pph'],
+            'acc_0' => $this->session->userdata('user_id')['name'],
+        );
+
+        $this->db->trans_start();
+        $this->db->insert('mp_invoice_usaha', $trans_data);
+        $order_id = $this->db->insert_id();
+        $total_heads = count($data['amount']);
+
+        for ($i = 0; $i < $total_heads; $i++) {
+            if (!empty($data['amount'][$i] && !empty($data['qyt'][$i]))) {
+                $trans_data  = array(
+                    'parent_id'   => $order_id,
+                    'qyt' => $data['qyt'][$i],
+                    'satuan' => $data['satuan'][$i],
+                    'keterangan_item' => $data['keterangan_item'][$i],
+                    'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
+                );
+                $this->db->insert('mp_sub_invoice_usaha', $trans_data);
+            }
+        }
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $data = NULL;
+        } else {
+            $this->db->trans_commit();
+            $this->record_activity(array('jenis' => 4, 'sub_id' => $order_id, 'desk' => 'Entry Invoice'));
+        }
+
+        return $order_id;
+    }
+
+
 
 
     function invoice_edit($data)
