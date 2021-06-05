@@ -394,4 +394,68 @@ class Usaha extends CI_Controller
         $filename = 'Nota ';
         $pdf->Output('', $filename, false);
     }
+
+    public function history()
+    {
+
+        // DEFINES PAGE TITLE
+        $data['title'] = 'Invoice';
+
+        $collection = array();
+
+        // DEFINES TO LOAD THE MODEL
+        $this->load->model('Accounts_model');
+        $filter['first_date'] = html_escape($this->input->post('date1'));
+        $filter['second_date'] = html_escape($this->input->post('date2'));
+        $filter['no_invoice'] = html_escape($this->input->post('invoice_no'));
+
+        if ($filter['first_date'] == NULL && $filter['second_date'] == NULL) {
+            $filter['first_date'] = date('Y-m-01');
+            $filter['second_date'] = date('Y-m-31');
+
+            // FETCH SALES RECORD FROM invoices TABLE
+            // $result_invoices = $this->Accounts_model->get('mp_invoices', $first_date, $second_date);
+        }
+        $data['filter'] = $filter;
+        $this->load->model(array('InvoiceModel'));
+        // $this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
+
+        $result_invoices = $this->InvoiceModel->getAllUsaha($filter);
+        // echo json_encode($result_invoices);
+        // die();
+
+        // if ($result_invoices != NULL) {
+        $count = 0;
+        // print "<pre>";
+        // print_r($result_invoices);
+        // foreach ($result_invoices as $obj_result_invoices) {
+
+        // 	// FETCH SALES RECORD FROM SALES TABLE
+        // 	$result_sales = $this->Accounts_model->fetch_record_sales('mp_sales', 'order_id', $obj_result_invoices->id);
+        // 	if ($result_sales != NULL) {
+        // 		$collection[$count] = $result_sales;
+        // 		$count++;
+        // 	}
+        // }
+        // // print "<pre>";
+        // print_r($collection);
+        // ASSIGNED THE FETCHED RECORD TO DATA ARRAY TO VIEW
+        // $data['Sales_Record'] = $collection;
+        $data['Model_Title'] = "Edit invoice";
+        $data['Model_Button_Title'] = "Update invoices";
+        $data['invoices_Record'] = $result_invoices;
+
+        $data['main_view'] = 'sales_invoices_v2_usaha';
+        $this->load->view('main/index.php', $data);
+        // } else {
+        // 	// DEFINES WHICH PAGE TO RENDER
+        // 	$data['main_view'] = 'main/error_invoices.php';
+        // 	$data['actionresult'] = "invoice/manage";
+        // 	$data['heading1'] = "Tidak ada faktur yang tersedia. ";
+        // 	$data['heading2'] = "Ups! Maaf tidak ada catatan faktur yang tersedia di detail yang diberikan";
+        // 	$data['details'] = "Kami akan segera memperbaikinya. Sementara itu, Anda dapat kembali atau mencoba menggunakan formulir pencarian.";
+        // 	// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+        // 	$this->load->view('main/index.php', $data);
+        // }
+    }
 }

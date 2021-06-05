@@ -79,29 +79,15 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
             <div class="row col-lg-12">
                 <div class=" col-lg-7"></div>
                 <div class="col-lg-5">
-                    <a class="btn btn-primary  btn-flat  pull-right" href="<?php echo base_url() . 'invoice/edit/' . $invoices_Record[$i]['id'] ?>"><i class="fas fa-pencil-alt pull-left"></i>
-                        Edit</a>
-                    <a class="btn btn-primary  btn-flat  pull-right" href="<?php echo base_url() . 'invoice/copy/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-copy pull-left"></i>
-                        Copy</a>
-                    <a class="btn btn-info  btn-flat  pull-right" href="<?php echo base_url() . 'invoice/download/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-download pull-left"></i>
-                        Pdf</a>
-                    <a class="btn btn-info  btn-flat  pull-right" href="<?php echo base_url() . 'invoice/show/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-eye pull-left"></i>
+                    <a class="btn btn-info  btn-flat  pull-right" href="<?php echo base_url() . 'usaha/cetak_nota/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-download pull-left"></i>
+                        Print</a>
+                    <a class="btn btn-info  btn-flat  pull-right" href="<?php echo base_url() . 'usaha/show/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-eye pull-left"></i>
                         Show </a>
-                    <a class="btn btn-danger  btn-flat  pull-right" href="<?php echo base_url() . 'invoice/delete/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-trash pull-left"></i>
-                        Delete </a>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-9 col-sm-9 col-xs-12">
-                <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <b>
-                        <?= $invoices_Record[$i]['customer_name'] ?>
-                    </b>
-                </div>
-                <div class="col-lg-12 col-sm-12 col-xs-12">
-                    </b>
-                </div>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
                     <b> No Tagihan # <?= $invoices_Record[$i]['no_invoice'] ?> </b>
                 </div>
@@ -238,8 +224,8 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
 }
 ?>
 <script>
-    $('#menu_id_6').addClass('menu-item-active menu-item-open menu-item-here"')
-    $('#submenu_id_13').addClass('menu-item-active')
+    $('#menu_id_30').addClass('menu-item-active menu-item-open menu-item-here"')
+    $('#submenu_id_82').addClass('menu-item-active')
 </script>
 <?php
 // print "<pre>";
