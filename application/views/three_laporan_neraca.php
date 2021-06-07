@@ -114,18 +114,23 @@
                             },
                             table: {
                                 columns: [{
-                                        width: 500,
+                                        width: 460,
                                         header: "Name"
                                     },
                                     {
-                                        width: 300,
+                                        width: 180,
                                         value: "credit",
                                         header: "Credit (Rp)",
                                     },
                                     {
-                                        width: 300,
+                                        width: 180,
                                         value: "debit",
                                         header: "Debit (Rp)",
+                                    },
+                                    {
+                                        width: 180,
+                                        value: "saldo",
+                                        header: "Saldo (Rp)",
                                     },
                                 ],
                                 resizable: true,

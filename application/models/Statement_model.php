@@ -1302,6 +1302,8 @@ class Statement_model extends CI_Model
                 }
             }
         }
+        $saldo = $debit - $credit;
+        if ($saldo < 0) $saldo = $saldo * (-1);
 
         // if (
         //     $count_total_amt == 0
@@ -1312,6 +1314,7 @@ class Statement_model extends CI_Model
         // }
         $data['debit'] = number_format($debit, '2');
         $data['credit'] = number_format($credit, '2');
+        $data['saldo'] = number_format($saldo, '2');
         return $data;
     }
 

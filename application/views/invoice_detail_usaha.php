@@ -198,6 +198,6 @@
     <!-- end: Invoice action-->
 </div>
 <script>
-    $('#menu_id_6').addClass('menu-item-active menu-item-open menu-item-here"')
-    $('#submenu_id_13').addClass('menu-item-active')
+    $('#menu_id_30').addClass('menu-item-active menu-item-open menu-item-here"')
+    $('#submenu_id_82').addClass('menu-item-active')
 </script>
