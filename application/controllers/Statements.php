@@ -516,6 +516,7 @@ class Statements extends CI_Controller
 				$nominal = $res_detail['sub'][$i]['amount'];
 				$nominal = number_format($nominal, 2, ',', '.');
 				$angka = $res_detail['sub'][$i]['amount'];;
+
 				$terbilang = $this->terbilang($angka);
 			}
 
@@ -689,7 +690,7 @@ class Statements extends CI_Controller
 		// $writer = new Word2007($phpWord);
 		$writer = new Word2007($phpWord);
 
-		$filename = 'simple';
+		$filename = 'DoC_';
 
 		header('Content-Type: application/msword');
 		header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
@@ -1353,12 +1354,21 @@ class Statements extends CI_Controller
 
 	function terbilang($nilai)
 	{
+		// echo $nilai;
+		$sen = '';
+		if (explode('.', $nilai)[1] != 0) {
+
+			$sen =  explode('.', $nilai)[1];
+			$sen =  $this->penyebut($sen);
+		}
+		// echo $sen;
+		// die();
 		if ($nilai < 0) {
 			$hasil = "minus " . trim($this->penyebut($nilai));
 		} else {
 			$hasil = trim($this->penyebut($nilai));
 		}
-		return $hasil;
+		return $hasil . $sen;
 	}
 
 	public function three_laporan_labarugi()
