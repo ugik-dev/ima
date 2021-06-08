@@ -248,7 +248,6 @@
     id_custmer = $('#customer_id');
     id_cars = $('#id_cars');
     layer_cars = $('#layer_cars');
-    array_cars = <?php echo json_encode($new_arr); ?>;
     id_custmer.on('change', function() {
         $.ajax({
             url: '<?= base_url() ?>Statements/getListCars',
@@ -310,10 +309,6 @@
     <?php if (!empty($parent->customer_id)) {
     ?>
         getData()
-        $('[name="id_cars[]"]').each(function() {
-            $(this).val(array_cars[m]);
-            m++;
-        });
     <?php } ?>
     m = 0;
 
