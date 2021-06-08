@@ -448,10 +448,10 @@
              `;
           var originalContents = document.body.innerHTML;
           document.body.innerHTML = printContents;
-          //   setTimeout(() => {
-          //       window.print();
-          //       document.body.innerHTML = originalContents;
-          //   }, 2000);
+          setTimeout(() => {
+              window.print();
+              document.body.innerHTML = originalContents;
+          }, 2000);
       }
 
       <?php if (!empty($acc)) {
