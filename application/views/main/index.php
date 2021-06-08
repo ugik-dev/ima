@@ -11,7 +11,7 @@ if ($this->session->userdata('user_id') == "") {
         redirect('profile');
     }
 
-    $this->load->view('main/header.php'); ?>
+    $this->load->view('main/headedetar.php'); ?>
 
     <body id="kt_body" class="header-fixed header-mobile-fixed subheader-enabled subheader-fixed aside-enabled aside-fixed aside-minimize-hoverable page-loading">
 
