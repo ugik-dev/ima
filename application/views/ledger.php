@@ -44,7 +44,6 @@
                     <div class="col-lg-3 ">
                         <div class="form-group">
                             <?php
-                            echo $from;
                             echo form_label('Sampai Tanggal'); ?>
                             <?php
                             $data = array('class' => 'form-control input-lg', 'type' => 'date', 'id' => 'to', 'name' => 'to', 'reqiured' => '', 'value' => $to);

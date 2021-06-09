@@ -417,7 +417,7 @@ class Statement_model extends CI_Model
                                 $sheet->mergeCells("A" . $sheetrow . ":F" . $sheetrow);
                                 $sheet->setCellValue('A' . $sheetrow, $accounts_types[$i]);
                                 $sheet->getRowDimension($sheetrow)->setRowHeight(23);
-                                $sheet->getStyle('A' . $sheetrow)->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
+                                $sheet->getStyle('A' . $sheetrow)->getAlignment()->setVertical('center')->setHorizontal('left')->setWrapText(true);
                                 $sheet->getStyle('A' . $sheetrow)->getFont()->setSize(16)->setBold(true);
                                 $sheetrow++;
                             }
@@ -426,7 +426,7 @@ class Statement_model extends CI_Model
                                 $sheet->mergeCells("A" . $sheetrow . ":F" . $sheetrow);
                                 $sheet->setCellValue('A' . $sheetrow, $single_head->name);
                                 // $sheet->getRowDimension('6')->setRowHeight(40);
-                                $sheet->getStyle('A' . $sheetrow)->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
+                                $sheet->getStyle('A' . $sheetrow)->getAlignment()->setVertical('center')->setHorizontal('lefft')->setWrapText(true);
                                 $sheet->getStyle('A' . $sheetrow)->getFont()->setBold(true);
                                 $sheetrow++;
                             }
@@ -466,6 +466,10 @@ class Statement_model extends CI_Model
         $this->db->from('mp_sub_entry');
         $this->db->join('mp_head', "mp_head.id = mp_sub_entry.accounthead");
         $this->db->join('mp_generalentry', 'mp_generalentry.id = mp_sub_entry.parent_id');
+        $this->db->order_by('mp_generalentry.date', 'desc');
+        // $this->db->order_by('mp_generalentry.no_jurnal', 'asc');
+        $this->db->order_by("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_generalentry.no_jurnal, '/', -3), '/', 1) ASC");
+
         $this->db->where('mp_head.id', $head_id);
         $this->db->where('mp_generalentry.date >=', $date1);
         $this->db->where('mp_generalentry.date <=', $date2);
