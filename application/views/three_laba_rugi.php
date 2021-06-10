@@ -14,7 +14,7 @@
             <?php
             $attributes = array('id' => 'leadgerAccounst', 'method' => 'post', 'class' => '');
             ?>
-            <?php echo form_open_multipart('statements/income_statement', $attributes); ?>
+            <?php echo form_open_multipart('statements/three_laporan_labarugi', $attributes); ?>
             <div class="row no-print">
                 <div class="col-md-3 ">
                     <div class="form-group">
@@ -22,7 +22,7 @@
                         <select class="form-control input-lg" name="year" id="year">
                             <option value="2019"> 2019</option>
                             <option value="2020"> 2020</option>
-                            <option value="2021" selected> 2021</option>
+                            <option value="2021"> 2021</option>
                             <option value="2022"> 2022</option>
                             <option value="2023"> 2023</option>
                             <option value="2024"> 2024</option>
@@ -64,6 +64,8 @@
                         <div id="jstree"></div>
                     </div>
                     <script type="text/javascript">
+                        $('#year').val('<?= $year ?>');
+
                         // $(document).ready(function() {
                         // tree data
                         var data = <?= json_encode($accounts_records) ?>;

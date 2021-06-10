@@ -567,7 +567,7 @@ class Statement_model extends CI_Model
         // for ($i = 0; $i  <li count($accounts_types); $i++) {
         // $this->db->select('mp_head.*');
         // $this->db->select('mp_head.*');
-        $year = 2020;
+        $year = $filter['year'];
         $this->db->from('mp_head');
         $this->db->order_by('mp_head.name');
         $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '.', -3), ']', 1) = '00.000.000'");
@@ -609,14 +609,12 @@ class Statement_model extends CI_Model
             if ($val != 0)
                 foreach ($level1[$i]->level2 as $lv2) {
                     $form_content .= "<li> <a  class='open' data-name='[" . substr($lv2->name, 1, 4)  . "'>" .  $lv2->name . '</a>';
-
                     $this->db->select('mp_head.*');
                     $this->db->from('mp_head');
                     $this->db->order_by('mp_head.name');
                     $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '.', -1), ']', 1) = '000'");
                     $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(name, '[', -1), '.', 2) = '" . substr($lv2->name, 1, 4) . "'");
 
-                    // $this->db->limit(3);
                     $this->db->where('mp_head.id != "' . $lv2->id . '"');
                     $query = $this->db->get();
                     $level1[$i]->level2[$j]->level3 = $query->result();
@@ -624,7 +622,6 @@ class Statement_model extends CI_Model
                     $val = $this->count_head_amount_like_name(array('name' => substr($lv2->name, 1, 4), 'year' => $year, 'lvl' => 1));
 
                     if ($val != null or $val != 0) {
-
                         $tmp[$i]['children'][$k] = array(
                             'id' => $lv2->id,
                             'text' => $lv2->name,
@@ -649,6 +646,19 @@ class Statement_model extends CI_Model
                                     'data' => ['amount' => $val],
                                     'state' => ['opened' => false]
                                 );
+                                // if ($val != 0) {
+                                //     $this->db->select('mp_head.*');
+                                //     $this->db->from('mp_head');
+                                //     $this->db->order_by('mp_head.name');
+                                //     $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '.' , -1), ']', 1) = '000'");
+                                //     $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(name, '[', -1), ']', 1) = '" . substr($lv3->name, 1, 12) . "'");
+
+                                //     $this->db->where('mp_head.id != "' . $lv2->id . '"');
+                                //     $query = $this->db->get();
+                                //     echo json_encode($query->result());
+                                //     die();
+                                //     $level1[$i]->level2[$j]->level3 = $query->result();
+                                // }
                                 $l++;
                             }
                         }
@@ -786,6 +796,7 @@ class Statement_model extends CI_Model
         $this->db->select("*");
         $this->db->from('mp_head');
         $this->db->where(['mp_head.nature' => 'Revenue']);
+        $this->db->order_by('mp_head.name');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             $record_data =  $query->result();
@@ -800,11 +811,11 @@ class Statement_model extends CI_Model
 
                         $amount = ($amount < 0 ? -$amount  : $amount);
                         $total_revenue = $total_revenue + $amount;
-                        $from_creator .= '<tr><td><h4>' . $single_head->name . '</h4></td><td class="pull-right"><h4>' . number_format($amount, '2', '.', '') . '</h4></td></tr>';
+                        $from_creator .= '<tr><td><h4>' . $single_head->name . '</h4></td><td class="pull-right"><h4>' . number_format($amount, '2', ',', '.') . '</h4></td></tr>';
                     }
                 }
 
-                $from_creator .= '<tr><td> Total Revenue </td><td class="pull-right"><h4><b>' . number_format($total_revenue, '2', '.', '') . '</b></h4></td></tr>';
+                $from_creator .= '<tr><td> Total Revenue </td><td class="pull-right"><h4><b>' . number_format($total_revenue, '2', ',', '.') . '</b></h4></td></tr>';
             }
         }
 

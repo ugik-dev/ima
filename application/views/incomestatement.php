@@ -19,7 +19,7 @@
                     <div class="col-md-3 ">
                         <div class="form-group">
                             <?php echo form_label('Pilih Tahun'); ?>
-                            <select class="form-control input-lg" name="year">
+                            <select class="form-control input-lg" name="year" id="year">
                                 <option value="2019"> 2019</option>
                                 <option value="2020"> 2020</option>
                                 <option value="2021"> 2021</option>
@@ -74,6 +74,7 @@
 <script>
     $('#menu_id_24').addClass('menu-item-active menu-item-open menu-item-here"')
     $('#submenu_id_62').addClass('menu-item-active')
+    $('#year').val('<?= $year ?>');
 </script>
 <!-- Bootstrap model  -->
 <?php $this->load->view('bootstrap_model.php'); ?>
