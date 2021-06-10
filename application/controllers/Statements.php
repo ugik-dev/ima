@@ -1382,11 +1382,11 @@ class Statements extends CI_Controller
 
 		$startyear = $year . '-1-1';
 		$endyear =   $year . '-12-31';
+		$data['year'] = $year;
 		$data['accounts_records'] = $this->Statement_model->account_tree(array('year' => $year));
 		// var_dump($data);
 		// die();
 
-		$data['year'] = $year;
 		$data['from'] = $startyear;
 
 		$data['to'] = $endyear;
@@ -1412,20 +1412,16 @@ class Statements extends CI_Controller
 		// var_dump($data);
 		// die();
 		$year = html_escape($this->input->post('year'));
-		$data['from'] = html_escape($this->input->post('from'));
-		$data['to'] = html_escape($this->input->post('to'));
-		if ($data['from'] == NULL and $data['to'] == NULL) {
-			$data['from'] = date('Y') . '-01-01';
-			$data['to'] = date('Y') . '-12-31';
-		}
-		if ($data['from'] == NULL) {
-			$data['from'] = date('Y') . '-01-01';
-		}
-		if ($data['to'] == NULL) {
-			$data['to'] = date('Y') . '-12-31';
+		if ($year == NULL) {
+			$year = date('Y');
 		}
 
-		$data['accounts_records'] = $this->Statement_model->account_tree_trail_balance($data);
+		$data['from'] = $year . '-1-1';
+		$data['to'] =   $year . '-12-31';
+		$data['year'] = $year;
+		// var_dump($data);
+		// die();
+		$data['accounts_records'] = $this->Statement_model->tree_neraca_saldo($data);
 
 		// $data['from'] = $startyear;
 

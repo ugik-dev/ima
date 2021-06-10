@@ -537,7 +537,7 @@ class Statement_model extends CI_Model
                             $total_ledger = number_format($total_ledger, '2', '.', '');
 
                             $form_content .= '<tr>
-                        <td>' . $single_ledger->date . '</td><td>' . $single_ledger->no_jurnal . '</td><td><a >' . $single_ledger->sub_keterangan . '</a></td><td>
+                        <td>' . $single_ledger->date . '</td><td> <a href="' . base_url('statements/show/') . $single_ledger->parent_id . '">' . $single_ledger->no_jurnal . '</td><td><a >' . $single_ledger->sub_keterangan . '</a></td><td>
                             <a  class="currency">' .
                                 (!empty($debitamount) ? number_format($debitamount, 2, ',', '.') : '') .
                                 '</a>
@@ -547,7 +547,7 @@ class Statement_model extends CI_Model
                                 (!empty($creditamount) ? number_format($creditamount, 2, ',', '.') : '')
                                 . '</a>
                         </td>
-                        <td  >' . ($total_ledger < 0 ? '( <a class="currency">' . number_format(-$total_ledger, 2, ',', '.') . '</a>)' : '<a class="currency">' . $total_ledger . '</a>') . '</td>            
+                        <td  >' . ($total_ledger < 0 ? '( <a class="currency">' . number_format(-$total_ledger, 2, ',', '.') . '</a>)' : '<a class="currency">' . number_format($total_ledger, 2, ',', '.') . '</a>') . '</td>            
                     </tr>';
                         }
                     }
@@ -558,153 +558,7 @@ class Statement_model extends CI_Model
         return $form_content;
     }
 
-    public function account_tree($filter)
-    {
-        // var_dump($filter['account_head']);
-        // die();
-        $accounts_types = array('Assets', 'Liability', 'Equity', 'Revenue', 'Expense');
-        $form_content = '';
-        // for ($i = 0; $i  <li count($accounts_types); $i++) {
-        // $this->db->select('mp_head.*');
-        // $this->db->select('mp_head.*');
-        $year = $filter['year'];
-        $this->db->from('mp_head');
-        $this->db->order_by('mp_head.name');
-        $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '.', -3), ']', 1) = '00.000.000'");
-        if (!empty($filter['account_head'])) $this->db->where('mp_head.id', $filter['account_head']);
-        // $this->db->where(['mp_head.nature' => $accounts_types[$i]]);
-        $query = $this->db->get();
-        $level1 =  $query->result();
-        $i = 0;
-        unset($level1[0]);
-        unset($level1[1]);
-        unset($level1[2]);
-        // unset($level1[3]);
-        array_splice($level1, 4, 0);
-        // echo json_encode($level1);
-        // die();
-        foreach ($level1 as $lv1) {
-            $form_content .= "<li> <a  class='open' data-lvl='1' data-name='[" . substr($lv1->name, 1, 1)  . "'>" . $lv1->name . '</a><ul>';
-            $this->db->select('mp_head.*');
-            $this->db->from('mp_head');
-            $this->db->order_by('mp_head.name');
-            $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '.', -2), ']', 1) = '000.000'");
-            $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(name, '[', -1), '.', 1) = '" . substr($lv1->name, 1, 1) . "'");
-            // $this->db->limit(3);
-            $this->db->where('mp_head.id != "' . $lv1->id . '"');
-            $query = $this->db->get();
-            $level1[$i]->level2 = $query->result();
-            $j = 0;
-            $m = 0;
-            $k = 0;
-            $val = $this->count_head_amount_like_name(array('name' => substr($lv1->name, 1, 1), 'year' => $year, 'lvl' => 1));
-            if ($val != null && $val != 0) {
-                // echo json_encode(array('name' => substr($lv1->name, 1, 1), 'year' => $year, 'lvl' => 1));
-                $tmp[$i] = array(
-                    'id' => $lv1->id,
-                    'text' => $lv1->name,
-                    'data' => ['amount' => $val],
-                    'state' => ['opened' => false]
-                );
 
-                // if ($val != 0)
-                foreach ($level1[$i]->level2 as $lv2) {
-                    $form_content .= "<li> <a  class='open' data-name='[" . substr($lv2->name, 1, 4)  . "'>" .  $lv2->name . '</a>';
-                    $this->db->select('mp_head.*');
-                    $this->db->from('mp_head');
-                    $this->db->order_by('mp_head.name');
-                    $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '[', -1), ']', 1),'.',-1) = '000'");
-                    $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(name, '[', -1), '.', 2) = '" . substr($lv2->name, 1, 4) . "'");
-
-                    $this->db->where('mp_head.id != "' . $lv2->id . '"');
-                    $query = $this->db->get();
-                    $level1[$i]->level2[$j]->level3 = $query->result();
-                    // if ($j == 3) {
-                    //     print_r($this->db->last_query());
-                    //     // echo json_encode(substr($lv2->name, 1, 4));
-                    //     die();
-                    // }
-
-                    $val = $this->count_head_amount_like_name(array('name' => substr($lv2->name, 1, 4), 'year' => $year, 'lvl' => 1));
-
-                    if ($val != null && $val != 0) {
-                        $tmp[$i]['children'][$k] = array(
-                            'id' => $lv2->id,
-                            'text' => $lv2->name,
-                            'data' => ['amount' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $val],
-                            'state' => ['opened' => false]
-                        );
-
-                        $l = 0;
-                        if (!empty($level1[$i]->level2[$j]->level3)) {
-                            $m = 0;
-                            foreach ($level1[$i]->level2[$j]->level3 as $lv3) {
-                                $form_content .= "<li class='open' data-name='[" . substr($lv3->name, 1, 8)  . "'>" . $lv3->name . '</li>';
-                                $val = $this->count_head_amount_like_name(array('name' => substr($lv3->name, 1, 8), 'year' => $year, 'lvl' => 1));
-
-                                // echo json_encode(array('name' => substr($lv3->name, 1, 8), 'year' => $year, 'lvl' => 1, 'val' => $val));
-                                // echo "\n";
-                                // if ($l == 20)
-                                //     die();
-                                if ($val == null) $val = 0;
-                                if (!empty($val)) {
-                                    $tmp[$i]['children'][$k]['children'][$m] = array(
-                                        'id' => $lv3->id,
-                                        'text' => $lv3->name,
-                                        'data' => ['amount' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $val, 'ins' => '<a onclick="inspect_buku_besar(' . $lv3->id . ')"><i class="fa fa-search text-warning mr-5"></i></a>'],
-                                        'state' => ['opened' => false]
-                                    );
-                                    $m++;
-                                }
-                                $l++;
-                            }
-                        }
-                        $k++;
-                    }
-
-                    $j++;
-                }
-            }
-
-            $i++;
-        }
-        // echo json_encode($tmp);
-        // die();
-        // return $form_content;
-        // return $level1;
-        return $tmp;
-        //         $data_leadger = $this->get_ledger_transactions($single_head->id, $filter['from'], $filter['to']);
-        //         if ($data_leadger != NULL) {
-        //             $total_ledger = 0;
-        //             $ledger_query  = array();
-        //             $form_content .= '<hr />                                       
-        //         ';
-
-        //             foreach ($data_leadger as $single_ledger) {
-        //                 $debitamount = '';
-        //                 $creditamount = '';
-
-        //                 if ($single_ledger->type == 0) {
-        //                     $debitamount = $single_ledger->amount;
-        //                     $total_ledger = $total_ledger + $debitamount;
-        //                 } else if (
-        //                     $single_ledger->type == 1
-        //                 ) {
-        //                     $creditamount = $single_ledger->amount;
-        //                     $total_ledger = $total_ledger - $creditamount;
-        //                 } else {
-        //                 }
-
-        //                 $total_ledger = number_format($total_ledger, '2', '.', '');
-        //             }
-        //         }
-        //         $form_content .= '</tbody></table>';
-        //     }
-        // }
-        // $form_content .= '</li>';
-        // }
-        // return $form_content;
-    }
 
     //USED TO COUNT SINGLE HEAD 
     public function count_head_amount($head_id, $date1, $date2)
@@ -1281,7 +1135,7 @@ class Statement_model extends CI_Model
         return $count_total_amt;
     }
 
-    public function count_head_amount_like_name_trail_balance(
+    public function count_head_amount_like_name_neraca_saldo(
         $filter
     ) {
         $count_total_amt = 0;
@@ -1331,7 +1185,7 @@ class Statement_model extends CI_Model
 
 
 
-    public function account_tree_trail_balance($filter)
+    public function tree_neraca_saldo($filter)
     {
         // var_dump($filter['account_head']);
         // die();
@@ -1355,10 +1209,11 @@ class Statement_model extends CI_Model
             $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(name, '[', -1), '.', 1) = '" . substr($lv1->name, 1, 1) . "'");
             $this->db->where('mp_head.id != "' . $lv1->id . '"');
             $query = $this->db->get();
+
             $level1[$i]->level2 = $query->result();
             $j = 0;
             $k = 0;
-            $val = $this->count_head_amount_like_name_trail_balance(array('name' => substr($lv1->name, 1, 1), 'filter' => $filter, 'lvl' => 1));
+            $val = $this->count_head_amount_like_name_neraca_saldo(array('name' => substr($lv1->name, 1, 1), 'filter' => $filter, 'lvl' => 1));
             $debitamt  = 0;
             $creditamt = 0;
             $tmp[$i] = array(
@@ -1372,15 +1227,21 @@ class Statement_model extends CI_Model
 
                     $this->db->select('mp_head.*');
                     $this->db->from('mp_head');
-                    $this->db->order_by('mp_head.name');
-                    $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '.', -1), ']', 1) = '000'");
+                    $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '[', -1), ']', 1),'.',-1) = '000'");
+
+                    // $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '.', -1), ']', 1) = '000'");
                     $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(name, '[', -1), '.', 2) = '" . substr($lv2->name, 1, 4) . "'");
                     $this->db->where('mp_head.id != "' . $lv2->id . '"');
-
+                    $this->db->order_by('mp_head.name');
                     $query = $this->db->get();
                     $level1[$i]->level2[$j]->level3 = $query->result();
+                    // // if ($i == 2) {
+                    // print_r($this->db->last_query());
+                    // //     // echo json_encode(substr($lv2->name, 1, 4));
+                    // die();
+                    // }
 
-                    $val = $this->count_head_amount_like_name_trail_balance(array('name' => substr($lv2->name, 1, 4), 'filter' => $filter, 'lvl' => 1));
+                    $val = $this->count_head_amount_like_name_neraca_saldo(array('name' => substr($lv2->name, 1, 4), 'filter' => $filter, 'lvl' => 1));
                     $tmp[$i]['children'][$k] = array(
                         'id' => $lv2->id,
                         'text' => $lv2->name,
@@ -1389,20 +1250,21 @@ class Statement_model extends CI_Model
                     );
                     $l = 0;
                     if ($val['debit'] != 0 or $val['credit'] != 0)
-                        if (!empty($level1[$i]->level2[$j]->level3)) {
-                            foreach ($level1[$i]->level2[$j]->level3 as $lv3) {
-                                $val = $this->count_head_amount_like_name_trail_balance(array('name' => substr($lv3->name, 1, 8), 'filter' => $filter, 'lvl' => 1));
-                                $tmp[$i]['children'][$k]['children'][$l] = array(
-                                    'id' => $lv3->id,
-                                    'text' => $lv3->name,
-                                    'data' => $val,
-                                    'state' => ['opened' => false]
-                                );
-                                // if ($val['debit'] != 0 or $val['credit'] != 0) {
+                        // if (!empty($level1[$i]->level2[$j]->level3)) {
+                        foreach ($level1[$i]->level2[$j]->level3 as $lv3) {
+                            $val = $this->count_head_amount_like_name_neraca_saldo(array('name' => substr($lv3->name, 1, 8), 'filter' => $filter, 'lvl' => 1));
+                            $val['ins'] = '<a onclick="inspect_buku_besar(' . $lv3->id . ')"><i class="fa fa-search text-warning mr-5"></i></a>';
+                            $tmp[$i]['children'][$k]['children'][$l] = array(
+                                'id' => $lv3->id,
+                                'text' =>  $lv3->name,
+                                'data' => $val,
+                                'state' => ['opened' => false]
+                            );
+                            // if ($val['debit'] != 0 or $val['credit'] != 0) {
 
-                                $l++;
-                            }
+                            $l++;
                         }
+                    // }
                     $k++;
                 }
 
@@ -1410,6 +1272,121 @@ class Statement_model extends CI_Model
                 $j++;
             }
             $form_content .= '</ul></li>';
+
+            $i++;
+        }
+        // echo json_encode($tmp);
+        // die();
+        return $tmp;
+    }
+
+    public function account_tree($filter)
+    {
+        // var_dump($filter['account_head']);
+        // die();
+        $accounts_types = array('Assets', 'Liability', 'Equity', 'Revenue', 'Expense');
+        $form_content = '';
+        // for ($i = 0; $i  <li count($accounts_types); $i++) {
+        // $this->db->select('mp_head.*');
+        // $this->db->select('mp_head.*');
+        $year = $filter['year'];
+        $this->db->from('mp_head');
+        $this->db->order_by('mp_head.name');
+        $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '.', -3), ']', 1) = '00.000.000'");
+        if (!empty($filter['account_head'])) $this->db->where('mp_head.id', $filter['account_head']);
+        // $this->db->where(['mp_head.nature' => $accounts_types[$i]]);
+        $query = $this->db->get();
+        $level1 =  $query->result();
+        $i = 0;
+        unset($level1[0]);
+        unset($level1[1]);
+        unset($level1[2]);
+        // unset($level1[3]);
+        array_splice($level1, 4, 0);
+        // echo json_encode($level1);
+        // die();
+        foreach ($level1 as $lv1) {
+            $form_content .= "<li> <a  class='open' data-lvl='1' data-name='[" . substr($lv1->name, 1, 1)  . "'>" . $lv1->name . '</a><ul>';
+            $this->db->select('mp_head.*');
+            $this->db->from('mp_head');
+            $this->db->order_by('mp_head.name');
+            $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '.', -2), ']', 1) = '000.000'");
+            $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(name, '[', -1), '.', 1) = '" . substr($lv1->name, 1, 1) . "'");
+            // $this->db->limit(3);
+            $this->db->where('mp_head.id != "' . $lv1->id . '"');
+            $query = $this->db->get();
+            $level1[$i]->level2 = $query->result();
+            $j = 0;
+            $m = 0;
+            $k = 0;
+            $val = $this->count_head_amount_like_name(array('name' => substr($lv1->name, 1, 1), 'year' => $year, 'lvl' => 1));
+            if ($val != null && $val != 0) {
+                // echo json_encode(array('name' => substr($lv1->name, 1, 1), 'year' => $year, 'lvl' => 1));
+                $tmp[$i] = array(
+                    'id' => $lv1->id,
+                    'text' => $lv1->name,
+                    'data' => ['amount' => $val],
+                    'state' => ['opened' => false]
+                );
+
+                // if ($val != 0)
+                foreach ($level1[$i]->level2 as $lv2) {
+                    $form_content .= "<li> <a  class='open' data-name='[" . substr($lv2->name, 1, 4)  . "'>" .  $lv2->name . '</a>';
+                    $this->db->select('mp_head.*');
+                    $this->db->from('mp_head');
+                    $this->db->order_by('mp_head.name');
+                    $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '[', -1), ']', 1),'.',-1) = '000'");
+                    $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(name, '[', -1), '.', 2) = '" . substr($lv2->name, 1, 4) . "'");
+
+                    $this->db->where('mp_head.id != "' . $lv2->id . '"');
+                    $query = $this->db->get();
+                    $level1[$i]->level2[$j]->level3 = $query->result();
+                    // if ($j == 3) {
+                    //     print_r($this->db->last_query());
+                    //     // echo json_encode(substr($lv2->name, 1, 4));
+                    //     die();
+                    // }
+
+                    $val = $this->count_head_amount_like_name(array('name' => substr($lv2->name, 1, 4), 'year' => $year, 'lvl' => 1));
+
+                    if ($val != null && $val != 0) {
+                        $tmp[$i]['children'][$k] = array(
+                            'id' => $lv2->id,
+                            'text' => $lv2->name,
+                            'data' => ['amount' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $val],
+                            'state' => ['opened' => false]
+                        );
+
+                        $l = 0;
+                        if (!empty($level1[$i]->level2[$j]->level3)) {
+                            $m = 0;
+                            foreach ($level1[$i]->level2[$j]->level3 as $lv3) {
+                                $form_content .= "<li class='open' data-name='[" . substr($lv3->name, 1, 8)  . "'>" . $lv3->name . '</li>';
+                                $val = $this->count_head_amount_like_name(array('name' => substr($lv3->name, 1, 8), 'year' => $year, 'lvl' => 1));
+
+                                // echo json_encode(array('name' => substr($lv3->name, 1, 8), 'year' => $year, 'lvl' => 1, 'val' => $val));
+                                // echo "\n";
+                                // if ($l == 20)
+                                //     die();
+                                if ($val == null) $val = 0;
+                                if (!empty($val)) {
+                                    $tmp[$i]['children'][$k]['children'][$m] = array(
+                                        'id' => $lv3->id,
+                                        'text' => $lv3->name,
+                                        'data' => ['amount' => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $val, 'ins' => '<a onclick="inspect_buku_besar(' . $lv3->id . ')"><i class="fa fa-search text-warning mr-5"></i></a>'],
+                                        'state' => ['opened' => false]
+                                    );
+                                    $m++;
+                                }
+                                $l++;
+                            }
+                        }
+                        $k++;
+                    }
+
+                    $j++;
+                }
+            }
 
             $i++;
         }

@@ -15,46 +15,33 @@
             $attributes = array('id' => 'leadgerAccounst', 'method' => 'post', 'class' => '');
             ?>
             <?php echo form_open_multipart('statements/three_laporan_neraca', $attributes); ?>
-            <div class="col-lg-12">
-                <div class="col-lg-12">
-                    <div style="float: right" class="form-group" style="margin-top: 16px;">
+            <div class="row no-print">
+                <div class="col-md-3 ">
+                    <div class="form-group">
+                        <?php echo form_label('Pilih Tahun'); ?>
+                        <select class="form-control input-lg" name="year" id="year">
+                            <option value="2019"> 2019</option>
+                            <option value="2020"> 2020</option>
+                            <option value="2021"> 2021</option>
+                            <option value="2022"> 2022</option>
+                            <option value="2023"> 2023</option>
+                            <option value="2024"> 2024</option>
+                            <option value="2025"> 2025</option>
+                            <option value="2026"> 2026</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3 ">
+                    <div class="form-group" style="margin-top:16px;">
                         <?php
-                        $data = array('class' => 'btn btn-default btn-outline-primary  mr-2', 'type' => 'button', 'id' => 'btn_export_excel', 'value' => 'true', 'content' => '<i class="fa fa-download" aria-hidden="true"></i> Export Excel');
+                        $data = array('class' => 'btn btn-info btn-flat margin btn-lg pull-right ', 'type' => 'submit', 'name' => 'btn_submit_customer', 'value' => 'true', 'content' => '<i class="fa fa-floppy-o" aria-hidden="true"></i> 
+                                Buat Statement');
                         echo form_button($data);
                         ?>
                     </div>
-                    <div style="float: right" class="form-group" style="margin-top: 16px;">
-                        <a onclick="printDiv('print-section')" class="btn btn-default btn-outline-primary  mr-2"><i class="fa fa-print  pull-left"></i> Cetak</a>
-                    </div>
-                    <!-- </div> -->
-                </div>
-                <div class="row col-lg-12">
-                    <div class="col-lg-3 ">
-                        <div class="form-group">
-                            <?php echo form_label('Dari Tanggal'); ?>
-                            <?php
-                            $data = array('class' => 'form-control input-lg', 'type' => 'date', 'id' => 'from', 'name' => 'from', 'reqiured' => '', 'value' => $from);
-                            echo form_input($data);
-                            ?>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 ">
-                        <div class="form-group">
-                            <?php echo form_label('Sampai Tanggal'); ?>
-                            <?php
-                            $data = array('class' => 'form-control input-lg', 'type' => 'date', 'id' => 'to', 'name' => 'to', 'reqiured' => '', 'value' => $to);
-                            echo form_input($data);
-                            ?>
-                        </div>
-                    </div>
-                    <!-- <div class="col-lg-3"> -->
-                    <div class="form-group" style="margin-top: 24px; float: right">
-                        <button class="btn btn-info btn-flat mr-2" type="submit" name="btn_submit_customer" value="true"> <i class=" fa fa-search pull-left"></i> Buat Statement</button>
-
-                    </div>
-                    <!-- </div> -->
                 </div>
             </div>
+            <?php form_close(); ?>
 
             <!-- <div class="row no-print">
                 <div class="col-md-3 ">
@@ -105,7 +92,10 @@
                         <div id="jstree"></div>
                     </div>
                     <script type="text/javascript">
+                        $('#year').val('<?= $year ?>');
+
                         var data = <?= json_encode($accounts_records) ?>;
+                        console.log(data);
                         $("div#jstree").jstree({
                             plugins: ["table", "dnd", "contextmenu", "sort"],
                             core: {
@@ -132,11 +122,16 @@
                                         value: "saldo",
                                         header: "Saldo (Rp)",
                                     },
+                                    {
+                                        width: 50,
+                                        value: "ins",
+                                        header: '<i class="fa fa-search text-warning mr-5"></i>'
+                                    }
                                 ],
                                 resizable: true,
                                 draggable: true,
                                 contextmenu: true,
-                                width: 1000,
+                                width: 1100,
                             }
                         });
                     </script>
@@ -152,6 +147,41 @@
 <script>
     $('#menu_id_24').addClass('menu-item-active menu-item-open menu-item-here"')
     $('#submenu_id_80').addClass('menu-item-active')
+
+    function inspect_buku_besar(i) {
+        console.log('op');
+        var mapForm = document.createElement("form");
+        mapForm.target = "Map";
+        mapForm.style = "display: none";
+        mapForm.method = "POST"; // or "post" if appropriate
+        mapForm.action = "<?= site_url('statements/leadgerAccounst') ?>";
+
+        var mapInput = document.createElement("input");
+        mapInput.type = "text";
+        mapInput.name = "account_head";
+        mapInput.value = i;
+        mapForm.append(mapInput);
+
+        var mapInput2 = document.createElement("input");
+        mapInput2.type = "text";
+        mapInput2.name = "from";
+        mapInput2.value = "<?= $year . '-01-01' ?>";
+        mapForm.append(mapInput2);
+
+        var mapInput3 = document.createElement("input");
+        mapInput3.type = "text";
+        mapInput3.name = "to";
+        mapInput3.value = "<?= $year . '-12-31' ?>";
+        mapForm.append(mapInput3);
+
+        document.body.appendChild(mapForm);
+
+        map = window.open("", "Map", "status=0,title=0,height=600,width=800,scrollbars=1");
+
+        if (map) {
+            mapForm.submit();
+        }
+    }
 </script>
 
 <!-- Bootstrap model  -->
