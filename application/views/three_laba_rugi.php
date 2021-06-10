@@ -93,11 +93,11 @@
                                         //     }
                                         // }
                                     },
-                                    // {
-                                    //     width: 15000,
-                                    //     value: "quantity",
-                                    //     header: "Qty"
-                                    // }
+                                    {
+                                        width: 100,
+                                        value: "ins",
+                                        header: "Inspect"
+                                    }
                                 ],
                                 resizable: true,
                                 draggable: true,
@@ -158,6 +158,74 @@
 <script>
     $('#menu_id_24').addClass('menu-item-active menu-item-open menu-item-here"')
     $('#submenu_id_79').addClass('menu-item-active')
+
+    function inspect_buku_besar(i) {
+        console.log('op');
+        var mapForm = document.createElement("form");
+        mapForm.target = "Map";
+        mapForm.style = "display: none";
+        mapForm.method = "POST"; // or "post" if appropriate
+        mapForm.action = "<?= site_url('statements/leadgerAccounst') ?>";
+
+        var mapInput = document.createElement("input");
+        mapInput.type = "text";
+        mapInput.name = "account_head";
+        mapInput.value = i;
+        mapForm.append(mapInput);
+
+        var mapInput2 = document.createElement("input");
+        mapInput2.type = "text";
+        mapInput2.name = "from";
+        mapInput2.value = "<?= $year . '-01-01' ?>";
+        mapForm.append(mapInput2);
+
+        var mapInput3 = document.createElement("input");
+        mapInput3.type = "text";
+        mapInput3.name = "to";
+        mapInput3.value = "<?= $year . '-12-31' ?>";
+        mapForm.append(mapInput3);
+
+        document.body.appendChild(mapForm);
+
+        map = window.open("", "Map", "status=0,title=0,height=600,width=800,scrollbars=1");
+
+        if (map) {
+            mapForm.submit();
+        } else {
+            alert('You must allow popups for this map to work.');
+        }
+
+        // data = {
+        //     from: '<?= $year . '-01-01' ?>',
+        //     to: '<?= $year . '-12-31' ?>',
+        //     account_head: i
+        // }
+        // $.ajax({
+        //     type: "POST",
+        //     url: "<?= site_url('statements/leadgerAccounst') ?>",
+        //     data: data,
+        //     dataType: "json",
+        //     success: function(data) {
+        //         var win = window.open();
+        //         win.document.write(data);
+        //     }
+        // })
+        // // $.post(`<?= site_url('statements/leadgerAccounst') ?>`, {
+        // //         from: '<?= $year . '-01-01' ?>',
+        // //         from: '<?= $year . '-12-31' ?>',
+        // //         account_head: i
+        // //     },
+
+        // //     function() {
+        // //         window.open('<?= site_url('statements/leadgerAccounst') ?>');
+        // //         // w.document.open();
+        // //         // w.document.write(data);
+        // //         // w.document.close();
+        // //     })
+
+        // //     window.open('about:blank');
+        // // });
+    }
 </script>
 
 <!-- Bootstrap model  -->

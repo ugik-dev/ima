@@ -9,6 +9,7 @@ use PhpOffice\PhpWord\Writer\Word2007;
 
 class Statements extends CI_Controller
 {
+
 	// Statements
 	//USED TO GENERATE GENERAL JOURNAL 
 	public function index()
@@ -766,6 +767,7 @@ class Statements extends CI_Controller
 	function leadgerAccounst()
 	{
 		//$ledger
+		// var_dus
 		$from = html_escape($this->input->post('from'));
 		$to   = html_escape($this->input->post('to'));
 		$data['account_head']   = html_escape($this->input->post('account_head'));
