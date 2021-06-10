@@ -827,13 +827,11 @@ class Statements extends CI_Controller
 	{
 		$year = html_escape($this->input->post('year'));
 		if ($year == NULL) {
-			$startyear = date('Y') . '-1-1';
-			$endyear = date('Y') . '-12-31';
-		} else {
-			$startyear = $year . '-1-1';
-			$endyear =   $year . '-12-31';
+			$year = date('Y');
 		}
-
+		$startyear = $year . '-1-1';
+		$endyear =   $year . '-12-31';
+		$data['year'] = $year;
 		$data['from'] = $startyear;
 
 		$data['to'] = $endyear;
@@ -1375,18 +1373,18 @@ class Statements extends CI_Controller
 	{
 		$this->load->model('Statement_model');
 		$account_head   = html_escape($this->input->post('account_head'));
-		$data['accounts_records'] = $this->Statement_model->account_tree(array());
-		// var_dump($data);
-		// die();
 		$year = html_escape($this->input->post('year'));
 		if ($year == NULL) {
-			$startyear = date('Y') . '-1-1';
-			$endyear = date('Y') . '-12-31';
-		} else {
-			$startyear = $year . '-1-1';
-			$endyear =   $year . '-12-31';
+			$year = date('Y');
 		}
 
+		$startyear = $year . '-1-1';
+		$endyear =   $year . '-12-31';
+		$data['accounts_records'] = $this->Statement_model->account_tree(array('year' => $year));
+		// var_dump($data);
+		// die();
+
+		$data['year'] = $year;
 		$data['from'] = $startyear;
 
 		$data['to'] = $endyear;
