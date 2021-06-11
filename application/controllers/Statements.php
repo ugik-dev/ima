@@ -827,16 +827,21 @@ class Statements extends CI_Controller
 	//USED TO GENERATE INCOME STATEMENT 
 	public function income_statement()
 	{
-		$year = html_escape($this->input->post('year'));
-		if ($year == NULL) {
-			$year = date('Y');
-		}
-		$startyear = $year . '-1-1';
-		$endyear =   $year . '-12-31';
-		$data['year'] = $year;
-		$data['from'] = $startyear;
+		$data = $this->input->post();
+		if (empty($data['from'])) $data['from'] = date('Y') . '-01-01';
+		if (empty($data['to'])) $data['to'] = date('Y') . '-12-31';
+		// $year = html_escape($this->input->post('year'));
+		// if ($year == NULL) {
+		// 	$year = date('Y');
+		// }
+		// $startyear = $year . '-1-1';
+		// $endyear =   $year . '-12-31';
+		// if(!empty)
 
-		$data['to'] = $endyear;
+		// $data['year'] = $year;
+		// $data['from'] = $startyear;
+
+		// $data['to'] = $endyear;
 
 		// DEFINES PAGE TITLE
 		$data['title'] = 'Laporan Untung Rugi';
@@ -845,7 +850,7 @@ class Statements extends CI_Controller
 		$data['main_view'] = 'incomestatement';
 
 		$this->load->model('Statement_model');
-		$data['income_records'] = $this->Statement_model->income_statement($startyear, $endyear);
+		$data['income_records'] = $this->Statement_model->income_statement($data['from'], $data['to']);
 
 
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
@@ -1374,22 +1379,26 @@ class Statements extends CI_Controller
 	public function three_laporan_labarugi()
 	{
 		$this->load->model('Statement_model');
-		$account_head   = html_escape($this->input->post('account_head'));
-		$year = html_escape($this->input->post('year'));
-		if ($year == NULL) {
-			$year = date('Y');
-		}
+		// $account_head   = html_escape($this->input->post('account_head'));
+		// $year = html_escape($this->input->post('year'));
+		// if ($year == NULL) {
+		// 	$year = date('Y');
+		// }
+		$data = $this->input->post();
+		if (empty($data['from'])) $data['from'] = date('Y') . '-01-01';
+		if (empty($data['to'])) $data['to'] = date('Y') . '-12-31';
 
-		$startyear = $year . '-1-1';
-		$endyear =   $year . '-12-31';
-		$data['year'] = $year;
-		$data['accounts_records'] = $this->Statement_model->account_tree(array('year' => $year));
+
+		// $startyear = $year . '-1-1';
+		// $endyear =   $year . '-12-31';
+		// $data['year'] = $year;
+		$data['accounts_records'] = $this->Statement_model->account_tree($data);
 		// var_dump($data);
 		// die();
 
-		$data['from'] = $startyear;
+		// $data['from'] = $startyear;
 
-		$data['to'] = $endyear;
+		// $data['to'] = $endyear;
 
 		// DEFINES PAGE TITLE
 		$data['title'] = 'Laporan Laba Rugi';

@@ -16,9 +16,8 @@
             ?>
             <?php echo form_open_multipart('statements/three_laporan_labarugi', $attributes); ?>
             <div class="row no-print">
-                <div class="col-md-3 ">
+                <!-- <div class="col-md-3 ">
                     <div class="form-group">
-                        <?php echo form_label('Pilih Tahun'); ?>
                         <select class="form-control input-lg" name="year" id="year">
                             <option value="2019"> 2019</option>
                             <option value="2020"> 2020</option>
@@ -30,7 +29,20 @@
                             <option value="2026"> 2026</option>
                         </select>
                     </div>
+                </div> -->
+                <div class="col-md-3" id="ly_from">
+                    <div class="form-group">
+                        <label>Dari</label>
+                        <input type="date" class="form-control" name="from" id="form" value="<?= $from ?>">
+                    </div>
                 </div>
+                <div class="col-md-3" id="ly_to">
+                    <div class="form-group">
+                        <label>Sampai</label>
+                        <input type="date" class="form-control" id="to" name="to" value="<?= $to ?>">
+                    </div>
+                </div>
+
                 <div class="col-md-3 ">
                     <div class="form-group" style="margin-top:16px;">
                         <?php
@@ -64,20 +76,14 @@
                         <div id="jstree"></div>
                     </div>
                     <script type="text/javascript">
-                        $('#year').val('<?= $year ?>');
-
-                        // $(document).ready(function() {
-                        // tree data
                         var data = <?= json_encode($accounts_records) ?>;
 
-                        // load jstree
                         $("div#jstree").jstree({
                             plugins: ["table", "dnd", "contextmenu", "sort"],
                             core: {
                                 data: data,
                                 check_callback: true
                             },
-                            // configure tree table
                             table: {
                                 columns: [{
                                         width: 500,
@@ -87,11 +93,6 @@
                                         width: 300,
                                         value: "amount",
                                         header: "Amount (Rp)",
-                                        // format: function(v) {
-                                        //     if (v) {
-                                        //         return '' + v.toFixed(2)
-                                        //     }
-                                        // }
                                     },
                                     {
                                         width: 100,
@@ -103,58 +104,18 @@
                                 draggable: true,
                                 contextmenu: true,
                                 width: 1000,
-                                // height: 2000
                             }
                         });
-                        // });
                     </script>
 
-                    <!-- <div id="jstree"></div> -->
-                    <!-- <div id="jstree_demo_div"></div> -->
-                    <!-- <div id="jstree"> -->
-                    <!-- <ul> -->
                     <?php
-                    // echo $accounts_records
                     ?>
-                    <!-- <li>
-                                Root node 1
-                                <ul>
-                                    <li data-jstree='{ "selected" : true }'>
-                                        <a href="javascript:;">
-                                            Initially selected </a>
-                                    </li>
-                                    <li data-jstree='{ "icon" : "flaticon2-analytics text-success " }'>
-                                        custom icon URL
-                                    </li>
-                                    <li data-jstree='{ "opened" : true }'>
-                                        initially open
-                                        <ul>
-                                            <li data-jstree='{ "disabled" : true }'>
-                                                Disabled Node
-                                            </li>
-                                            <li data-jstree='{ "type" : "file" }'>
-                                                Another node
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li data-jstree='{ "icon" : "flaticon2-user text-danger" }'>
-                                        Custom icon class (bootstrap)
-                                    </li>
-                                </ul>
-                            </li>
-                            <li data-jstree='{ "type" : "file" }'>
-                                <a href="https://keenthemes.com/">
-                                    Clickable link node </a>
-                            </li> -->
-                    <!-- </ul> -->
                 </div>
             </div>
 
         </div>
     </div>
 </div>
-</div>
-<!-- </section> -->
 <script>
     $('#menu_id_24').addClass('menu-item-active menu-item-open menu-item-here"')
     $('#submenu_id_79').addClass('menu-item-active')
@@ -176,13 +137,13 @@
         var mapInput2 = document.createElement("input");
         mapInput2.type = "text";
         mapInput2.name = "from";
-        mapInput2.value = "<?= $year . '-01-01' ?>";
+        mapInput2.value = "<?= $from ?>' ?>";
         mapForm.append(mapInput2);
 
         var mapInput3 = document.createElement("input");
         mapInput3.type = "text";
         mapInput3.name = "to";
-        mapInput3.value = "<?= $year . '-12-31' ?>";
+        mapInput3.value = "<?= $to  ?>";
         mapForm.append(mapInput3);
 
         document.body.appendChild(mapForm);
@@ -191,40 +152,8 @@
 
         if (map) {
             mapForm.submit();
-        } else {
-            alert('You must allow popups for this map to work.');
         }
 
-        // data = {
-        //     from: '<?= $year . '-01-01' ?>',
-        //     to: '<?= $year . '-12-31' ?>',
-        //     account_head: i
-        // }
-        // $.ajax({
-        //     type: "POST",
-        //     url: "<?= site_url('statements/leadgerAccounst') ?>",
-        //     data: data,
-        //     dataType: "json",
-        //     success: function(data) {
-        //         var win = window.open();
-        //         win.document.write(data);
-        //     }
-        // })
-        // // $.post(`<?= site_url('statements/leadgerAccounst') ?>`, {
-        // //         from: '<?= $year . '-01-01' ?>',
-        // //         from: '<?= $year . '-12-31' ?>',
-        // //         account_head: i
-        // //     },
-
-        // //     function() {
-        // //         window.open('<?= site_url('statements/leadgerAccounst') ?>');
-        // //         // w.document.open();
-        // //         // w.document.write(data);
-        // //         // w.document.close();
-        // //     })
-
-        // //     window.open('about:blank');
-        // // });
     }
 </script>
 

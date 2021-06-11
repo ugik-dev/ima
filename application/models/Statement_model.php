@@ -1107,7 +1107,9 @@ class Statement_model extends CI_Model
         $this->db->join('mp_generalentry', 'mp_generalentry.id = mp_sub_entry.parent_id');
         $this->db->join('mp_head', 'mp_head.id = mp_sub_entry.accounthead');
         $this->db->where('mp_head.name like "[' . $filter['name'] . '%"');
-        $this->db->where('mp_generalentry.date like "' . $filter['year'] . '%"');
+        if (!empty($filter['year'])) $this->db->where('mp_generalentry.date like "' . $filter['year'] . '%"');
+        if (!empty($filter['filter']['from'])) $this->db->where('mp_generalentry.date >= "' . $filter['filter']['from'] . '"');
+        if (!empty($filter['filter']['to'])) $this->db->where('mp_generalentry.date <= "' . $filter['filter']['to'] . '"');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             $ledger_data =  $query->result();
@@ -1289,7 +1291,7 @@ class Statement_model extends CI_Model
         // for ($i = 0; $i  <li count($accounts_types); $i++) {
         // $this->db->select('mp_head.*');
         // $this->db->select('mp_head.*');
-        $year = $filter['year'];
+        // $year = $filter['year'];
         $this->db->from('mp_head');
         $this->db->order_by('mp_head.name');
         $this->db->where("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '.', -3), ']', 1) = '00.000.000'");
@@ -1319,7 +1321,7 @@ class Statement_model extends CI_Model
             $j = 0;
             $m = 0;
             $k = 0;
-            $val = $this->count_head_amount_like_name(array('name' => substr($lv1->name, 1, 1), 'year' => $year, 'lvl' => 1));
+            $val = $this->count_head_amount_like_name(array('name' => substr($lv1->name, 1, 1), 'filter' => $filter, 'lvl' => 1));
             if ($val != null && $val != 0) {
                 // echo json_encode(array('name' => substr($lv1->name, 1, 1), 'year' => $year, 'lvl' => 1));
                 $tmp[$i] = array(
@@ -1347,7 +1349,7 @@ class Statement_model extends CI_Model
                     //     die();
                     // }
 
-                    $val = $this->count_head_amount_like_name(array('name' => substr($lv2->name, 1, 4), 'year' => $year, 'lvl' => 1));
+                    $val = $this->count_head_amount_like_name(array('name' => substr($lv2->name, 1, 4), 'filter' => $filter, 'lvl' => 1));
 
                     if ($val != null && $val != 0) {
                         $tmp[$i]['children'][$k] = array(
@@ -1362,7 +1364,7 @@ class Statement_model extends CI_Model
                             $m = 0;
                             foreach ($level1[$i]->level2[$j]->level3 as $lv3) {
                                 $form_content .= "<li class='open' data-name='[" . substr($lv3->name, 1, 8)  . "'>" . $lv3->name . '</li>';
-                                $val = $this->count_head_amount_like_name(array('name' => substr($lv3->name, 1, 8), 'year' => $year, 'lvl' => 1));
+                                $val = $this->count_head_amount_like_name(array('name' => substr($lv3->name, 1, 8), 'filter' => $filter, 'lvl' => 1));
 
                                 // echo json_encode(array('name' => substr($lv3->name, 1, 8), 'year' => $year, 'lvl' => 1, 'val' => $val));
                                 // echo "\n";
