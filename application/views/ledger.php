@@ -75,7 +75,7 @@
                 <?php echo $this->db->get_where('mp_langingpage', array('id' => 1))->result_array()[0]['companyname'];
                 ?>
             </h3>
-            <h4 style="text-align:center"><b> Dari </b> <?php echo $from; ?> <b> Sampai </b> <?php echo $to; ?></h4>
+            <h4 style="text-align:center"><b> Dari </b> <?= $from ?> <b> Sampai </b> <?php echo $to; ?></h4>
             <h4 style="text-align:center"><b> Dibuat </b> <?php echo Date('Y-m-d'); ?> </h4>
         </div>
         <!-- <div class="col-lg-3"></div> -->

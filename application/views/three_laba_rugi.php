@@ -137,7 +137,7 @@
         var mapInput2 = document.createElement("input");
         mapInput2.type = "text";
         mapInput2.name = "from";
-        mapInput2.value = "<?= $from ?>' ?>";
+        mapInput2.value = "<?= $from ?>";
         mapForm.append(mapInput2);
 
         var mapInput3 = document.createElement("input");
