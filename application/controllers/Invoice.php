@@ -515,7 +515,7 @@ class Invoice extends CI_Controller
 
 		// $textrun->addTextBreak();
 
-		$section->addText("\t\tYth.", 'paragraph', array('spaceAfter' => 100));
+		$section->addText("\t\tKepada Yth.", 'paragraph', array('spaceAfter' => 100));
 		// $section->addTextBreak();
 		$section->addText("\t\tDirektur Keuangan", 'paragraph', array('spaceAfter' => 100));
 		// $section->addTextBreak();
@@ -526,6 +526,11 @@ class Invoice extends CI_Controller
 		$section->addText("\t\tdi -", 'paragraph', array('spaceAfter' => 0));
 		// $section->addTextBreak();
 		$section->addText("\t\t\t" . $dataContent['cus_address'], 'paragraph', array('spaceAfter' => 0));
+		// $footer = $section->addFooter();
+		// $footer->addText("KANTOR PUSAT : ", 'paragraph_bold', array('spaceAfter' => 0));
+		// $footer->addText("Jalan Sanggul Dewa No.6", 'paragraph', array('spaceAfter' => 0));
+		// $footer->addText("Pangkalpinang, 33121 - Bangka Belitung", 'paragraph', array('spaceAfter' => 0));
+		// $footer->addText("Tel. No. 0717 700 1055; ", 'paragraph', array('spaceAfter' => 0));
 
 		$section = $phpWord->addSection([
 			'breakType' => 'continuous', 'colsNum' => 1, 'pageSizeW' =>
@@ -536,17 +541,17 @@ class Invoice extends CI_Controller
 		// $section->addTextBreak();
 		// $section = $phpWord->addSection();
 
-		$section->addImage(
-			base_url('assets/img/ima.png'),
-			array(
-				'height'           => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(1)),
-				'positioning'      => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
-				'posHorizontal' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
-				'posVertical' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
-				'marginLeft'       => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(-1)),
-				'marginTop'        => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(-4.2)),
-			)
-		);
+		// $section->addImage(
+		// 	base_url('assets/img/ima.png'),
+		// 	array(
+		// 		'height'           => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(1)),
+		// 		'positioning'      => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
+		// 		'posHorizontal' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
+		// 		'posVertical' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
+		// 		'marginLeft'       => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(-1)),
+		// 		'marginTop'        => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(-4.2)),
+		// 	)
+		// );
 		$section->addText("Dengan hormat,", 'paragraph', array('spaceAfter' => 100));
 		// $section->addTextBreak();
 		$section->addText("Bersaam ini kami sampaikan tagihan " . $dataContent['description'] . ' sebagai berikut :', 'paragraph', array('spaceAfter' => 0));

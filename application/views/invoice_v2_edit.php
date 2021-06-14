@@ -286,6 +286,7 @@
     no_invoice = $('#no_invoice');
     description = $('#description');
     date_jurnal = $('#date');
+    payment_metode = $('#payment_metode');
     acc_1 = $('#acc_1');
     acc_2 = $('#acc_2');
     acc_3 = $('#acc_3');
@@ -342,6 +343,7 @@
         acc_1.val('<?= $data_return['acc_1'] ?>');
         acc_2.val('<?= $data_return['acc_2'] ?>');
         acc_3.val('<?= $data_return['acc_3'] ?>');
+        payment_metode.val('<?= $data_return['payment_metode'] ?>');
         <?php
         $count_rows = count($data_return['amount']);
 
