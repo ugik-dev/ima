@@ -643,7 +643,7 @@ class Invoice extends CI_Controller
 		$section->addText("PT INDOMETAL ASIA,", 'paragraph_bold', array('spaceAfter' => 0));
 
 		$section->addText("Direktur", 'paragraph_bold');
-		$section->addTextBreak(3);
+		$section->addTextBreak(2);
 		$section->addText($dataContent['name_acc_1'], 'paragraph_bold_underline');
 		$section->addTextBreak();
 		$section = $phpWord->addSection([
