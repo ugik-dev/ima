@@ -521,7 +521,7 @@ class Invoice extends CI_Controller
 		// $section->addTextBreak();
 		$section->addText("\t\t" . $dataContent['customer_name'], 'paragraph', array('spaceAfter' => 100));
 		// $section->addTextBreak();
-		$section->addText("\t\tu.p Ka Akuntansu Utang/Pajak", 'paragraph', array('spaceAfter' => 100));
+		$section->addText("\t\tu.p Ka Akuntansi Utang/Pajak", 'paragraph', array('spaceAfter' => 100));
 		// $section->addTextBreak();
 		$section->addText("\t\tdi -", 'paragraph', array('spaceAfter' => 0));
 		// $section->addTextBreak();
@@ -602,7 +602,7 @@ class Invoice extends CI_Controller
 			if ($dataContent['ppn_pph'] == 1) {
 				$table->addRow();
 				$cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
-				$table->addCell(200, $cellColSpan)->addText('PPn 10%    ', 'paragraph_bold', array('align' => 'right'));
+				$table->addCell(200, $cellColSpan)->addText('PPN 10%    ', 'paragraph_bold', array('align' => 'right'));
 				$table->addCell(500, $cellVCentered)->addText('' . number_format($total * 0.10, '0', ',', '.'), 'paragraph_bold', array('align' => 'right'));
 				$table->addRow();
 				$cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
@@ -635,7 +635,7 @@ class Invoice extends CI_Controller
 		]);
 
 		$section->addTextBreak(6);
-		$section->addText("PT INDOETAL ASIA,", 'paragraph_bold', array('spaceAfter' => 0));
+		$section->addText("PT INDOMETAL ASIA,", 'paragraph_bold', array('spaceAfter' => 0));
 
 		$section->addText("Direktur", 'paragraph_bold');
 		$section->addTextBreak(3);

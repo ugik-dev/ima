@@ -165,7 +165,7 @@
                                     </tr>
                                     <tr>
                                         <th colspan="1"></th>
-                                        <th colspan="2">PPn PPh 10%: </th>
+                                        <th colspan="2">PPN PPh 10%: </th>
                                         <th colspan="1">
                                             <div class="col-3">
                                                 <span class="switch switch-icon">

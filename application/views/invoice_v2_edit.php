@@ -116,6 +116,10 @@
                                                     <select name="satuan[]" id="satuan" class="form-control">
                                                         <option value="bln"> bln </option>
                                                         <option value="hari"> hari </option>
+                                                        <option value="trip"> trip </option>
+                                                        <option value="unit"> unit </option>
+                                                        <option value="pcs"> pcs </option>
+
                                                     </select>
                                                 </td>
                                                 <td>
@@ -181,7 +185,7 @@
                                     </tr>
                                     <tr>
                                         <th colspan="2"></th>
-                                        <th colspan="2">PPn PPh 10%: </th>
+                                        <th colspan="2">PPN PPh 10%: </th>
                                         <th colspan="1">
                                             <div class="col-3">
                                                 <span class="switch switch-icon">
