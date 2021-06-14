@@ -640,11 +640,15 @@ class Invoice extends CI_Controller
 		]);
 
 		$section->addTextBreak(6);
-		$section->addText("PT INDOMETAL ASIA,", 'paragraph_bold', array('spaceAfter' => 0));
+		$section->addText("\t\tPT INDOMETAL ASIA,", 'paragraph_bold', array('spaceAfter' => 0));
 
-		$section->addText("Direktur", 'paragraph_bold');
+		$section->addText("\t\tDirektur", 'paragraph_bold');
 		$section->addTextBreak(2);
-		$section->addText($dataContent['name_acc_1'], 'paragraph_bold_underline');
+
+		$textrun = $section->addTextRun();
+		$textrun->addText("\t\t", 'paragraph');
+		$textrun->addText($dataContent['name_acc_1'], 'paragraph_bold_underline');
+		// $section->addText("\t\t" . $dataContent['name_acc_1'], 'paragraph_bold_underline');
 		$section->addTextBreak();
 		$section = $phpWord->addSection([
 			'breakType' => 'continuous', 'colsNum' =>
