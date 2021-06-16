@@ -42,20 +42,6 @@ class InvoiceModel extends CI_Model
                 $i++;
             }
         }
-        // if ($transaction_records  != NULL) {
-        //     $this->db->select("mp_sub_entry.*,mp_head.name");
-        //     $this->db->from('mp_sub_entry');
-        //     $this->db->join('mp_head', 'mp_head.id = mp_sub_entry.accounthead');
-        //     $this->db->where('mp_sub_entry.parent_id =', $transaction_records->transaction_id);
-        //     $sub_query = $this->db->get();
-        //     if ($sub_query->num_rows() > 0) {
-        //         $sub_query =  $sub_query->result();
-        //     }
-        // }
-        // $data['parent'] = $transaction_records;
-        // $data['sub_parent'] = $sub_query;
-        // echo json_encode($data);
-        // die();
         return $transaction_records;
     }
 
@@ -93,20 +79,6 @@ class InvoiceModel extends CI_Model
                 $i++;
             }
         }
-        // if ($transaction_records  != NULL) {
-        //     $this->db->select("mp_sub_entry.*,mp_head.name");
-        //     $this->db->from('mp_sub_entry');
-        //     $this->db->join('mp_head', 'mp_head.id = mp_sub_entry.accounthead');
-        //     $this->db->where('mp_sub_entry.parent_id =', $transaction_records->transaction_id);
-        //     $sub_query = $this->db->get();
-        //     if ($sub_query->num_rows() > 0) {
-        //         $sub_query =  $sub_query->result();
-        //     }
-        // }
-        // $data['parent'] = $transaction_records;
-        // $data['sub_parent'] = $sub_query;
-        // echo json_encode($data);
-        // die();
         return $transaction_records;
     }
 
@@ -127,7 +99,6 @@ class InvoiceModel extends CI_Model
             'desk'   => $data['desk'],
             'sub_id'   => $data['sub_id']
         );
-
         $this->db->insert('mp_activity', $sub_data);
     }
 }

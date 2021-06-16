@@ -34,7 +34,6 @@
                                         <div class="col-lg-10" id='layer_cars'>
                                             <?php
                                             if (!empty($new_arr)) {
-
                                                 foreach ($new_arr as $v) {
                                             ?>
                                                     <select name="id_cars[]" id="id_cars" class="form-control select2 input-lg">
@@ -50,7 +49,6 @@
                                             <button type="button" style="display:none" class="btn btn-primary" id="addcars"> <i class="fa fa-plus-circle"></i> </button>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>

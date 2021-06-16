@@ -276,24 +276,24 @@
           //   console.log(tpe)
           no_rek = '112-0098146017';
           for (var i = 0; i < name.length; i++) {
-              //   if (name[i].innerHTML.substring(1, 5) == '1.11') {
-              if (tpe == 'AM') {
-                  show =
-                      show +
-                      (debit[i].innerHTML ?
-                          parseInt(debit[i].innerHTML.replace(/[^0-9]/g, "")) :
-                          0);
-                  displyhide = false
-              } else if (tpe == 'AK') {
-                  displyhide = false
+              if (name[i].innerHTML.substring(1, 5) == '1.11') {
+                  if (tpe == 'AM') {
+                      displyhide = false
+                      show =
+                          show +
+                          (debit[i].innerHTML ?
+                              parseInt(debit[i].innerHTML.replace(/[^0-9]/g, "")) :
+                              0);
+                  } else if (tpe == 'AK') {
+                      displyhide = false
 
-                  show =
-                      show +
-                      (kredit[i].innerHTML ?
-                          parseInt(kredit[i].innerHTML.replace(/[^0-9]/g, "")) :
-                          0);
+                      show =
+                          show +
+                          (kredit[i].innerHTML ?
+                              parseInt(kredit[i].innerHTML.replace(/[^0-9]/g, "")) :
+                              0);
+                  }
               }
-              //   }
               if (name[i].innerHTML.substring(1, 9) == '1.11.240') {
                   no_rek = '169-00-0207756-5';
               }

@@ -376,8 +376,6 @@
         date_item[row].value = '';
 
         i = 0;
-        // $('input[name="creditamount[]"]').each(function() {
-        //     if (row == i) {
         if ($('input[name="delete_row[' + row + ']"]').prop("checked") == true) {
             $(this).val("");
             $(this).prop("readonly", true);

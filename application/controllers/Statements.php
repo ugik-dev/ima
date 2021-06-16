@@ -483,11 +483,6 @@ class Statements extends CI_Controller
 
 
 		$section->addTextBreak();
-		// $phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
-
-
-
-		// $writer = new Word2007($phpWord);
 		$writer = new Word2007($phpWord);
 
 		$filename = 'simple';
