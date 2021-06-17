@@ -79,16 +79,28 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
             <div class="row col-lg-12">
                 <div class=" col-lg-7"></div>
                 <div class="col-lg-5">
-                    <a class="btn btn-primary  btn-flat  pull-right" href="<?php echo base_url() . 'invoice/edit/' . $invoices_Record[$i]['id'] ?>"><i class="fas fa-pencil-alt pull-left"></i>
-                        Edit</a>
-                    <a class="btn btn-primary  btn-flat  pull-right" href="<?php echo base_url() . 'invoice/copy/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-copy pull-left"></i>
-                        Copy</a>
-                    <a class="btn btn-info  btn-flat  pull-right" href="<?php echo base_url() . 'invoice/download/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-download pull-left"></i>
-                        Pdf</a>
-                    <a class="btn btn-info  btn-flat  pull-right" href="<?php echo base_url() . 'invoice/show/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-eye pull-left"></i>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary dropdown-toggle mr-1 mr-sm-14 my-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Download File</button>
+                        <div class="dropdown-menu">
+                            <a type="button" href="<?= base_url('invoice/download_word/') . $invoices_Record[$i]['id'] ?>" class="btn mr-3 my-1">To KA Akuntansi</a>
+                            <a type="button" href="<?= base_url('invoice/download_word/') . $invoices_Record[$i]['id'] ?>/2" class="btn mr-3 my-1">To Divisi Eksplorasi</a>
+                            <a type="button" href="<?= base_url('invoice/download/') . $invoices_Record[$i]['id'] ?>" class="btn">Invoice PDF</a>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary dropdown-toggle mr-1 mr-sm-14 my-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
+                        <div class="dropdown-menu">
+                            <a class="btn" href="<?php echo base_url() . 'invoice/edit/' . $invoices_Record[$i]['id'] ?>"><i class="fas fa-pencil-alt pull-left"></i>
+                                Edit</a>
+                            <a class="btn" href="<?php echo base_url() . 'invoice/copy/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-copy pull-left"></i>
+                                Copy</a>
+                            <a class="btn btn-danger" href="<?php echo base_url() . 'invoice/delete/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-trash pull-left"></i>
+                                Delete </a>
+                        </div>
+                    </div>
+                    <a class="btn btn-info mr-1 mr-sm-14 my-1" href="<?php echo base_url() . 'invoice/show/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-eye pull-left"></i>
+
                         Show </a>
-                    <a class="btn btn-danger  btn-flat  pull-right" href="<?php echo base_url() . 'invoice/delete/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-trash pull-left"></i>
-                        Delete </a>
                 </div>
             </div>
         </div>

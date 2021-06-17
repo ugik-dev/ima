@@ -466,7 +466,7 @@ class Invoice extends CI_Controller
 		$t = explode('-', $tanggal);
 		return "{$t[2]} {$BULAN[intval($t[1])]} {$t[0]}";
 	}
-	public function download_word($id)
+	public function download_word($id, $format = 1)
 	{
 		$this->load->model(array('SecurityModel', 'InvoiceModel'));
 		// $this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
@@ -507,34 +507,29 @@ class Invoice extends CI_Controller
 		$section = $phpWord->addSection($pageStyle);
 		$year = explode("-", $dataContent['input_date'])[0];
 		$section->addText("Nomor\t\t: " . $dataContent['no_invoice'], 'paragraph', array('spaceAfter' => 100));
-		// $section->addTextBreak(2);
 		$section->addText("Tanggal\t: " . $tanggal, 'paragraph', array('spaceAfter' => 100));
-		// $section->addTextBreak(2);
 		$section->addText("Lampiran\t: 1 (satu) berkas", 'paragraph', array('spaceAfter' => 100));
-		// $section->addTextBreak();
 		$textrun = $section->addTextRun();
 		$textrun->addText("Perihal\t\t: ", 'paragraph');
 		$textrun->addText("Permohonan Pembayaran", 'paragraph_bold');
 		$section->addTextBreak();
 
 		// $textrun->addTextBreak();
-
-		$section->addText("\t\tKepada Yth.", 'paragraph', array('spaceAfter' => 100));
-		// $section->addTextBreak();
-		$section->addText("\t\tDirektur Keuangan", 'paragraph', array('spaceAfter' => 100));
-		// $section->addTextBreak();
-		$section->addText("\t\t" . $dataContent['customer_name'], 'paragraph', array('spaceAfter' => 100));
-		// $section->addTextBreak();
-		$section->addText("\t\tu.p Ka Akuntansi Utang/Pajak", 'paragraph', array('spaceAfter' => 100));
-		// $section->addTextBreak();
-		$section->addText("\t\tdi -", 'paragraph', array('spaceAfter' => 0));
-		// $section->addTextBreak();
-		$section->addText("\t\t\t" . $dataContent['cus_address'], 'paragraph', array('spaceAfter' => 0));
-		// $footer = $section->addFooter();
-		// $footer->addText("KANTOR PUSAT : ", 'paragraph_bold', array('spaceAfter' => 0));
-		// $footer->addText("Jalan Sanggul Dewa No.6", 'paragraph', array('spaceAfter' => 0));
-		// $footer->addText("Pangkalpinang, 33121 - Bangka Belitung", 'paragraph', array('spaceAfter' => 0));
-		// $footer->addText("Tel. No. 0717 700 1055; ", 'paragraph', array('spaceAfter' => 0));
+		if ($format == 2) {
+			$section->addText("\t\tKepada Yth.", 'paragraph', array('spaceAfter' => 100));
+			$section->addText("\t\tKepada Divisi Ekplorasi", 'paragraph', array('spaceAfter' => 100));
+			$section->addText("\t\t" . $dataContent['customer_name'], 'paragraph', array('spaceAfter' => 100));
+			$section->addText("\t\tJl. Jend. Sudirman No.51", 'paragraph', array('spaceAfter' => 100));
+			// $section->addText("\t\tdi -", 'paragraph', array('spaceAfter' => 0));
+			$section->addText("\t\t\t" . $dataContent['cus_address'], 'paragraph', array('spaceAfter' => 0));
+		} else {
+			$section->addText("\t\tKepada Yth.", 'paragraph', array('spaceAfter' => 100));
+			$section->addText("\t\tDirektur Keuangan", 'paragraph', array('spaceAfter' => 100));
+			$section->addText("\t\t" . $dataContent['customer_name'], 'paragraph', array('spaceAfter' => 100));
+			$section->addText("\t\tu.p Ka Akuntansi Utang/Pajak", 'paragraph', array('spaceAfter' => 100));
+			$section->addText("\t\tdi -", 'paragraph', array('spaceAfter' => 0));
+			$section->addText("\t\t\t" . $dataContent['cus_address'], 'paragraph', array('spaceAfter' => 0));
+		}
 
 		$section = $phpWord->addSection([
 			'breakType' => 'continuous', 'colsNum' => 1,
@@ -549,7 +544,11 @@ class Invoice extends CI_Controller
 
 		$section->addText("Dengan hormat,", 'paragraph', array('spaceAfter' => 100));
 		// $section->addTextBreak();
-		$section->addText("Bersamaan ini kami sampaikan tagihan " . $dataContent['description'] . ' sebagai berikut :', 'paragraph', array('spaceAfter' => 0));
+		if ($format == 2) {
+			$section->addText("Menurut Surat Perjanjian Nomor 0122.E/Tbk/SP-2000/21-S11.4 tanggal 01 April 2021 antara PT Timah Tbk dengan PT Indometal Asia tentang Kerjasama Kegiatan Eksplorasi Timah di Wilayah Izin Usaha Pertambangan PT Timah Tbk, dengan ini kami sampaikan tagihan atas perjanjian tersebut dengan rincian : ", 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
+		} else {
+			$section->addText("Bersamaan ini kami sampaikan tagihan " . $dataContent['description'] . ' sebagai berikut :', 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
+		}
 		$section->addTextBreak();
 		$fancyTableStyle = array('borderSize' => 1, 'borderColor' => '000000', 'height' => 100, 'cellMarginButtom' => -100, 'cellMarginTop' => 100, 'cellMarginLeft' => 100, 'cellMarginRight' => 100, 'spaceAfter' => -100);
 		$cellVCentered = array('valign' => 'center', 'align' => 'center', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
@@ -636,10 +635,8 @@ class Invoice extends CI_Controller
 		$section->addText("Direktur", 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
 		$section->addTextBreak(2);
 
-		// $textrun = $section->addTextRun();
-		// $textrun->addText("\t\t", 'paragraph', array('spaceAfter' => 0, 'align' => 'center'));
 		$section->addText($dataContent['name_acc_1'], 'paragraph_bold_underline', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
-		// $section->addText("\t\t" . $dataContent['name_acc_1'], 'paragraph_bold_underline');
+
 		$section->addTextBreak();
 		$section = $phpWord->addSection([
 			'breakType' => 'continuous', 'colsNum' => 1,
@@ -647,142 +644,141 @@ class Invoice extends CI_Controller
 			\PhpOffice\PhpWord\Shared\Converter::inchToTwip(8.4),
 			'pageSizeH' =>
 			\PhpOffice\PhpWord\Shared\Converter::inchToTwip(11.7),
-			'marginLeft' => 1500, 'marginRight' => 1000,
-			'marginTop' => 1700,
+			'marginLeft' => 500, 'marginRight' => 500,
+			'marginTop' => 500,
 			'marginBottom' => 1000
 		]);
 		$section->addPageBreak();
-		$section->addImage(
+		// new
+		$fancyTableStyleName = 'Fancy Table';
+		$fancyTableStyle = array('borderSize' => 2, 'borderColor' => '006699', 'cellMargin' => 80, 'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 'cellSpacing' => 20);
+		$fancyTableFirstRowStyle = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => 'ffffff');
+		$fancyTableCellStyle = array('valign' => 'center');
+		$fancyTableCellBtlrStyle = array('valign' => 'center', 'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR);
+		$fancyTableFontStyle = array('bold' => true);
+		$phpWord->addTableStyle($fancyTableStyleName, $fancyTableStyle, $fancyTableFirstRowStyle);
+		$table = $section->addTable($fancyTableStyleName);
+		$homekwintansi = $table->addRow()->addCell();
+
+		// end new
+		// $section->addText("KWITANSIsaddddddddddd", 'paragraph_bold', array('align' => 'center'));
+		$fancyTableStyle = array('height' => 300, 'borderSize' => 1, 'borderColor' => 'ffffff', 'width' => 6000, 'cellMargin' => 10, 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
+		$cellVCentered = array('borderColor' => '000000', 'borderSize' => '12', 'valign' => 'top', 'spaceAfter' => 2);
+		$spanTableStyleName = 'Freame Rowspan';
+		$phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
+
+		$freame = $homekwintansi->addTable($spanTableStyleName);
+		$freame->addRow(1000);
+		$freame2 = $freame->addCell(12000, array('valign' => 'top', 'borderBottomColor' => 'ffffff', 'borderBottomSize' => '6', 'height' => 200, 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)));
+
+		$freame2->addImage(
 			base_url('assets/img/ima-transparent2.png'),
 			array(
 				'height'           => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(1.3)),
 				'positioning'      => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
 				'posHorizontal' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
 				'posVertical' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
-				'marginLeft'       => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(-0.5)),
-				'marginTop'        => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(-0.5)),
+				'marginLeft'       => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(0.5)),
+				'marginTop'        => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(0.1)),
 			)
 		);
-		$section->addText("KWITANSI", 'paragraph_bold', array('align' => 'center'));
+		$freame->addRow();
+		$freame3 = $freame->addCell(12000, array('valign' => 'top', 'borderBottomColor' => 'ffffff', 'borderBottomSize' => '6', 'height' => 200, 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)));
+
+
+		$freame3->addText("KWITANSI", array('name' => 'Times New Roman', 'size' => 13, 'color' => '000000', 'bold' => true), array('align' => 'center'));
 		$fancyTableStyle = array('height' => 300, 'cellMargin' => 40, 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
 		$cellVCentered = array('borderColor' => '#ffffff', 'borderSize' => '6', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
 		$spanTableStyleName = 'Colspan Rowspan';
 		$phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
-		$table = $section->addTable($spanTableStyleName);
 
-		$table->addRow();
-		$table->addCell(2000, $cellVCentered)->addText('Sudah terima dari', 'paragraph', array('spaceAfter' => 0));
-		$table->addCell(1, $cellVCentered)->addText(':', 'paragraph', array('spaceAfter' => 0));
-		$table->addCell(7000, $cellVCentered)->addText($dataContent['customer_name'], 'paragraph_bold', array('spaceAfter' => 0));
+		$freame->addRow();
+		$freame4 = $freame->addCell(10000, array('valign' => 'top', 'borderBottomColor' => 'ffffff', 'borderBottomSize' => '6', 'height' => 200, 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)));
+		$freame5 = $freame4->addTable($spanTableStyleName);
 
-		$table->addRow();
-		$table->addCell(2000, $cellVCentered)->addText('Sejumlah', 'paragraph', array('spaceAfter' => 0));
-		$table->addCell(1, $cellVCentered)->addText(':', 'paragraph', array('spaceAfter' => 0));
-		$table->addCell(7000, $cellVCentered)->addText($this->terbilang($terbilang) . ' Rupiah', 'paragraph_italic', array('spaceAfter' => 0));
+		$freame5->addRow();
+		$freame5->addCell(100, $cellVCentered)->addText('', 'paragraph', array('spaceAfter' => 0));
 
-		$table->addRow();
-		$table->addCell(2000, $cellVCentered)->addText('Untuk Pembayaran', 'paragraph', array('spaceAfter' => 0));
-		$table->addCell(1, $cellVCentered)->addText(':', 'paragraph', array('spaceAfter' => 0));
-		$table->addCell(7000, $cellVCentered)->addText($dataContent['description'], 'paragraph', array('spaceAfter' => 3));
-		// $section->addTextBreak();
+		$freame5->addCell(2000, $cellVCentered)->addText('Sudah terima dari', 'paragraph', array('spaceAfter' => 0));
+		$freame5->addCell(1, $cellVCentered)->addText(':', 'paragraph', array('spaceAfter' => 0));
+		$freame5->addCell(7000, $cellVCentered)->addText($dataContent['customer_name'], 'paragraph_bold', array('spaceAfter' => 0));
 
+		$freame5->addRow();
+		$freame5->addCell(100, $cellVCentered)->addText('', 'paragraph', array('spaceAfter' => 0));
+		$freame5->addCell(2000, $cellVCentered)->addText('Sejumlah', 'paragraph', array('spaceAfter' => 0));
+		$freame5->addCell(1, $cellVCentered)->addText(':', 'paragraph', array('spaceAfter' => 0));
+		$freame5->addCell(7000, $cellVCentered)->addText($this->terbilang($terbilang) . ' Rupiah', 'paragraph_italic', array('spaceAfter' => 0));
+
+		$freame5->addRow();
+		$freame5->addCell(100, $cellVCentered)->addText('', 'paragraph', array('spaceAfter' => 3));
+		$freame5->addCell(2000, $cellVCentered)->addText('Untuk Pembayaran', 'paragraph', array('spaceAfter' => 3));
+		$freame5->addCell(1, $cellVCentered)->addText(':', 'paragraph', array('spaceAfter' => 3));
+		$freame5->addCell(8000, $cellVCentered)->addText($dataContent['description'], 'paragraph', array('spaceAfter' => 3));
+
+		$fancyTableStyle = array('leftFromText' => 0, 'height' => 300, 'marginRight' => 4000, 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0), 'indentation' => 3000);
+		$cellVCentered = array('borderColor' => 'ffffff', 'borderSize' => '6', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
+		$spanTableStyleName = 'Price';
+		$phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
+		$freame->addRow();
+		$freame6 = $freame->addCell(10000, array('valign' => 'top', 'height' => 200, 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)));
+		$freame7 = $freame6->addTable($spanTableStyleName);
 		if ($dataContent['ppn_pph'] == 1) {
 
+			$freame7->addRow();
 
-			$section = $phpWord->addSection([
-				'breakType' => 'continuous', 'colsNum' => 1,
-				'pageSizeW' =>
-				\PhpOffice\PhpWord\Shared\Converter::inchToTwip(8.4),
-				'pageSizeH' =>
-				\PhpOffice\PhpWord\Shared\Converter::inchToTwip(11.7),
-				'marginLeft' => 6000, 'marginRight' => 1000,
-				'marginTop' => 1700,
-				'marginBottom' => 1000
-			]);
+			$freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+			$freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+			$freame7->addCell(1400, $cellVCentered)->addText('SUB TOTAL', 'paragraph', array('spaceAfter' => 0));
+			$freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph', array('spaceAfter' => 0));
+			$freame7->addCell(1600, $cellVCentered)->addText(number_format($total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
+			$freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
 
-			$fancyTableStyle = array('leftFromText' => 0, 'height' => 300, 'marginRight' => 4000, 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0), 'indentation' => 3000);
-			$cellVCentered = array('borderColor' => '#ffffff', 'borderSize' => '6', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
-			$spanTableStyleName = 'Price';
-			$phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
-			$table = $section->addTable($spanTableStyleName);
-			$table->addRow();
-			$table->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-			$table->addCell(1400, $cellVCentered)->addText('SUB TOTAL', 'paragraph', array('spaceAfter' => 0));
-			$table->addCell(30, $cellVCentered)->addText('Rp', 'paragraph', array('spaceAfter' => 0));
-			$table->addCell(1600, $cellVCentered)->addText(number_format($total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
-			$table->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+			$freame7->addRow();
+			$freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+			$freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
 
-			$table->addRow();
-			$table->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
+			$freame7->addCell(1400, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('PPN', 'paragraph', array('spaceAfter' => 0));
+			$freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('Rp', 'paragraph', array('spaceAfter' => 0));
+			$freame7->addCell(1600, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText(number_format($total * 0.10, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
+			$freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
 
-			$table->addCell(1400, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('PPN', 'paragraph', array('spaceAfter' => 0));
-			$table->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('Rp', 'paragraph', array('spaceAfter' => 0));
-			$table->addCell(1600, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText(number_format($total * 0.10, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
-			$table->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
-
-			$table->addRow();
-			$table->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-			$table->addCell(1400, $cellVCentered)->addText('TOTAL', 'paragraph_bold', array('spaceAfter' => 0));
-			$table->addCell(30, $cellVCentered)->addText('Rp', 'paragraph_bold', array('spaceAfter' => 0));
-			$table->addCell(1600, $cellVCentered)->addText(number_format(($total * 0.10) + $total, '0', ',', '.'), 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'right',));
-			$table->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+			$freame7->addRow();
+			$freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+			$freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+			$freame7->addCell(1400, $cellVCentered)->addText('TOTAL', 'paragraph_bold', array('spaceAfter' => 0));
+			$freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph_bold', array('spaceAfter' => 0));
+			$freame7->addCell(1600, $cellVCentered)->addText(number_format(($total * 0.10) + $total, '0', ',', '.'), 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'right',));
+			$freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 1));
 		}
-		$section = $phpWord->addSection($pageStyle);
+		$freame7->addRow(0.1);
+		$freame7->addCell(6000)->addText(' ', array('name' => 'Times New Roman', 'size' => 2, 'color' => '000000', 'bold' => true), array('align' => 'center', 'spaceAfter' => -1));
 
-		$section->addTextBreak(2);
-		$section->addText(number_format(($total * 0.10) + $total, '0', ',', '.'), 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 300, 'right' => 0)));
-		$section->addTextBreak(2);
-		$section->addText('Pangkalpinang, ' . $this->tanggal_indo($dataContent['date']), 'paragraph', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
-		//  array('align' => 'center')
+		$freame7->addRow();
+		$freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+		$freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+		$freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('Pangkalpinang, ' . $this->tanggal_indo($dataContent['date']), 'paragraph', array('align' => 'center', 'spaceAfter' => -1));
 
-		// $section->addText("Direktur", 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
-		$section->addTextBreak(2);
+		$freame7->addRow();
+		$freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+		$freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+		$freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 
-		// $textrun = $section->addTextRun();
-		// $textrun->addText("\t\t", 'paragraph', array('spaceAfter' => 0, 'align' => 'center'));
-		$section->addText($dataContent['name_acc_1'], 'paragraph_bold_underline', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
-		// $section->addText("\t\t" . $dataContent['name_acc_1'], 'paragraph_bold_underline');
-		$section->addTextBreak();
-		$section = $phpWord->addSection([
-			'breakType' => 'continuous', 'colsNum' => 1,
-			'pageSizeW' =>
-			\PhpOffice\PhpWord\Shared\Converter::inchToTwip(8.4),
-			'pageSizeH' =>
-			\PhpOffice\PhpWord\Shared\Converter::inchToTwip(11.7),
-			'marginLeft' => 1000, 'marginRight' => 1000,
-			'marginTop' => 1700,
-			'marginBottom' => 1000
-		]);
+		$freame7->addRow(700);
+		$freame7->addCell(6000, $cellVCentered)->addText('          ' . number_format(($total * 0.10) + $total, '0', ',', '.'), array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), array('align' => 'left'));
+		$freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+		$freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 
-		$section->addShape(
-			'rect',
-			array(
-				'roundness' => 0,
-				'frame'     => array('width' => 500, 'height' => 300, 'left' => 1, 'top' => 1),
-				'fill'      => array('color' => 'no fill'),
-				'outline'   => array('color' => '#990000', 'weight' => 2),
-				'shadow'    => array(),
-			)
-		);
-		// $table->addRow();
-		// $table->addCell(2000, $cellVCentered)->addText('Sejumlah', 'paragraph', array('spaceAfter' => 0));
-		// $table->addCell(1, $cellVCentered)->addText(':', 'paragraph', array('spaceAfter' => 0));
-		// $table->addCell(7000, $cellVCentered)->addText($this->terbilang($terbilang) . ' Rupiah', 'paragraph_italic', array('spaceAfter' => 0));
-
-		// $table->addRow();
-		// $table->addCell(2000, $cellVCentered)->addText('Untuk Pembayaran', 'paragraph', array('spaceAfter' => 0));
-		// $table->addCell(1, $cellVCentered)->addText(':', 'paragraph', array('spaceAfter' => 0));
-		// $table->addCell(7000, $cellVCentered)->addText($dataContent['description'], 'paragraph', array('spaceAfter' => 0));
-
+		$freame7->addRow();
+		$freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+		$freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+		$freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText($dataContent['name_acc_1'], 'paragraph_bold_underline', array('align' => 'center', 'spaceAfter' => -1));
 
 		$writer = new Word2007($phpWord);
-
-		$filename = 'invoice_' . $dataContent['no_invoice'];
+		$filename = 'SPB_KW_' . $dataContent['no_invoice'];
 
 		header('Content-Type: application/msword');
 		header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
 		header('Cache-Control: max-age=0');
-
 		$writer->save('php://output');
 	}
 
@@ -1041,110 +1037,110 @@ class Invoice extends CI_Controller
 		$pdf->SetFont('Arial', 'I', 10);
 		$pdf->MultiCell(88, 6 + $crop2, $this->terbilang($terbilang) . ' Rupiah', 0, 1);
 
-		if ($cur_y > $pdf->GetY()) {
-			$pdf->SetY($cur_y);
-		}
-		$pdf->Cell(1, 10 + $crop, '', 0, 1);
-		$pdf->Cell(115, 6, '', 0, 0);
-		$pdf->SetFont('Arial', 'B', 10);
-		$pdf->Cell(60, 4, 'PT. INDOMETAL ASIA', 0, 1, 'C');
-		$pdf->Cell(115, 3, '', 0, 0);
-		$pdf->Cell(60, 3, $dataContent['title_acc_1'], 0, 1, 'C');
+		// if ($cur_y > $pdf->GetY()) {
+		// 	$pdf->SetY($cur_y);
+		// }
+		// $pdf->Cell(1, 10 + $crop, '', 0, 1);
+		// $pdf->Cell(115, 6, '', 0, 0);
+		// $pdf->SetFont('Arial', 'B', 10);
+		// $pdf->Cell(60, 4, 'PT. INDOMETAL ASIA', 0, 1, 'C');
+		// $pdf->Cell(115, 3, '', 0, 0);
+		// $pdf->Cell(60, 3, $dataContent['title_acc_1'], 0, 1, 'C');
 
-		$pdf->Cell(1, 22, '', 0, 1);
-		$pdf->Cell(115, 6, '', 0, 0);
-		$pdf->SetFont('Arial', 'BU', 10);
-		$pdf->Cell(60, 6, $dataContent['name_acc_1'], 0, 1, 'C');
-
-
-		$pdf->AddPage();
-
-		$pdf->Cell(173, 16, $pdf->Image(base_url() . "assets/img/ima.jpg", 15, 16, 100, 14), 0, 1);
-		$pdf->Cell(10, 30, '', 0, 0, 'C');
-		$pdf->SetFont('Times', 'B', 12);
-
-		$pdf->Cell(173, 6, 'KWITANSI', 0, 1, 'C');
-		$pdf->SetFont('Times', '', 12);
-
-		$pdf->Cell(173, 6, '', 0, 1);
-		$pdf->Cell(5, 6, '', 0, 0);
-		$pdf->Cell(50, 6, 'Sudah Terima Dari', 0, 0, 'L');
-		$pdf->Cell(3, 6, ':', 0, 0);
-		$pdf->SetFont('Times', 'B', 12);
-
-		$pdf->Cell(120, 6, $dataContent['customer_name'], 0, 1, 'L');
-		$pdf->SetFont('Times', '', 12);
-
-		$pdf->Cell(5, 6, '', 0, 0);
-		$pdf->Cell(50, 6, 'Sejumlah', 0, 0, 'L');
-		$pdf->Cell(3, 6, ':', 0, 0);
-		$pdf->SetFont('Times', 'I', 12);
-
-		$pdf->MultiCell(120, 6, $this->terbilang($terbilang) . ' Rupiah', 0, 'L');
-		$pdf->SetFont('Times', '', 12);
-
-		$pdf->Cell(5, 6, '', 0, 0);
-		$pdf->Cell(50, 6, 'Untuk Pembayaran', 0, 0, 'L');
-		$pdf->Cell(3, 6, ':', 0, 0);
-		$pdf->MultiCell(120, 6, $dataContent['description'], 0, 'L');
-
-		if ($dataContent['ppn_pph'] == 1) {
-
-			$pdf->Cell(100, 6, '', 0, 0, 'L');
-			$pdf->Cell(30, 6, 'SUB TOTAL', 0, 0, 'L');
-			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-			$pdf->Cell(38, 6,  number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
-			$pdf->Cell(100, 6, '', 0, 0);
-			$pdf->Cell(30, 6, 'PPN 10%', 0, 0, 'L');
-			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-			$pdf->Cell(38, 6, number_format(floor($total * 0.10), '0', ',', '.'), 0, 1, 'R');
-			$pdf->SetLineWidth(0.5);
-			$pdf->Line(110, $pdf->GetY(), 190, $pdf->GetY());
-			$pdf->Cell(100, 6, '', 0, 0);
-			$pdf->Cell(30, 6, 'TOTAL', 0, 0, 'L');
-			$pdf->SetFont('Times', 'B', 12);
-
-			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-			$pdf->Cell(38, 6, number_format(floor($total * 0.10) + floor($total)), 0, 1, 'R');
-		} else {
-			$pdf->Cell(100, 6, '', 0, 0, 'L');
-			$pdf->Cell(30, 6, 'SUB TOTAL', 0, 0, 'L');
-			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-			$pdf->Cell(38, 6,  number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
-			$pdf->Cell(100, 6, '', 0, 0);
-			$pdf->Cell(30, 6, 'PPN', 0, 0, 'L');
-			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-			$pdf->Cell(38, 6, '-', 0, 1, 'R');
-			$pdf->SetLineWidth(0.5);
-			$pdf->Line(110, $pdf->GetY(), 190, $pdf->GetY());
-			$pdf->Cell(100, 6, '', 0, 0);
-			$pdf->Cell(30, 6, 'TOTAL', 0, 0, 'L');
-			$pdf->SetFont('Times', 'B', 12);
-
-			$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-			$pdf->Cell(38, 6, number_format(floor($total)), 0, 1, 'R');
-		}
-		$pdf->SetFont('Times', '', 12);
-
-		$pdf->Cell(1, 5, '', 0, 1);
-		$pdf->Cell(115, 6, '', 0, 0);
-		$pdf->Cell(60, 4, 'Pangkalpinang, ' . $this->tanggal_indo($dataContent['date']), 0, 1, 'C');
-
-		$pdf->SetFont('Times', 'B', 16);
-		$pdf->Cell(1, 13, '', 0, 1);
-		$pdf->Cell(1, 10, '                    Rp    ' . number_format(floor($terbilang)), 0, 1);
-
-		$pdf->Cell(115, 6, '', 0, 0);
+		// $pdf->Cell(1, 22, '', 0, 1);
+		// $pdf->Cell(115, 6, '', 0, 0);
 		// $pdf->SetFont('Arial', 'BU', 10);
-		$pdf->SetFont('Times', 'B', 12);
+		// $pdf->Cell(60, 6, $dataContent['name_acc_1'], 0, 1, 'C');
 
 
-		$pdf->Cell(60, 6, $dataContent['name_acc_1'], 0, 1, 'C');
-		$cur_y = $pdf->GetY();
-		$pdf->SetXY(10, 13);
-		// $pdf->Cell(190, $cur_y - 10, '', 1, 0);
-		$pdf->Rect(11, 14, 190, $cur_y - 10, 'D');
-		$pdf->Rect(10, 13, 190, $cur_y - 10, 'D');
+		// $pdf->AddPage();
+
+		// $pdf->Cell(173, 16, $pdf->Image(base_url() . "assets/img/ima.jpg", 15, 16, 100, 14), 0, 1);
+		// $pdf->Cell(10, 30, '', 0, 0, 'C');
+		// $pdf->SetFont('Times', 'B', 12);
+
+		// $pdf->Cell(173, 6, 'KWITANSI', 0, 1, 'C');
+		// $pdf->SetFont('Times', '', 12);
+
+		// $pdf->Cell(173, 6, '', 0, 1);
+		// $pdf->Cell(5, 6, '', 0, 0);
+		// $pdf->Cell(50, 6, 'Sudah Terima Dari', 0, 0, 'L');
+		// $pdf->Cell(3, 6, ':', 0, 0);
+		// $pdf->SetFont('Times', 'B', 12);
+
+		// $pdf->Cell(120, 6, $dataContent['customer_name'], 0, 1, 'L');
+		// $pdf->SetFont('Times', '', 12);
+
+		// $pdf->Cell(5, 6, '', 0, 0);
+		// $pdf->Cell(50, 6, 'Sejumlah', 0, 0, 'L');
+		// $pdf->Cell(3, 6, ':', 0, 0);
+		// $pdf->SetFont('Times', 'I', 12);
+
+		// $pdf->MultiCell(120, 6, $this->terbilang($terbilang) . ' Rupiah', 0, 'L');
+		// $pdf->SetFont('Times', '', 12);
+
+		// $pdf->Cell(5, 6, '', 0, 0);
+		// $pdf->Cell(50, 6, 'Untuk Pembayaran', 0, 0, 'L');
+		// $pdf->Cell(3, 6, ':', 0, 0);
+		// $pdf->MultiCell(120, 6, $dataContent['description'], 0, 'L');
+
+		// if ($dataContent['ppn_pph'] == 1) {
+
+		// 	$pdf->Cell(100, 6, '', 0, 0, 'L');
+		// 	$pdf->Cell(30, 6, 'SUB TOTAL', 0, 0, 'L');
+		// 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
+		// 	$pdf->Cell(38, 6,  number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
+		// 	$pdf->Cell(100, 6, '', 0, 0);
+		// 	$pdf->Cell(30, 6, 'PPN 10%', 0, 0, 'L');
+		// 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
+		// 	$pdf->Cell(38, 6, number_format(floor($total * 0.10), '0', ',', '.'), 0, 1, 'R');
+		// 	$pdf->SetLineWidth(0.5);
+		// 	$pdf->Line(110, $pdf->GetY(), 190, $pdf->GetY());
+		// 	$pdf->Cell(100, 6, '', 0, 0);
+		// 	$pdf->Cell(30, 6, 'TOTAL', 0, 0, 'L');
+		// 	$pdf->SetFont('Times', 'B', 12);
+
+		// 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
+		// 	$pdf->Cell(38, 6, number_format(floor($total * 0.10) + floor($total)), 0, 1, 'R');
+		// } else {
+		// 	$pdf->Cell(100, 6, '', 0, 0, 'L');
+		// 	$pdf->Cell(30, 6, 'SUB TOTAL', 0, 0, 'L');
+		// 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
+		// 	$pdf->Cell(38, 6,  number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
+		// 	$pdf->Cell(100, 6, '', 0, 0);
+		// 	$pdf->Cell(30, 6, 'PPN', 0, 0, 'L');
+		// 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
+		// 	$pdf->Cell(38, 6, '-', 0, 1, 'R');
+		// 	$pdf->SetLineWidth(0.5);
+		// 	$pdf->Line(110, $pdf->GetY(), 190, $pdf->GetY());
+		// 	$pdf->Cell(100, 6, '', 0, 0);
+		// 	$pdf->Cell(30, 6, 'TOTAL', 0, 0, 'L');
+		// 	$pdf->SetFont('Times', 'B', 12);
+
+		// 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
+		// 	$pdf->Cell(38, 6, number_format(floor($total)), 0, 1, 'R');
+		// }
+		// $pdf->SetFont('Times', '', 12);
+
+		// $pdf->Cell(1, 5, '', 0, 1);
+		// $pdf->Cell(115, 6, '', 0, 0);
+		// $pdf->Cell(60, 4, 'Pangkalpinang, ' . $this->tanggal_indo($dataContent['date']), 0, 1, 'C');
+
+		// $pdf->SetFont('Times', 'B', 16);
+		// $pdf->Cell(1, 13, '', 0, 1);
+		// $pdf->Cell(1, 10, '                    Rp    ' . number_format(floor($terbilang)), 0, 1);
+
+		// $pdf->Cell(115, 6, '', 0, 0);
+		// // $pdf->SetFont('Arial', 'BU', 10);
+		// $pdf->SetFont('Times', 'B', 12);
+
+
+		// $pdf->Cell(60, 6, $dataContent['name_acc_1'], 0, 1, 'C');
+		// $cur_y = $pdf->GetY();
+		// $pdf->SetXY(10, 13);
+		// // $pdf->Cell(190, $cur_y - 10, '', 1, 0);
+		// $pdf->Rect(11, 14, 190, $cur_y - 10, 'D');
+		// $pdf->Rect(10, 13, 190, $cur_y - 10, 'D');
 
 
 		$filename = 'INV_' .

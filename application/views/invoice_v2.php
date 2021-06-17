@@ -71,7 +71,6 @@
                                             <?php foreach ($banks as $banks_data) {
                                                 echo '<option value="' . $banks_data->id . '"> Transfer ' . $banks_data->bankname . ' (' . $banks_data->accountno . ') </option>';
                                             } ?>
-
                                             <option value="99"> Cash </option>
                                         </select>
                                     </div>
