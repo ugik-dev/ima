@@ -197,13 +197,13 @@ class Statements extends CI_Controller
 		$accounthead[2] = 20;
 		// if ($result['ppn_pph'] == 1) {
 		// }
-		$debitamount[0] = $amount * 0.90;
+		$debitamount[0] = $amount;
 		$debitamount[1] = $amount * 0.10;
 		$debitamount[2] = '';
 
 		$creditamount[0] = '';
 		$creditamount[1] = '';
-		$creditamount[2] = $amount;
+		$creditamount[2] = $amount + ($amount * 0.10);
 
 		$sub_keterangan[0] = '';
 		$sub_keterangan[1] = '';
