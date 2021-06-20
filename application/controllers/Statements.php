@@ -189,21 +189,23 @@ class Statements extends CI_Controller
 		$i = 0;
 		$tex = '';
 		foreach ($result['item'] as $itm) {
-			$amount = $amount + $itm->amount;
+			$amount = $amount + ($itm->amount * $itm->qyt);
+			// echo $amount;
 			$tex .= $itm->keterangan_item;
 		}
+		// number_format($amount, 2);
 		$accounthead[0] = 8;
 		$accounthead[1] = 120;
 		$accounthead[2] = 20;
 		// if ($result['ppn_pph'] == 1) {
 		// }
-		$debitamount[0] = $amount;
-		$debitamount[1] = $amount * 0.10;
+		$debitamount[0] = number_format($amount, 2);
+		$debitamount[1] = number_format($amount * 0.10, 2);
 		$debitamount[2] = '';
 
 		$creditamount[0] = '';
 		$creditamount[1] = '';
-		$creditamount[2] = $amount + ($amount * 0.10);
+		$creditamount[2] = number_format($amount + ($amount * 0.10), 2);
 
 		$sub_keterangan[0] = '';
 		$sub_keterangan[1] = '';
@@ -225,6 +227,8 @@ class Statements extends CI_Controller
 			'sub_keterangan' => $sub_keterangan,
 			'acc' => $acc
 		);
+		// echo json_encode($result);
+		// echo json_encode($data);
 		$this->journal_voucher($data);
 	}
 
