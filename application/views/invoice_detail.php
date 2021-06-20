@@ -9,9 +9,9 @@
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>" class="btn mr-3 my-1">To KA Akuntansi</a>
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>/2" class="btn mr-3 my-1">To Divisi Eksplorasi</a>
                         <a type="button" href="<?= base_url('invoice/download/') . $dataContent['id'] ?>" class="btn">Invoice PDF</a>
-                        <a type="button" href="<?= base_url('statements/invoice_to_jurnal/') . $dataContent['id'] ?>" class="btn"> Buat Jurnal Umum</a>
                     </div>
                 </div>
+                <a type="button" href="<?= base_url('statements/invoice_to_jurnal/') . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"> Buat Jurnal Umum</a>
                 <a type="button" href="<?php echo base_url() . 'invoice/edit/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-pencil-alt mr-3 my-1"></i> Edit</a>
                 <a type="button" href="<?php echo base_url() . 'invoice/copy/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-copy mr-3 my-1"> </i> Copy</a>
                 <a type="button" href="<?= base_url('invoice') ?>" class="btn btn-warning font-weight-bolder ml-sm-auto my-1">Create New Invoice</a>
