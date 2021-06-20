@@ -5,7 +5,7 @@
                 <?php
                 $attributes = array('id' => 'journal_voucher', 'method' => 'post', 'class' => '');
                 ?>
-                <?php echo form_open('statements/create_journal_voucher', $attributes); ?>
+                <?php echo form_open('', $attributes); ?>
                 <div class="">
                     <div class="row no-print invoice">
                         <h4 class=""> <i class="fa fa-check-circle"></i>
@@ -37,23 +37,20 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <?php echo form_label('No Jurnal'); ?>
-                                <?php
+                                <?php echo form_label('No Jurnal');
                                 $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_jurnal', 'id' => 'no_jurnal');
                                 echo form_input($data);
                                 ?>
                             </div>
                             <div class="form-group">
-                                <?php echo form_label('Rincian Transaksi'); ?>
-                                <?php
+                                <?php echo form_label('Rincian Transaksi');
                                 $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'description', 'id' => 'description', 'reqiured' => '');
                                 echo form_input($data);
                                 ?>
                             </div>
                             <div class="form-group">
-                                <?php echo form_label('Tanggal'); ?>
-                                <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'date', 'name' => 'date', 'id' => 'date', 'reqiured' => '', 'value' => Date('d/m/Y'));
+                                <?php echo form_label('Tanggal');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'date', 'name' => 'date', 'id' => 'date', 'reqiured' => '', 'value' => Date('Y-m-d'));
                                 echo form_input($data);
                                 ?>
                             </div>
@@ -210,14 +207,17 @@
                                 </div>
                             </div>
                         </div>
+                        <input type="text" id="draft_value" name="draft_value">
 
                         <div class="col-lg-12 ">
                             <div class="form-group">
                                 <?php
-                                $data = array('class' => 'btn btn-info  margin btn-lg pull-right ', 'type' => 'submit', 'name' => 'btn_submit_customer', 'value' => 'true', 'id' => 'btn_save_transaction', 'content' => '<i class="fa fa-floppy-o" aria-hidden="true"></i> 
-                                Simpan ');
-                                echo form_button($data);
+                                // $data = array('class' => 'btn btn-info  margin btn-lg pull-right ', 'type' => 'submit', 'name' => 'btn_submit_customer', 'value' => 'true', 'id' => 'btn_save_transaction', 'content' => '<i class="fa fa-floppy-o" aria-hidden="true"></i> 
+                                // Simpan ');
+                                // echo form_button($data);
                                 ?>
+                                <a class="btn btn-info margin btn-lg pull-right mr-1" id="btn_save_fix"><i class="fa fa-floppy-o" aria-hidden="true"></i> Simpan </a>
+                                <a class="btn btn-warning margin btn-lg pull-right mr-1" id="btn_draft"><i class="fa fa-floppy-o" aria-hidden="true"></i> Draft </a>
                             </div>
                         </div>
                     </div>
@@ -234,6 +234,10 @@
 <script>
     $('#menu_id_23').addClass('menu-item-active menu-item-open menu-item-here"')
     $('#submenu_id_64').addClass('menu-item-active')
+    btn_save = $('#btn_save_fix');
+    draft_value = $('#draft_value');
+    form_journal_voucher = $('#journal_voucher');
+    btn_draft = $('#btn_draft');
     no_jurnal = $('#no_jurnal');
     description = $('#description');
     date_jurnal = $('#date');
@@ -244,6 +248,67 @@
     var account_head = document.getElementsByName('account_head[]');
     var debitamount = document.getElementsByName('debitamount[]');
     var creditamount = document.getElementsByName('creditamount[]');
+
+    btn_draft.on('click', (ev) => {
+        draft_value.val(true)
+        form_journal_voucher.submit();
+    })
+
+    btn_save.on('click', (ev) => {
+        draft_value.val(false)
+        form_journal_voucher.submit();
+    })
+
+
+    form_journal_voucher.submit(function(event) {
+        event.preventDefault();
+        // var isAdd = UserModal.addBtn.is(':visible');
+        var url = "<?= base_url('statements/create_journal_voucher') ?>";
+        // url += isAdd ? "addUser" : "editUser";
+        // var button = isAdd ? UserModal.addBtn : UserModal.saveEditBtn;
+
+        $.ajax({
+            url: url,
+            'type': 'POST',
+            data: form_journal_voucher.serialize(),
+            success: function(data) {
+                // buttonIdle(button);
+                var json = JSON.parse(data);
+                if (json['error']) {
+                    // 
+                    Swal.fire({
+                        text: json['message'],
+                        icon: "error",
+                        buttonsStyling: true,
+                        confirmButtonText: "Ok!",
+                        customClass: {
+                            confirmButton: "btn font-weight-bold btn-light-primary",
+                        },
+                    })
+                    // swal("Simpan Gagal", json['message'], "error");
+                    return;
+                }
+                var res_data = json['data']
+                if (res_data['draft'] == 'true') {
+                    Swal.fire({
+                        text: json['message'],
+                        icon: "success",
+                        buttonsStyling: true,
+                        confirmButtonText: "Ok!",
+                        customClass: {
+                            confirmButton: "btn font-weight-bold btn-light-primary",
+                        },
+                    })
+                    location.replace("<?= base_url('statements/show/') ?>" + res_data['id'] + '/draft')
+                }
+                // dataUser[user['id_user']] = user;
+                // swal("Simpan Berhasil", "", "success");
+                // renderUser(dataUser);
+                // UserModal.self.modal('hide');
+            },
+            error: function(e) {}
+        });
+    });
 
 
     id_custmer = $('#customer_id');
@@ -273,6 +338,8 @@
             error: function(e) {}
         });
     });
+
+
     $('#addcars').on('click', function() {
         add_cars()
     })

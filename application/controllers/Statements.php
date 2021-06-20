@@ -39,7 +39,8 @@ class Statements extends CI_Controller
 
 		$this->load->model('Statement_model');
 		$data['transaction_records'] = $this->Statement_model->fetch_transasctions($filter);
-
+		// echo json_encode($data['transaction_records']);
+		// die();
 		$data['from'] = $from;
 		$data['to'] = $to;
 		$data['no_jurnal'] = $no_jurnal;
@@ -48,7 +49,44 @@ class Statements extends CI_Controller
 		$this->load->view('main/index.php', $data);
 	}
 
-	public function show($id)
+	public function draft()
+	{
+
+		// DEFINES PAGE TITLE
+		$data['title'] = 'Draft Jurnal Umum';
+
+		// DEFINES WHICH PAGE TO RENDER
+		$data['main_view'] = 'generaljournal_draft';
+
+		// $from 	 = html_escape($this->input->post('from'));
+		// $no_jurnal 	 = html_escape($this->input->post('no_jurnal'));
+		// $to 	 = html_escape($this->input->post('to'));
+
+		// if ($from == NULL and $to == NULL) {
+		// 	$from = date('Y-m-' . '01');
+		// 	$to = date('Y-m-' . date('t', strtotime($from)));
+		// }
+
+		if (empty($no_jurnal)) {
+			$no_jurnal = '';
+		}
+		// $filter['from'] = $from;
+		// $filter['to'] = $to;
+		// $filter['no_jurnal'] = $no_jurnal;
+		$filter['draft'] = true;
+		$this->load->model('Statement_model');
+		$data['transaction_records'] = $this->Statement_model->fetch_transasctions($filter);
+		// echo json_encode($data['transaction_records']);
+		// die();
+		// $data['from'] = $from;
+		// $data['to'] = $to;
+		$data['no_jurnal'] = $no_jurnal;
+
+		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+		$this->load->view('main/index.php', $data);
+	}
+
+	public function show($id, $draft = false)
 	{
 
 		// DEFINES PAGE TITLE
@@ -58,10 +96,12 @@ class Statements extends CI_Controller
 
 		$from 	 = html_escape($this->input->post('from'));
 		$to 	 = html_escape($this->input->post('to'));
-
+		$data['id'] = $id;
+		// $filter['draft'] = $draft;
+		$data['draft'] = $draft;
 		$this->load->model('Statement_model');
-		$data['transaction'] = $this->Statement_model->detail_fetch_transasctions($id);
-		$data['acc'] = $this->Statement_model->get_acc($id, true);
+		$data['transaction'] = $this->Statement_model->detail_fetch_transasctions($data);
+		$data['acc'] = $this->Statement_model->get_acc($id, true, $draft);
 		// echo json_encode($data);
 		// die();
 		$new_arr = [];
@@ -112,9 +152,9 @@ class Statements extends CI_Controller
 			$acc[2] = $res_acc->acc_2;
 			$acc[3] = $res_acc->acc_3;
 		} else {
-			$acc[1] = '';
-			$acc[2] = '';
-			$acc[3] = '';
+			$acc[1] = 0;
+			$acc[2] = 0;
+			$acc[3] = 0;
 		}
 		$new_arr = [];
 		$arr = explode(']', $res_detail['parent']->arr_cars);
@@ -140,7 +180,53 @@ class Statements extends CI_Controller
 		$this->journal_voucher($data);
 	}
 
+	public function invoice_to_jurnal($invoice_no)
+	{
+		$this->load->model('InvoiceModel');
+		$result = $this->InvoiceModel->getAllInvoice(array('id' =>  $invoice_no))[0];
+		// echo json_encode($result);
+		$amount = 0;
+		$i = 0;
+		$tex = '';
+		foreach ($result['item'] as $itm) {
+			$amount = $amount + $itm->amount;
+			$tex .= $itm->keterangan_item;
+		}
+		$accounthead[0] = 8;
+		$accounthead[1] = 120;
+		$accounthead[2] = 20;
+		// if ($result['ppn_pph'] == 1) {
+		// }
+		$debitamount[0] = $amount * 0.90;
+		$debitamount[1] = $amount * 0.10;
+		$debitamount[2] = '';
 
+		$creditamount[0] = '';
+		$creditamount[1] = '';
+		$creditamount[2] = $amount;
+
+		$sub_keterangan[0] = '';
+		$sub_keterangan[1] = '';
+		$sub_keterangan[2] = $tex;
+
+		$acc[1] = $result['acc_1'];
+		$acc[2] = 0;
+		$acc[3] = 0;
+
+		$data = array(
+			'description' => $result['description'],
+			'date' => $result['date'],
+			'customer_id' => $result['customer_id'],
+			'arr_cars' => '',
+			'no_jurnal' => '',
+			'account_head' => $accounthead,
+			'debitamount' => $debitamount,
+			'creditamount' => $creditamount,
+			'sub_keterangan' => $sub_keterangan,
+			'acc' => $acc
+		);
+		$this->journal_voucher($data);
+	}
 
 	public function export_excel()
 	{
@@ -723,18 +809,18 @@ class Statements extends CI_Controller
 		$this->load->view('main/index.php', $data);
 	}
 
-	public function edit_jurnal($uri1)
+	public function edit_jurnal($uri1, $draft = false)
 	{
 		// echo $uri1;
 		// $this->load->model('St')
 		$this->load->model('Crud_model');
 		$this->load->model('Statement_model');
-		$data = $this->Statement_model->getSingelJurnal(array('id' => $uri1));
+		$data = $this->Statement_model->getSingelJurnal(array('id' => $uri1, 'draft' => $draft));
 		$data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
 		$data['lst'] = $this->Statement_model->getListCars(array('id_patner' => $data['parent']->customer_id));
 		$data['accounts_records'] = $this->Statement_model->chart_list();
 		$data['patner_record'] = $this->Statement_model->patners_cars_list();
-		$data['acc'] = $this->Statement_model->get_acc($uri1);
+		$data['acc'] = $this->Statement_model->get_acc($uri1, false, $draft);
 		$new_arr = [];
 		$arr = explode(']', $data['parent']->arr_cars);
 		foreach ($arr as $dat) {
@@ -743,12 +829,12 @@ class Statements extends CI_Controller
 		// var_dump($data['acc']);
 		// die;
 		$data['new_arr'] = $new_arr;
+		$data['draft'] = $draft;
 
 
 
 		// DEFINES PAGE TITLE
 		$data['title'] = 'Edit Jurnal';
-
 
 		// DEFINES WHICH PAGE TO RENDER
 		$data['main_view'] = 'journal_voucher_edit';
@@ -1061,222 +1147,207 @@ class Statements extends CI_Controller
 	//Statements/create_journal_voucher
 	function create_journal_voucher()
 	{
-		$description = html_escape($this->input->post('description'));
-		$date   = html_escape($this->input->post('date'));
-		$account_head   = html_escape($this->input->post('account_head'));
-		$debitamount   = html_escape($this->input->post('debitamount'));
-		$creditamount   = html_escape($this->input->post('creditamount'));
-		$no_jurnal   = html_escape($this->input->post('no_jurnal'));
-		$sub_keterangan   = html_escape($this->input->post('sub_keterangan'));
+		try {
 
-		$customer_id   = html_escape($this->input->post('customer_id'));
-		$id_cars   = html_escape($this->input->post('id_cars'));
+			$draft_value = html_escape($this->input->post('draft_value'));
+			$description = html_escape($this->input->post('description'));
+			$date   = html_escape($this->input->post('date'));
+			$account_head   = html_escape($this->input->post('account_head'));
+			$debitamount   = html_escape($this->input->post('debitamount'));
+			$creditamount   = html_escape($this->input->post('creditamount'));
+			$no_jurnal   = html_escape($this->input->post('no_jurnal'));
+			$sub_keterangan   = html_escape($this->input->post('sub_keterangan'));
 
-		$acc[1]   = html_escape($this->input->post('acc_1'));
-		$acc[2]   = html_escape($this->input->post('acc_2'));
-		$acc[3]  = html_escape($this->input->post('acc_3'));
+			$customer_id   = html_escape($this->input->post('customer_id'));
+			$id_cars   = html_escape($this->input->post('id_cars'));
 
-		if ($date == NULL) {
-			$date = date('Y-m-d');
-		}
-		$count_rows = count($account_head);
+			$acc[1]   = html_escape($this->input->post('acc_1'));
+			$acc[2]   = html_escape($this->input->post('acc_2'));
+			$acc[3]  = html_escape($this->input->post('acc_3'));
 
-		if (!empty($id_cars)) {
-			$count_cars = count($id_cars);
-		} else {
-			$count_cars = 0;
-		}
-		$status = TRUE;
-		$cars = '';
-		for ($i = 0; $i < $count_cars; $i++) {
-			if (!empty($id_cars[$i])) $cars .= '[' . $id_cars[$i] . ']';
-		}
-
-
-		for ($i = 0; $i < $count_rows; $i++) {
-			$creditamount[$i] = preg_replace("/[^0-9]/", "", $creditamount[$i]);
-			$debitamount[$i] = preg_replace("/[^0-9]/", "", $debitamount[$i]);
-			if ((($debitamount[$i] > 0 and $creditamount[$i] == 0) or ($creditamount[$i] > 0 and $debitamount[$i] == 0) or ($account_head[$i] == 0 and $debitamount[$i] == 0 and $creditamount[$i] == 0))) {
-			} else {
-				$status = FALSE;
+			if ($date == NULL) {
+				$date = date('Y-m-d');
 			}
-		}
+			$count_rows_x = count(array_filter($account_head));
+			$count_rows = count($account_head);
+			if ($count_rows_x == 0) {
+				throw new UserException("data item tidak ditemukan", USER_NOT_FOUND_CODE);
+			}
+			if ($draft_value == 'false' && empty($no_jurnal)) {
+				throw new UserException("Nomor jurnal tidak boleh kosong", USER_NOT_FOUND_CODE);
+			}
+			if (!empty($id_cars)) {
+				$count_cars = count($id_cars);
+			} else {
+				$count_cars = 0;
+			}
 
-		$data = array(
-			'description' => $description,
-			'date' => $date,
-			'customer_id' => $customer_id,
-			'arr_cars' => $cars,
-			'account_head' => $account_head,
-			'debitamount' => $debitamount,
-			'creditamount' => $creditamount,
-			'no_jurnal' => $no_jurnal,
-			'sub_keterangan' => $sub_keterangan,
-			'acc' => $acc
-		);
+			$status = TRUE;
+			$cars = '';
+			for ($i = 0; $i < $count_cars; $i++) {
+				if (!empty($id_cars[$i])) $cars .= '[' . $id_cars[$i] . ']';
+			}
 
-		// var_dump($data);
-		// var_dump($status);
-		// die();
-
-		if ($status) {
-			$this->load->model('Transaction_model');
-			if (!empty($data['no_jurnal'])) {
-				$res = $this->Transaction_model->check_no_jurnal($data['no_jurnal']);
-				if ($res != 0) {
-					$array_msg = array(
-						'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Jurnal Sudah Ada',
-						'alert' => 'danger'
-					);
-					$this->session->set_flashdata('status', $array_msg);
-					$this->journal_voucher($data);
-					return;
-					// redirect('statements/journal_voucher');
+			$count_debit = 0;
+			$count_kredit = 0;
+			for ($i = 0; $i < $count_rows; $i++) {
+				$creditamount[$i] = preg_replace("/[^0-9]/", "", $creditamount[$i]);
+				$debitamount[$i] = preg_replace("/[^0-9]/", "", $debitamount[$i]);
+				if (!empty($debitamount[$i])) $count_debit = $count_debit + $debitamount[$i];
+				if (!empty($creditamount[$i])) $count_kredit = $count_kredit + $creditamount[$i];
+				if ((($debitamount[$i] > 0 and $creditamount[$i] == 0) or ($creditamount[$i] > 0 and $debitamount[$i] == 0) or ($account_head[$i] == 0 and $debitamount[$i] == 0 and $creditamount[$i] == 0))) {
+				} else {
+					$status = FALSE;
 				}
 			}
-			$result = $this->Transaction_model->journal_voucher_entry($data);
-			if ($result != NULL) {
-				$this->Transaction_model->activity_edit($result, $acc);
-				$array_msg = array(
-					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',
-					'alert' => 'info'
-				);
-				$this->session->set_flashdata('status', $array_msg);
-			} else {
-				$array_msg = array(
-					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error while creating',
-					'alert' => 'danger'
-				);
-				$this->session->set_flashdata('status', $array_msg);
-				$this->journal_voucher($data);
-				return;
-				// redirect('statements/journal_voucher');
+			if ($count_debit != $count_kredit) {
+				$status = FALSE;
 			}
-		} else {
-			$array_msg = array(
-				'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Entry must be either a credit or a debit',
-				'alert' => 'danger'
+
+			$data = array(
+				'description' => $description,
+				'date' => $date,
+				'customer_id' => $customer_id,
+				'arr_cars' => $cars,
+				'account_head' => $account_head,
+				'debitamount' => $debitamount,
+				'creditamount' => $creditamount,
+				'no_jurnal' => $no_jurnal,
+				'sub_keterangan' => $sub_keterangan,
+				'acc' => $acc,
+				'draft_value' => $draft_value,
 			);
-			$this->session->set_flashdata('status', $array_msg);
-			$this->journal_voucher($data);
-			return;
-			// redirect('statements/journal_voucher');
+			if ($status) {
+				$this->load->model('Transaction_model');
+				if (!empty($data['no_jurnal'])) {
+					$res = $this->Transaction_model->check_no_jurnal($data['no_jurnal']);
+					if ($res != 0) {
+						throw new UserException("Nomor jurnal sudah ada", USER_NOT_FOUND_CODE);
+					}
+				}
+				$result = $this->Transaction_model->journal_voucher_entry($data);
+				if ($result != NULL) {
+					$this->Transaction_model->activity_edit($result, $acc, $draft_value);
+				} else {
+					throw new UserException("Terjadi kesalahan !!", USER_NOT_FOUND_CODE);
+				}
+			} else {
+				throw new UserException(" Entry kredit dan debit harus imbang !!", USER_NOT_FOUND_CODE);
+			}
+			echo json_encode(array('error' => false, 'data' => array('draft' => $draft_value, 'id' => $result)));
+		} catch (Exception $e) {
+			ExceptionHandler::handle($e);
 		}
-		redirect('statements');
 	}
 
 	function edit_journal_voucher()
 	{
-		$description = html_escape($this->input->post('description'));
-		$date   = html_escape($this->input->post('date'));
-		$account_head   = html_escape($this->input->post('account_head'));
-		$debitamount   = html_escape($this->input->post('debitamount'));
-		$creditamount   = html_escape($this->input->post('creditamount'));
-		$no_jurnal   = html_escape($this->input->post('no_jurnal'));
-		$sub_keterangan   = html_escape($this->input->post('sub_keterangan'));
-		$id   = html_escape($this->input->post('id'));
-		$sub_id   = html_escape($this->input->post('sub_id'));
-		$customer_id   = html_escape($this->input->post('customer_id'));
-		$id_cars   = html_escape($this->input->post('id_cars'));
-
-		$acc[1]   = html_escape($this->input->post('acc_1'));
-		$acc[2]   = html_escape($this->input->post('acc_2'));
-		$acc[3]  = html_escape($this->input->post('acc_3'));
-
-		if ($date == NULL) {
-			$date = date('Y-m-d');
-		}
-
-		$count_rows = count($account_head);
-
-		if (!empty($id_cars)) {
-			$count_cars = count($id_cars);
-		} else {
-			$count_cars = 0;
-		}
-		$status = TRUE;
-		$cars = '';
-		for ($i = 0; $i < $count_cars; $i++) {
-			if (!empty($id_cars[$i])) $cars .= '[' . $id_cars[$i] . ']';
-		}
-
-		for ($i = 0; $i < $count_rows; $i++) {
-			$creditamount[$i] = preg_replace("/[^0-9]/", "", $creditamount[$i]);
-			$debitamount[$i] = preg_replace("/[^0-9]/", "", $debitamount[$i]);
-			// $sub_id[$i] = $sub_
-			// if ((($debitamount[$i] > 0 and $creditamount[$i] == 0) or ($creditamount[$i] > 0 and $debitamount[$i] == 0)) and $account_head[$i] != 0) {
-			// } else {
-			// 	$status = FALSE;
-			// }
-		}
-		$data = array(
-			'id' => $id,
-			'customer_id' => $customer_id,
-			'arr_cars' => $cars,
-			'description' => $description,
-			'date' => $date,
-			'account_head' => $account_head,
-			'debitamount' => $debitamount,
-			'creditamount' => $creditamount,
-			'no_jurnal' => $no_jurnal,
-			'sub_keterangan' => $sub_keterangan,
-			'sub_id' => $sub_id
-		);
-		if ($status) {
-			$this->load->model('Transaction_model');
-			if (!empty($data['no_jurnal'])) {
-				$res = $this->Transaction_model->check_no_jurnal($data['no_jurnal'], $id);
-				if ($res != 0) {
-					$array_msg = array(
-						'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Jurnal Sudah Ada !',
-						'alert' => 'danger'
-					);
-					$this->session->set_flashdata('status', $array_msg);
-					redirect('statements/edit_jurnal/' . $data['id']);
-				}
+		try {
+			$draft_value = html_escape($this->input->post('draft_value'));
+			$description = html_escape($this->input->post('description'));
+			$date   = html_escape($this->input->post('date'));
+			$account_head   = html_escape($this->input->post('account_head'));
+			$debitamount   = html_escape($this->input->post('debitamount'));
+			$creditamount   = html_escape($this->input->post('creditamount'));
+			$no_jurnal   = html_escape($this->input->post('no_jurnal'));
+			$sub_keterangan   = html_escape($this->input->post('sub_keterangan'));
+			$id   = html_escape($this->input->post('id'));
+			$sub_id   = html_escape($this->input->post('sub_id'));
+			$customer_id   = html_escape($this->input->post('customer_id'));
+			$id_cars   = html_escape($this->input->post('id_cars'));
+			if ($draft_value == 'draft') {
+				$draft_value = 'true';
 			}
 
-			$res = $this->Transaction_model->check_lock($id);
-			// var_dump($res);
-			// die();
-			if ($res == 'Y') {
-				$array_msg = array(
-					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Data Sudah di Kunci! ',
-					'alert' => 'danger'
-				);
-				$this->session->set_flashdata('status', $array_msg);
-				redirect('statements/edit_jurnal/' . $data['id']);
+			$acc[1]   = html_escape($this->input->post('acc_1'));
+			$acc[2]   = html_escape($this->input->post('acc_2'));
+			$acc[3]  = html_escape($this->input->post('acc_3'));
+
+			if ($date == NULL) {
+				$date = date('Y-m-d');
 			}
 
-			$result = $this->Transaction_model->journal_voucher_edit($data);
-			$this->Transaction_model->activity_edit($id, $acc);
+			$count_rows_x = count(array_filter($account_head));
+			$count_rows = count($account_head);
+			if ($count_rows_x == 0) {
+				throw new UserException("data item tidak ditemukan", USER_NOT_FOUND_CODE);
+			}
+			if ($draft_value == 'false' && empty($no_jurnal)) {
+				throw new UserException("Nomor jurnal tidak boleh kosong", USER_NOT_FOUND_CODE);
+			}
 
-			if ($result != NULL) {
-				$array_msg = array(
-					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Edit Successfully',
-					'alert' => 'info'
-				);
-				$this->session->set_flashdata('status', $array_msg);
+			if (!empty($id_cars)) {
+				$count_cars = count($id_cars);
 			} else {
-				$array_msg = array(
-					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error while creating',
-					'alert' => 'danger'
-				);
-				$this->session->set_flashdata('status', $array_msg);
-
-				redirect('statements/show/' . $data['id']);
+				$count_cars = 0;
 			}
-		} else {
-			$array_msg = array(
-				'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Entry must be either a credit or a debit',
-				'alert' => 'danger'
+			$status = TRUE;
+			$cars = '';
+			for ($i = 0; $i < $count_cars; $i++) {
+				if (!empty($id_cars[$i])) $cars .= '[' . $id_cars[$i] . ']';
+			}
+
+			$count_debit = 0;
+			$count_kredit = 0;
+			for ($i = 0; $i < $count_rows; $i++) {
+				$creditamount[$i] = preg_replace("/[^0-9]/", "", $creditamount[$i]);
+				$debitamount[$i] = preg_replace("/[^0-9]/", "", $debitamount[$i]);
+				if (!empty($debitamount[$i])) $count_debit = $count_debit + $debitamount[$i];
+				if (!empty($creditamount[$i])) $count_kredit = $count_kredit + $creditamount[$i];
+				// if ((($debitamount[$i] > 0 and $creditamount[$i] == 0) or ($creditamount[$i] > 0 and $debitamount[$i] == 0) or ($account_head[$i] == 0 and $debitamount[$i] == 0 and $creditamount[$i] == 0))) {
+				// } else {
+				// 	$status = FALSE;
+				// }
+			}
+			if ($count_debit != $count_kredit) {
+				$status = FALSE;
+			}
+
+			$data = array(
+				'id' => $id,
+				'customer_id' => $customer_id,
+				'arr_cars' => $cars,
+				'description' => $description,
+				'date' => $date,
+				'account_head' => $account_head,
+				'debitamount' => $debitamount,
+				'creditamount' => $creditamount,
+				'no_jurnal' => $no_jurnal,
+				'sub_keterangan' => $sub_keterangan,
+				'sub_id' => $sub_id,
+				'draft_value' => $draft_value,
 			);
-			$this->session->set_flashdata('status', $array_msg);
-			redirect('statements/edit_jurnal/' . $data['id']);
-			// redirect('vouchers/journal_voucher');
+			if ($status) {
+				$this->load->model('Transaction_model');
+				if (!empty($data['no_jurnal'])) {
+					$res = $this->Transaction_model->check_no_jurnal($data['no_jurnal'], $id);
+					if ($res != 0) {
+						throw new UserException("Nomor jurnal sudah ada", USER_NOT_FOUND_CODE);
+					}
+				}
+				if ($draft_value != 'true') {
+					$res = $this->Transaction_model->check_lock($id);
+					if ($res == 'Y') {
+						throw new UserException("Data sudah ditutup !!", USER_NOT_FOUND_CODE);
+					}
+				}
+
+				$result = $this->Transaction_model->journal_voucher_edit($data);
+
+				if ($result != NULL) {
+					$this->Transaction_model->activity_edit($id, $acc, $draft_value);
+				} else {
+					throw new UserException("Terjadi kesalahan !!", USER_NOT_FOUND_CODE);
+				}
+			} else {
+				throw new UserException("Entry kredit dan debit harus imbang !!", USER_NOT_FOUND_CODE);
+			}
+			echo json_encode(array('error' => false, 'data' => array('draft' => $draft_value, 'id' => $id)));
+			// redirect('statements/show/' . $data['id']);
+			// redirect('statements');
+		} catch (Exception $e) {
+			ExceptionHandler::handle($e);
 		}
-		redirect('statements/show/' . $data['id']);
-		// redirect('statements');
 	}
 
 	public function delete_jurnal($id)

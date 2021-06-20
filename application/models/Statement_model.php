@@ -13,7 +13,15 @@ class Statement_model extends CI_Model
         $form_content = '';
 
         $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.customer_id,mp_generalentry.arr_cars,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
-        $this->db->from('mp_generalentry');
+        if (!empty($filter['draft'])) {
+            if ($filter['draft'] == 'draft')
+                $this->db->from('draft_generalentry as mp_generalentry');
+            else
+                $this->db->from('mp_generalentry');
+        } else {
+
+            $this->db->from('mp_generalentry');
+        }
         // if (!empty($filter['id']))
         $this->db->where('id', $filter['id']);
         // $this->db->where('date >=', $date1);
@@ -23,17 +31,28 @@ class Statement_model extends CI_Model
         $transaction_records =  $query->result()['0'];
         if ($transaction_records  != NULL) {
             $this->db->select("mp_sub_entry.*,mp_head.name");
-            $this->db->from('mp_sub_entry');
+            if (!empty($filter['draft'])) {
+                if ($filter['draft'] == 'draft')
+                    $this->db->from('draft_sub_entry as mp_sub_entry');
+                else
+                    $this->db->from('mp_sub_entry');
+            } else {
+
+                $this->db->from('mp_sub_entry');
+            }
+            // $this->db->from('mp_sub_entry');
             $this->db->join('mp_head', 'mp_head.id = mp_sub_entry.accounthead');
             $this->db->where('mp_sub_entry.parent_id =', $transaction_records->transaction_id);
             $sub_query = $this->db->get();
+            // var_dump($sub_query);
+            // die();
             if ($sub_query->num_rows() > 0) {
                 $sub_query =  $sub_query->result();
             }
         }
         $data['parent'] = $transaction_records;
         $data['sub_parent'] = $sub_query;
-        // echo json_encode($data);
+        // echo json_encode($filter);
         // die();
         return $data;
     }
@@ -47,11 +66,17 @@ class Statement_model extends CI_Model
         $return_data = [];
 
         $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
-        $this->db->from('mp_generalentry');
+
+        if (!empty($filter['draft']))
+            $this->db->from('draft_generalentry as mp_generalentry');
+        else
+            $this->db->from('mp_generalentry');
+
         if (!empty($filter['no_jurnal']))
             $this->db->where('no_jurnal like "%' . $filter['no_jurnal'] . '%"');
-        $this->db->where('date >=', $filter['from']);
-        $this->db->where('date <=', $filter['to']);
+
+        if (!empty($filter['from'])) $this->db->where('date >=', $filter['from']);
+        if (!empty($filter['to'])) $this->db->where('date <=', $filter['to']);
 
         $this->db->order_by('mp_generalentry.id', 'DESC');
 
@@ -65,15 +90,20 @@ class Statement_model extends CI_Model
                     $debit_amt = NULL;
                     $credit_amt = NULL;
 
-                    $return_data[$i] = $transaction_record;
                     $this->db->select("mp_sub_entry.*,mp_head.name");
-                    $this->db->from('mp_sub_entry');
+                    if (!empty($filter['draft']))
+                        $this->db->from('draft_sub_entry as mp_sub_entry');
+                    else
+                        $this->db->from('mp_sub_entry');
+
+                    // $this->db->from('mp_sub_entry');
                     $this->db->join('mp_head', 'mp_head.id = mp_sub_entry.accounthead');
                     $this->db->where('mp_sub_entry.parent_id =', $transaction_record['transaction_id']);
                     $sub_query = $this->db->get();
                     if ($sub_query->num_rows() > 0) {
                         $sub_query =  $sub_query->result_array();
                         if ($sub_query != NULL) {
+                            $return_data[$i] = $transaction_record;
                             $return_data[$i]['data_sub'] = $sub_query;
                         }
                     }
@@ -252,19 +282,22 @@ class Statement_model extends CI_Model
         }
         return $subs[0];
     }
-    public function detail_fetch_transasctions($id)
+    public function detail_fetch_transasctions($filter)
     {
 
         $total_debit = 0;
         $total_credit = 0;
         $form_content = '';
 
-        $this->db->select("mp_generalentry.id as transaction_id,mp_payee.customer_name,mp_generalentry.date,mp_generalentry.customer_id,arr_cars,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
-        $this->db->from('mp_generalentry');
+        $this->db->select("mp_g.id as transaction_id,mp_payee.customer_name,mp_g.date,mp_g.customer_id,arr_cars,mp_g.naration,mp_g.no_jurnal, gen_lock");
+        if ($filter['draft'])
+            $this->db->from('draft_generalentry as mp_g');
+        else
+            $this->db->from('mp_generalentry as mp_g');
         // $this->db->where('date >=', $date1);
-        $this->db->join('mp_payee', 'mp_payee.id = mp_generalentry.customer_id', 'LEFT');
-        $this->db->where('mp_generalentry.id', $id);
-        $this->db->order_by('mp_generalentry.id', 'DESC');
+        $this->db->join('mp_payee', 'mp_payee.id = mp_g.customer_id', 'LEFT');
+        $this->db->where('mp_g.id', $filter['id']);
+        $this->db->order_by('mp_g.id', 'DESC');
         $data = [];
         $query = $this->db->get();
         $transaction_records =  $query->result();
@@ -280,12 +313,17 @@ class Statement_model extends CI_Model
                     $debit_amt = NULL;
                     $credit_amt = NULL;
 
-                    $this->db->select("mp_sub_entry.*,mp_head.name");
-                    $this->db->from('mp_sub_entry');
-                    $this->db->join('mp_head', 'mp_head.id = mp_sub_entry.accounthead');
+                    $this->db->select("mp_s.*,mp_head.name");
+                    if ($filter['draft'])
+                        $this->db->from('draft_sub_entry as mp_s');
+                    else
+                        $this->db->from('mp_sub_entry as mp_s');
+
+                    // $this->db->from('');
+                    $this->db->join('mp_head', 'mp_head.id = mp_s.accounthead');
                     // $this->db->order_by('mp_sub_entry.type');
 
-                    $this->db->where('mp_sub_entry.parent_id =', $transaction_records[0]->transaction_id);
+                    $this->db->where('mp_s.parent_id =', $transaction_records[0]->transaction_id);
                     $sub_query = $this->db->get();
                     $subs =  $sub_query->result_array();
                     if (empty($subs[0])) {
@@ -867,7 +905,7 @@ class Statement_model extends CI_Model
         return  array('current_assets' => $current_assets, 'noncurrent_assets' => $noncurrent_assets, 'total_assets' => $total_current_nc, 'current_libility' => $current_libility, 'noncurrent_libility' => $noncurrent_libility, 'total_currentnoncurrent_libility' => $total_current_nc_libility, 'equity' => $equity, 'total_libility_equity' => $total_libility_and_equity);
     }
 
-    public function get_acc($id, $name = false)
+    public function get_acc($id, $name = false, $draft = false)
     {
         if ($name) {
             $this->db->select('ma.*, u1.user_name as name_1, u2.user_name as name_2 ,u3.user_name as name_3');
@@ -880,7 +918,10 @@ class Statement_model extends CI_Model
 
             $this->db->select('*');
         }
-        $this->db->from('mp_approv as ma');
+        if ($draft)
+            $this->db->from('draft_approv as ma');
+        else
+            $this->db->from('mp_approv as ma');
         $this->db->where('id_transaction', $id);
         $query = $this->db->get();
         $result =  $query->result();

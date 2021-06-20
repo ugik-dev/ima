@@ -1028,7 +1028,11 @@ class Transaction_model extends CI_Model
     {
 
         $this->db->select("id_transaction");
-        $this->db->from('mp_approv');
+        if ($data['draft_value'] == 'true')
+            $this->db->from('draft_approv');
+        else
+            $this->db->from('mp_approv');
+        // $this->db->from('mp_approv');
         $this->db->where('id_transaction',  $data['id']);
         $query = $this->db->get();
         $res = $query->result_array();
@@ -1052,19 +1056,29 @@ class Transaction_model extends CI_Model
 
         if (empty($res)) {
             $this->db->set("id_transaction", $data['id']);
-            $this->db->insert('mp_approv');
+            if ($data['draft_value'] == 'true')
+                $this->db->insert('draft_approv');
+            else
+                $this->db->insert('mp_approv');
         } else {
             $this->db->where("id_transaction", $data['id']);
-            $this->db->update('mp_approv');
+            if ($data['draft_value'] == 'true')
+                $this->db->update('draft_approv');
+            else
+                $this->db->update('mp_approv');
         }
     }
 
 
-    function activity_edit($id, $acc)
+    function activity_edit($id, $acc, $draft_value)
     {
 
         $this->db->select("id_transaction");
-        $this->db->from('mp_approv');
+        if ($draft_value == 'true')
+            $this->db->from('draft_approv');
+        else
+            $this->db->from('mp_approv');
+
         $this->db->where('id_transaction',  $id);
         $query = $this->db->get();
         $res = $query->result_array();
@@ -1075,10 +1089,18 @@ class Transaction_model extends CI_Model
         $this->db->set("date_acc_0", date('Y-m-d'));
         if (empty($res)) {
             $this->db->set("id_transaction", $id);
-            $this->db->insert('mp_approv');
+            if ($draft_value == 'true')
+                $this->db->insert('draft_approv');
+            else
+                $this->db->insert('mp_approv');
+            // $this->db->insert('mp_approv');
         } else {
             $this->db->where("id_transaction", $id);
-            $this->db->update('mp_approv');
+            if ($draft_value == 'true')
+                $this->db->update('draft_approv');
+            else
+                $this->db->update('mp_approv');
+            // $this->db->update('mp_approv');
         }
     }
 
@@ -1094,11 +1116,12 @@ class Transaction_model extends CI_Model
             'no_jurnal' => $data['no_jurnal'],
             'generated_source' => 'Journal Voucher'
         );
-
         $this->db->trans_start();
-        // $this->db->trans_strict(FALSE);
-        //INSERT AND GET LAST ID
-        $this->db->insert('mp_generalentry', $trans_data);
+
+        if ($data['draft_value'] == 'true')
+            $this->db->insert('draft_generalentry', $trans_data);
+        else
+            $this->db->insert('mp_generalentry', $trans_data);
         $order_id = $this->db->insert_id();
 
         $total_heads = count($data['account_head']);
@@ -1123,12 +1146,20 @@ class Transaction_model extends CI_Model
                         'sub_keterangan' => $data['sub_keterangan'][$i]
                     );
                 }
-
-                $this->db->insert('mp_sub_entry', $sub_data);
+                if ($data['draft_value'] == 'true')
+                    $this->db->insert('draft_sub_entry', $sub_data);
+                else
+                    $this->db->insert('mp_sub_entry', $sub_data);
             }
         }
-
         $this->db->trans_complete();
+        // $db_error = $this->db->error();
+        // var_dump($db_error);
+        // die();
+        // if ($db_error) {
+        //     throw new Exception('Database error! Error Code [' . $db_error['code'] . '] Error: ' . $db_error['message']);
+        //     return false; // unreachable retrun statement !!!
+        // }
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
             $data = NULL;
@@ -1136,6 +1167,7 @@ class Transaction_model extends CI_Model
             $this->db->trans_commit();
             $this->record_activity(array('jenis' => 1, 'sub_id' => $order_id, 'desk' => 'Entry Jurnal'));
         }
+
 
         return $order_id;
     }
@@ -1317,7 +1349,12 @@ class Transaction_model extends CI_Model
         // $this->db->trans_strict(FALSE);
         //INSERT AND GET LAST ID
         $this->db->where('id', $data['id']);
-        $this->db->update('mp_generalentry', $trans_data);
+        if ($data['draft_value'] == 'true')
+            $this->db->update('draft_generalentry', $trans_data);
+        else
+            $this->db->update('mp_generalentry', $trans_data);
+
+        // $this->db->update('mp_generalentry', $trans_data);
         // $order_id = $this->db->insert_id();
 
         $total_heads = count($data['account_head']);
@@ -1345,13 +1382,22 @@ class Transaction_model extends CI_Model
                 if ($data['creditamount'][$i] == 0 && $data['debitamount'][$i] == 0) {
                     if (!empty($data['sub_id'][$i])) {
                         $this->db->where('id', $data['sub_id'][$i]);
-                        $this->db->delete('mp_sub_entry');
+                        if ($data['draft_value'] == 'true')
+                            $this->db->delete('draft_sub_entry');
+                        else
+                            $this->db->delete('mp_sub_entry');
                     }
                 } else  if (!empty($data['sub_id'][$i])) {
                     $this->db->where('id', $data['sub_id'][$i]);
-                    $this->db->update('mp_sub_entry', $sub_data);
+                    if ($data['draft_value'] == 'true')
+                        $this->db->update('draft_sub_entry', $sub_data);
+                    else
+                        $this->db->update('mp_sub_entry', $sub_data);
                 } else {
-                    $this->db->insert('mp_sub_entry', $sub_data);
+                    if ($data['draft_value'] == 'true')
+                        $this->db->insert('draft_sub_entry', $sub_data);
+                    else
+                        $this->db->insert('mp_sub_entry', $sub_data);
                 }
             }
         }
@@ -1364,7 +1410,6 @@ class Transaction_model extends CI_Model
             $this->db->trans_commit();
             $this->record_activity(array('jenis' => 2, 'sub_id' => $data['id'], 'desk' => 'Edit Jurnal'));
         }
-
         return $data;
     }
 

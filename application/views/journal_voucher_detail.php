@@ -159,7 +159,7 @@
                                   <?php
                                     if ($this->session->userdata('user_id')['nama_role'] == 'accounting') {
                                     ?>
-                                      <a href="<?= base_url() . 'statements/edit_jurnal/' . $transaction['parent']->transaction_id ?>" class="btn btn-info  margin btn-lg pull-right" style="float: right"> <i class="fa fa-list-alt" aria-hidden="true"></i>
+                                      <a href="<?= base_url() . 'statements/edit_jurnal/' . $transaction['parent']->transaction_id . ($draft ? '/draft' : '') ?>" class="btn btn-info  margin btn-lg pull-right" style="float: right"> <i class="fa fa-list-alt" aria-hidden="true"></i>
                                           Edit</a>
                                   <?php } ?>
 
@@ -177,7 +177,11 @@
 
   <script>
       $('#menu_id_24').addClass('menu-item-active menu-item-open menu-item-here"')
-      $('#submenu_id_59').addClass('menu-item-active')
+      <?php if ($draft == false) { ?>
+          $('#submenu_id_59').addClass('menu-item-active')
+      <?php } else { ?>
+          $('#submenu_id_83').addClass('menu-item-active')
+      <?php } ?>
 
       function formatRupiah(angka, prefix) {
           var number_string = angka.toString();

@@ -2,7 +2,7 @@
     <div class="card-body">
         <div class="">
             <?php
-            $attributes = array('id' => 'journal_voucher', 'method' => 'post', 'class' => '');
+            $attributes = array('id' => 'form_journal_voucher', 'method' => 'post', 'class' => '');
             ?>
 
 
@@ -219,15 +219,15 @@
                             </div>
                         </div>
                     </div>
+                    <input type="text" id="draft_value" name="draft_value" value="<?= $draft ?>">
                     <div class=" col-lg-12 ">
                         <div class=" form-group">
-                            <?php
-                            $data = array('class' => 'btn btn-info  margin btn-lg pull-right ', 'type' => 'submit', 'name' => 'btn_submit_customer', 'value' => 'true', 'id' => 'btn_save_transaction', 'content' => '<i class="fa fa-floppy-o" aria-hidden="true"></i> 
-                                Simpan ');
-                            echo form_button($data);
-                            ?>
+                            <a class="btn btn-info margin btn-lg pull-right mr-1" id="btn_save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save </a>
+                            <a class="btn btn-info margin btn-lg pull-right mr-1" id="btn_post_jurnal"><i class="fa fa-floppy-o" aria-hidden="true"></i> Post to Jurnal </a>
+                            <a class="btn btn-warning margin btn-lg pull-right mr-1" id="btn_draft"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save to Draft </a>
                         </div>
                     </div>
+
                 </div>
 
             </div>
@@ -241,11 +241,130 @@
 
 <script>
     $('#menu_id_24').addClass('menu-item-active menu-item-open menu-item-here"')
-    $('#submenu_id_59').addClass('menu-item-active')
+    <?php if ($draft == false) { ?>
+        $('#submenu_id_59').addClass('menu-item-active')
+    <?php } else { ?>
+        $('#submenu_id_83').addClass('menu-item-active')
+    <?php } ?>
     data_cars = [];
+    btn_save = $('#btn_save');
+    btn_post_jurnal = $('#btn_post_jurnal');
+    btn_draft = $('#btn_draft');
+    form_journal_voucher = $('#form_journal_voucher');
+    draft_value = $('#draft_value');
+    <?php if ($draft == false) { ?>
+        btn_post_jurnal.hide();
+        btn_draft.hide();
+    <?php } else { ?>
+        btn_save.hide();
+    <?php } ?>
+
     id_custmer = $('#customer_id');
     id_cars = $('#id_cars');
     layer_cars = $('#layer_cars');
+
+    btn_draft.on('click', (ev) => {
+        draft_value.val('draft')
+        form_journal_voucher.submit();
+    })
+
+    btn_save.on('click', (ev) => {
+        draft_value.val('false')
+        form_journal_voucher.submit();
+    })
+    btn_post_jurnal.on('click', (ev) => {
+        draft_value.val('false')
+        // form_journal_voucher.submit();
+        var url = "<?= base_url('statements/create_journal_voucher') ?>";
+        $.ajax({
+            url: url,
+            'type': 'POST',
+            data: form_journal_voucher.serialize(),
+            success: function(data) {
+                // buttonIdle(button);
+                var json = JSON.parse(data);
+                if (json['error']) {
+                    // 
+                    Swal.fire({
+                        text: json['message'],
+                        icon: "error",
+                        buttonsStyling: true,
+                        confirmButtonText: "Ok!",
+                        customClass: {
+                            confirmButton: "btn font-weight-bold btn-light-primary",
+                        },
+                    })
+                    // swal("Simpan Gagal", json['message'], "error");
+                    return;
+                }
+                var res_data = json['data']
+                Swal.fire({
+                    text: 'Success',
+                    icon: "success",
+                    buttonsStyling: true,
+                    confirmButtonText: "Ok!",
+                    customClass: {
+                        confirmButton: "btn font-weight-bold btn-light-primary",
+                    },
+                })
+                if (res_data['draft'] == 'true') {
+                    location.replace("<?= base_url('statements/show/') ?>" + res_data['id'] + '/draft')
+                } else {
+                    location.replace("<?= base_url('statements/show/') ?>" + res_data['id'])
+                }
+            },
+            error: function(e) {}
+        });
+    })
+
+    form_journal_voucher.submit(function(event) {
+        event.preventDefault();
+        var url = "<?= base_url('statements/edit_journal_voucher') ?>";
+        $.ajax({
+            url: url,
+            'type': 'POST',
+            data: form_journal_voucher.serialize(),
+            success: function(data) {
+                // buttonIdle(button);
+                var json = JSON.parse(data);
+                if (json['error']) {
+                    // 
+                    Swal.fire({
+                        text: json['message'],
+                        icon: "error",
+                        buttonsStyling: true,
+                        confirmButtonText: "Ok!",
+                        customClass: {
+                            confirmButton: "btn font-weight-bold btn-light-primary",
+                        },
+                    })
+                    // swal("Simpan Gagal", json['message'], "error");
+                    return;
+                }
+                var res_data = json['data']
+                Swal.fire({
+                    text: 'Success',
+                    icon: "success",
+                    buttonsStyling: true,
+                    confirmButtonText: "Ok!",
+                    customClass: {
+                        confirmButton: "btn font-weight-bold btn-light-primary",
+                    },
+                })
+                if (res_data['draft'] == 'true') {
+                    location.replace("<?= base_url('statements/show/') ?>" + res_data['id'] + '/draft')
+                } else {
+                    location.replace("<?= base_url('statements/show/') ?>" + res_data['id'])
+                }
+                // dataUser[user['id_user']] = user;
+                // swal("Simpan Berhasil", "", "success");
+                // renderUser(dataUser);
+                // UserModal.self.modal('hide');
+            },
+            error: function(e) {}
+        });
+    })
+
     id_custmer.on('change', function() {
         $.ajax({
             url: '<?= base_url() ?>Statements/getListCars',
