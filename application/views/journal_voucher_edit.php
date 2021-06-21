@@ -273,8 +273,16 @@
         form_journal_voucher.submit();
     })
     btn_post_jurnal.on('click', (ev) => {
+        Swal.fire({
+            title: 'Please Wait !',
+            html: 'Data Uploading .. ', // add html attribute if you want or remove
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading()
+            },
+        });
         draft_value.val('false')
-        // form_journal_voucher.submit();
         var url = "<?= base_url('statements/create_journal_voucher') ?>";
         $.ajax({
             url: url,
@@ -319,6 +327,15 @@
 
     form_journal_voucher.submit(function(event) {
         event.preventDefault();
+        Swal.fire({
+            title: 'Please Wait !',
+            html: 'Data Uploading .. ', // add html attribute if you want or remove
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading()
+            },
+        });
         var url = "<?= base_url('statements/edit_journal_voucher') ?>";
         $.ajax({
             url: url,
@@ -354,7 +371,7 @@
                 if (res_data['draft'] == 'true') {
                     location.replace("<?= base_url('statements/show/') ?>" + res_data['id'] + '/draft')
                 } else {
-                    location.replace("<?= base_url('statements/show/') ?>" + res_data['id'])
+                    // location.replace("<?= base_url('statements/show/') ?>" + res_data['id'])
                 }
                 // dataUser[user['id_user']] = user;
                 // swal("Simpan Berhasil", "", "success");

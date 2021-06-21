@@ -266,6 +266,15 @@
         var url = "<?= base_url('statements/create_journal_voucher') ?>";
         // url += isAdd ? "addUser" : "editUser";
         // var button = isAdd ? UserModal.addBtn : UserModal.saveEditBtn;
+        Swal.fire({
+            title: 'Please Wait !',
+            html: 'Data Uploading .. ', // add html attribute if you want or remove
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading()
+            },
+        });
 
         $.ajax({
             url: url,
