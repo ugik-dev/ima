@@ -274,14 +274,14 @@
               tpe = 'AK'
           }
           if (tpe == undefined) {
-
               tpe = ''
           }
           //   console.log(tpe)
           no_rek = '112-0098146017';
           for (var i = 0; i < name.length; i++) {
               if (name[i].innerHTML.substring(1, 5) == '1.11') {
-                  console.log('s' + debit[i]);
+                  arus_kas_debit = parseInt(debit[i].innerHTML.replace(/[^0-9]/g, ""));
+                  arus_kas_kredit = parseInt(kredit[i].innerHTML.replace(/[^0-9]/g, ""));
                   if (tpe == 'AM') {
                       displyhide = false
                       show =
@@ -301,8 +301,13 @@
               if (name[i].innerHTML.substring(1, 9) == '1.11.240') {
                   no_rek = '169-00-0207756-5';
               }
-              console.log(name[i].innerHTML)
-              console.log(displyhide)
+
+              <?php if ($draft == false) { ?>
+              <?php } else { ?>
+                  if (arus_kas_debit > 0) tpe = 'AM';
+                  if (arus_kas_kredit > 0) tpe = 'AK';
+              <?php } ?>
+
               isi += `
             <tr style="height : 10px">
                 <td style="text-align:center; padding-left : 5px ">${name[i].innerHTML.substring(0, 14)}</td>
