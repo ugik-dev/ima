@@ -277,6 +277,8 @@
               tpe = ''
           }
           //   console.log(tpe)
+          arus_kas_debit = 0;
+          arus_kas_kredit = 0;
           no_rek = '112-0098146017';
           for (var i = 0; i < name.length; i++) {
               if (name[i].innerHTML.substring(1, 5) == '1.11') {
