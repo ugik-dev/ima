@@ -486,7 +486,7 @@ class Invoice extends CI_Controller
 		$phpWord = new \PhpOffice\PhpWord\PhpWord();
 
 
-		$tanggal = $this->tanggal_indonesia(date("Y-m-d"));
+		$tanggal = $this->tanggal_indonesia($dataContent['date']);
 		// $section->addText("\t\t\t\t\t\t\t\t\tPanngkalpinang, {$tanggal}", "paragraph", array('spaceBefore' => 0));
 		$phpWord->addFontStyle('paragraph_bold', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true));
 		$phpWord->addFontStyle('paragraph_italic', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'italic' => true));

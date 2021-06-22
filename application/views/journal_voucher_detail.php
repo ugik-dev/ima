@@ -281,6 +281,7 @@
           no_rek = '112-0098146017';
           for (var i = 0; i < name.length; i++) {
               if (name[i].innerHTML.substring(1, 5) == '1.11') {
+                  console.log('s' + debit[i]);
                   if (tpe == 'AM') {
                       displyhide = false
                       show =
@@ -290,7 +291,6 @@
                               0);
                   } else if (tpe == 'AK') {
                       displyhide = false
-
                       show =
                           show +
                           (kredit[i].innerHTML ?
