@@ -207,7 +207,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="text" id="draft_value" name="draft_value">
+                        <input type="hidden" id="draft_value" name="draft_value">
 
                         <div class="col-lg-12 ">
                             <div class="form-group">
@@ -298,17 +298,19 @@
                     return;
                 }
                 var res_data = json['data']
+                Swal.fire({
+                    text: json['message'],
+                    icon: "success",
+                    buttonsStyling: true,
+                    confirmButtonText: "Ok!",
+                    customClass: {
+                        confirmButton: "btn font-weight-bold btn-light-primary",
+                    },
+                })
                 if (res_data['draft'] == 'true') {
-                    Swal.fire({
-                        text: json['message'],
-                        icon: "success",
-                        buttonsStyling: true,
-                        confirmButtonText: "Ok!",
-                        customClass: {
-                            confirmButton: "btn font-weight-bold btn-light-primary",
-                        },
-                    })
                     location.replace("<?= base_url('statements/show/') ?>" + res_data['id'] + '/draft')
+                } else {
+                    location.replace("<?= base_url('statements/show/') ?>" + res_data['id'])
                 }
                 // dataUser[user['id_user']] = user;
                 // swal("Simpan Berhasil", "", "success");

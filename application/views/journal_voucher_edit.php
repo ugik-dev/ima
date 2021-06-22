@@ -14,7 +14,6 @@
                     </h4>
 
                     <?php if (!empty($acc)) {
-                        // var_dump($acc->acc_1);
                     } ?>
                     <div class="col-lg-12 ">
                         <div class="row">
@@ -88,7 +87,6 @@
                                     <th class="col-lg-5 ">Akun</th>
                                     <th class="col-lg-2">Debit</th>
                                     <th class="col-lg-2">Kredit</th>
-                                    <!-- <th class="col-lg-3">Keterangan</th> -->
                                 </tr>
                             </thead>
                             <tbody id="transaction_table_body">
@@ -219,7 +217,8 @@
                             </div>
                         </div>
                     </div>
-                    <input type="text" id="draft_value" name="draft_value" value="<?= $draft ?>">
+                    <input type="hidden" id="draft_value" name="draft_value" value="<?= $draft ?>">
+                    <input type="hidden" id="remove_draft" name="remove_draft" value="<?= $draft ?>">
                     <div class=" col-lg-12 ">
                         <div class=" form-group">
                             <a class="btn btn-info margin btn-lg pull-right mr-1" id="btn_save"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save </a>
@@ -249,8 +248,10 @@
     data_cars = [];
     btn_save = $('#btn_save');
     btn_post_jurnal = $('#btn_post_jurnal');
+
     btn_draft = $('#btn_draft');
     form_journal_voucher = $('#form_journal_voucher');
+    remove_draft = $('#remove_draft');
     draft_value = $('#draft_value');
     <?php if ($draft == false) { ?>
         btn_post_jurnal.hide();
@@ -283,16 +284,15 @@
             },
         });
         draft_value.val('false')
+        remove_draft.val('true')
         var url = "<?= base_url('statements/create_journal_voucher') ?>";
         $.ajax({
             url: url,
             'type': 'POST',
             data: form_journal_voucher.serialize(),
             success: function(data) {
-                // buttonIdle(button);
                 var json = JSON.parse(data);
                 if (json['error']) {
-                    // 
                     Swal.fire({
                         text: json['message'],
                         icon: "error",
@@ -302,7 +302,6 @@
                             confirmButton: "btn font-weight-bold btn-light-primary",
                         },
                     })
-                    // swal("Simpan Gagal", json['message'], "error");
                     return;
                 }
                 var res_data = json['data']

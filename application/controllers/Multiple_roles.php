@@ -111,6 +111,65 @@ class Multiple_roles extends CI_Controller
 		redirect('multiple_roles');
 	}
 
+	public function edit_role()
+	{
+
+		// DEFINES READ CATEROTY NAME FORM Multiple FORM
+		$user_id = html_escape($this->input->post('user_id'));
+		$menu_id = html_escape($this->input->post('menu_id'));
+		$role_id = html_escape($this->input->post('role_id'));
+		$user_name = $this->session->userdata('user_id');
+		$added_by = $user_name['id'];
+
+		// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
+		$this->load->model('Crud_model');
+		if ($user_id != 0) {
+			$i = 0;
+			while ($i < count($menu_id)) {
+
+				// GETTING THE VALUES FROM TEXTFIELD .THE ARRAYS OF VALUES WHICH WE CREATED
+				// BY USING DOM
+				if (
+					$role_id[$i] != 0
+				) {
+					$result_duplication = $this->Crud_model->check_role_duplication($user_id, $menu_id[$i]);
+					if ($result_duplication != TRUE) {
+						// ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY FOR EVERY ITERATION
+						$args = array(
+							'user_id' => $user_id,
+							'menu_Id' => $menu_id[$i],
+							'role' => $role_id[$i],
+							'agentid' => $added_by
+						);
+
+						// DEFINES CALL THE FUNCTION OF insert_data FORM Crud_model CLASS
+						$this->Crud_model->insert_data('mp_multipleroles', $args);
+					}
+				} else {
+					$this->Crud_model->delete_multiplerole($user_id, $menu_id[$i]);
+				}
+				$result = 1;
+				$i++;
+			}
+
+			if ($result == 1) {
+				$array_msg = array(
+					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="TRUE"></i> Roles added Successfully',
+					'alert' => 'info'
+				);
+				$this->session->set_flashdata('status', $array_msg);
+			} else {
+				$array_msg = array(
+					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="TRUE"></i> Error Roles cannot be added',
+					'alert' => 'danger'
+				);
+				$this->session->set_flashdata('status', $array_msg);
+			}
+		}
+
+		redirect('multiple_roles');
+	}
+
 	//DEFINES A POPUP MODEL OG GIVEN PARAMETER
 	function popup($page_name = '', $param = '')
 	{
@@ -124,12 +183,13 @@ class Multiple_roles extends CI_Controller
 			$this->load->view('admin_models/add_models/add_multipleroles_model.php', $data);
 		} else if ($page_name  == 'edit_multipleroles_model') {
 			$privileges = $this->Crud_model->get_user_single_menus(array('user_id' => $param));
-			echo json_encode($privileges);
-			die();
 
 
-			$result_roles = $this->Crud_model->fetch_record('mp_menu', NULL);
-			$data['result_roles'] = $result_roles;
+			$result_roles = $this->Crud_model->fetch_menus();
+			$data['result_roles'] = $privileges;
+			// $data['result_roles'] = $result_roles;
+			// echo json_encode($data);
+			// die();
 			$data['user_list'] =  $this->Crud_model->fetch_record('mp_users', 'status');
 			//model name available in admin models folder
 			$this->load->view('admin_models/edit_models/edit_multipleroles_model.php', $data);

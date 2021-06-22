@@ -102,6 +102,27 @@ class Crud_model extends CI_Model
         }
     }
 
+    public function fetch_menus($filter = [])
+    {
+        // if ($args != NULL) {
+        $this->db->select('id, name');
+        $this->db->order_by('id');
+
+        // $this->db->where(['status' => 0]);
+        // $query = $this->db->get('mp_menu');
+        // } else {
+        //     $query = $this->db->get($tablename);
+        // }
+
+        // $this->db->where('source', $source);
+        $query = $this->db->get('mp_menu');
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return NULL;
+        }
+    }
+
     public function fetch_payee_record($type, $status = '')
     {
         $this->db->where(['type' => $type]);
@@ -472,6 +493,21 @@ class Crud_model extends CI_Model
         $this->db->db_debug = $db_debug;
     }
 
+    public function delete_multiplerole($user_id, $menu_id)
+    {
+        $db_debug = $this->db->db_debug;
+        $this->db->db_debug = FALSE;
+        $this->db->where('user_id = ' . $user_id . ' AND menu_Id = ' . $menu_id);
+        $this->db->delete('mp_multipleroles');
+        if ($this->db->affected_rows() > 0) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+
+        $this->db->db_debug = $db_debug;
+    }
+
     public function delete_record_by_userid($tablename, $source, $userid)
     {
         $db_debug = $this->db->db_debug;
@@ -723,13 +759,13 @@ class Crud_model extends CI_Model
 
     public function get_user_single_menus($filter = [])
     {
-        $this->db->select("*");
-        // $this->db->from('mp_users');
-        $this->db->from('mp_multipleroles');
-        // $this->db->join('mp_multipleroles', "mp_users.id = mp_multipleroles.user_id");
-        $this->db->join('mp_menu', 'mp_multipleroles.menu_Id = mp_menu.id', 'LEFT');
-        if (!empty($filter['user_id'])) $this->db->where('mp_multipleroles.user_id', $filter['user_id']);
+        $this->db->select("u.id, u.user_name, mp_menu.name as menu_name, mp_menu.id as menu_id , mp_multipleroles.id as roleid");
+        $this->db->from('mp_users as u');
         // $this->db->from('mp_multipleroles');
+        $this->db->join('mp_menu', '1=1');
+        $this->db->join('mp_multipleroles', "u.id = mp_multipleroles.user_id AND mp_menu.id = mp_multipleroles.menu_id", 'LEFT');
+        if (!empty($filter['user_id'])) $this->db->where('u.id', $filter['user_id']);
+        $this->db->order_by('menu_id');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();

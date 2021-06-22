@@ -1511,6 +1511,18 @@ class Transaction_model extends CI_Model
         $this->record_activity(array('jenis' => 3, 'sub_id' => $id, 'desk' => 'Delete Jurnal'));
     }
 
+    public function remove_draft($id)
+    {
+        $this->db->where('draft_sub_entry.parent_id =', $id);
+        $this->db->delete('draft_sub_entry');
+
+        $this->db->where('draft_generalentry.id ', $id);
+        $this->db->delete('draft_generalentry');
+
+        $this->db->where('draft_approv.id_transaction ', $id);
+        $this->db->delete('draft_approv');
+    }
+
     public function create_cheque($data_fields)
     {
         $this->db->trans_start();

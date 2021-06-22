@@ -68,10 +68,7 @@
                                     <div class="form-group">
                                         <?php echo form_label('Metode Pembayaran'); ?>
                                         <select name="payment_metode" id="payment_metode" class="form-control input-lg">
-                                            <?php foreach ($banks as $banks_data) {
-                                                echo '<option value="' . $banks_data->id . '"> Transfer ' . $banks_data->bankname . ' (' . $banks_data->accountno . ') </option>';
-                                            } ?>
-                                            <option value="99"> Cash </option>
+                                            <option value="2" selected> Transfer Mandiri A (112-0098146017) </option>
                                         </select>
                                     </div>
                                 </div>

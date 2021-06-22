@@ -1154,6 +1154,8 @@ class Statements extends CI_Controller
 	{
 		try {
 
+			$id = html_escape($this->input->post('id'));
+			$remove_draft = html_escape($this->input->post('remove_draft'));
 			$draft_value = html_escape($this->input->post('draft_value'));
 			$description = html_escape($this->input->post('description'));
 			$date   = html_escape($this->input->post('date'));
@@ -1222,6 +1224,7 @@ class Statements extends CI_Controller
 				'acc' => $acc,
 				'draft_value' => $draft_value,
 			);
+			if (!empty($remove_draft)) $data['remove_draft'] = $remove_draft;
 			if ($status) {
 				$this->load->model('Transaction_model');
 				if (!empty($data['no_jurnal'])) {
@@ -1231,6 +1234,7 @@ class Statements extends CI_Controller
 					}
 				}
 				$result = $this->Transaction_model->journal_voucher_entry($data);
+				$removed = $this->Transaction_model->remove_draft($id);
 				if ($result != NULL) {
 					$this->Transaction_model->activity_edit($result, $acc, $draft_value);
 				} else {
