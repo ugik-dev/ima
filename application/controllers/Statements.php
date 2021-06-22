@@ -130,8 +130,8 @@ class Statements extends CI_Controller
 	{
 
 		$this->load->model('Statement_model');
-		$res_detail = $this->Statement_model->detail_fetch_transasctions($id);
-		$res_acc = $this->Statement_model->get_acc($id, true);
+		$res_detail = $this->Statement_model->detail_fetch_transasctions(array('id' => $id, 'draft' => false));
+		$res_acc = $this->Statement_model->get_acc($id, true, false);
 		$countsub = count($res_detail['sub']);
 		for ($i = 0; $i < $countsub; $i++) {
 			$accounthead[$i] = $res_detail['sub'][$i]['accounthead'];
@@ -177,6 +177,7 @@ class Statements extends CI_Controller
 			'sub_keterangan' => $sub_keterangan,
 			'acc' => $acc
 		);
+		// die();
 		$this->journal_voucher($data);
 	}
 
@@ -588,7 +589,7 @@ class Statements extends CI_Controller
 	{
 
 		$this->load->model('Statement_model');
-		$res_detail = $this->Statement_model->detail_fetch_transasctions($id);
+		$res_detail = $this->Statement_model->detail_fetch_transasctions(array('id' => $id, 'draft' => false));
 		$res_acc = $this->Statement_model->get_acc($id, true);
 		$countsub = count($res_detail['sub']);
 		$bank = '112-0098146017';

@@ -2,7 +2,7 @@
 /*
 
 */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 class Multiple_roles extends CI_Controller
 {
 	// MultipleRoles
@@ -31,6 +31,8 @@ class Multiple_roles extends CI_Controller
 		$this->load->model('Crud_model');
 
 		$privileges = $this->Crud_model->get_user_details_menus();
+		// echo json_encode($privileges);
+		// die();
 		$data['privileges'] = $privileges;
 
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
@@ -50,19 +52,15 @@ class Multiple_roles extends CI_Controller
 
 		// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
 		$this->load->model('Crud_model');
-		if ($user_id != 0)
-		{
+		if ($user_id != 0) {
 			$i = 0;
-			while ($i < count($menu_id))
-			{
+			while ($i < count($menu_id)) {
 
 				// GETTING THE VALUES FROM TEXTFIELD .THE ARRAYS OF VALUES WHICH WE CREATED
 				// BY USING DOM
-				if ($role_id[$i] != 0)
-				{
+				if ($role_id[$i] != 0) {
 					$result_duplication = $this->Crud_model->check_role_duplication($user_id, $menu_id[$i]);
-					if ($result_duplication != TRUE)
-					{
+					if ($result_duplication != TRUE) {
 
 						// ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY FOR EVERY ITERATION
 						$args = array(
@@ -81,26 +79,20 @@ class Multiple_roles extends CI_Controller
 				$i++;
 			}
 
-			if ($result_duplication == TRUE)
-			{
+			if ($result_duplication == TRUE) {
 				$array_msg = array(
 					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="TRUE"></i> privileges already assigned',
 					'alert' => 'danger'
 				);
 				$this->session->set_flashdata('status', $array_msg);
-			}
-			else
-			{
-				if ($result == 1)
-				{
+			} else {
+				if ($result == 1) {
 					$array_msg = array(
 						'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="TRUE"></i> Roles added Successfully',
 						'alert' => 'info'
 					);
 					$this->session->set_flashdata('status', $array_msg);
-				}
-				else
-				{
+				} else {
 					$array_msg = array(
 						'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="TRUE"></i> Error Roles cannot be added',
 						'alert' => 'danger'
@@ -108,9 +100,7 @@ class Multiple_roles extends CI_Controller
 					$this->session->set_flashdata('status', $array_msg);
 				}
 			}
-		}
-		else
-		{
+		} else {
 			$array_msg = array(
 				'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="TRUE"></i> Error No user is selected',
 				'alert' => 'danger'
@@ -122,18 +112,27 @@ class Multiple_roles extends CI_Controller
 	}
 
 	//DEFINES A POPUP MODEL OG GIVEN PARAMETER
-	function popup($page_name = '',$param = '')
+	function popup($page_name = '', $param = '')
 	{
 		$this->load->model('Crud_model');
 
-		if($page_name  == 'add_multipleroles_model')
-		{
+		if ($page_name  == 'add_multipleroles_model') {
 			$result_roles = $this->Crud_model->fetch_record('mp_menu', NULL);
 			$data['result_roles'] = $result_roles;
-
-			$data['user_list'] =  $this->Crud_model->fetch_record('mp_users','status');
+			$data['user_list'] =  $this->Crud_model->fetch_record('mp_users', 'status');
 			//model name available in admin models folder
-			$this->load->view('admin_models/add_models/add_multipleroles_model.php',$data);
+			$this->load->view('admin_models/add_models/add_multipleroles_model.php', $data);
+		} else if ($page_name  == 'edit_multipleroles_model') {
+			$privileges = $this->Crud_model->get_user_single_menus(array('user_id' => $param));
+			echo json_encode($privileges);
+			die();
+
+
+			$result_roles = $this->Crud_model->fetch_record('mp_menu', NULL);
+			$data['result_roles'] = $result_roles;
+			$data['user_list'] =  $this->Crud_model->fetch_record('mp_users', 'status');
+			//model name available in admin models folder
+			$this->load->view('admin_models/edit_models/edit_multipleroles_model.php', $data);
 		}
 	}
 
@@ -143,16 +142,13 @@ class Multiple_roles extends CI_Controller
 		// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
 		$this->load->model('Crud_model');
 		$result = $this->Crud_model->delete_record('mp_multipleroles', $args);
-		if ($result == 1)
-		{
+		if ($result == 1) {
 			$array_msg = array(
 				'msg' => '<i style="color:#fff" class="fa fa-trash-o" aria-hidden="TRUE"></i> Privilege removed Successfully',
 				'alert' => 'info'
 			);
 			$this->session->set_flashdata('status', $array_msg);
-		}
-		else
-		{
+		} else {
 			$array_msg = array(
 				'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="TRUE"></i> Error Privilege record cannot be romoved',
 				'alert' => 'danger'
