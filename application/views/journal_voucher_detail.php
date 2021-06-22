@@ -370,7 +370,12 @@
                             <td style="text-align:left ;width: 400px">${ naration}</td>
                             <td style="text-align:left ;width: 100px">Tanggal</td>
                             <td style="width: 10px">:</td>
-                            <td style="text-align:left; width: 200px  ${tpe == 'AM' ? '; color: red':''}">${date}</td>
+                            <?php if ($draft == false) { ?>
+                                <td style="text-align:left; width: 200px  ${tpe == 'AM' ? '; color: red':''}">${date}</td>
+                           
+                            <?php } else { ?>
+                                <td style="text-align:left; width: 200px  ${tpe == 'AM' ? '; color: red':''}"></td>
+                            <?php } ?>
                         </tr>
                             <tr style="${displyhide ? 'display: none' : ''} ;">
                             <td style="text-align:left ;width: 100px">Sejumlah</td>
