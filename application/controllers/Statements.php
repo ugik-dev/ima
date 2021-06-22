@@ -200,13 +200,13 @@ class Statements extends CI_Controller
 		$accounthead[2] = 20;
 		// if ($result['ppn_pph'] == 1) {
 		// }
-		$debitamount[0] = number_format($amount, 2);
-		$debitamount[1] = number_format($amount * 0.10, 2);
+		$debitamount[0] = number_format($amount * 0.98, 2);
+		$debitamount[1] = number_format($amount * 0.02, 2);
 		$debitamount[2] = '';
 
 		$creditamount[0] = '';
 		$creditamount[1] = '';
-		$creditamount[2] = number_format($amount + ($amount * 0.10), 2);
+		$creditamount[2] = number_format($amount, 2);
 
 		$sub_keterangan[0] = '';
 		$sub_keterangan[1] = '';
@@ -1386,6 +1386,36 @@ class Statements extends CI_Controller
 		redirect('statements');
 		// $this->Transaction_model->activity_edit($id, $acc);
 	}
+
+
+	public function delete_jurnal_draft($id)
+	{
+		$this->load->model('Transaction_model');
+		if (!empty($id)) {
+			// $res = $this->Transaction_model->check_lock($id);
+			// var_dump($res);
+			// die();
+			if ($res == 'Y') {
+				$array_msg = array(
+					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Data Sudah di Kunci! ',
+					'alert' => 'danger'
+				);
+				$this->session->set_flashdata('status', $array_msg);
+				redirect('statements');
+				return;
+			}
+		}
+
+		$this->Transaction_model->remove_draft($id);
+		$array_msg = array(
+			'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Delet Successfully',
+			'alert' => 'info'
+		);
+		$this->session->set_flashdata('status', $array_msg);
+		redirect('statements/draft');
+		// $this->Transaction_model->activity_edit($id, $acc);
+	}
+
 
 	public function getListCars()
 	{

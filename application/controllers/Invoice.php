@@ -493,6 +493,7 @@ class Invoice extends CI_Controller
 		$phpWord->addFontStyle('paragraph_underline', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'underline' => 'single'));
 		$phpWord->addFontStyle('paragraph_bold_underline', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'underline' => 'single', 'bold' => true));
 		$phpWord->addFontStyle('paragraph2', array('spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(106), 'name' => 'Times New Roman', 'size' => 11, 'color' => '000000'));
+
 		$pageStyle = [
 			'breakType' => 'continuous', 'colsNum' => 2,
 			// 'pageSizeW' => $paper->getWidth(),
@@ -505,6 +506,7 @@ class Invoice extends CI_Controller
 			'marginBottom' => 1000
 		];
 		$section = $phpWord->addSection($pageStyle);
+		$section->addTextBreak();
 		$year = explode("-", $dataContent['input_date'])[0];
 		$section->addText("Nomor\t\t: " . $dataContent['no_invoice'], 'paragraph', array('spaceAfter' => 100));
 		$section->addText("Tanggal\t: " . $tanggal, 'paragraph', array('spaceAfter' => 100));
@@ -512,6 +514,7 @@ class Invoice extends CI_Controller
 		$textrun = $section->addTextRun();
 		$textrun->addText("Perihal\t\t: ", 'paragraph');
 		$textrun->addText("Permohonan Pembayaran", 'paragraph_bold');
+		$section->addTextBreak();
 		$section->addTextBreak();
 
 		// $textrun->addTextBreak();
@@ -541,13 +544,16 @@ class Invoice extends CI_Controller
 			'marginTop' => 1700,
 			'marginBottom' => 1000
 		]);
+		$section->addTextBreak();
+		$section->addTextBreak();
+		$section->addTextBreak();
 
 		$section->addText("Dengan hormat,", 'paragraph', array('spaceAfter' => 100));
 		// $section->addTextBreak();
 		if ($format == 2) {
 			$section->addText("Menurut Surat Perjanjian Nomor 0122.E/Tbk/SP-2000/21-S11.4 tanggal 01 April 2021 antara PT Timah Tbk dengan PT Indometal Asia tentang Kerjasama Kegiatan Eksplorasi Timah di Wilayah Izin Usaha Pertambangan PT Timah Tbk, dengan ini kami sampaikan tagihan atas perjanjian tersebut dengan rincian : ", 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
 		} else {
-			$section->addText("Bersamaan ini kami sampaikan tagihan " . $dataContent['description'] . ' sebagai berikut :', 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
+			$section->addText("Bersama ini kami sampaikan tagihan " . $dataContent['description'] . ' sebagai berikut :', 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
 		}
 		$section->addTextBreak();
 		$fancyTableStyle = array('borderSize' => 1, 'borderColor' => '000000', 'height' => 100, 'cellMarginButtom' => -100, 'cellMarginTop' => 100, 'cellMarginLeft' => 100, 'cellMarginRight' => 100, 'spaceAfter' => -100);
@@ -581,18 +587,18 @@ class Invoice extends CI_Controller
 		$textrun1->addText('QYT', 'paragraph_bold', array('spaceAfter' => 0));
 		$cell1 = $table->addCell(2000, $cellRowSpan);
 		$textrun1 = $cell1->addTextRun($cellHCentered);
-		$textrun1->addText('HARGA', 'paragraph_bold', array('spaceAfter' => 0));
+		$textrun1->addText('HARGA (Rp)', 'paragraph_bold', array('spaceAfter' => 0));
 		$cell1 = $table->addCell(2000, $cellRowSpan);
 		$textrun1 = $cell1->addTextRun($cellHCentered);
-		$textrun1->addText('SUB TOTAL', 'paragraph_bold', array('spaceAfter' => 0));
+		$textrun1->addText('SUB TOTAL (Rp)', 'paragraph_bold', array('spaceAfter' => 0));
 		if ($dataContent['item']  != NULL) {
 			foreach ($dataContent['item'] as $item) {
 				$table->addRow();
 				$table->addCell(3500, $cellVCentered)->addText($item->keterangan_item, null, array('spaceAfter' => 0));
 				$table->addCell(1200, $cellVCentered)->addText($item->date_item, null, array('spaceAfter' => 0));
 				$table->addCell(1000, $cellVCentered)->addText($item->qyt . ' ' . $item->satuan, null, array('spaceAfter' => 0, 'align' => 'center'));
-				$table->addCell(1500, $cellVCentered)->addText(number_format(floor($item->amount)), null, array('spaceAfter' => 0, 'align' => 'right'));
-				$table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount)), null, array('spaceAfter' => 0, 'align' => 'right'));
+				$table->addCell(1500, $cellVCentered)->addText(number_format(floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
+				$table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
 			}
 			$table->addRow();
 			$cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
@@ -606,7 +612,7 @@ class Invoice extends CI_Controller
 				$table->addRow();
 				$cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
 				$table->addCell(200, $cellColSpan)->addText('TOTAL   ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
-				$table->addCell(500, $cellVCentered)->addText('' . number_format(floor($total * 0.10) + floor($total)), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+				$table->addCell(500, $cellVCentered)->addText('' . number_format((floor($total * 0.10) + floor($total)), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
 				$terbilang = floor($total * 0.10) + floor($total);
 			}
 		}
@@ -629,7 +635,7 @@ class Invoice extends CI_Controller
 		$section = $phpWord->addSection($pageStyle);
 
 		$section->addTextBreak(6);
-		$section->addText("PT INDOMETAL ASIA,", 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
+		$section->addText("PT INDOMETAL ASIA", 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
 		//  array('align' => 'center')
 
 		$section->addText("Direktur", 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
@@ -651,7 +657,7 @@ class Invoice extends CI_Controller
 		$section->addPageBreak();
 		// new
 		$fancyTableStyleName = 'Fancy Table';
-		$fancyTableStyle = array('borderSize' => 2, 'borderColor' => '006699', 'cellMargin' => 80, 'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 'cellSpacing' => 20);
+		$fancyTableStyle = array('borderSize' => 2, 'borderColor' => '000000', 'cellMargin' => 80, 'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 'cellSpacing' => 20);
 		$fancyTableFirstRowStyle = array('borderBottomSize' => 18, 'borderBottomColor' => '0000FF', 'bgColor' => 'ffffff');
 		$fancyTableCellStyle = array('valign' => 'center');
 		$fancyTableCellBtlrStyle = array('valign' => 'center', 'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR);
@@ -764,7 +770,7 @@ class Invoice extends CI_Controller
 		$freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 
 		$freame7->addRow(700);
-		$freame7->addCell(6000, $cellVCentered)->addText('          ' . number_format(($total * 0.10) + $total, '0', ',', '.'), array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), array('align' => 'left'));
+		$freame7->addCell(6000, $cellVCentered)->addText('          Rp. ' . number_format(($total * 0.10) + $total, '0', ',', '.'), array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), array('align' => 'left'));
 		$freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
 		$freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 
