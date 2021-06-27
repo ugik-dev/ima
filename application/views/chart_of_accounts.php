@@ -10,9 +10,8 @@
          </div>
      </div>
  </div>
- <div class="card card-custom" id="print-section">
+ <div class="card card-custom">
      <div class="card-body">
-
          <div class="col-xs-12">
              <div class="box" id="print-section">
                  <div class="box-header">
@@ -20,7 +19,7 @@
                  </div>
                  <div class="box-body">
                      <div class="table-responsive col-md-12">
-                         <table class="table table-bordered table-hover table-checkable mt-10" id="kt_datatable">
+                         <table class="table table-bordered table-hover table-checkable mt-10" id="FDataTable">
                              <thead>
                                  <?php
                                     foreach ($table_heading_names_of_coloums as $table_head) {
@@ -87,6 +86,16 @@
  <script>
      $('#menu_id_23').addClass('menu-item-active menu-item-open menu-item-here"')
      $('#submenu_id_58').addClass('menu-item-active')
+     $(document).ready(function() {
+
+         var FDataTable = $('#FDataTable').DataTable({
+             'columnDefs': [],
+             deferRender: true,
+             "order": [
+                 [0, "desc"]
+             ]
+         });
+     });
  </script>
  <!-- Bootstrap model  -->
  <?php $this->load->view('bootstrap_model.php'); ?>

@@ -1889,4 +1889,14 @@ class Transaction_model extends CI_Model
 
         $this->db->insert('mp_activity', $sub_data);
     }
+
+    public function delete_jurnal_draft($id)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete('draft_generalentry');
+
+
+        $this->db->where('parent_id', $id);
+        $this->db->delete('draft_generalentry');
+    }
 }

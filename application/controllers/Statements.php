@@ -1224,6 +1224,10 @@ class Statements extends CI_Controller
 				'acc' => $acc,
 				'draft_value' => $draft_value,
 			);
+			if ($draft_value == 'false')
+				$this->balancing_akumulasi($data);
+			// var_dump($data);;
+			// die();
 			if (!empty($remove_draft)) $data['remove_draft'] = $remove_draft;
 			if ($status) {
 				$this->load->model('Transaction_model');
@@ -1235,6 +1239,8 @@ class Statements extends CI_Controller
 				}
 				$result = $this->Transaction_model->journal_voucher_entry($data);
 				$removed = $this->Transaction_model->remove_draft($id);
+				// else
+
 				if ($result != NULL) {
 					$this->Transaction_model->activity_edit($result, $acc, $draft_value);
 				} else {
@@ -1391,20 +1397,6 @@ class Statements extends CI_Controller
 	public function delete_jurnal_draft($id)
 	{
 		$this->load->model('Transaction_model');
-		if (!empty($id)) {
-			// $res = $this->Transaction_model->check_lock($id);
-			// var_dump($res);
-			// die();
-			if ($res == 'Y') {
-				$array_msg = array(
-					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Data Sudah di Kunci! ',
-					'alert' => 'danger'
-				);
-				$this->session->set_flashdata('status', $array_msg);
-				redirect('statements');
-				return;
-			}
-		}
 
 		$this->Transaction_model->remove_draft($id);
 		$array_msg = array(
@@ -1519,7 +1511,7 @@ class Statements extends CI_Controller
 		// $this->load->view('test.php');
 	}
 
-	public function three_laporan_neraca()
+	public function three_laporan_neraca_old()
 	{
 		$this->load->model('Statement_model');
 		$account_head   = html_escape($this->input->post('account_head'));
@@ -1555,6 +1547,71 @@ class Statements extends CI_Controller
 		// $this->load->view('test.php');
 	}
 
+	public function three_laporan_neraca()
+	{
+		$this->load->model('Statement_model');
+		$filter = $this->input->get();
+		if (empty($filter['periode'])) {
+			$filter['periode'] = 'bulanan';
+			$filter['tahun'] =  (int)date('Y');
+			$filter['bulan'] =  (int)date('m');
+		}
+
+		if ($filter['periode'] == 'tahunan') {
+			if (empty($filter['tahun'])) {
+				$filter['tahun'] =  (int)date('Y');
+			}
+			$filter['bulan'] = 0;
+		}
+
+		if ($filter['periode'] == 'bulanan') {
+			if (empty($filter['tahun'])) {
+				$filter['tahun'] =  (int)date('Y');
+			}
+			if (empty($filter['bulan']) or $filter['bulan'] == 0) {
+				$filter['bulan'] = (int)date('m');
+			}
+			// $filter['bulan'] = 0;
+		}
+		// $filter['tahun'] =  2020;
+		// $filter['bulan'] = 12;
+
+		// var_dump($filter);
+		// die();
+
+		// $account_head   = html_escape($this->input->post('account_head'));
+		// var_dump($data);
+		// die();
+		// $year = html_escape($this->input->post('year'));
+		// if ($year == NULL) {
+		// 	$year = date('Y');
+		// }
+
+		// $data['from'] = $year . '-1-1';
+		// $data['to'] =   $year . '-12-31';
+		$data['filter'] = $filter;
+		// var_dump($data);
+		// die();
+		$data['accounts_records'] = $this->Statement_model->periode_neraca_saldo($filter);
+
+		// $data['from'] = $startyear;
+
+		// $data['to'] = $endyear;
+
+		// DEFINES PAGE TITLE
+		$data['title'] = 'Tree Neraca Saldo';
+
+		// DEFINES WHICH PAGE TO RENDER
+		$data['main_view'] = 'three_laporan_neraca_new';
+
+		// $data['income_records'] = $this->Statement_model->income_statement($startyear, $endyear);
+
+
+		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+		$this->load->view('main/index.php', $data);
+		// $this->load->view('test.php');
+	}
+
 
 	public function getTreeAccount()
 	{
@@ -1565,5 +1622,61 @@ class Statements extends CI_Controller
 		// $data = $this->Statement_model->getTreeAccount($filter);
 		// $data = $this->Statement_model->count_head_amount_like_name($filter);
 		echo json_encode($data);
+	}
+
+	function balancing_akumulasi($data)
+	{
+		$this->load->model('Crud_model');
+		$c_count = count($data['account_head']);
+		for ($i = 0; $i < $c_count; $i++) {
+			$name = $this->Crud_model->fetch_record_v2('mp_head', $data['account_head'][$i])[0]['name'];
+			if (!empty($data['debitamount'][$i]))
+				$amount = substr($data['debitamount'][$i], 0, -2) . '.' . substr($data['debitamount'][$i], -2);
+			if (!empty($data['creditamount'][$i]))
+				$amount = -substr($data['creditamount'][$i], 0, -2) . '.' . substr($data['creditamount'][$i], -2);
+			// echo $amount;
+			// die();
+			$tmp = array('name' => $name, 'date' => $data['date'], 'amount' => $amount);
+
+			$this->akumulasi($tmp);
+		}
+	}
+	function akumulasi($data)
+	{
+		// echo json_encode($data);
+		// die();
+		$parm = $data['name'];
+		// [1.10.20.300]
+		$parm = explode('[', $parm)[1];
+		$parm = explode(']', $parm)[0];
+		$parm = explode('.', $parm);
+		// if($parm[3])
+		$date = $data['date'];
+		$data['year'] = (int)explode('-', $date)[0];
+		$data['month'] = (int)explode('-', $date)[1];
+		$data['amount'] = $data['amount'];
+
+		if ($parm[3] == '000' && $parm[2] == '000' && $parm[1] == '00') {
+			$sl[0] = $parm[0] . '.00.000.000';
+		} else if ($parm[3] == '000' && $parm[2] == '000') {
+			$sl[0] = $parm[0] . '.' . $parm[1] . '.' . $parm[2] . '.' . $parm[3];
+			$sl[1] = $parm[0] . '.' . $parm[1] . '.' . $parm[2];
+			// $sl[1] = $parm[0] . '.' . $parm[1] . '.' . $parm[2];
+		} else if ($parm[3] == '000') {
+			$sl[0] = $parm[0] . '.' . $parm[1] . '.' . $parm[2] . '.000';
+			$sl[1] = $parm[0] . '.' . $parm[1] . '.000.000';
+			$sl[2] = $parm[0] .  '.00.000.000';
+		} else {
+			$sl[0] = $parm[0] . '.' . $parm[1] . '.' . $parm[2] . '.' . $parm[3];
+			$sl[1] = $parm[0] . '.' . $parm[1] . '.' . $parm[2] . '.000';
+			$sl[2] = $parm[0] . '.' . $parm[1] . '.000.000';
+			$sl[3] = $parm[0] .  '.00.000.000';
+		}
+
+		foreach ($sl as $s) {
+			$this->load->model('Statement_model');
+			$data['name'] = $s;
+			$this->Statement_model->recount_akumulasi($data);
+		}
 	}
 }

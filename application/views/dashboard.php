@@ -299,7 +299,7 @@
                              <div class="tab-pane show active fade" id="kt_tab_pane_11_1" role="tabpanel" aria-labelledby="kt_tab_pane_11_1">
                                  <!--begin::Table-->
                                  <div class="table-responsive">
-                                     <table class="table table-borderless table-vertical-center">
+                                     <table id="FDataTable" class=" table table-borderless table-vertical-center">
                                          <thead>
                                              <tr>
                                                  <!-- <th class="p-0 w-40px"></th> -->

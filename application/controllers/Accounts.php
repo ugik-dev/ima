@@ -98,8 +98,9 @@ class Accounts extends CI_Controller
     $this->load->model('Crud_model');
 
     // DEFINES TO DELETE THE ROW FROM TABLE AGAINST ID
-    $result = $this->Crud_model->delete_record('mp_head', $args);
+    $result = $this->Crud_model->check_head_transaction($args);
     if ($result == 1) {
+      $result = $this->Crud_model->delete_record('mp_head', $args);
       $array_msg = array(
         'msg' => '<i style="color:#fff" class="fa fa-trash-o" aria-hidden="true"></i> Record removed',
         'alert' => 'info'
@@ -107,7 +108,7 @@ class Accounts extends CI_Controller
       $this->session->set_flashdata('status', $array_msg);
     } else {
       $array_msg = array(
-        'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Record cannot be changed',
+        'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Data transaksi dengan akun ini sudah ada!.',
         'alert' => 'danger'
       );
       $this->session->set_flashdata('status', $array_msg);
@@ -466,5 +467,11 @@ class Accounts extends CI_Controller
 
     // DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
     $this->load->view('main/index.php', $data);
+  }
+
+  public function count_chart_of_account($year)
+  {
+    $this->load->model('Statement_model');
+    $this->Statement_model->count_chart_of_account(array('year' => $year));
   }
 }

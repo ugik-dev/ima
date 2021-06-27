@@ -1,6 +1,12 @@
  <script type="text/javascript">
-     $(function() {
-
+     $(document).ready(function() {
+         var FDataTable = $('#FDataTable').DataTable({
+             'columnDefs': [],
+             deferRender: true,
+             "order": [
+                 [0, "desc"]
+             ]
+         });
          /* ChartJS
           * -------
           * Here we will create a few charts using ChartJS
@@ -110,237 +116,228 @@
 
          //  lineChart.Line(lineChartDataProfit, lineChartOptions);
 
-     });
-
-     $('#btn_act_bulan').on('click', () => {
-         $('#body_tab_act').html('');
-         return $.ajax({
-             url: "<?php echo site_url('Dashboard/getActivity') ?>",
-             data: {
-                 'bulanan': true
-             },
-             type: 'GET',
-             success: function(data) {
-                 var json = JSON.parse(data);
-                 if (json['error']) {
-                     return;
-                 }
-                 console.log('ac');
-                 data = json['data'];
-                 console.log(data);
-                 //  if (data != NULL)
-                 renderAcitvity(data);
-             },
-             error: function(e) {}
-         });
-
-     })
 
 
-     $('#btn_act_minggu').on('click', () => {
-         $('#body_tab_act').html('');
-         return $.ajax({
-             url: "<?php echo site_url('Dashboard/getActivity') ?>",
-             data: {
-                 'mingguan': true
-             },
-             type: 'GET',
-             success: function(data) {
-                 var json = JSON.parse(data);
-                 if (json['error']) {
-                     return;
-                 }
-                 console.log('ac');
-                 data = json['data'];
-                 console.log(data);
-                 //  if (data != NULL)
-                 renderAcitvity(data);
-             },
-             error: function(e) {}
-         });
-     })
-     getCalendarEvent()
-
-     function getCalendarEvent() {
-         return $.ajax({
-             url: "<?php echo site_url('Dashboard/getEvent') ?>",
-             data: {
-                 'mingguan': true
-             },
-             type: 'GET',
-             success: function(data) {
-                 var json = JSON.parse(data);
-                 if (json['error']) {
-                     return;
-                 }
-                 console.log('ac');
-                 data = json['data'];
-                 //  if (data != NULL)
-                 //  renderAcitvity(data);
-                 //  KTCalendarBasic.init();
-                 newdata = [];
-                 i = 0;
-                 Object.values(data).forEach((dat) => {
-                     //  newdata[i]['title'] = dat['nama_event'];
-                     //  newdata[i]['title'] = dat['nama_event'];
-                     newdata[i] = {
-                         id: dat['nama_event'],
-                         title: dat['nama_event'],
-                         start: dat['start_event'],
-                         end: dat['end_event'],
-                         url: dat['url'],
-                         description: dat['keterangan'],
-                         className: `fc-event-${dat["label_event"]} fc-event-solid-${dat["label_event"]}`
-                     }
-                     i++;
-                 });
-                 console.log(newdata);
-                 renderCalendarEvent(newdata)
-
-             },
-             error: function(e) {}
-         });
-
-     }
-
-
-
-     function renderCalendarEvent(data) {
-         var todayDate = moment().startOf('day');
-         var YM = todayDate.format('YYYY-MM');
-         var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
-         var TODAY = todayDate.format('YYYY-MM-DD');
-         var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
-
-         var calendarEl = document.getElementById('kt_calendar');
-         var calendar = new FullCalendar.Calendar(calendarEl, {
-             plugins: ['bootstrap', 'interaction', 'dayGrid', 'timeGrid', 'list'],
-             themeSystem: 'bootstrap',
-
-             isRTL: KTUtil.isRTL(),
-
-             header: {
-                 left: 'prev,next today',
-                 center: 'title',
-                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
-             },
-
-             height: 1000,
-             contentHeight: 800,
-             aspectRatio: 1, // see: https://fullcalendar.io/docs/aspectRatio
-
-             nowIndicator: true,
-             now: TODAY + 'T09:25:00', // just for demo
-
-             views: {
-                 dayGridMonth: {
-                     buttonText: 'month'
+         $('#btn_act_bulan').on('click', () => {
+             //  $('#body_tab_act').html('');
+             return $.ajax({
+                 url: "<?php echo site_url('Dashboard/getActivity') ?>",
+                 data: {
+                     'bulanan': true
                  },
-                 timeGridWeek: {
-                     buttonText: 'week'
+                 type: 'GET',
+                 success: function(data) {
+                     var json = JSON.parse(data);
+                     if (json['error']) {
+                         return;
+                     }
+                     console.log('ac');
+                     data = json['data'];
+                     console.log(data);
+                     //  if (data != NULL)
+                     renderAcitvity(data);
                  },
-                 timeGridDay: {
-                     buttonText: 'day'
-                 }
-             },
+                 error: function(e) {}
+             });
 
-             defaultView: 'dayGridMonth',
-             defaultDate: TODAY,
+         })
 
-             editable: true,
-             eventLimit: false, // allow "more" link when too many events
-             navLinks: true,
-             events: data,
-             eventClick: function(info) {
-                 info.jsEvent.preventDefault(); // don't let the browser navigate
 
-                 if (info.event.url) {
-                     window.open(info.event.url);
-                 }
-             },
+         $('#btn_act_minggu').on('click', () => {
+             //  $('#body_tab_act').html('');
+             return $.ajax({
+                 url: "<?php echo site_url('Dashboard/getActivity') ?>",
+                 data: {
+                     'mingguan': true
+                 },
+                 type: 'GET',
+                 success: function(data) {
+                     var json = JSON.parse(data);
+                     if (json['error']) {
+                         return;
+                     }
+                     console.log('ac');
+                     data = json['data'];
+                     console.log(data);
+                     //  if (data != NULL)
+                     renderAcitvity(data);
+                 },
+                 error: function(e) {}
+             });
+         })
+         getCalendarEvent()
 
-             eventRender: function(info) {
-                 var element = $(info.el);
+         function getCalendarEvent() {
+             return $.ajax({
+                 url: "<?php echo site_url('Dashboard/getEvent') ?>",
+                 data: {
+                     'mingguan': true
+                 },
+                 type: 'GET',
+                 success: function(data) {
+                     var json = JSON.parse(data);
+                     if (json['error']) {
+                         return;
+                     }
+                     console.log('ac');
+                     data = json['data'];
+                     //  if (data != NULL)
+                     //  renderAcitvity(data);
+                     //  KTCalendarBasic.init();
+                     newdata = [];
+                     i = 0;
+                     Object.values(data).forEach((dat) => {
+                         //  newdata[i]['title'] = dat['nama_event'];
+                         //  newdata[i]['title'] = dat['nama_event'];
+                         newdata[i] = {
+                             id: dat['nama_event'],
+                             title: dat['nama_event'],
+                             start: dat['start_event'],
+                             end: dat['end_event'],
+                             url: dat['url'],
+                             description: dat['keterangan'],
+                             className: `fc-event-${dat["label_event"]} fc-event-solid-${dat["label_event"]}`
+                         }
+                         i++;
+                     });
+                     console.log(newdata);
+                     renderCalendarEvent(newdata)
 
-                 if (info.event.extendedProps && info.event.extendedProps.description) {
-                     if (element.hasClass('fc-day-grid-event')) {
-                         element.data('content', info.event.extendedProps.description);
-                         element.data('placement', 'top');
-                         KTApp.initPopover(element);
-                     } else if (element.hasClass('fc-time-grid-event')) {
-                         element.find('.fc-title').append('<div class="fc-description">' + info.event.extendedProps.description + '</div>');
-                     } else if (element.find('.fc-list-item-title').lenght !== 0) {
-                         element.find('.fc-list-item-title').append('<div class="fc-description">' + info.event.extendedProps.description + '</div>');
+                 },
+                 error: function(e) {}
+             });
+
+         }
+
+
+
+         function renderCalendarEvent(data) {
+             var todayDate = moment().startOf('day');
+             var YM = todayDate.format('YYYY-MM');
+             var YESTERDAY = todayDate.clone().subtract(1, 'day').format('YYYY-MM-DD');
+             var TODAY = todayDate.format('YYYY-MM-DD');
+             var TOMORROW = todayDate.clone().add(1, 'day').format('YYYY-MM-DD');
+
+             var calendarEl = document.getElementById('kt_calendar');
+             var calendar = new FullCalendar.Calendar(calendarEl, {
+                 plugins: ['bootstrap', 'interaction', 'dayGrid', 'timeGrid', 'list'],
+                 themeSystem: 'bootstrap',
+
+                 isRTL: KTUtil.isRTL(),
+
+                 header: {
+                     left: 'prev,next today',
+                     center: 'title',
+                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                 },
+
+                 height: 1000,
+                 contentHeight: 800,
+                 aspectRatio: 1, // see: https://fullcalendar.io/docs/aspectRatio
+
+                 nowIndicator: true,
+                 now: TODAY + 'T09:25:00', // just for demo
+
+                 views: {
+                     dayGridMonth: {
+                         buttonText: 'month'
+                     },
+                     timeGridWeek: {
+                         buttonText: 'week'
+                     },
+                     timeGridDay: {
+                         buttonText: 'day'
+                     }
+                 },
+
+                 defaultView: 'dayGridMonth',
+                 defaultDate: TODAY,
+
+                 editable: true,
+                 eventLimit: false, // allow "more" link when too many events
+                 navLinks: true,
+                 events: data,
+                 eventClick: function(info) {
+                     info.jsEvent.preventDefault(); // don't let the browser navigate
+
+                     if (info.event.url) {
+                         window.open(info.event.url);
+                     }
+                 },
+
+                 eventRender: function(info) {
+                     var element = $(info.el);
+
+                     if (info.event.extendedProps && info.event.extendedProps.description) {
+                         if (element.hasClass('fc-day-grid-event')) {
+                             element.data('content', info.event.extendedProps.description);
+                             element.data('placement', 'top');
+                             KTApp.initPopover(element);
+                         } else if (element.hasClass('fc-time-grid-event')) {
+                             element.find('.fc-title').append('<div class="fc-description">' + info.event.extendedProps.description + '</div>');
+                         } else if (element.find('.fc-list-item-title').lenght !== 0) {
+                             element.find('.fc-list-item-title').append('<div class="fc-description">' + info.event.extendedProps.description + '</div>');
+                         }
                      }
                  }
-             }
-         });
+             });
 
-         calendar.render();
-     };
+             calendar.render();
+         };
 
 
-     $('#btn_act_hari').on('click', () => {
-         $('#body_tab_act').html('');
-         return $.ajax({
-             url: "<?php echo site_url('Dashboard/getActivity') ?>",
-             data: {
-                 'harian': true
-             },
-             type: 'GET',
-             success: function(data) {
-                 var json = JSON.parse(data);
-                 if (json['error']) {
-                     return;
+         $('#btn_act_hari').on('click', () => {
+             //  $('#body_tab_act').html('');
+             return $.ajax({
+                 url: "<?php echo site_url('Dashboard/getActivity') ?>",
+                 data: {
+                     'harian': true
+                 },
+                 type: 'GET',
+                 success: function(data) {
+                     var json = JSON.parse(data);
+                     if (json['error']) {
+                         return;
+                     }
+                     data = json['data'];
+                     //  if (data != NULL)
+                     renderAcitvity(data);
+                 },
+                 error: function(e) {}
+             });
+
+         })
+
+         function renderAcitvity(data) {
+             base = '<?= base_url() ?>';
+             var renderData = [];
+
+             Object.values(data).forEach((dat) => {
+                 if (dat['jenis'] == '1') {
+                     label = ' <span class="label label-lg label-light-success label-inline">Enty Jurnal</span>';
+                     url = base + 'statements/show/' + dat['sub_id'];
+                 } else if (dat['jenis'] == '2') {
+                     label = ' <span class="label label-lg label-light-primary label-inline">Edit Jurnal</span>';
+                     url = base + 'statements/show/' + dat['sub_id'];
+                 } else if (dat['jenis'] == '3') {
+                     label = ' <span class="label label-lg label-light-danger label-inline">Delete Jurnal</span>';
+                     url = base + 'statements/show/' + dat['sub_id'];
+                 } else if (dat['jenis'] == '4') {
+                     label = ' <span class="label label-lg label-light-success label-inline">Enty Invoice</span>';
+                     url = base + 'invoice/show/' + dat['sub_id'];
+                 } else if (dat['jenis'] == '5') {
+                     label = ' <span class="label label-lg label-light-primary label-inline">Edit Invoice</span>';
+                     url = base + 'invoice/show/' + dat['sub_id'];
+                 } else if (dat['jenis'] == '6') {
+                     label = ' <span class="label label-lg label-light-danger label-inline">Delete Inovice</span>';
+                     url = base + 'invoice/show/' + dat['sub_id'];
+                 } else {
+                     label = '';
                  }
-                 data = json['data'];
-                 //  if (data != NULL)
-                 renderAcitvity(data);
-             },
-             error: function(e) {}
-         });
-
-     })
-
-     function renderAcitvity(data) {
-         base = '<?= base_url() ?>';
-         Object.values(data).forEach((dat) => {
-             if (dat['jenis'] == '1') {
-                 label = ' <span class="label label-lg label-light-success label-inline">Enty Jurnal</span>';
-                 url = base + 'statements/show/' + dat['sub_id'];
-             } else if (dat['jenis'] == '2') {
-                 label = ' <span class="label label-lg label-light-primary label-inline">Edit Jurnal</span>';
-                 url = base + 'statements/show/' + dat['sub_id'];
-             } else if (dat['jenis'] == '3') {
-                 label = ' <span class="label label-lg label-light-danger label-inline">Delete Jurnal</span>';
-                 url = base + 'statements/show/' + dat['sub_id'];
-             } else if (dat['jenis'] == '4') {
-                 label = ' <span class="label label-lg label-light-success label-inline">Enty Invoice</span>';
-                 url = base + 'invoice/show/' + dat['sub_id'];
-             } else if (dat['jenis'] == '5') {
-                 label = ' <span class="label label-lg label-light-primary label-inline">Edit Invoice</span>';
-                 url = base + 'invoice/show/' + dat['sub_id'];
-             } else if (dat['jenis'] == '6') {
-                 label = ' <span class="label label-lg label-light-danger label-inline">Delete Inovice</span>';
-                 url = base + 'invoice/show/' + dat['sub_id'];
-             } else {
-                 label = '';
-             }
-             isi = `<tr>
-                        <td class="pl-0">
-                            <a href="#" class="text-dark-75 font-weight-bolder text-hover-primary mb-1 font-size-lg">${dat['user_name']}</a>
-                        </td>
-                        <td class="text-right">
-                            <span class="text-dark-75 font-weight-bolder d-block font-size-lg">${dat['date_activity']}</span>
-                        </td>
-                        <td class="text-right">
-                            <span class="text-muted font-weight-500">${dat['desk']}</span>
-                        </td>
-                        <td class="text-right">
-
-                        ${label}
-                 </td>
-                 <td class="text-right pl-0">
+                 col1 = `<a href="#" class="text-dark-75 font-weight-bolder text-hover-primary mb-1 font-size-lg">${dat['user_name']}</a>`;
+                 col2 = ` <span class="text-dark-75 font-weight-bolder d-block font-size-lg">${dat['date_activity']}</span>`;
+                 col3 = ` <span class="text-muted font-weight-500">${dat['desk']}</span>`;
+                 col5 = `
                      <a href="${url}" class="btn btn-icon btn-light btn-hover-primary btn-sm">
                          <span class="svg-icon svg-icon-md svg-icon-primary">
                              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -351,12 +348,12 @@
                                  </g>
                              </svg>
                          </span>
-                     </a>
+                     </a>`;
 
-                 </td>
-             </tr>`;
+                 renderData.push([col1, col2, col3, label, col5]);
 
-             $('#body_tab_act').append(isi);
-         })
-     }
+             })
+             FDataTable.clear().rows.add(renderData).draw();
+         }
+     });
  </script>

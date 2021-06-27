@@ -102,19 +102,24 @@ class Crud_model extends CI_Model
         }
     }
 
+
+    public function fetch_record_v2($tablename, $id)
+    {
+        $this->db->where('id', $id);
+        $query = $this->db->get($tablename);
+
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return NULL;
+        }
+    }
+
     public function fetch_menus($filter = [])
     {
-        // if ($args != NULL) {
         $this->db->select('id, name');
         $this->db->order_by('id');
 
-        // $this->db->where(['status' => 0]);
-        // $query = $this->db->get('mp_menu');
-        // } else {
-        //     $query = $this->db->get($tablename);
-        // }
-
-        // $this->db->where('source', $source);
         $query = $this->db->get('mp_menu');
         if ($query->num_rows() > 0) {
             return $query->result();
@@ -309,6 +314,28 @@ class Crud_model extends CI_Model
         $query = $this->db->get($tablename);
         if ($query->num_rows() > 0) {
             return $query->result();
+        } else {
+            return NULL;
+        }
+    }
+
+    public function check_head_transaction($id)
+    {
+        $this->db->select('count(*) as cc');
+        $this->db->where('accounthead', $id);
+        $this->db->from('mp_sub_entry');
+        // $this->db->where('date <=', $second_date);
+
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+
+            $res = $query->result();
+            // var_dump($res)
+            if ($res[0]->cc > 0) {
+                return NULL;
+            } else {
+                return 1;
+            }
         } else {
             return NULL;
         }

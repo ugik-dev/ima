@@ -277,6 +277,8 @@
         Swal.fire({
             title: 'Please Wait !',
             html: 'Data Uploading .. ', // add html attribute if you want or remove
+            icon: "save",
+
             showConfirmButton: false,
             allowOutsideClick: false,
             onBeforeOpen: () => {

@@ -11,5 +11,7 @@
 !/uploads/users/default.jpg
 /uploads/supplier/*
 !/uploads/supplier/default.jpg
+/uploads/file_dokumen/*
+!/uploads/file_dokumen/
 /uploads/purchase/*
 !/uploads/purchase/default.jpg
