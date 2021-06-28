@@ -1224,8 +1224,8 @@ class Statements extends CI_Controller
 				'acc' => $acc,
 				'draft_value' => $draft_value,
 			);
-			if ($draft_value == 'false')
-				$this->balancing_akumulasi($data);
+			// if ($draft_value == 'false')
+			// 	$this->balancing_akumulasi($data);
 			// var_dump($data);;
 			// die();
 			if (!empty($remove_draft)) $data['remove_draft'] = $remove_draft;
