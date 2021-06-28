@@ -55,16 +55,16 @@ class Dashboard extends CI_Controller
 		$data['product_alert_limit'] = $this->Crud_model->fetch_record_product_alert_limit(8);
 
 		//CASH IN HAND
-		$data['cash_in_hand'] = $this->Statement_model->count_head_amount_by_id(2);
+		$data['cash_in_hand'] = $this->Statement_model->count_current_time(array('acc_number' => '1.11.000.000'));
 
 		//ACCOUNT RECEIVABLE
-		$data['account_recieveble'] = $this->Statement_model->count_head_amount_by_id(4);
+		$data['account_recieveble'] = $this->Statement_model->count_current_time(array('acc_number' => '1.13.000.000'));
 
 		//CASH IN BANK
 		$data['cash_in_bank'] = $this->Statement_model->count_head_amount_by_id(16);
 
 		//PAYABLES
-		$data['payables'] = $this->Statement_model->count_head_amount_by_id(5);
+		$data['payables'] = $this->Statement_model->count_current_time(array('acc_number' => '2.11.000.000'));
 
 		$data['activity_today'] = $this->Statement_model->my_activity(array('from' => date('Y-m-d'), 'to' => date('Y-m-d') . ' 23.59.59'));
 
@@ -115,10 +115,10 @@ class Dashboard extends CI_Controller
 
 		// FETCHING THE EXPENSE AND REVENUE FOR GRAPH
 		$result_sales_this_year_and_total_profit = $this->Accounts_model->statistics_sales_this_year();
-		$data['result_sales_arr'] = json_encode($result_sales_this_year_and_total_profit[0]);
+		$data['result_sales_arr'] = $this->Statement_model->statistics_sales_this_year(array('acc_number' => '4.00.000.000'), 2);
+		$data['result_expense_this_year'] = $this->Statement_model->statistics_sales_this_year(array('acc_number' => '5.00.000.000'), 2, true);
 
 		$data['result_profit_this_year'] = json_encode($result_sales_this_year_and_total_profit[1]);
-		$data['result_expense_this_year'] = json_encode($result_sales_this_year_and_total_profit[2]);
 
 		// echo json_encode($data);
 		// die();

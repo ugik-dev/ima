@@ -1869,28 +1869,103 @@ class Statement_model extends CI_Model
             return false;
     }
 
+
+    public function count_current_time($filter, $cut = 5)
+    {
+        $QUERY = 'SELECT
+                                    @names := SUBSTR(mp_head.name, 1, ' . $cut . ') as pars,SUBSTR(mp_head.name, 2, 5) as title,
+                                    COALESCE((
+                                    SELECT
+                                        ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                    FROM
+                                        mp_sub_entry
+                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                                    WHERE
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date < "' . date('Y') . '-' . date('m') . '-1" AND 			mp_generalentry.date >= "' . date('Y')  . '-1-1"
+                                    ),0) saldo_sebelum,
+                                COALESCE((
+                                    SELECT
+                                        ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                    FROM
+                                        mp_sub_entry
+                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                                    WHERE
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . date('Y') . '-' .  date('m') . '-1" AND 			mp_generalentry.date <="' . date('Y') . '-' . date('m') . '-31"
+                                    ),0)  mutasi,
+                                mp_head.id,
+                                mp_head.name
+                                FROM
+                                    `mp_head`
+                                WHERE
+                                
+                                      mp_head.name like "[' . $filter['acc_number'] . '%"
+                                
+                        ORDER BY mp_head.name
+                        ';
+        $res = $this->db->query($QUERY);
+        $res = $res->result();
+        if (!empty($res[0])) {
+            return $res[0]->saldo_sebelum + $res[0]->mutasi;
+            echo json_encode($res[0]);
+        }
+        die();
+    }
+
+    public function statistics_sales_this_year($filter, $cut = 5, $min = false)
+    {
+        if (empty($filter['tahun'])) $filter['tahun'] = date('Y');
+        // if (empty($filter['bulan']))
+        if ($filter['tahun'] < date('Y'))
+            $filter['bulan'] = 12;
+        else
+            $filter['bulan'] = date('m');
+        $c_saldo = 0;
+        $mutasi = 0;
+        $debit = 0;
+        $kredit = 0;
+        for ($i = 1; $i <= $filter['bulan']; $i++) {
+            $QUERY = 'SELECT
+                                    @names := SUBSTR(mp_head.name, 1, ' . $cut . ') as pars,SUBSTR(mp_head.name, 2, 5) as title,
+                                    COALESCE((
+                                    SELECT
+                                        ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                    FROM
+                                        mp_sub_entry
+                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                                    WHERE
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' .  $i . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $i . '-31"
+                                    ),0) mutasi,
+                                mp_head.id,
+                                mp_head.name
+                                FROM
+                                    `mp_head`
+                                WHERE
+                                
+                                      mp_head.name like "[' . $filter['acc_number'] . '%"
+                                
+                        ORDER BY mp_head.name
+                        ';
+            $res = $this->db->query($QUERY);
+            $res = $res->result();
+            if (!empty($res[0])) {
+                if ($min)
+                    $tmp[$i - 1] = -$res[0]->mutasi;
+                else
+                    $tmp[$i - 1] = $res[0]->mutasi;
+            }
+        }
+        return $tmp;
+        // echo json_encode($res);
+        // die();
+        // echo json_encode($tmp);
+        // die();
+    }
+
     public function real_time_akumulasi($filter)
     {
-        //     SELECT YEAR(mp_generalentry.date) as year, MONTH(mp_generalentry.date) as month,
-        //         ROUND(sum(IF(mp_sub_entry.type = 1,  mp_sub_entry.amount,-mp_sub_entry.amount)),2) mutasi,
-        //         (SELECT 
-        //         ROUND(sum(IF(mp_sub_entry.type = 1,  mp_sub_entry.amount,-mp_sub_entry.amount)),2) saldo_sebelum
-        //         from mp_sub_entry
-        //         JOIN mp_generalentry on mp_generalentry.id = mp_sub_entry.parent_id
-        //         JOIN mp_head on mp_head.id = mp_sub_entry.accounthead
-        //   where mp_head.name like "[1.11.%"
-        //  AND mp_generalentry.date <'2020-04-1' AND mp_generalentry.date > '2020-01-01'
-        //          ) as saldo_sebelum
-
-        //         from mp_sub_entry
-        //         JOIN mp_generalentry on mp_generalentry.id = mp_sub_entry.parent_id
-        //         JOIN mp_head on mp_head.id = mp_sub_entry.accounthead
-        //   where mp_head.name like "[1.11.%"
-        //  AND mp_generalentry.date >= '2020-04-1' AND mp_generalentry.date <= '2020-04-31'
-        // if ($filter['month'] == 1) {
-        //     $fx['month'] = 12;
-        //     $fx['year'] = $filter['year'] - 1;
-        // }
         $c_saldo = 0;
         $mutasi = 0;
         $debit = 0;
