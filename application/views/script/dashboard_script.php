@@ -73,12 +73,12 @@
 
              labels: ["Jan", "Feb", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "Sep", "Okt", "Nov", "Des"],
              datasets: [{
-                     label: "Pendapatan Tahun Ini",
+                     label: "Pendapatan",
                      backgroundColor: "rgba(60,141,188,0.9)",
                      borderColor: "rgba(120, 120, 114, 1)",
                      data: <?php echo json_encode($result_sales_arr); ?>
                  }, {
-                     label: "Beban Tahun Ini",
+                     label: "Beban",
                      backgroundColor: "rgba(255, 99, 132, 0.9)",
                      borderColor: "rgba(120, 120, 114, 1)",
 
