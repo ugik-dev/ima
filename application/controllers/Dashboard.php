@@ -166,7 +166,9 @@ class Dashboard extends CI_Controller
 			$filter['to'] =  date('Y-m-d' . ' 23.59.59');
 		}
 		$this->load->model('Statement_model');
-		$data = $this->Statement_model->getEvent($filter);
+		$data1 = $this->Statement_model->getEvent($filter);
+		$data2 = $this->Statement_model->getEventNotif($filter);
+		$data = array_merge($data1, $data2);
 		echo json_encode(array('data' => $data));
 		// $this->load->model('Statement_model');
 	}
@@ -195,5 +197,6 @@ class Dashboard extends CI_Controller
 		if (!empty($data['label_event']) && !empty($data['nama_event']) && !empty($data['start_event']) && !empty($data['end_event']))
 			$this->Crud_model->insert_data('mp_event', $data);
 		echo json_encode(array('error' => false, 'data' => $data));
+		redirect('dashboard');
 	}
 }

@@ -72,14 +72,24 @@
                                 <label>Notifikasi</label>
                                 <div class="radio-list">
                                     <label class="radio">
-                                        <input type="radio" value="disable" id="notif_disable" name="notification" required="required" />
+                                        <input type="radio" value="0" id="notif_disable" name="notification" required="required" />
                                         <span></span>
                                         Matikan
                                     </label>
                                     <label class="radio">
-                                        <input type="radio" value="1bulan" id="notif_1bulan" name="notification" />
+                                        <input type="radio" value="30" id="notif_1bulan" name="notification" />
                                         <span></span>
-                                        Hidupkan <small> (1 bulan sebelum)</small>
+                                        Hidupkan <small> (30 hari sebelum)</small>
+                                    </label>
+                                    <label class="radio">
+                                        <input type="radio" value="14" id="notif_2minggu" name="notification" />
+                                        <span></span>
+                                        Hidupkan <small> (14 hari sebelum)</small>
+                                    </label>
+                                    <label class="radio">
+                                        <input type="radio" value="7" id="notif_1minggu" name="notification" />
+                                        <span></span>
+                                        Hidupkan <small> (7 hari sebelum)</small>
                                     </label>
                                 </div>
                             </div>
@@ -143,6 +153,8 @@
             'nama_dokumen': $('#jenis_dokumen_modal').find('#nama_dokumen'),
             'notif_disable': $('#jenis_dokumen_modal').find('#notif_disable'),
             'notif_1bulan': $('#jenis_dokumen_modal').find('#notif_1bulan'),
+            'notif_1minggu': $('#jenis_dokumen_modal').find('#notif_1minggu'),
+            'notif_2minggu': $('#jenis_dokumen_modal').find('#notif_2minggu'),
             'file_dokumen': new FileUploader($('#jenis_dokumen_modal').find('#file_dokumen'), "", "file_dokumen", ".xls ,.docx , .doc, .png , .jpeg , .jpg , .pdf", false, false),
 
         }
@@ -253,8 +265,10 @@
                 DokumenPerusahaanModal.date_end.val(currentData['date_end']);
                 DokumenPerusahaanModal.deskripsi.val(currentData['deskripsi']);
                 // DokumenPerusahaanModal.notif_1bulan.checked = true
-                currentData['notification'] == '1bulan' ? document.getElementById("notif_1bulan").checked = true : '';
-                currentData['notification'] == 'disable' ? document.getElementById("notif_disable").checked = true : '';
+                currentData['notification'] == '30' ? document.getElementById("notif_1bulan").checked = true : '';
+                currentData['notification'] == '14' ? document.getElementById("notif_2minggu").checked = true : '';
+                currentData['notification'] == '7' ? document.getElementById("notif_1minggu").checked = true : '';
+                currentData['notification'] == '0' ? document.getElementById("notif_disable").checked = true : '';
             })
         }
 
@@ -277,6 +291,8 @@
             DokumenPerusahaanModal.date_end.val('');
             DokumenPerusahaanModal.deskripsi.val('');
             document.getElementById("notif_1bulan").checked = false;
+            document.getElementById("notif_2minggu").checked = false;
+            document.getElementById("notif_1minggu").checked = false;
             document.getElementById("notif_disable").checked = false;
             DokumenPerusahaanModal.file_dokumen.resetState();
         }

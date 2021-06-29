@@ -107,6 +107,5 @@
         } else {
             $('#expense-type-id').css('display', 'none');
         }
-
     }
 </script>

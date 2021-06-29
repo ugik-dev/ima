@@ -9,9 +9,15 @@ use PhpOffice\PhpWord\Writer\Word2007;
 
 class Statements extends CI_Controller
 {
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->model(array('SecurityModel', 'Statement_model', 'Transaction_model'));
+		$this->SecurityModel->MultiplerolesGuard('Statement');
+		$this->load->helper(array('DataStructure'));
+		$this->db->db_debug = TRUE;
+	}
 
-	// Statements
-	//USED TO GENERATE GENERAL JOURNAL 
 	public function index()
 	{
 
@@ -46,6 +52,20 @@ class Statements extends CI_Controller
 		$data['no_jurnal'] = $no_jurnal;
 
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+		$this->load->view('main/index.php', $data);
+	}
+
+
+	public function close()
+	{
+
+		// DEFINES PAGE TITLE
+		$data['title'] = 'Penutupan Buku';
+
+		// DEFINES WHICH PAGE TO RENDER
+		$data['main_view'] = 'close_book';
+
+		$this->load->model('Statement_model');
 		$this->load->view('main/index.php', $data);
 	}
 
@@ -1250,6 +1270,19 @@ class Statements extends CI_Controller
 				throw new UserException(" Entry kredit dan debit harus imbang !!", USER_NOT_FOUND_CODE);
 			}
 			echo json_encode(array('error' => false, 'data' => array('draft' => $draft_value, 'id' => $result)));
+		} catch (Exception $e) {
+			ExceptionHandler::handle($e);
+		}
+	}
+
+	public function close_process()
+	{
+		try {
+
+			$data = $this->input->post();
+			$this->Transaction_model->close_book($data);
+			$this->Transaction_model->periode_neraca_saldo($data);
+			echo json_encode(array('error' => false));
 		} catch (Exception $e) {
 			ExceptionHandler::handle($e);
 		}

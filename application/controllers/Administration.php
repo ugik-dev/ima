@@ -9,7 +9,6 @@ class Administration extends CI_Controller
     {
         parent::__construct();
         $this->load->model(array('SecurityModel', 'AdministrationModel'));
-        $this->SecurityModel->MultiplerolesGuard('Administration');
         $this->load->helper(array('DataStructure'));
         $this->db->db_debug = TRUE;
     }
@@ -18,6 +17,8 @@ class Administration extends CI_Controller
     //USED TO GENERATE GENERAL JOURNAL 
     public function index()
     {
+
+        $this->SecurityModel->MultiplerolesGuard('Administration');
 
         // DEFINES PAGE TITLE
         $data['title'] = 'Administration';
@@ -147,6 +148,8 @@ class Administration extends CI_Controller
     public function addJenisDokumen()
     {
         try {
+            $this->SecurityModel->MultiplerolesGuard('Administration');
+
             $input = $this->input->post();
             $data['id_jenis_dokumen'] = $this->AdministrationModel->addJenisDokumen($input);
             $data['nama_jenis_dokumen'] = $input['nama_jenis_dokumen'];
@@ -160,6 +163,8 @@ class Administration extends CI_Controller
     public function editJenisDokumen()
     {
         try {
+            $this->SecurityModel->MultiplerolesGuard('Administration');
+
             $input = $this->input->post();
             $data['id_jenis_dokumen'] = $this->AdministrationModel->editJenisDokumen($input);
             $data['nama_jenis_dokumen'] = $input['nama_jenis_dokumen'];
@@ -173,6 +178,8 @@ class Administration extends CI_Controller
     public function deleteJenisDokumen()
     {
         try {
+            $this->SecurityModel->MultiplerolesGuard('Administration');
+
             $input = $this->input->post();
             $data['id_jenis_dokumen'] = $this->AdministrationModel->deleteJenisDokumen($input);
             // $data['nama_jenis_dokumen'] = $input['nama_jenis_dokumen'];
@@ -185,6 +192,8 @@ class Administration extends CI_Controller
     public function addDokumen()
     {
         try {
+            $this->SecurityModel->MultiplerolesGuard('Administration');
+
             $data = $this->input->post();
             $data['file_dokumen'] = FileIO::genericUpload('file_dokumen', array('png', 'jpeg', 'jpg', 'pdf', 'doc', 'docx', 'xls'), NULL, $data);
             $data['id_dokumen'] = $this->AdministrationModel->addDokumen($data);
@@ -200,6 +209,8 @@ class Administration extends CI_Controller
     public function editDokumen()
     {
         try {
+            $this->SecurityModel->MultiplerolesGuard('Administration');
+
             $data = $this->input->post();
             $data['file_dokumen'] = FileIO::genericUpload('file_dokumen', array('png', 'jpeg', 'jpg', 'pdf', 'doc', 'docx', 'xls'), NULL, $data);
             // $data['id_dokumen'] = $this->AdministrationModel->addDokumen($data);
@@ -220,6 +231,8 @@ class Administration extends CI_Controller
     public function deleteDokumen()
     {
         try {
+            $this->SecurityModel->MultiplerolesGuard('Administration');
+
             $input = $this->input->post();
             $data['id_dokumen'] = $this->AdministrationModel->deleteDokumen($input);
             // $data['nama_jenis_dokumen'] = $input['nama_jenis_dokumen'];

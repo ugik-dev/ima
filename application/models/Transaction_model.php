@@ -273,6 +273,119 @@ class Transaction_model extends CI_Model
         return $data_fields;
     }
 
+    public function close_book($data)
+    {
+        $this->db->set('gen_lock', 'Y');
+        $this->db->where('date like "' . $data['tahun'] . '%"');
+        $this->db->where('gen_lock', 'N');
+        $this->db->update('mp_generalentry');
+    }
+
+
+    public function periode_neraca_saldo($filter)
+    {
+        $this->db->select('*');
+        $this->db->from('mp_generalentry');
+        $this->db->where('generated_source', 'Openning Balancing');
+        $this->db->where('date like "' . ((int)$filter['tahun'] + 1) . '%"');
+        $this->db->where('no_jurnal = "OPENBALANCE/' . ((int)$filter['tahun'] + 1) . '"');
+        $open_gen = $this->db->get();
+        $open_gen = $open_gen->result();
+        // var_dump($open_gen);
+        if (!empty($open_gen)) {
+        } else {
+            $this->db->set('id', - ((int)$filter['tahun'] + 1));
+            $this->db->set('generated_source', 'Openning Balancing');
+            $this->db->set('gen_lock', 'Y');
+            $this->db->set('date', ((int)$filter['tahun'] + 1) . '-01-01');
+            $this->db->set('no_jurnal', 'OPENBALANCE/' . ((int)$filter['tahun'] + 1));
+            $this->db->insert('mp_generalentry');
+        }
+
+        $parent_id = - ((int)$filter['tahun'] + 1);
+
+
+        // $QUERY = 'SELECT
+        //                 @names := SUBSTR(mp_head.name, 1, 14) as pars,nature as title,
+        //                 COALESCE((
+        //                 SELECT
+        //                     ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+        //                 FROM
+        //                     mp_sub_entry
+        //                 JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+        //                 JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+        //                 WHERE
+        //                 mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-1-1" AND mp_generalentry.date <= "' . $filter['tahun'] . '-12-31"
+        //                 ),0) saldo,
+        //             mp_head.id,
+        //             mp_head.name
+        //             FROM
+        //                 `mp_head`
+        //                 right join mp_sub_entry on mp_head.id = mp_sub_entry.accounthead
+        //                 join mp_generalentry on mp_generalentry.id = mp_sub_entry.parent_id
+        //                 ';
+        $QUERY = '
+        INSERT INTO mp_sub_entry (parent_id, accounthead, amount, type,sub_keterangan,pos_lock)
+        SELECT "' . - ((int)$filter['tahun'] + 1) . '" as parent_id ,mp_head.id as accounthead ,
+        ROUND(ABS(SUM(IF(mp_sub_entry.type = 1, mp_sub_entry.amount, - mp_sub_entry.amount))),2) as amount,
+        @var_saldo := if((SUM(IF(mp_sub_entry.type = 1, mp_sub_entry.amount, - mp_sub_entry.amount))) < 0 , 0, 1 ) AS type ,
+        "Openning Balance ' . - ((int)$filter['tahun'] + 1) . '" as sub_keterangan,
+        "Y" as pos_lock
+                                    FROM
+                                        mp_sub_entry
+                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                                    WHERE
+                                   mp_generalentry.date >= "' . $filter['tahun'] . '-1-1" AND mp_generalentry.date <= "' . $filter['tahun'] . '-12-31"
+                                    GROUP by 
+                                    mp_head.name';
+        // WHERE
+        // (
+        //         SUBSTRING_INDEX(
+        //             SUBSTRING_INDEX(mp_head.name, ".", -3),
+        //             "]",
+        //             1
+        //         ) = "00.000.000" 
+        //     ) 
+        // GROUP BY
+        // SUBSTR(mp_head.name, 1, 5)
+        // ORDER BY mp_head.name
+        $res = $this->db->query($QUERY);
+        $res = $res->result();
+        // $i = 0;
+        echo json_encode($res);
+        // print_r($QUERY);
+        die();
+        foreach ($res as $re) {
+            if ($re->saldo != 0) {
+                $this->db->set('parent_id', - ((int)$filter['tahun'] + 1));
+                if ($re->saldo < 0) {
+
+                    $this->db->set('type', '0');
+                    $this->db->set('amount', -$re->saldo);
+                } else {
+                    $this->db->set('type', '1');
+                    $this->db->set('amount', $re->saldo);
+                }
+                $this->db->set('pos_lock', 'Y');
+                $this->db->set('sub_keterangan', 'Openning Balance ' . ((int)$filter['tahun'] + 1));
+                $this->db->set('accounthead', $re->id);
+                $this->db->insert('mp_sub_entry');
+            }
+            // $tmp[$i] = array(
+            //     'id' => $re->id,
+            //     'text' => ($i + 1) . ' | ' . $re->title,
+            //     'data' => [
+            //         'saldo_s' => number_format($re->title == 'Expense' ? - ($re->saldo_sebelum) : $re->saldo_sebelum, 2),
+            //         'mutasi' => number_format($re->title == 'Expense' ? - ($re->mutasi) : $re->mutasi, 2),
+            //         'saldo' => number_format($re->title == 'Expense' ? - ($re->saldo_sebelum + $re->mutasi) : ($re->saldo_sebelum + $re->mutasi), 2)
+            //     ],
+            //     'state' => ['opened' => true]
+            // );
+        }
+        // return $tmp;
+    }
+
     //USED TO ADD EXPENSES TRANSACTIONS 
     function add_expense_transaction($data_fields)
     {
