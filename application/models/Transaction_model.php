@@ -304,26 +304,9 @@ class Transaction_model extends CI_Model
 
         $parent_id = - ((int)$filter['tahun'] + 1);
 
+        $this->db->where('parent_id', $parent_id);
+        $this->db->delete('mp_sub_entry');
 
-        // $QUERY = 'SELECT
-        //                 @names := SUBSTR(mp_head.name, 1, 14) as pars,nature as title,
-        //                 COALESCE((
-        //                 SELECT
-        //                     ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
-        //                 FROM
-        //                     mp_sub_entry
-        //                 JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-        //                 JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-        //                 WHERE
-        //                 mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-1-1" AND mp_generalentry.date <= "' . $filter['tahun'] . '-12-31"
-        //                 ),0) saldo,
-        //             mp_head.id,
-        //             mp_head.name
-        //             FROM
-        //                 `mp_head`
-        //                 right join mp_sub_entry on mp_head.id = mp_sub_entry.accounthead
-        //                 join mp_generalentry on mp_generalentry.id = mp_sub_entry.parent_id
-        //                 ';
         $QUERY = '
         INSERT INTO mp_sub_entry (parent_id, accounthead, amount, type,sub_keterangan,pos_lock)
         SELECT "' . - ((int)$filter['tahun'] + 1) . '" as parent_id ,mp_head.id as accounthead ,

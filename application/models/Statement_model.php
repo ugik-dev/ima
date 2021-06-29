@@ -512,7 +512,7 @@ class Statement_model extends CI_Model
         $this->db->from('mp_sub_entry');
         $this->db->join('mp_head', "mp_head.id = mp_sub_entry.accounthead");
         $this->db->join('mp_generalentry', 'mp_generalentry.id = mp_sub_entry.parent_id');
-        $this->db->order_by('mp_generalentry.date', 'desc');
+        $this->db->order_by('mp_generalentry.date', 'asc');
         // $this->db->order_by('mp_generalentry.no_jurnal', 'asc');
         $this->db->order_by("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_generalentry.no_jurnal, '/', -3), '/', 1) ASC");
 
