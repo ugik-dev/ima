@@ -963,7 +963,7 @@ class Statements extends CI_Controller
 		$this->load->view('main/index.php', $data);
 	}
 
-	//USED TO GENERATE BALANCE SHEET 
+	//USED TO GENERATE BALANCE SHEET 	
 	public function balancesheet()
 	{
 		$year = html_escape($this->input->post('year'));
