@@ -5,7 +5,7 @@
                 <form class="form-inline" id="toolbar_form" onsubmit="return false;">
                     <input type="hidden" id="is_not_self" name="is_not_self" value="1">
                     <select class="form-control mr-sm-2" name="id_jenis_perusahaan" id="id_jenis_perusahaan"></select>
-                    <button type="button" class="btn btn-success my-1 mr-sm-2" id="new_btn"><i class="fas fa-plus"></i> Tambah Jenis Dokumen</button>
+                    <button type="button" class="btn btn-success my-1 mr-sm-2" id="new_btn"><i class="fas fa-plus"></i> Tambah Dokumen</button>
                 </form>
             </div>
         </div>

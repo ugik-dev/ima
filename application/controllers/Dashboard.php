@@ -168,10 +168,37 @@ class Dashboard extends CI_Controller
 		$this->load->model('Statement_model');
 		$data1 = $this->Statement_model->getEvent($filter);
 		$data2 = $this->Statement_model->getEventNotif($filter);
-		$data = array_merge($data1, $data2);
+		if (!empty($data1) && !empty($data2))
+			$data = array_merge($data1, $data2);
+		else if (!empty($data1)) {
+			$data = $data1;
+		} else if (!empty($data2)) {
+			$data = $data2;
+		}
 		echo json_encode(array('data' => $data));
 		// $this->load->model('Statement_model');
 	}
+
+	public function document()
+	{
+
+		$this->SecurityModel->MultiplerolesGuard('Administration');
+
+		// DEFINES PAGE TITLE
+		$data['title'] = 'Administration';
+
+		// DEFINES WHICH PAGE TO RENDER
+		$data['main_view'] = 'administration/dokumen_list';
+
+		$this->load->model('Statement_model');
+		// $data['transaction_records'] = $this->Statement_model->fetch_transasctions($filter);
+		// echo json_encode($data['transaction_records']);
+		// die();
+
+		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+		$this->load->view('main/index.php', $data);
+	}
+
 
 
 	function popup($page_name = '', $param = '')

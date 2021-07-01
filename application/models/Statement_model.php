@@ -645,7 +645,7 @@ class Statement_model extends CI_Model
     public function trail_balance($current_date)
     {
         //ACCOUNTING START DATE
-        $date1 = '2019-01-01';
+        $date1 = '2012-01-01';
 
         $date2 = $current_date;
 
@@ -1408,7 +1408,7 @@ class Statement_model extends CI_Model
                         @names := SUBSTR(mp_head.name, 1, 3) as pars,nature as title,
                         COALESCE((
                         SELECT
-                            ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                            ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
                         FROM
                             mp_sub_entry
                         JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
@@ -1418,7 +1418,7 @@ class Statement_model extends CI_Model
                         ),0) saldo_sebelum,
                        COALESCE((
                         SELECT
-                            ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                            ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
                         FROM
                             mp_sub_entry
                         JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
@@ -1450,7 +1450,7 @@ class Statement_model extends CI_Model
                             ROUND(
                                 SUM(
                                     IF(mp_sub_entry.parent_id < 0,
-                                        IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)
+                                        IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)
                                     ,0)
                                 ),2
                             ) 
@@ -1465,7 +1465,7 @@ class Statement_model extends CI_Model
                         SELECT
                             ROUND(SUM(
                                      IF(mp_sub_entry.parent_id > 0,
-                               IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)
+                               IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)
                               ,0)
                             ),2) 
                         FROM
@@ -1510,97 +1510,12 @@ class Statement_model extends CI_Model
                 'state' => ['opened' => true]
             );
             if ($re->saldo_sebelum != 0 or $re->mutasi != 0) {
-                if ($filter['bulan'] != 1) {
 
-                    $QUERY = 'SELECT
-                                    @names := SUBSTR(mp_head.name, 1, 5) as pars,SUBSTR(mp_head.name, 2, 5) as title,
-                                    COALESCE((
-                                    SELECT
-                                        ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
-                                    FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date < "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date >= "' . $filter['tahun'] . '-1-1"
-                                    ),0) saldo_sebelum,
-                                COALESCE((
-                                    SELECT
-                                        ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
-                                    FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
-                                    ),0)  mutasi,
-                                mp_head.id,
-                                mp_head.name
-                                FROM
-                                    `mp_head`
-                                WHERE
-                                
-                                        SUBSTRING_INDEX(
-                                            SUBSTRING_INDEX(mp_head.name, ".", -2),
-                                            "]",
-                                            1
-                                        ) = "000.000" 
-                                     AND mp_head.name like "' . $re->pars . '%"
-                                     AND mp_head.id !=  "' . $re->id . '"
-                                GROUP BY
-                                    SUBSTR(mp_head.name, 1, 5)
-                        ORDER BY mp_head.name
-                        ';
+                if ($filter['bulan'] != 1) {
+                    $res2 =  $this->query_count_more_1($filter, $re->pars, $re->id, 5, -2, '000.000');
                 } else {
-                    $QUERY = 'SELECT
-                                    @names := SUBSTR(mp_head.name, 1, 5) as pars,SUBSTR(mp_head.name, 2, 5) as title,
-                                    COALESCE((
-                                    SELECT
-                                        ROUND(SUM(    
-                                                       IF(mp_sub_entry.parent_id < 0,
-                                        IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)
-                                    ,0)
-                                     ),2) 
-                                       FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date < "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date >= "' . $filter['tahun'] . '-1-1"
-                                    ),0) saldo_sebelum,
-                                        COALESCE((
-                                        SELECT
-                                            ROUND(SUM(               IF(mp_sub_entry.parent_id > 0,
-                                            IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)
-                                        ,0)
-                                    ),2) 
-                                    FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
-                                    ),0)  mutasi,
-                                mp_head.id,
-                                mp_head.name
-                                FROM
-                                    `mp_head`
-                                WHERE
-                                
-                                        SUBSTRING_INDEX(
-                                            SUBSTRING_INDEX(mp_head.name, ".", -2),
-                                            "]",
-                                            1
-                                        ) = "000.000" 
-                                     AND mp_head.name like "' . $re->pars . '%"
-                                     AND mp_head.id !=  "' . $re->id . '"
-                                GROUP BY
-                                    SUBSTR(mp_head.name, 1, 5)
-                        ORDER BY mp_head.name
-                        ';
+                    $res2 =  $this->query_count_month_1($filter, $re->pars, $re->id, 5, -2, '000.000');
                 }
-                $res2 = $this->db->query($QUERY);
-                $res2 = $res2->result();
                 $k = 0;
                 foreach ($res2 as $re2) {
                     if ($re2->saldo_sebelum != 0 or $re2->mutasi != 0) {
@@ -1615,96 +1530,22 @@ class Statement_model extends CI_Model
                             ],
                             'state' => ['opened' => true]
                         );
+
                         // ===LEVEL 3
                         if ($filter['bulan'] != 1) {
-                            $QUERY = 'SELECT
-                                    @names := SUBSTR(mp_head.name, 1, 9) as pars,SUBSTR(mp_head.name, 2, 9) as title,
-                                    COALESCE((
-                                    SELECT
-                                        ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
-                                    FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date < "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date >= "' . $filter['tahun'] . '-1-1"
-                                    ),0) saldo_sebelum,
-                                COALESCE((
-                                    SELECT
-                                        ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
-                                    FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
-                                    ),0)  mutasi,
-                                mp_head.id,
-                                mp_head.name
-                                FROM
-                                    `mp_head`
-                                WHERE
-                                
-                                        SUBSTRING_INDEX(
-                                            SUBSTRING_INDEX(mp_head.name, ".", -1),
-                                            "]",
-                                            1
-                                        ) = "000" 
-                                        AND mp_head.name like "' . $re2->pars . '%"
-                                        AND mp_head.id !=  "' . $re2->id . '"
-                                  
-                        ORDER BY mp_head.name
-                        ';
+                            $res3 =  $this->query_count_more_1($filter, $re2->pars, $re2->id, 9, -1, '000');
                         } else {
-
-                            $QUERY = 'SELECT
-                                    @names := SUBSTR(mp_head.name, 1, 9) as pars,SUBSTR(mp_head.name, 2, 9) as title,
-                                    COALESCE((
-                                    SELECT
-                                        ROUND(SUM(IF(mp_sub_entry.parent_id < 0,IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount),0)),2) 
-                                    FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date < "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date >= "' . $filter['tahun'] . '-1-1"
-                                    ),0) saldo_sebelum,
-                                COALESCE((
-                                    SELECT
-                                        ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
-                                    FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
-                                    ),0)  mutasi,
-                                mp_head.id,
-                                mp_head.name
-                                FROM
-                                    `mp_head`
-                                WHERE
-                                
-                                        SUBSTRING_INDEX(
-                                            SUBSTRING_INDEX(mp_head.name, ".", -1),
-                                            "]",
-                                            1
-                                        ) = "000" 
-                                        AND mp_head.name like "' . $re2->pars . '%"
-                                        AND mp_head.id !=  "' . $re2->id . '"
-                                  
-                        ORDER BY mp_head.name
-                        ';
+                            $res3 =  $this->query_count_month_1($filter, $re2->pars, $re2->id, 9, -1, '000');
                         }
 
-                        $res3 = $this->db->query($QUERY);
-                        $res3 = $res3->result();
+                        // $res3 = $this->db->query($QUERY);
+                        // $res3 = $res3->result();
                         $l = 0;
                         // if ($k == 0) {
 
                         //     // print_r($this->db->last_query());
-                        // echo json_encode($res3);
-                        // die();
+                        // echo $re2->id;
+                        // echo json_enX`
                         // }
                         foreach ($res3 as $re3) {
                             if ($re3->saldo_sebelum != 0 or $re3->mutasi != 0) {
@@ -1726,7 +1567,7 @@ class Statement_model extends CI_Model
                                     //                 @names := SUBSTR(mp_head.name, 1, 14) as pars,SUBSTR(mp_head.name, 2, 14) as title,
                                     //                 COALESCE((
                                     //                 SELECT
-                                    //                     ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                    //                     ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
                                     //                 FROM
                                     //                     mp_sub_entry
                                     //                 JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
@@ -1736,7 +1577,7 @@ class Statement_model extends CI_Model
                                     //                 ),0) saldo_sebelum,
                                     //             COALESCE((
                                     //                 SELECT
-                                    //                     ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                    //                     ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
                                     //                 FROM
                                     //                     mp_sub_entry
                                     //                 JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
@@ -1797,6 +1638,85 @@ class Statement_model extends CI_Model
             $i++;
         }
         return $tmp;
+    }
+
+    function query_count_more_1($filter, $pars, $id, $leng, $var1, $var2)
+    {
+        $QUERY = 'SELECT
+                                    @names := SUBSTR(mp_head.name, 1, ' . $leng . ') as pars,SUBSTR(mp_head.name, 2, ' . $leng . ') as title,
+                                    COALESCE((
+                                    SELECT
+                                        ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                    FROM
+                                        mp_sub_entry
+                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                                    WHERE
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date < "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND	mp_generalentry.date >= "' . $filter['tahun'] . '-1-1"
+                                    ),0) saldo_sebelum,
+                                COALESCE((
+                                    SELECT
+                                        ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                    FROM
+                                        mp_sub_entry
+                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                                    WHERE
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                                    ),0)  mutasi,
+                                mp_head.id,
+                                mp_head.name
+                                FROM
+                                `mp_head`
+                                WHERE
+                                   
+                                       SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, "]", 1),"[",-1),"." ,' . $var1 . ') = "' . $var2 . '" 
+                                        AND mp_head.name like "' . $pars . '%"
+                                        AND mp_head.id !=  "' . $id . '"
+                        ORDER BY mp_head.name
+                        ';
+        $res = $this->db->query($QUERY);
+        return $res->result();
+    }
+
+
+    function query_count_month_1($filter, $pars, $id, $leng, $var1, $var2)
+    {
+        $QUERY = 'SELECT @names := SUBSTR(mp_head.name, 1, ' . $leng . ') as pars,SUBSTR(mp_head.name, 2, 9) as title,
+                        COALESCE((
+                                    SELECT
+                                        ROUND(SUM(IF(mp_sub_entry.parent_id < 0,IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount),0)),2) 
+                                    FROM
+                                        mp_sub_entry
+                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                                    WHERE
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date = "' . $filter['tahun'] . '-1-1" 
+                                    ),0) saldo_sebelum,
+                                COALESCE((
+                                    SELECT
+                                        ROUND(SUM(IF(mp_sub_entry.parent_id > 0,IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount),0)),2) 
+                                    FROM
+                                        mp_sub_entry
+                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                                    WHERE
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                                    ),0)  mutasi,
+                                mp_head.id,
+                                mp_head.name
+                                FROM
+                                    `mp_head`
+                                WHERE
+                                        SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, "]", 1),"[",-1),"." ,' . $var1 . ') = "' . $var2 . '" 
+                                        AND mp_head.name like "' . $pars . '%"
+                                        AND mp_head.id !=  "' . $id . '"
+                                                                                             GROUP BY
+                                    SUBSTR(mp_head.name, 1, 9)
+                        ORDER BY mp_head.name
+                        ';
+        $res = $this->db->query($QUERY);
+        return $res->result();
     }
 
     public function count_chart_of_account($filter = [])
@@ -1978,7 +1898,7 @@ class Statement_model extends CI_Model
                                     @names := SUBSTR(mp_head.name, 1, ' . $cut . ') as pars,SUBSTR(mp_head.name, 2, 5) as title,
                                     COALESCE((
                                     SELECT
-                                        ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                        ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
                                     FROM
                                         mp_sub_entry
                                     JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
@@ -1988,7 +1908,7 @@ class Statement_model extends CI_Model
                                     ),0) saldo_sebelum,
                                 COALESCE((
                                     SELECT
-                                        ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                        ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
                                     FROM
                                         mp_sub_entry
                                     JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
@@ -2038,6 +1958,7 @@ class Statement_model extends CI_Model
                                     JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                                     JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                                     WHERE
+                                    mp_generalentry.id > 0 AND
                                     mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' .  $i . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $i . '-31"
                                     ),0) mutasi,
                                 mp_head.id,

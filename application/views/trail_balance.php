@@ -30,7 +30,14 @@
                         </div>
                         <!-- </div> -->
                         <div class="form-group mr-2">
-                            <select class="form-control input-lg" name="year">
+                            <select class="form-control input-lg" id="year" name="year">
+                                <option value="2012"> 2012</option>
+                                <option value="2013"> 2013</option>
+                                <option value="2014"> 2014</option>
+                                <option value="2015"> 2015</option>
+                                <option value="2016"> 2016</option>
+                                <option value="2017"> 2017</option>
+                                <option value="2018"> 2018</option>
                                 <option value="2019"> 2019</option>
                                 <option value="2020"> 2020</option>
                                 <option value="2021"> 2021</option>
@@ -41,6 +48,10 @@
                                 <option value="2026"> 2026</option>
                             </select>
                         </div>
+
+                        <script>
+                            $('#year').val('<?= explode('-', $year)[0] ?>');
+                        </script>
                         <!-- </div> -->
                         <!-- <div class="col-lg-3"> -->
                         <div class="form-group mr-2">

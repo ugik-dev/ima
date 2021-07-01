@@ -240,7 +240,7 @@
                                  <!--end::Symbol-->
                                  <!--begin::Text-->
                                  <div class="d-flex flex-column font-weight-bold">
-                                     <a href="<?php base_url() ?>invoice/manage" class="text-dark text-hover-primary mb-1 font-size-lg">Kwitansi</a>
+                                     <a href="<?php base_url() ?>dashboard/document" class="text-dark text-hover-primary mb-1 font-size-lg">Document</a>
 
                                  </div>
                                  <!--end::Text-->
@@ -266,45 +266,6 @@
                                  <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                              </div>
                          </div>
-                         <!-- <canvas id="myChart" width="400" height="400"></canvas> -->
-                         <!-- <script>
-                             var ctx = document.getElementById('myChart').getContext('2d');
-                             var myChart = new Chart(ctx, {
-                                 type: 'bar',
-                                 data: {
-                                     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                                     datasets: [{
-                                         label: '# of Votes',
-                                         data: [12, 19, 3, 5, 2, 3],
-                                         backgroundColor: [
-                                             'rgba(255, 99, 132, 0.2)',
-                                             'rgba(54, 162, 235, 0.2)',
-                                             'rgba(255, 206, 86, 0.2)',
-                                             'rgba(75, 192, 192, 0.2)',
-                                             'rgba(153, 102, 255, 0.2)',
-                                             'rgba(255, 159, 64, 0.2)'
-                                         ],
-                                         borderColor: [
-                                             'rgba(255, 99, 132, 1)',
-                                             'rgba(54, 162, 235, 1)',
-                                             'rgba(255, 206, 86, 1)',
-                                             'rgba(75, 192, 192, 1)',
-                                             'rgba(153, 102, 255, 1)',
-                                             'rgba(255, 159, 64, 1)'
-                                         ],
-                                         borderWidth: 1
-                                     }]
-                                 },
-                                 options: {
-                                     scales: {
-                                         y: {
-                                             beginAtZero: true
-                                         }
-                                     }
-                                 }
-                             });
-                         </script> -->
-
                          <div class="card-body pt-8">
 
                              <div class=" box-body">
@@ -424,88 +385,12 @@
                                      <!--end::Table-->
                                  </div>
                                  <!--end::Tap pane-->
-                                 <!--begin::Tap pane-->
 
                              </div>
                          </div>
-                         <!--end::Body-->
                      </div>
-                     <!--end::Advance Table Widget 2-->
                  </div>
              </div>
-             <!-- <div class="row">
-             <div class="col-lg-3 col-xs-6">
-                 <div class="small-box custom-bg-color">
-                     <div class="inner">
-                         <h3><label class="label"><?php echo $Sales_today_count; ?></label></h3>
-                         <h4 class="paragraph">Penjualan Hari Ini</h4>
-                     </div>
-                     <div class="icon">
-                         <i class="fa fa-bar-chart "></i>
-                     </div>
-                     <a href="<?php echo base_url('salesreport'); ?>" class="small-box-footer"><span class="dashboard_text"> Tot <?php echo $sales_today_amount[0]; ?> | Mo <?php echo $sales_today_amount[1]; ?> | Pr <?php echo $sales_today_amount[0] - $sales_today_amount[1]; ?></a>
-                 </div>
-             </div>
-             <div class="col-lg-3 col-xs-6">
-                 <div class="small-box custom-bg-color">
-                     <div class="inner">
-                         <h3><label class="label"><?php echo $Sales_month_count; ?></label></h3>
-
-                         <h4 class="paragraph">Penjualan Bulan Ini</h4>
-                     </div>
-                     <div class="icon">
-                         <i class="fa fa-area-chart "></i>
-                     </div>
-                     <a href="<?php echo base_url('salesreport'); ?>" class="small-box-footer"> <span class="dashboard_text"> Tot <?php echo $sales_month_amount[0]; ?> | <span class="expense_das">Mod <?php echo $sales_month_amount[1]; ?></span> | Pr <?php echo $sales_month_amount[0] - $sales_month_amount[1]; ?> </span></a>
-                 </div>
-             </div>
-             <div class="col-lg-3 col-xs-6">
-                 <div class="small-box custom-bg-color-second">
-                     <div class="inner">
-                         <h3><label class="label"><?php echo number_format($purchase_amount, 0, '.', ''); ?></label></h3>
-                         <h4 class="paragraph">Pembelian Bulan Ini <?php echo $currency; ?></h4>
-                     </div>
-                     <div class="icon">
-                         <i class="fa fa-cubes"></i>
-                     </div>
-                     <a href="<?php echo base_url('purchase'); ?>" class="small-box-footer">Lihat <i class="fa fa-hand-o-right"></i></a>
-                 </div>
-             </div>
-             <div class="col-lg-3 col-xs-6">
-                 <div class="small-box custom-bg-color-second">
-                     <div class="inner">
-                         <h3><label class="label"><?php echo number_format($expense_amount, 0, '.', ''); ?></label></h3>
-                         <h4 class="paragraph">Pengeluaran Bulan Ini <?php echo $currency; ?></h4>
-
-                     </div>
-                     <div class="icon">
-                         <i class="fa fa-rocket" aria-hidden="true"></i>
-                     </div>
-                     <a href="<?php echo base_url('expense'); ?>" class="small-box-footer">Lihat <i class="fa fa-hand-o-right"></i></a>
-                 </div>
-             </div>
-         </div> -->
-             <!-- </section>
-         <div class="row">
-             <section class="col-lg-5 connectedSortable">
-                 <div class="box box-primary ">
-                     <div class="box-header with-border">
-                         <h3 class="box-title"> <i class="ion ion-stats-bars "></i> Profit Penjualan Tahun Ini <?php echo $currency; ?> </h3>
-                         <div class="box-tools pull-right">
-                             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                             </button>
-                             <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                         </div>
-                     </div>
-                     <div class="box-body">
-                         <div class="chart">
-                             <canvas id="lineChart" style="height:249px"></canvas>
-                         </div>
-                     </div>
-                 </div>
-
-             </section> -->
-
 
          </div>
      </div>
