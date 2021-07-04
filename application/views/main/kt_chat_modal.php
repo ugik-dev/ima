@@ -107,14 +107,9 @@
                             </button>
                         </div>
                     </div>
-                    <!--end::Header-->
-                    <!--begin::Body-->
                     <div class="card-body">
-                        <!--begin::Scroll-->
                         <div class="scroll scroll-pull" data-height="375" data-mobile-height="300">
-                            <!--begin::Messages-->
                             <div class="messages">
-                                <!--begin::Message In-->
                                 <div class="d-flex flex-column mb-5 align-items-start">
                                     <div class="d-flex align-items-center">
                                         <div class="symbol symbol-circle symbol-40 mr-3">
@@ -127,8 +122,6 @@
                                     </div>
                                     <div class="mt-2 rounded p-5 bg-light-success text-dark-50 font-weight-bold font-size-lg text-left max-w-400px">How likely are you to recommend our company to your friends and family?</div>
                                 </div>
-                                <!--end::Message In-->
-                                <!--begin::Message Out-->
                                 <div class="d-flex flex-column mb-5 align-items-end">
                                     <div class="d-flex align-items-center">
                                         <div>
@@ -141,8 +134,6 @@
                                     </div>
                                     <div class="mt-2 rounded p-5 bg-light-primary text-dark-50 font-weight-bold font-size-lg text-right max-w-400px">Hey there, we’re just writing to let you know that you’ve been subscribed to a repository on GitHub.</div>
                                 </div>
-                                <!--end::Message Out-->
-                                <!--begin::Message In-->
                                 <div class="d-flex flex-column mb-5 align-items-start">
                                     <div class="d-flex align-items-center">
                                         <div class="symbol symbol-circle symbol-40 mr-3">
@@ -155,8 +146,6 @@
                                     </div>
                                     <div class="mt-2 rounded p-5 bg-light-success text-dark-50 font-weight-bold font-size-lg text-left max-w-400px">Ok, Understood!</div>
                                 </div>
-                                <!--end::Message In-->
-                                <!--begin::Message Out-->
                                 <div class="d-flex flex-column mb-5 align-items-end">
                                     <div class="d-flex align-items-center">
                                         <div>

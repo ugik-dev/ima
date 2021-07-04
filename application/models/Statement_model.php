@@ -1402,13 +1402,16 @@ class Statement_model extends CI_Model
     public function periode_neraca_saldo($filter)
     {
         if ($filter['bulan'] != 1) {
-
-
             $QUERY = 'SELECT
                         @names := SUBSTR(mp_head.name, 1, 3) as pars,nature as title,
                         COALESCE((
                         SELECT
-                            ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                            ROUND(SUM(
+                                    IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                        
+                                ),2) 
                         FROM
                             mp_sub_entry
                         JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
@@ -1418,7 +1421,11 @@ class Statement_model extends CI_Model
                         ),0) saldo_sebelum,
                        COALESCE((
                         SELECT
-                            ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                            ROUND(SUM(
+                                IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                        ),2) 
                         FROM
                             mp_sub_entry
                         JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
@@ -1450,8 +1457,10 @@ class Statement_model extends CI_Model
                             ROUND(
                                 SUM(
                                     IF(mp_sub_entry.parent_id < 0,
-                                        IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)
-                                    ,0)
+                                      IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                          ,0)
                                 ),2
                             ) 
                         FROM
@@ -1465,8 +1474,10 @@ class Statement_model extends CI_Model
                         SELECT
                             ROUND(SUM(
                                      IF(mp_sub_entry.parent_id > 0,
-                               IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)
-                              ,0)
+                               IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                           ,0)
                             ),2) 
                         FROM
                             mp_sub_entry
@@ -1646,7 +1657,12 @@ class Statement_model extends CI_Model
                                     @names := SUBSTR(mp_head.name, 1, ' . $leng . ') as pars,SUBSTR(mp_head.name, 2, ' . $leng . ') as title,
                                     COALESCE((
                                     SELECT
-                                        ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                        ROUND(SUM(
+                                            IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                        
+                                        ),2) 
                                     FROM
                                         mp_sub_entry
                                     JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
@@ -1656,7 +1672,11 @@ class Statement_model extends CI_Model
                                     ),0) saldo_sebelum,
                                 COALESCE((
                                     SELECT
-                                        ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                        ROUND(SUM(
+                                            IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                        ),2) 
                                     FROM
                                         mp_sub_entry
                                     JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
@@ -1898,7 +1918,11 @@ class Statement_model extends CI_Model
                                     @names := SUBSTR(mp_head.name, 1, ' . $cut . ') as pars,SUBSTR(mp_head.name, 2, 5) as title,
                                     COALESCE((
                                     SELECT
-                                        ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                        ROUND(SUM(
+                                            IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                        ),2) 
                                     FROM
                                         mp_sub_entry
                                     JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
@@ -1908,7 +1932,11 @@ class Statement_model extends CI_Model
                                     ),0) saldo_sebelum,
                                 COALESCE((
                                     SELECT
-                                        ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                        ROUND(SUM(
+                                            IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                                   ),2) 
                                     FROM
                                         mp_sub_entry
                                     JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id

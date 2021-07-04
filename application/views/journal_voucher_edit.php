@@ -372,7 +372,7 @@
                 if (res_data['draft'] == 'true') {
                     location.replace("<?= base_url('statements/show/') ?>" + res_data['id'] + '/draft')
                 } else {
-                    // location.replace("<?= base_url('statements/show/') ?>" + res_data['id'])
+                    location.replace("<?= base_url('statements/show/') ?>" + res_data['id'])
                 }
                 // dataUser[user['id_user']] = user;
                 // swal("Simpan Berhasil", "", "success");

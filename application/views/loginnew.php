@@ -27,8 +27,6 @@
     <!--end::Layout Themes-->
     <link rel="shortcut icon" href="<?= base_url() ?>assets/img/favicon.png" />
 </head>
-<!--end::Head-->
-<!--begin::Body-->
 
 <body id="kt_body" class="header-fixed header-mobile-fixed subheader-enabled subheader-fixed aside-enabled aside-fixed aside-minimize-hoverable page-loading">
     <!--begin::Main-->

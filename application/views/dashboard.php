@@ -302,8 +302,6 @@
                              </div>
                          </div>
 
-                         <!--end::Header-->
-                         <!--begin::Body-->
 
                          <div class="card-body pt-2 pb-0 mt-n3">
                              <div class="tab-content mt-5" id="myTabTables11">

@@ -186,8 +186,6 @@
                                           </div>
                                       </div>
                                   </div>
-                                  <!--end::Header-->
-                                  <!--begin::Body-->
                                   <div class="card-body p-0 position-relative overflow-hidden">
                                       <!--begin::Chart-->
                                       <div id="kt_mixed_widget_1_chart" class="card-rounded-bottom bg-danger" style="height: 200px"></div>
@@ -335,8 +333,6 @@
                                           </div>
                                       </div>
                                   </div>
-                                  <!--end::Header-->
-                                  <!--begin::Body-->
                                   <div class="card-body pt-4">
                                       <!--begin::Timeline-->
                                       <div class="timeline timeline-6 mt-3">
@@ -478,7 +474,6 @@
                           <div class="col-lg-6 col-xxl-4">
                               <!--begin::Stats Widget 11-->
                               <div class="card card-custom card-stretch card-stretch-half gutter-b">
-                                  <!--begin::Body-->
                                   <div class="card-body p-0">
                                       <div class="d-flex align-items-center justify-content-between card-spacer flex-grow-1">
                                           <span class="symbol symbol-50 symbol-light-success mr-2">
@@ -508,7 +503,6 @@
                               <!--end::Stats Widget 11-->
                               <!--begin::Stats Widget 12-->
                               <div class="card card-custom card-stretch card-stretch-half gutter-b">
-                                  <!--begin::Body-->
                                   <div class="card-body p-0">
                                       <div class="d-flex align-items-center justify-content-between card-spacer flex-grow-1">
                                           <span class="symbol symbol-50 symbol-light-primary mr-2">

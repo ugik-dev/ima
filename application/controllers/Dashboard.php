@@ -92,22 +92,22 @@ class Dashboard extends CI_Controller
 		$data['result_customer'] = $this->Crud_model->fetch_payee_record('customer', NULL);
 
 		//CURRENCY 
-		$data['currency'] = '( ' . $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency . ' )';
+		$data['currency'] = '( RP )';
 
-		$data['Sales_today_count'] = $this->Crud_model->count_sales('mp_invoices', date('Y-m-d'), date('Y-m-d'));
-		$data['Sales_month_count'] = $this->Crud_model->count_sales('mp_invoices', date('Y-m') . '-1', date('Y-m') . '-30');
+		// $data['Sales_today_count'] = $this->Crud_model->count_sales('mp_invoices', date('Y-m-d'), date('Y-m-d'));
+		// $data['Sales_month_count'] = $this->Crud_model->count_sales('mp_invoices', date('Y-m') . '-1', date('Y-m') . '-30');
 
 		// COUNTING THE TODO LIST FOR THIS MONTH IN Todolist TABLE
-		$data['Todos_count'] = $this->Crud_model->count_sales('mp_todolist', date('Y-m') . '-1', date('Y-m') . '-30');
+		// $data['Todos_count'] = $this->Crud_model->count_sales('mp_todolist', date('Y-m') . '-1', date('Y-m') . '-30');
 
 		// AFTER COUNTING FETCHING THE TODO RECORED FROM GIVEN DATE
-		$data['result_todo'] = $this->Crud_model->fetch_todo_record('mp_todolist', date('Y-m') . '-1', date('Y-m') . '-30');
+		// $data['result_todo'] = $this->Crud_model->fetch_todo_record('mp_todolist', date('Y-m') . '-1', date('Y-m') . '-30');
 
 		$this->load->model('Accounts_model');
 		//COUNT AMOUNT OF SALES TODAY AND EXPENSE
-		$data['sales_today_amount'] =  $this->Accounts_model->Statistics_sales_with_date(date('Y-m-d'), date('Y-m-d'));
+		// $data['sales_today_amount'] =  $this->Accounts_model->Statistics_sales_with_date(date('Y-m-d'), date('Y-m-d'));
 
-		$data['sales_month_amount'] = $this->Accounts_model->Statistics_sales_with_date(date('Y-m' . '-1'), date('Y-m' . '-31'));
+		// $data['sales_month_amount'] = $this->Accounts_model->Statistics_sales_with_date(date('Y-m' . '-1'), date('Y-m' . '-31'));
 
 
 		// DEFINES TO LOAD THE MODEL Accounts_model

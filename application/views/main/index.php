@@ -1,5 +1,3 @@
-<!--begin::Body-->
-
 <?php
 if ($this->session->userdata('user_id') == "") {
     redirect('login');

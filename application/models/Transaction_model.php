@@ -284,29 +284,19 @@ class Transaction_model extends CI_Model
 
     public function periode_neraca_saldo($filter)
     {
-        $this->db->select('*');
-        $this->db->from('mp_generalentry');
-        $this->db->where('generated_source', 'Openning Balancing');
-        $this->db->where('date like "' . ((int)$filter['tahun'] + 1) . '%"');
-        $this->db->where('no_jurnal = "OPENBALANCE/' . ((int)$filter['tahun'] + 1) . '"');
-        $open_gen = $this->db->get();
-        $open_gen = $open_gen->result();
-        // var_dump($open_gen);
-        if (!empty($open_gen)) {
-        } else {
-            $this->db->set('id', - ((int)$filter['tahun'] + 1));
-            $this->db->set('generated_source', 'Openning Balancing');
-            $this->db->set('gen_lock', 'Y');
-            $this->db->set('date', ((int)$filter['tahun'] + 1) . '-01-01');
-            $this->db->set('no_jurnal', 'OPENBALANCE/' . ((int)$filter['tahun'] + 1));
-            $this->db->insert('mp_generalentry');
-        }
+        $this->db->where('id', - ((int)$filter['tahun'] + 1));
+        $this->db->delete('mp_generalentry');
+        $this->db->set('id', - ((int)$filter['tahun'] + 1));
+        $this->db->set('generated_source', 'Openning Balancing');
+        $this->db->set('gen_lock', 'Y');
+        $this->db->set('date', ((int)$filter['tahun'] + 1) . '-01-01');
+        $this->db->set('no_jurnal', 'OPENBALANCE/' . ((int)$filter['tahun'] + 1));
+        $this->db->insert('mp_generalentry');
 
         $parent_id = - ((int)$filter['tahun'] + 1);
 
         $this->db->where('parent_id', $parent_id);
         $this->db->delete('mp_sub_entry');
-
         $QUERY = '
         INSERT INTO mp_sub_entry (parent_id, accounthead, amount, type,sub_keterangan,pos_lock)
         SELECT "' . - ((int)$filter['tahun'] + 1) . '" as parent_id ,mp_head.id as accounthead ,
@@ -322,51 +312,7 @@ class Transaction_model extends CI_Model
                                    mp_generalentry.date >= "' . $filter['tahun'] . '-1-1" AND mp_generalentry.date <= "' . $filter['tahun'] . '-12-31"
                                     GROUP by 
                                     mp_head.name';
-        // WHERE
-        // (
-        //         SUBSTRING_INDEX(
-        //             SUBSTRING_INDEX(mp_head.name, ".", -3),
-        //             "]",
-        //             1
-        //         ) = "00.000.000" 
-        //     ) 
-        // GROUP BY
-        // SUBSTR(mp_head.name, 1, 5)
-        // ORDER BY mp_head.name
         $res = $this->db->query($QUERY);
-        $res = $res->result();
-        // $i = 0;
-        echo json_encode($res);
-        // print_r($QUERY);
-        die();
-        foreach ($res as $re) {
-            if ($re->saldo != 0) {
-                $this->db->set('parent_id', - ((int)$filter['tahun'] + 1));
-                if ($re->saldo < 0) {
-
-                    $this->db->set('type', '0');
-                    $this->db->set('amount', -$re->saldo);
-                } else {
-                    $this->db->set('type', '1');
-                    $this->db->set('amount', $re->saldo);
-                }
-                $this->db->set('pos_lock', 'Y');
-                $this->db->set('sub_keterangan', 'Openning Balance ' . ((int)$filter['tahun'] + 1));
-                $this->db->set('accounthead', $re->id);
-                $this->db->insert('mp_sub_entry');
-            }
-            // $tmp[$i] = array(
-            //     'id' => $re->id,
-            //     'text' => ($i + 1) . ' | ' . $re->title,
-            //     'data' => [
-            //         'saldo_s' => number_format($re->title == 'Expense' ? - ($re->saldo_sebelum) : $re->saldo_sebelum, 2),
-            //         'mutasi' => number_format($re->title == 'Expense' ? - ($re->mutasi) : $re->mutasi, 2),
-            //         'saldo' => number_format($re->title == 'Expense' ? - ($re->saldo_sebelum + $re->mutasi) : ($re->saldo_sebelum + $re->mutasi), 2)
-            //     ],
-            //     'state' => ['opened' => true]
-            // );
-        }
-        // return $tmp;
     }
 
     //USED TO ADD EXPENSES TRANSACTIONS 
@@ -1224,7 +1170,7 @@ class Transaction_model extends CI_Model
 
         for ($i = 0; $i < $total_heads; $i++) {
 
-            if (!empty($data['account_head'][$i])) {
+            if (!empty($data['account_head'][$i]) and (!empty($data['debitamount'][$i]) or !empty($data['creditamount'][$i]))) {
                 if ($data['debitamount'][$i] != 0) {
                     $sub_data  = array(
                         'parent_id'   => $order_id,
@@ -1456,8 +1402,8 @@ class Transaction_model extends CI_Model
         $total_heads = count($data['account_head']);
 
         for ($i = 0; $i < $total_heads; $i++) {
-            if ($data['account_head'][$i] != 0) {
-                if ($data['debitamount'][$i] != 0) {
+            if (!empty($data['account_head'][$i])) {
+                if (!empty($data['debitamount'][$i])) {
                     $sub_data  = array(
                         'parent_id'   =>  $data['id'],
                         'accounthead' => $data['account_head'][$i],
@@ -1465,7 +1411,7 @@ class Transaction_model extends CI_Model
                         'type'        => 0,
                         'sub_keterangan' => $data['sub_keterangan'][$i],
                     );
-                } else if ($data['creditamount'][$i] != 0) {
+                } else if (!empty($data['creditamount'][$i])) {
                     $sub_data  = array(
                         'parent_id'   =>  $data['id'],
                         'accounthead' => $data['account_head'][$i],
@@ -1475,7 +1421,7 @@ class Transaction_model extends CI_Model
                     );
                 }
 
-                if ($data['creditamount'][$i] == 0 && $data['debitamount'][$i] == 0) {
+                if (empty($data['creditamount'][$i]) && empty($data['debitamount'][$i])) {
                     if (!empty($data['sub_id'][$i])) {
                         $this->db->where('id', $data['sub_id'][$i]);
                         if ($data['draft_value'] == 'true')
@@ -1994,5 +1940,30 @@ class Transaction_model extends CI_Model
 
         $this->db->where('parent_id', $id);
         $this->db->delete('draft_generalentry');
+    }
+
+    public function tester_query()
+    {
+        $this->db->trans_start();
+
+        $QUERY = '
+     SELECT max(mp_sub_entry.id) as id
+FROM `mp_sub_entry` JOIN
+mp_generalentry on mp_generalentry.id = mp_sub_entry.parent_id 
+GROUP BY amount, sub_keterangan, type,mp_generalentry.no_jurnal,accounthead
+HAVING COUNT(amount) > 1 AND COUNT(sub_keterangan) > 1 AND COUNT(type) > 1 AND COUNT(mp_generalentry.no_jurnal) > 1 AND COUNT(accounthead) > 1
+        ';
+
+        $res = $this->db->query($QUERY);
+        $res = $res->result_array();
+        $this->db->trans_complete();
+        echo json_encode($res);
+        foreach ($res as $r) {
+            // $this->db
+            $this->db->trans_start();
+            $this->db->where('id', $r['id']);
+            $this->db->delete('mp_sub_entry');
+            $this->db->trans_complete();
+        }
     }
 }
