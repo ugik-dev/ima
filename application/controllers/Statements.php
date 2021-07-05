@@ -1609,43 +1609,13 @@ class Statements extends CI_Controller
 			}
 			// $filter['bulan'] = 0;
 		}
-		// $filter['tahun'] =  2020;
-		// $filter['bulan'] = 12;
-
-		// var_dump($filter);
-		// die();
-
-		// $account_head   = html_escape($this->input->post('account_head'));
-		// var_dump($data);
-		// die();
-		// $year = html_escape($this->input->post('year'));
-		// if ($year == NULL) {
-		// 	$year = date('Y');
-		// }
-
-		// $data['from'] = $year . '-1-1';
-		// $data['to'] =   $year . '-12-31';
 		$data['filter'] = $filter;
-		// var_dump($data);
-		// die();
 		$data['accounts_records'] = $this->Statement_model->periode_neraca_saldo($filter);
-
-		// $data['from'] = $startyear;
-
-		// $data['to'] = $endyear;
-
-		// DEFINES PAGE TITLE
 		$data['title'] = 'Tree Neraca Saldo';
 
-		// DEFINES WHICH PAGE TO RENDER
 		$data['main_view'] = 'three_laporan_neraca_new';
 
-		// $data['income_records'] = $this->Statement_model->income_statement($startyear, $endyear);
-
-
-		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
 		$this->load->view('main/index.php', $data);
-		// $this->load->view('test.php');
 	}
 
 

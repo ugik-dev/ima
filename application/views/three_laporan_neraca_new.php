@@ -16,7 +16,7 @@
             ?>
             <?php echo form_open_multipart('statements/three_laporan_neraca', $attributes); ?>
             <div class="row no-print">
-                <div class="col-md-3 ">
+                <div class="col-md-2">
                     <div class="form-group">
                         <?php echo form_label('Periode'); ?>
                         <select class="form-control input-lg" name="periode" id="periode">
@@ -25,7 +25,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-3 ">
+                <div class="col-md-2">
                     <div class="form-group">
                         <?php echo form_label('Tahun'); ?>
                         <select class="form-control input-lg" name="tahun" id="tahun">
@@ -48,7 +48,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-3 ">
+                <div class="col-md-2">
                     <div class="form-group">
                         <?php echo form_label('Bulan'); ?>
                         <select class="form-control input-lg" name="bulan" id="bulan">
@@ -68,15 +68,21 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-3 ">
-                    <div class="form-group" style="margin-top:16px;">
-                        <?php
-                        $data = array('class' => 'btn btn-info btn-flat margin btn-lg pull-right ', 'type' => 'submit', 'name' => 'btn_submit_customer', 'value' => 'true', 'content' => '<i class="fa fa-floppy-o" aria-hidden="true"></i> 
+                <!-- <div class="col-md-2"> -->
+                <div class="form-group" style="margin-top:20px;">
+                    <?php
+                    $data = array('class' => 'btn btn-info btn-flat margin btn-lg pull-right ', 'type' => 'submit', 'name' => 'btn_submit_customer', 'value' => 'true', 'content' => '<i class="fa fa-floppy-o" aria-hidden="true"></i> 
                                 Buat Statement');
-                        echo form_button($data);
-                        ?>
-                    </div>
+                    echo form_button($data);
+                    ?>
+                    <!-- </div> -->
                 </div>
+                <!-- <div class="col-md-2"> -->
+                <div class="form-group" style="margin-top:20px;">
+                    <a class="btn btn-info btn-flat margin btn-lg pull-right ml-2" href="<?= base_url() . 'download/xls_neraca_saldo?periode=' . $filter['periode'] . '&tahun=' . $filter['tahun'] . '&bulan=' . $filter['bulan'] ?>"> <i class="fa fa-download" aria-hidden="true"></i> Excel</a>
+                </div>
+                <!-- </div> -->
+
             </div>
             <script>
                 $('#periode').on('change', () => {
@@ -104,9 +110,13 @@
                         ?>
                     </h3>
                     <h4 style="text-align:center"> per <?php
-                                                        $namaBulan = array("Januari", "Februaru", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
-
-                                                        echo  '1 '  . $namaBulan[(int)$filter['bulan'] - 1] . ' ' . $filter['tahun'] . ' s/d 31 '  . $namaBulan[(int)$filter['bulan'] - 1] . ' ' . $filter['tahun']; ?> <b>
+                                                        if ($filter['periode'] == 'bulanan') {
+                                                            $namaBulan = array("Januari", "Februaru", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
+                                                            echo  '1 '  . $namaBulan[(int)$filter['bulan'] - 1] . ' ' . $filter['tahun'] . ' s/d 31 '  . $namaBulan[(int)$filter['bulan'] - 1] . ' ' . $filter['tahun'];
+                                                        } else {
+                                                            echo '1 Januari ' . $filter['tahun'] . ' s/d ' . '31 Desember '  . $filter['tahun'];
+                                                        }
+                                                        ?> <b>
                     </h4>
                     <h4 style="text-align:center"> Dibuat <?php echo Date('Y-m-d'); ?> <b>
                     </h4>
