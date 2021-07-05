@@ -645,7 +645,7 @@ class Statement_model extends CI_Model
     public function trail_balance($current_date)
     {
         //ACCOUNTING START DATE
-        $date1 = '2012-01-01';
+        $date1 = '2020-01-01';
 
         $date2 = $current_date;
 
@@ -655,6 +655,7 @@ class Statement_model extends CI_Model
 
         $this->db->select("h.*");
         $this->db->from('mp_head as h');
+        $this->db->order_by('name', 'ASC');
         // $this->db->join('mp_generalentrys as g', 'g.id = h.id_parent');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -996,12 +997,13 @@ class Statement_model extends CI_Model
         $accounts_list = '';
         $accounts_nature  = array('Assets', 'Liability', 'Equity', 'Revenue', 'Expense');
         for ($i = 0; $i < count($accounts_nature); $i++) {
-            $accounts_list .= '<option value="0">-------------</option>';
+            $accounts_list .= '<option value="0">------------------------------------</option>';
             $accounts_list .= '<optgroup label="' . $accounts_nature[$i] . '">';
 
             $this->db->select("*");
             $this->db->from('mp_head');
             $this->db->where(['mp_head.nature' => $accounts_nature[$i]]);
+            $this->db->order_by('name', 'ASC');
             $query = $this->db->get();
             if ($query->num_rows() > 0) {
                 $result =  $query->result();
@@ -1408,7 +1410,7 @@ class Statement_model extends CI_Model
                         SELECT
                             ROUND(
                                 SUM(
-                                      IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                      IF(SUBSTR(mp_head.name, 2, 1) in (1,5) ,
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                 ),2
@@ -1424,7 +1426,7 @@ class Statement_model extends CI_Model
                         SELECT
                             ROUND(SUM(
                                      IF(mp_sub_entry.parent_id > 0,
-                                        IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                        IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                            ,0)
@@ -1449,6 +1451,7 @@ class Statement_model extends CI_Model
                                 1
                             ) = "00.000.000" 
                         ) 
+                        AND mp_head.nature in (' . $filter['nature'] . ')
                     GROUP BY
                         SUBSTR(mp_head.name, 1, 5)
             ORDER BY mp_head.name
@@ -1459,7 +1462,7 @@ class Statement_model extends CI_Model
                         COALESCE((
                         SELECT
                             ROUND(SUM(
-                                    IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                    IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                         
@@ -1474,7 +1477,7 @@ class Statement_model extends CI_Model
                        COALESCE((
                         SELECT
                             ROUND(SUM(
-                                IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                         ),2) 
@@ -1497,6 +1500,7 @@ class Statement_model extends CI_Model
                                 1
                             ) = "00.000.000" 
                         ) 
+                        AND mp_head.nature in (' . $filter['nature'] . ')
                     GROUP BY
                         SUBSTR(mp_head.name, 1, 5)
             ORDER BY mp_head.name
@@ -1509,7 +1513,7 @@ class Statement_model extends CI_Model
                             ROUND(
                                 SUM(
                                     IF(mp_sub_entry.parent_id < 0,
-                                      IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                      IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                           ,0)
@@ -1526,7 +1530,7 @@ class Statement_model extends CI_Model
                         SELECT
                             ROUND(SUM(
                                      IF(mp_sub_entry.parent_id > 0,
-                               IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                               IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                            ,0)
@@ -1550,6 +1554,7 @@ class Statement_model extends CI_Model
                                 1
                             ) = "00.000.000" 
                         ) 
+                        AND mp_head.nature in (' . $filter['nature'] . ')
                     GROUP BY
                         SUBSTR(mp_head.name, 1, 5)
             ORDER BY mp_head.name
@@ -1558,13 +1563,11 @@ class Statement_model extends CI_Model
 
         $res = $this->db->query($QUERY);
         $res = $res->result();
-        // echo json_encode($res);
-        // die();
         $i = 0;
         foreach ($res as $re) {
             $tmp[$i] = array(
                 'id' => $re->id,
-                'text' => ($i + 1) . ' | ' . $re->title,
+                'text' =>  $re->title,
                 'data' => [
                     'saldo_s' => number_format($re->saldo_sebelum, 2),
                     'mutasi' => number_format($re->mutasi, 2),
@@ -1629,67 +1632,6 @@ class Statement_model extends CI_Model
 
                                 //  LVL 4
                                 {
-                                    // $QUERY = 'SELECT
-                                    //                 @names := SUBSTR(mp_head.name, 1, 14) as pars,SUBSTR(mp_head.name, 2, 14) as title,
-                                    //                 COALESCE((
-                                    //                 SELECT
-                                    //                     ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
-                                    //                 FROM
-                                    //                     mp_sub_entry
-                                    //                 JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    //                 JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    //                 WHERE
-                                    //                 mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date < "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date >= "' . $filter['tahun'] . '-1-1"
-                                    //                 ),0) saldo_sebelum,
-                                    //             COALESCE((
-                                    //                 SELECT
-                                    //                     ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
-                                    //                 FROM
-                                    //                     mp_sub_entry
-                                    //                 JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    //                 JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    //                 WHERE
-                                    //                 mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
-                                    //                 ),0)  mutasi,
-                                    //             mp_head.id,
-                                    //             mp_head.name
-                                    //             FROM
-                                    //                 `mp_head`
-                                    //             WHERE
-
-                                    //                     SUBSTRING_INDEX(
-                                    //                         SUBSTRING_INDEX(mp_head.name, ".", -1),
-                                    //                         "]",
-                                    //                         1
-                                    //                     ) != "000" 
-                                    //                     AND mp_head.name like "' . $re3->pars . '%"
-                                    //                     AND mp_head.id !=  "' . $re3->id . '"           
-                                    //     ORDER BY mp_head.name
-                                    //     ';
-                                    // $res4 = $this->db->query($QUERY);
-                                    // $res4 = $res4->result();
-                                    // $m = 0;
-                                    // // if ($k == 0) {
-
-                                    // // }
-                                    // foreach ($res4 as $re4) {
-                                    //     // print_r($this->db->last_query());
-                                    //     // echo json_encode($res4);
-                                    //     // die();
-                                    //     if ($re4->saldo_sebelum != 0 and $re4->mutasi != 0) {
-                                    //         $tmp[$i]['children'][$k]['children'][$l]['children'][$m] = array(
-                                    //             'id' => $re4->id . '-3',
-                                    //             'text' => $re4->name,
-                                    //             'data' => [
-                                    //                 'saldo_s' => number_format($re4->saldo_sebelum, 2),
-                                    //                 'mutasi' => number_format($re3->mutasi, 2),
-                                    //                 'saldo' => number_format($re4->saldo_sebelum + $re4->mutasi, 2)
-                                    //             ],
-                                    //             'state' => ['opened' => true]
-                                    //         );
-                                    //         $m++;
-                                    //     }
-                                    // }
                                 }
                                 //  END LVL 4
 
@@ -1713,7 +1655,7 @@ class Statement_model extends CI_Model
                                     COALESCE((
                                     SELECT
                                         ROUND(SUM(
-                                            IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                            IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                                 (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                                 (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount))
                                             )  
@@ -1728,7 +1670,7 @@ class Statement_model extends CI_Model
                                 COALESCE((
                                     SELECT
                                         ROUND(SUM(
-                                            IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                            IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                         ),2) 
@@ -1745,7 +1687,7 @@ class Statement_model extends CI_Model
                                 `mp_head`
                                 WHERE
                                    
-                                       SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, "]", 1),"[",-1),"." ,' . $var1 . ') = "' . $var2 . '" 
+                                       SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, "]", 1),"[",-1),"." ,' . $var1 . ') ' . ($var2 == '' ? ('!= "000') : ('= "' . $var2))  . '" 
                                         AND mp_head.name like "' . $pars . '%"
                                         AND mp_head.id !=  "' . $id . '"
                         ORDER BY mp_head.name
@@ -1762,7 +1704,7 @@ class Statement_model extends CI_Model
                         COALESCE((
                                     SELECT
                                         ROUND(SUM(
-                                                IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                                IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                                 (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                                 (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                                 )
@@ -1778,7 +1720,7 @@ class Statement_model extends CI_Model
                                 COALESCE((
                                     SELECT
                                         ROUND(SUM(
-                                               IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                               IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                                 (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                                 (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                         ),2) 
@@ -1795,7 +1737,7 @@ class Statement_model extends CI_Model
                                 FROM
                                     `mp_head`
                                 WHERE
-                                        SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, "]", 1),"[",-1),"." ,' . $var1 . ') = "' . $var2 . '" 
+                                        SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, "]", 1),"[",-1),"." ,' . $var1 . ') ' . ($var2 == '' ? ('!= "000') : ('= "' . $var2))  . '" 
                                         AND mp_head.name like "' . $pars . '%"
                                         AND mp_head.id !=  "' . $id . '"
                                                                                              GROUP BY
@@ -1812,7 +1754,7 @@ class Statement_model extends CI_Model
                         COALESCE((
                                     SELECT
                                         ROUND(SUM(
-                                                IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                                IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                                 (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                                 (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                         ),2) 
@@ -1827,7 +1769,7 @@ class Statement_model extends CI_Model
                                 COALESCE((
                                     SELECT
                                         ROUND(SUM(
-                                                     IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                                     IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                                 (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                                 (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                        
@@ -1845,7 +1787,7 @@ class Statement_model extends CI_Model
                                 FROM
                                     `mp_head`
                                 WHERE
-                                        SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, "]", 1),"[",-1),"." ,' . $var1 . ') = "' . $var2 . '" 
+                                        SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, "]", 1),"[",-1),"." ,' . $var1 . ') ' . ($var2 == '' ? ('!= "000') : ('= "' . $var2))  . '" 
                                         AND mp_head.name like "' . $pars . '%"
                                         AND mp_head.id !=  "' . $id . '"
                                                                                              GROUP BY
@@ -2036,7 +1978,7 @@ class Statement_model extends CI_Model
                                     COALESCE((
                                     SELECT
                                         ROUND(SUM(
-                                            IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                            IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                         ),2) 
@@ -2050,7 +1992,7 @@ class Statement_model extends CI_Model
                                 COALESCE((
                                     SELECT
                                         ROUND(SUM(
-                                            IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                            IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                                    ),2) 
@@ -2293,7 +2235,7 @@ class Statement_model extends CI_Model
                         SELECT
                             ROUND(
                                 SUM(
-                                      IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                      IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                 ),2
@@ -2309,7 +2251,7 @@ class Statement_model extends CI_Model
                         SELECT
                             ROUND(SUM(
                                      IF(mp_sub_entry.parent_id > 0,
-                                        IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                        IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                            ,0)
@@ -2334,6 +2276,7 @@ class Statement_model extends CI_Model
                                 1
                             ) = "00.000.000" 
                         ) 
+                        AND mp_head.nature in (' . $filter['nature'] . ')
                     GROUP BY
                         SUBSTR(mp_head.name, 1, 5)
             ORDER BY mp_head.name
@@ -2344,7 +2287,7 @@ class Statement_model extends CI_Model
                         COALESCE((
                         SELECT
                             ROUND(SUM(
-                                    IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                    IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                         
@@ -2359,7 +2302,7 @@ class Statement_model extends CI_Model
                        COALESCE((
                         SELECT
                             ROUND(SUM(
-                                IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                         ),2) 
@@ -2382,6 +2325,7 @@ class Statement_model extends CI_Model
                                 1
                             ) = "00.000.000" 
                         ) 
+                        AND mp_head.nature in (' . $filter['nature'] . ')
                     GROUP BY
                         SUBSTR(mp_head.name, 1, 5)
             ORDER BY mp_head.name
@@ -2394,7 +2338,7 @@ class Statement_model extends CI_Model
                             ROUND(
                                 SUM(
                                     IF(mp_sub_entry.parent_id < 0,
-                                      IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                                      IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                           ,0)
@@ -2411,7 +2355,7 @@ class Statement_model extends CI_Model
                         SELECT
                             ROUND(SUM(
                                      IF(mp_sub_entry.parent_id > 0,
-                               IF(SUBSTR(mp_head.name, 2, 1) = 1,
+                               IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                            ,0)
@@ -2435,6 +2379,7 @@ class Statement_model extends CI_Model
                                 1
                             ) = "00.000.000" 
                         ) 
+                        AND mp_head.nature in (' . $filter['nature'] . ')
                     GROUP BY
                         SUBSTR(mp_head.name, 1, 5)
             ORDER BY mp_head.name
@@ -2443,15 +2388,19 @@ class Statement_model extends CI_Model
         $res = $this->db->query($QUERY);
         $res = $res->result();
         $i = 0;
-        $sheetrow = 6;
+        $sheetrow = 7;
         foreach ($res as $re) {
 
             // $sheet->setCellValue('A' . $sheetrow, substr($re->title, 0, 12));
             $sheet->mergeCells("B" . $sheetrow . ":E" . $sheetrow)->setCellValue('B' . $sheetrow, $re->title);
-            $sheet->setCellValue('F' . $sheetrow, $re->title == 'Expense' ? - ($re->saldo_sebelum) : $re->saldo_sebelum);
-            $sheet->setCellValue('G' . $sheetrow, $re->title == 'Expense' ? - ($re->mutasi) : $re->mutasi);
-            $sheet->setCellValue('H' . $sheetrow, $re->title == 'Expense' ? - ($re->saldo_sebelum + $re->mutasi) : ($re->saldo_sebelum + $re->mutasi));
+            $sheet->setCellValue('F' . $sheetrow,  $re->saldo_sebelum);
+            $sheet->setCellValue('G' . $sheetrow,  $re->mutasi);
+            $sheet->setCellValue('H' . $sheetrow, ($re->saldo_sebelum + $re->mutasi));
             $sheetrow++;
+            // if ($sheetrow == 8) {
+            $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
+            $sheetrow++;
+            // }
             if (
                 $re->saldo_sebelum != 0 or $re->mutasi != 0
             ) {
@@ -2466,10 +2415,10 @@ class Statement_model extends CI_Model
                 foreach ($res2 as $re2) {
                     if ($re2->saldo_sebelum != 0 or $re2->mutasi != 0) {
                         $sheet->setCellValue('A' . $sheetrow, substr($re2->name, 0, 14));
-                        $sheet->mergeCells("C" . $sheetrow . ":E" . $sheetrow)->setCellValue('C' . $sheetrow, substr($re2->name, 15, 16));
-                        $sheet->setCellValue('F' . $sheetrow, $re->title == 'Expense' ? - ($re2->saldo_sebelum) : $re2->saldo_sebelum);
-                        $sheet->setCellValue('G' . $sheetrow, $re->title == 'Expense' ? - ($re2->mutasi) : $re2->mutasi);
-                        $sheet->setCellValue('H' . $sheetrow, $re->title == 'Expense' ? - ($re2->saldo_sebelum + $re2->mutasi) : ($re2->saldo_sebelum + $re2->mutasi));
+                        $sheet->mergeCells("C" . $sheetrow . ":E" . $sheetrow)->setCellValue('C' . $sheetrow, substr($re2->name, 15, 25));
+                        $sheet->setCellValue('F' . $sheetrow, $re2->saldo_sebelum);
+                        $sheet->setCellValue('G' . $sheetrow, $re2->mutasi);
+                        $sheet->setCellValue('H' . $sheetrow, ($re2->saldo_sebelum + $re2->mutasi));
                         $sheetrow++;
                         // ===LEVEL 3
                         if ($filter['periode'] == 'tahunan') {
@@ -2480,100 +2429,54 @@ class Statement_model extends CI_Model
                             $res3 =  $this->query_count_month_1($filter, $re2->pars, $re2->id, 9, -1, '000');
                         }
 
-                        // $res3 = $this->db->query($QUERY);
-                        // $res3 = $res3->result();
-                        $l = 0;
-                        // if ($k == 0) {
 
-                        //     // print_r($this->db->last_query());
-                        // echo $re2->id;
-                        // echo json_enX`
-                        // }
                         foreach ($res3 as $re3) {
-                            if (
-                                $re3->saldo_sebelum != 0 or $re3->mutasi != 0
-                            ) {
+                            if ($re3->saldo_sebelum != 0 or $re3->mutasi != 0) {
                                 $sheet->setCellValue('A' . $sheetrow, substr($re3->name, 1, 12));
-                                $sheet->mergeCells("D" . $sheetrow . ":E" . $sheetrow)->setCellValue('D' . $sheetrow, substr($re3->name, 15, 16));
-                                $sheet->setCellValue('F' . $sheetrow, $re->title == 'Expense' ? - ($re3->saldo_sebelum) : $re3->saldo_sebelum);
-                                $sheet->setCellValue('G' . $sheetrow, $re->title == 'Expense' ? - ($re3->mutasi) : $re3->mutasi);
-                                $sheet->setCellValue('H' . $sheetrow, $re->title == 'Expense' ? - ($re3->saldo_sebelum + $re3->mutasi) : ($re3->saldo_sebelum + $re3->mutasi));
+                                $sheet->mergeCells("D" . $sheetrow . ":E" . $sheetrow)->setCellValue('D' . $sheetrow, substr($re3->name, 15, 25));
+                                $sheet->setCellValue('F' . $sheetrow,  $re3->saldo_sebelum);
+                                $sheet->setCellValue('G' . $sheetrow,  $re3->mutasi);
+                                $sheet->setCellValue('H' . $sheetrow, ($re3->saldo_sebelum + $re3->mutasi));
                                 $sheetrow++;
                                 //  LVL 4
                                 {
-                                    // $QUERY = 'SELECT
-                                    //                 @names := SUBSTR(mp_head.name, 1, 14) as pars,SUBSTR(mp_head.name, 2, 14) as title,
-                                    //                 COALESCE((
-                                    //                 SELECT
-                                    //                     ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
-                                    //                 FROM
-                                    //                     mp_sub_entry
-                                    //                 JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    //                 JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    //                 WHERE
-                                    //                 mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date < "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date >= "' . $filter['tahun'] . '-1-1"
-                                    //                 ),0) saldo_sebelum,
-                                    //             COALESCE((
-                                    //                 SELECT
-                                    //                     ROUND(SUM(IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
-                                    //                 FROM
-                                    //                     mp_sub_entry
-                                    //                 JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    //                 JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    //                 WHERE
-                                    //                 mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
-                                    //                 ),0)  mutasi,
-                                    //             mp_head.id,
-                                    //             mp_head.name
-                                    //             FROM
-                                    //                 `mp_head`
-                                    //             WHERE
 
-                                    //                     SUBSTRING_INDEX(
-                                    //                         SUBSTRING_INDEX(mp_head.name, ".", -1),
-                                    //                         "]",
-                                    //                         1
-                                    //                     ) != "000" 
-                                    //                     AND mp_head.name like "' . $re3->pars . '%"
-                                    //                     AND mp_head.id !=  "' . $re3->id . '"           
-                                    //     ORDER BY mp_head.name
-                                    //     ';
-                                    // $res4 = $this->db->query($QUERY);
-                                    // $res4 = $res4->result();
-                                    // $m = 0;
-                                    // // if ($k == 0) {
+                                    if ($filter['periode'] == 'tahunan') {
+                                        $res4 =  $this->query_count_tahunan($filter, $re3->pars, $re3->id, 13, -1, '');
+                                    } else if ($filter['bulan'] != 1) {
+                                        $res4 =  $this->query_count_more_1($filter, $re3->pars, $re3->id, 13, -1, '');
+                                    } else {
+                                        $res4 =  $this->query_count_month_1($filter, $re3->pars, $re3->id, 13, -1, '');
+                                    }
 
-                                    // // }
-                                    // foreach ($res4 as $re4) {
-                                    //     // print_r($this->db->last_query());
-                                    //     // echo json_encode($res4);
-                                    //     // die();
-                                    //     if ($re4->saldo_sebelum != 0 and $re4->mutasi != 0) {
-                                    //         $tmp[$i]['children'][$k]['children'][$l]['children'][$m] = array(
-                                    //             'id' => $re4->id . '-3',
-                                    //             'text' => $re4->name,
-                                    //             'data' => [
-                                    //                 'saldo_s' => number_format($re4->saldo_sebelum, 2),
-                                    //                 'mutasi' => number_format($re3->mutasi, 2),
-                                    //                 'saldo' => number_format($re4->saldo_sebelum + $re4->mutasi, 2)
-                                    //             ],
-                                    //             'state' => ['opened' => true]
-                                    //         );
-                                    //         $m++;
-                                    //     }
-                                    // }
+                                    foreach ($res4 as $re4) {
+                                        if ($re4->saldo_sebelum != 0 or $re4->mutasi != 0) {
+                                            $sheet->setCellValue('A' . $sheetrow, substr($re4->name, 1, 12));
+                                            $sheet->setCellValue('E' . $sheetrow, substr($re4->name, 15, 20));
+                                            $sheet->setCellValue('F' . $sheetrow, $re4->saldo_sebelum);
+                                            $sheet->setCellValue('G' . $sheetrow,  $re4->mutasi);
+                                            $sheet->setCellValue('H' . $sheetrow, ($re4->saldo_sebelum + $re4->mutasi));
+                                            $sheetrow++;
+                                        }
+                                    }
                                 }
                                 //  END LVL 4
-
-                                $l++;
                             }
                         }
                         // ===END LVL 3
-                        $k++;
+                    }
+                    if ($re2->saldo_sebelum != 0 or $re2->mutasi != 0) {
+                        $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
+                        $sheetrow++;
                     }
                 }
             }
-            $i++;
+            if (
+                $re->saldo_sebelum != 0 or $re->mutasi != 0
+            ) {
+                $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
+                $sheetrow++;
+            }
         }
         // return $tmp;
     }

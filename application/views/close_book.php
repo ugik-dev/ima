@@ -14,7 +14,7 @@
             <?php
             $attributes = array('id' => 'close_book', 'method' => 'get', 'class' => '');
             ?>
-            <?php echo form_open_multipart('statements/three_laporan_neraca', $attributes); ?>
+            <?php echo form_open_multipart('statements/tree_laporan_neraca', $attributes); ?>
             <div class="row no-print">
                 <div class="col-md-3 ">
                     <div class="form-group">
@@ -68,15 +68,15 @@
                 // denyButtonText: `Don't save`,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Swal.fire({
-                    //     title: 'Please Wait !',
-                    //     html: 'Data Closing .. ', // add html attribute if you want or remove
-                    //     showConfirmButton: false,
-                    //     allowOutsideClick: false,
-                    //     onBeforeOpen: () => {
-                    //         Swal.showLoading()
-                    //     },
-                    // });
+                    Swal.fire({
+                        title: 'Please Wait !',
+                        html: 'Data Closing .. ', // add html attribute if you want or remove
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        onBeforeOpen: () => {
+                            Swal.showLoading()
+                        },
+                    });
                     var url = "<?= base_url('statements/close_process') ?>";
                     $.ajax({
                         url: url,

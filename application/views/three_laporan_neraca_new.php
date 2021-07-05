@@ -14,7 +14,7 @@
             <?php
             $attributes = array('id' => 'leadgerAccounst', 'method' => 'get', 'class' => '');
             ?>
-            <?php echo form_open_multipart('statements/three_laporan_neraca', $attributes); ?>
+            <?php echo form_open_multipart('statements/' . $url_form, $attributes); ?>
             <div class="row no-print">
                 <div class="col-md-2">
                     <div class="form-group">
@@ -79,7 +79,7 @@
                 </div>
                 <!-- <div class="col-md-2"> -->
                 <div class="form-group" style="margin-top:20px;">
-                    <a class="btn btn-info btn-flat margin btn-lg pull-right ml-2" href="<?= base_url() . 'download/xls_neraca_saldo?periode=' . $filter['periode'] . '&tahun=' . $filter['tahun'] . '&bulan=' . $filter['bulan'] ?>"> <i class="fa fa-download" aria-hidden="true"></i> Excel</a>
+                    <a class="btn btn-info btn-flat margin btn-lg pull-right ml-2" href="<?= base_url() . 'download/xls_neraca_saldo?' . (!empty($xls) ? 'laba_rugi=true&' : '') . 'periode=' . $filter['periode'] . '&tahun=' . $filter['tahun'] . '&bulan=' . $filter['bulan'] ?>"> <i class="fa fa-download" aria-hidden="true"></i> Excel</a>
                 </div>
                 <!-- </div> -->
 
@@ -104,7 +104,7 @@
             <div class="row">
                 <div class="col-md-3"></div>
                 <div class="col-md-6">
-                    <h3 style="text-align:center">NERACA SALDO </h3>
+                    <h3 style="text-align:center"><?= $title ?> </h3>
                     <h3 style="text-align:center">
                         <?php echo $this->db->get_where('mp_langingpage', array('id' => 1))->result_array()[0]['companyname'];
                         ?>
@@ -195,7 +195,7 @@
 <!-- </section> -->
 <script>
     $('#menu_id_24').addClass('menu-item-active menu-item-open menu-item-here"')
-    $('#submenu_id_80').addClass('menu-item-active')
+    $('#submenu_id_<?= $submenu_id ?>').addClass('menu-item-active')
 
     function inspect_buku_besar(i) {
         console.log('op');

@@ -309,6 +309,7 @@ class Transaction_model extends CI_Model
                                     JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                                     JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                                     WHERE
+                                    mp_sub_entry.nature in ("Assets","Liability","Equity")
                                    mp_generalentry.date >= "' . $filter['tahun'] . '-1-1" AND mp_generalentry.date <= "' . $filter['tahun'] . '-12-31"
                                     GROUP by 
                                     mp_head.name';

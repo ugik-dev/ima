@@ -1509,42 +1509,43 @@ class Statements extends CI_Controller
 		return $hasil . $sen;
 	}
 
-	public function three_laporan_labarugi()
+	public function tree_laporan_labarugi()
 	{
 		$this->load->model('Statement_model');
-		// $account_head   = html_escape($this->input->post('account_head'));
-		// $year = html_escape($this->input->post('year'));
-		// if ($year == NULL) {
-		// 	$year = date('Y');
-		// }
-		$data = $this->input->post();
-		if (empty($data['from'])) $data['from'] = date('Y') . '-01-01';
-		if (empty($data['to'])) $data['to'] = date('Y') . '-12-31';
+		$filter = $this->input->get();
+		if (empty($filter['periode'])) {
+			$filter['periode'] = 'bulanan';
+			$filter['tahun'] =  (int)date('Y');
+			$filter['bulan'] =  (int)date('m');
+		}
 
+		if ($filter['periode'] == 'tahunan') {
+			if (empty($filter['tahun'])) {
+				$filter['tahun'] =  (int)date('Y');
+			}
+			$filter['bulan'] = 0;
+		}
 
-		// $startyear = $year . '-1-1';
-		// $endyear =   $year . '-12-31';
-		// $data['year'] = $year;
-		$data['accounts_records'] = $this->Statement_model->account_tree($data);
-		// var_dump($data);
-		// die();
+		if ($filter['periode'] == 'bulanan') {
+			if (empty($filter['tahun'])) {
+				$filter['tahun'] =  (int)date('Y');
+			}
+			if (empty($filter['bulan']) or $filter['bulan'] == 0) {
+				$filter['bulan'] = (int)date('m');
+			}
+			// $filter['bulan'] = 0;
+		}
+		$data['filter'] = $filter;
+		$filter['nature'] = "'Expense','Revenue'";
+		$data['accounts_records'] = $this->Statement_model->periode_neraca_saldo($filter);
+		$data['title'] = 'LAPORAN LABA RUGI';
+		$data['url_form'] = 'tree_laporan_labarugi';
+		$data['xls'] = 'laba_rugi';
+		$data['submenu_id'] = 79;
 
-		// $data['from'] = $startyear;
+		$data['main_view'] = 'three_laporan_neraca_new';
 
-		// $data['to'] = $endyear;
-
-		// DEFINES PAGE TITLE
-		$data['title'] = 'Laporan Laba Rugi';
-
-		// DEFINES WHICH PAGE TO RENDER
-		$data['main_view'] = 'three_laba_rugi';
-
-		// $data['income_records'] = $this->Statement_model->income_statement($startyear, $endyear);
-
-
-		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
 		$this->load->view('main/index.php', $data);
-		// $this->load->view('test.php');
 	}
 
 	public function three_laporan_neraca_old()
@@ -1573,7 +1574,7 @@ class Statements extends CI_Controller
 		$data['title'] = 'Tree Neraca Saldo';
 
 		// DEFINES WHICH PAGE TO RENDER
-		$data['main_view'] = 'three_laporan_neraca';
+		$data['main_view'] = 'tree_laporan_neraca';
 
 		// $data['income_records'] = $this->Statement_model->income_statement($startyear, $endyear);
 
@@ -1583,7 +1584,7 @@ class Statements extends CI_Controller
 		// $this->load->view('test.php');
 	}
 
-	public function three_laporan_neraca()
+	public function tree_laporan_neraca()
 	{
 		$this->load->model('Statement_model');
 		$filter = $this->input->get();
@@ -1610,10 +1611,12 @@ class Statements extends CI_Controller
 			// $filter['bulan'] = 0;
 		}
 		$data['filter'] = $filter;
+		$filter['nature'] = "'Assets','Liability','Equity','Expense','Revenue'";
 		$data['accounts_records'] = $this->Statement_model->periode_neraca_saldo($filter);
-		$data['title'] = 'Tree Neraca Saldo';
-
+		$data['title'] = 'NERACA SALDO';
+		$data['url_form'] = 'tree_laporan_neraca';
 		$data['main_view'] = 'three_laporan_neraca_new';
+		$data['submenu_id'] = 80;
 
 		$this->load->view('main/index.php', $data);
 	}

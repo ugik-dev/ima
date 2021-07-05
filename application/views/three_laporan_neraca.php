@@ -14,7 +14,7 @@
             <?php
             $attributes = array('id' => 'leadgerAccounst', 'method' => 'post', 'class' => '');
             ?>
-            <?php echo form_open_multipart('statements/three_laporan_neraca', $attributes); ?>
+            <?php echo form_open_multipart('statements/tree_laporan_neraca', $attributes); ?>
             <div class="row no-print">
                 <div class="col-md-3 ">
                     <div class="form-group">
