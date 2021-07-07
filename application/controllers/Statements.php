@@ -1222,7 +1222,7 @@ class Statements extends CI_Controller
 				$debitamount[$i] = preg_replace("/[^0-9]/", "", $debitamount[$i]);
 				if (!empty($debitamount[$i])) $count_debit = $count_debit + $debitamount[$i];
 				if (!empty($creditamount[$i])) $count_kredit = $count_kredit + $creditamount[$i];
-				if ((($debitamount[$i] > 0 and $creditamount[$i] == 0) or ($creditamount[$i] > 0 and $debitamount[$i] == 0) or (!empty($account_head[$i]) and empty($debitamount[$i]) and empty($creditamount[$i])))) {
+				if ((($debitamount[$i] > 0 and $creditamount[$i] == 0) or ($creditamount[$i] > 0 and $debitamount[$i] == 0) or (empty($account_head[$i]) and empty($debitamount[$i]) and empty($creditamount[$i])))) {
 				} else {
 					$status = FALSE;
 				}
