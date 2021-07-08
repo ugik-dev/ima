@@ -1578,6 +1578,11 @@ class Statement_model extends CI_Model
             if ($re->saldo_sebelum != 0 or $re->mutasi != 0) {
                 if ($filter['periode'] == 'tahunan') {
                     $res2 =  $this->query_count_tahunan($filter, $re->pars, $re->id, 5, -2, '000.000');
+                    // if (!empty($res2)) {
+                    // }
+                    // print_r($this->db->last_query());
+                    // // echo json_encode($re);
+                    // die();
                 } else if ($filter['bulan'] != 1) {
                     $res2 =  $this->query_count_more_1($filter, $re->pars, $re->id, 5, -2, '000.000');
                 } else {
