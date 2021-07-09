@@ -456,30 +456,40 @@ class Statement_model extends CI_Model
                     $data_leadger = $this->get_ledger_transactions($single_head->id, $filter['from'], $filter['to']);
                     if ($data_leadger != NULL) {
                         $j = 0;
-                        $total_ledger = 0;
-                        $ledger_query  = array();
-                        foreach ($data_leadger as $single_ledger) {
-                            if ($k == 0) {
-                                $sheet->mergeCells("A" . $sheetrow . ":F" . $sheetrow);
-                                $sheet->setCellValue('A' . $sheetrow, $accounts_types[$i]);
-                                $sheet->getRowDimension($sheetrow)->setRowHeight(23);
-                                $sheet->getStyle('A' . $sheetrow)->getAlignment()->setVertical('center')->setHorizontal('left')->setWrapText(true);
-                                $sheet->getStyle('A' . $sheetrow)->getFont()->setSize(16)->setBold(true);
-                                $sheetrow++;
-                            }
+                        // $total_ledger = 0;
+                        if ($data_leadger['saldo_awal'] == 0) {
+                            $total_ledger = 0;
+                        } else {
+                            $total_ledger = $data_leadger['saldo_awal'];
+                        }
+                        if ($k == 0) {
+                            $sheet->mergeCells("A" . $sheetrow . ":F" . $sheetrow);
+                            $sheet->setCellValue('A' . $sheetrow, $accounts_types[$i]);
+                            $sheet->getRowDimension($sheetrow)->setRowHeight(23);
+                            $sheet->getStyle('A' . $sheetrow)->getAlignment()->setVertical('center')->setHorizontal('left')->setWrapText(true);
+                            $sheet->getStyle('A' . $sheetrow)->getFont()->setSize(16)->setBold(true);
+                            $sheetrow++;
                             $k++;
-                            if ($j == 0) {
-                                $sheet->mergeCells("A" . $sheetrow . ":F" . $sheetrow);
-                                $sheet->setCellValue('A' . $sheetrow, $single_head->name);
-                                // $sheet->getRowDimension('6')->setRowHeight(40);
-                                $sheet->getStyle('A' . $sheetrow)->getAlignment()->setVertical('center')->setHorizontal('lefft')->setWrapText(true);
-                                $sheet->getStyle('A' . $sheetrow)->getFont()->setBold(true);
-                                $sheetrow++;
-                            }
-                            $j++;
+                        }
+
+                        $sheet->mergeCells("A" . $sheetrow . ":F" . $sheetrow);
+                        $sheet->setCellValue('A' . $sheetrow, $single_head->name);
+                        // $sheet->getRowDimension('6')->setRowHeight(40);
+                        $sheet->getStyle('A' . $sheetrow)->getAlignment()->setVertical('center')->setHorizontal('lefft')->setWrapText(true);
+                        $sheet->getStyle('A' . $sheetrow)->getFont()->setBold(true);
+                        $sheetrow++;
+
+                        $sheet->setCellValue('C' . $sheetrow, 'Saldo Sebelum');
+                        $sheet->setCellValue('F' . $sheetrow, $total_ledger);
+
+                        $sheetrow++;
+
+
+                        $ledger_query  = array();
+                        foreach ($data_leadger['data'] as $single_ledger) {
                             $debitamount = '';
                             $creditamount = '';
-                            $total_ledger = number_format($total_ledger, '2', '.', '');
+                            // $total_ledger = number_format($total_ledger, '2', '.', '');
                             $sheet->setCellValue('A' . $sheetrow, $single_ledger->date);
                             $sheet->setCellValue('B' . $sheetrow, $single_ledger->no_jurnal);
                             $sheet->setCellValue('C' . $sheetrow, $single_ledger->sub_keterangan);
@@ -508,13 +518,45 @@ class Statement_model extends CI_Model
     //USED TO GET THE LEDGER USING NATURE 
     public function get_ledger_transactions($head_id, $date1, $date2)
     {
+        $this->db->select("SUM(IF(mp_sub_entry.type = 0,amount, -amount)) as saldo_awal");
+        $this->db->from('mp_sub_entry');
+        $this->db->join('mp_head', "mp_head.id = mp_sub_entry.accounthead");
+        $this->db->join('mp_generalentry', 'mp_generalentry.id = mp_sub_entry.parent_id');
+        $this->db->order_by('mp_generalentry.date', 'asc');
+        $this->db->order_by("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_generalentry.no_jurnal, '/', -3), '/', 1) ASC");
+        $year = explode('-', $date1)[0];
+        $this->db->where('mp_head.id', $head_id);
+        // $this->db->where('mp_generalentry.date >=', $year. '1-1');
+        // $this->db->where('mp_generalentry.date <', $date1);
+        if ($date1 == $year . '-1-1' or $date1 == $year . '-01-1' or $date1 == $year . '-1-01' or $date1 == $year . '-01-01') {
+            $this->db->where('mp_generalentry.id = -' . explode('-', $date1)[0]);
+            $this->db->where('mp_sub_entry.parent_id = -' . explode('-', $date1)[0]);
+            // $this->db->where('mp_generalentry.date >=', $year. '1-1');
+            // $this->db->where('mp_generalentry.date <', $date1);
+        } else {
+            $this->db->where('mp_generalentry.date >=', $year . '-1-1');
+            $this->db->where('mp_generalentry.date <', $date1);
+        }
+        $query = $this->db->get();
+        $query = $query->result_array();
+        if (empty($query)) {
+            $saldo_awal = 0;
+        } else {
+            $saldo_awal = $query[0]['saldo_awal'];
+        }
+        // var_dump($query);
+        // die();
+
+
+
         $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.date,mp_generalentry.no_jurnal,mp_generalentry.naration,mp_generalentry.no_jurnal,mp_head.name,mp_head.nature,mp_sub_entry.*");
         $this->db->from('mp_sub_entry');
         $this->db->join('mp_head', "mp_head.id = mp_sub_entry.accounthead");
         $this->db->join('mp_generalentry', 'mp_generalentry.id = mp_sub_entry.parent_id');
         $this->db->order_by('mp_generalentry.date', 'asc');
-        // $this->db->order_by('mp_generalentry.no_jurnal', 'asc');
         $this->db->order_by("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_generalentry.no_jurnal, '/', -3), '/', 1) ASC");
+        $this->db->where('mp_generalentry.id > 0');
+        $this->db->where('mp_sub_entry.parent_id > 0');
 
         $this->db->where('mp_head.id', $head_id);
         $this->db->where('mp_generalentry.date >=', $date1);
@@ -522,7 +564,11 @@ class Statement_model extends CI_Model
 
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
-            return $query->result();
+            $res['data'] = $query->result();;
+            $res['saldo_awal'] = $saldo_awal;
+            // echo json_encode($res);
+            // die();
+            return $res;
         } else {
             return NULL;
         }
@@ -548,8 +594,13 @@ class Statement_model extends CI_Model
                 foreach ($heads_record as $single_head) {
                     $data_leadger = $this->get_ledger_transactions($single_head->id, $filter['from'], $filter['to']);
                     if ($data_leadger != NULL) {
-                        $total_ledger = 0;
-                        $ledger_query  = array();
+
+                        if ($data_leadger['saldo_awal'] == 0) {
+                            $total_ledger = 0;
+                        } else {
+                            $total_ledger = $data_leadger['saldo_awal'];
+                        }
+
                         $form_content .= '<hr />                                       
                     
                         <table id="1" class="table table-striped table-hover">
@@ -566,8 +617,15 @@ class Statement_model extends CI_Model
                              <th class="">SALDO</th>
                         </thead>
                         <tbody>';
+                        $form_content .= '<tr>
+                        <td></td><td></td><td>Saldo Sebelum</td><td>
+                        </td>
+                        <td>
+                        </td>
+                        <td  >' . ($total_ledger < 0 ? '( <a class="currency">' . number_format(-$total_ledger, 2, ',', '.') . '</a>)' : '<a class="currency">' . number_format($total_ledger, 2, ',', '.') . '</a>') . '</td>            
+                        </tr>';
 
-                        foreach ($data_leadger as $single_ledger) {
+                        foreach ($data_leadger['data'] as $single_ledger) {
                             $debitamount = '';
                             $creditamount = '';
 
@@ -580,7 +638,7 @@ class Statement_model extends CI_Model
                             } else {
                             }
 
-                            $total_ledger = number_format($total_ledger, '2', '.', '');
+                            // $total_ledger = number_format($total_ledger, '2', '.', '');
 
                             $form_content .= '<tr>
                         <td>' . $single_ledger->date . '</td><td> <a href="' . base_url('statements/show/') . $single_ledger->parent_id . '">' . $single_ledger->no_jurnal . '</td><td><a >' . $single_ledger->sub_keterangan . '</a></td><td>
