@@ -79,7 +79,18 @@
                 </div>
                 <!-- <div class="col-md-2"> -->
                 <div class="form-group" style="margin-top:20px;">
-                    <a class="btn btn-info btn-flat margin btn-lg pull-right ml-2" href="<?= base_url() . 'download/xls_neraca_saldo?' . (!empty($xls) ? 'laba_rugi=true&' : '') . 'periode=' . $filter['periode'] . '&tahun=' . $filter['tahun'] . '&bulan=' . $filter['bulan'] ?>"> <i class="fa fa-download" aria-hidden="true"></i> Excel</a>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle btn-info btn-flat margin btn-lg pull-right ml-2" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-download" aria-hidden="true"></i> Excel
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item btn btn-info btn-flat margin btn-lg pull-right ml-2" href="<?= base_url() . 'download/xls_neraca_saldo?' . (!empty($xls) ? 'laba_rugi=true&' : '') . 'periode=' . $filter['periode'] . '&tahun=' . $filter['tahun'] . '&bulan=' . $filter['bulan'] ?>"> Format 1</a>
+                            <a class="dropdown-item btn btn-info btn-flat margin btn-lg pull-right ml-2" href="<?= base_url() . 'download/xls_neraca_saldo?' . (!empty($xls) ? 'laba_rugi=true&' : '') . 'periode=' . $filter['periode'] . '&tahun=' . $filter['tahun'] . '&bulan=' . $filter['bulan'] ?>&template=2"> Format 2</a>
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                        </div>
+                    </div>
                 </div>
                 <!-- </div> -->
 

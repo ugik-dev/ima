@@ -30,6 +30,7 @@ class Statements extends CI_Controller
 		$from 	 = html_escape($this->input->post('from'));
 		$no_jurnal 	 = html_escape($this->input->post('no_jurnal'));
 		$to 	 = html_escape($this->input->post('to'));
+		$filter['search'] 	 = html_escape($this->input->post('search'));
 
 		if ($from == NULL and $to == NULL) {
 			$from = date('Y-m-' . '01');
@@ -47,6 +48,7 @@ class Statements extends CI_Controller
 		$data['transaction_records'] = $this->Statement_model->fetch_transasctions($filter);
 		// echo json_encode($data['transaction_records']);
 		// die();
+		$data['search'] = $filter['search'];
 		$data['from'] = $from;
 		$data['to'] = $to;
 		$data['no_jurnal'] = $no_jurnal;
@@ -874,6 +876,7 @@ class Statements extends CI_Controller
 	{
 		//$ledger
 		// var_dus
+		$data['search'] = html_escape($this->input->post('search'));
 		$from = html_escape($this->input->post('from'));
 		$to   = html_escape($this->input->post('to'));
 		$data['account_head']   = html_escape($this->input->post('account_head'));

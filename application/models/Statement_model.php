@@ -73,8 +73,9 @@ class Statement_model extends CI_Model
             $this->db->from('mp_generalentry');
 
         if (!empty($filter['no_jurnal']))
-            $this->db->where('no_jurnal like "%' . $filter['no_jurnal'] . '%"');
-
+            $this->db->where(' no_jurnal like "%' . $filter['no_jurnal'] . '%"');
+        if (!empty($filter['search']))
+            $this->db->where('naration like "%' . $filter['search'] . '%"');
         if (!empty($filter['from'])) $this->db->where('date >=', $filter['from']);
         if (!empty($filter['to'])) $this->db->where('date <=', $filter['to']);
 
@@ -162,8 +163,6 @@ class Statement_model extends CI_Model
         $this->db->select("mp_activity.*, mp_users.agentname as user_name");
         $this->db->from('mp_activity');
         $this->db->join('mp_users', 'mp_activity.user_id = mp_users.id');
-        // if (!empty($filter['no_jurnal']))
-        //     $this->db->where('no_jurnal like "%' . $filter['no_jurnal'] . '%"');
         if (!empty($filter['from'])) $this->db->where('date_activity >=', $filter['from']);
         if (!empty($filter['to'])) $this->db->where('date_activity <=', $filter['to']);
         if (!empty($filter['user_id'])) $this->db->where('user_id', $filter['user_id']);
@@ -453,7 +452,7 @@ class Statement_model extends CI_Model
             if ($query->num_rows() > 0) {
                 $heads_record =  $query->result();
                 foreach ($heads_record as $single_head) {
-                    $data_leadger = $this->get_ledger_transactions($single_head->id, $filter['from'], $filter['to']);
+                    $data_leadger = $this->get_ledger_transactions($single_head->id, $filter);
                     if ($data_leadger != NULL) {
                         $j = 0;
                         // $total_ledger = 0;
@@ -516,8 +515,10 @@ class Statement_model extends CI_Model
 
 
     //USED TO GET THE LEDGER USING NATURE 
-    public function get_ledger_transactions($head_id, $date1, $date2)
+    public function get_ledger_transactions($head_id, $filter)
     {
+        $date1 = $filter['from'];
+        $date2 = $filter['to'];
         $this->db->select("SUM(IF(mp_sub_entry.type = 0,amount, -amount)) as saldo_awal");
         $this->db->from('mp_sub_entry');
         $this->db->join('mp_head', "mp_head.id = mp_sub_entry.accounthead");
@@ -553,19 +554,25 @@ class Statement_model extends CI_Model
         $this->db->from('mp_sub_entry');
         $this->db->join('mp_head', "mp_head.id = mp_sub_entry.accounthead");
         $this->db->join('mp_generalentry', 'mp_generalentry.id = mp_sub_entry.parent_id');
-        $this->db->order_by('mp_generalentry.date', 'asc');
-        $this->db->order_by("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_generalentry.no_jurnal, '/', -3), '/', 1) ASC");
         $this->db->where('mp_generalentry.id > 0');
         $this->db->where('mp_sub_entry.parent_id > 0');
+        if (!empty($filter['search'])) {
+            $this->db->where('(mp_sub_entry.sub_keterangan like "%' . $filter['search'] . '%" OR mp_generalentry.naration like "%' . $filter['search'] . '%")');
+        }
 
         $this->db->where('mp_head.id', $head_id);
         $this->db->where('mp_generalentry.date >=', $date1);
         $this->db->where('mp_generalentry.date <=', $date2);
+        $this->db->order_by('mp_generalentry.date', 'asc');
+        $this->db->order_by("SUBSTRING_INDEX(SUBSTRING_INDEX(mp_generalentry.no_jurnal, '/', -3), '/', 1) ASC");
 
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             $res['data'] = $query->result();;
             $res['saldo_awal'] = $saldo_awal;
+            // print_r($this->db->last_query());
+            // echo json_encode($res);
+            // die();
             // echo json_encode($res);
             // die();
             return $res;
@@ -592,7 +599,7 @@ class Statement_model extends CI_Model
             if ($query->num_rows() > 0) {
                 $heads_record =  $query->result();
                 foreach ($heads_record as $single_head) {
-                    $data_leadger = $this->get_ledger_transactions($single_head->id, $filter['from'], $filter['to']);
+                    $data_leadger = $this->get_ledger_transactions($single_head->id, $filter);
                     if ($data_leadger != NULL) {
 
                         if ($data_leadger['saldo_awal'] == 0) {
@@ -2540,6 +2547,320 @@ class Statement_model extends CI_Model
                 $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
                 $sheetrow++;
             }
+        }
+        // return $tmp;
+    }
+
+    public function xls_neraca_saldo2($filter, $sheet)
+    {
+        if ($filter['periode'] == 'tahunan') {
+            $QUERY = 'SELECT
+                        @names := SUBSTR(mp_head.name, 1, 3) as pars,nature as title,
+                        COALESCE((
+                        SELECT
+                            ROUND(
+                                SUM(
+                                      IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                ),2
+                            ) 
+                        FROM
+                            mp_sub_entry
+                        JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                        JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                        WHERE
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_sub_entry.parent_id = " -' . $filter['tahun'] . '"
+                        ),0) saldo_sebelum,
+                       COALESCE((
+                        SELECT
+                            ROUND(SUM(
+                                     IF(mp_sub_entry.parent_id > 0,
+                                        IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                           ,0)
+                            ),2) 
+                        FROM
+                            mp_sub_entry
+                        JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                        JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                        WHERE
+                        mp_sub_entry.parent_id > 0 AND
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-1-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-12-31"
+                        ),0)  mutasi,
+                    mp_head.id,
+                    mp_head.name
+                    FROM
+                        `mp_head`
+                    WHERE
+                    (
+                            SUBSTRING_INDEX(
+                                SUBSTRING_INDEX(mp_head.name, ".", -3),
+                                "]",
+                                1
+                            ) = "00.000.000" 
+                        ) 
+                        AND mp_head.nature in (' . $filter['nature'] . ')
+                    GROUP BY
+                        SUBSTR(mp_head.name, 1, 5)
+            ORDER BY mp_head.name
+            ';
+        } else if ($filter['bulan'] != 1) {
+            $QUERY = 'SELECT
+                        @names := SUBSTR(mp_head.name, 1, 3) as pars,nature as title,
+                        COALESCE((
+                        SELECT
+                            ROUND(SUM(
+                                    IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                        
+                                ),2) 
+                        FROM
+                            mp_sub_entry
+                        JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                        JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                        WHERE
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date < "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date >= "' . $filter['tahun'] . '-1-1"
+                        ),0) saldo_sebelum,
+                       COALESCE((
+                        SELECT
+                            ROUND(SUM(
+                                IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                        ),2) 
+                        FROM
+                            mp_sub_entry
+                        JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                        JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                        WHERE
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                        ),0)  mutasi,
+                    mp_head.id,
+                    mp_head.name
+                    FROM
+                        `mp_head`
+                    WHERE
+                    (
+                            SUBSTRING_INDEX(
+                                SUBSTRING_INDEX(mp_head.name, ".", -3),
+                                "]",
+                                1
+                            ) = "00.000.000" 
+                        ) 
+                        AND mp_head.nature in (' . $filter['nature'] . ')
+                    GROUP BY
+                        SUBSTR(mp_head.name, 1, 5)
+            ORDER BY mp_head.name
+            ';
+        } else {
+            $QUERY = 'SELECT
+                        @names := SUBSTR(mp_head.name, 1, 3) as pars,nature as title,
+                        COALESCE((
+                        SELECT
+                            ROUND(
+                                SUM(
+                                    IF(mp_sub_entry.parent_id < 0,
+                                      IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                          ,0)
+                                ),2
+                            ) 
+                        FROM
+                            mp_sub_entry
+                        JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                        JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                        WHERE
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date = "' . $filter['tahun'] . '-01-01"
+                        ),0) saldo_sebelum,
+                       COALESCE((
+                        SELECT
+                            ROUND(SUM(
+                                     IF(mp_sub_entry.parent_id > 0,
+                               IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
+                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+                                           ,0)
+                            ),2) 
+                        FROM
+                            mp_sub_entry
+                        JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                        JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                        WHERE
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                        ),0)  mutasi,
+                    mp_head.id,
+                    mp_head.name
+                    FROM
+                        `mp_head`
+                    WHERE
+                    (
+                            SUBSTRING_INDEX(
+                                SUBSTRING_INDEX(mp_head.name, ".", -3),
+                                "]",
+                                1
+                            ) = "00.000.000" 
+                        ) 
+                        AND mp_head.nature in (' . $filter['nature'] . ')
+                    GROUP BY
+                        SUBSTR(mp_head.name, 1, 5)
+            ORDER BY mp_head.name
+            ';
+        }
+        $res = $this->db->query($QUERY);
+        $res = $res->result();
+        $i = 0;
+        $sheetrow = 10;
+        foreach ($res as $re) {
+
+            // $sheet->setCellValue('A' . $sheetrow, substr($re->title, 0, 12));
+            $sheet->mergeCells("B" . $sheetrow . ":E" . $sheetrow)->setCellValue('B' . $sheetrow, $re->title);
+            // $sheet->setCellValue('F' . $sheetrow,  $re->saldo_sebelum);
+            // $sheet->setCellValue('G' . $sheetrow,  $re->mutasi);
+            // $sheet->setCellValue('H' . $sheetrow, ($re->saldo_sebelum + $re->mutasi));
+            $sheetrow++;
+            // if ($sheetrow == 8) {
+            $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
+            $sheetrow++;
+            // }
+            if (
+                $re->saldo_sebelum != 0 or $re->mutasi != 0
+            ) {
+                if (
+                    $filter['periode'] == 'tahunan'
+                ) {
+                    $res2 =  $this->query_count_tahunan($filter, $re->pars, $re->id, 5, -2, '000.000');
+                } else if ($filter['bulan'] != 1) {
+                    $res2 =  $this->query_count_more_1($filter, $re->pars, $re->id, 5, -2, '000.000');
+                } else {
+                    $res2 =  $this->query_count_month_1($filter, $re->pars, $re->id, 5, -2, '000.000');
+                }
+                // print_r($this->db->last_query());
+                // // echo json_encode($res2);
+                // die();
+                $k = 0;
+                foreach ($res2 as $re2) {
+                    if ($re2->saldo_sebelum != 0 or $re2->mutasi != 0) {
+                        $sheet->setCellValue('A' . $sheetrow, substr($re2->name, 0, 14));
+                        $sheet->mergeCells("C" . $sheetrow . ":E" . $sheetrow)->setCellValue('C' . $sheetrow, substr($re2->name, 15, 25));
+                        // $tmp_rowlv3 = $sheetrow;
+                        $sheetrow++;
+                        $sum = false;
+                        // ===LEVEL 3
+                        if ($filter['periode'] == 'tahunan') {
+                            $res3 =  $this->query_count_tahunan($filter, $re2->pars, $re2->id, 9, -1, '000');
+                        } else if ($filter['bulan'] != 1) {
+                            $res3 =  $this->query_count_more_1($filter, $re2->pars, $re2->id, 9, -1, '000');
+                        } else {
+                            $res3 =  $this->query_count_month_1($filter, $re2->pars, $re2->id, 9, -1, '000');
+                        }
+
+
+                        foreach ($res3 as $re3) {
+                            if (
+                                $re3->saldo_sebelum != 0 or $re3->mutasi != 0
+                            ) {
+                                $sheet->setCellValue('A' . $sheetrow, substr($re3->name, 1, 12));
+                                $sheet->mergeCells("D" . $sheetrow . ":E" . $sheetrow)->setCellValue('D' . $sheetrow, substr($re3->name, 15, 25));
+                                $tmp_row = $sheetrow;
+                                $sheetrow++;
+                                $sum = false;
+                                //  LVL 4
+                                {
+
+                                    if (
+                                        $filter['periode'] == 'tahunan'
+                                    ) {
+                                        $res4 =  $this->query_count_tahunan($filter, $re3->pars, $re3->id, 13, -1, '');
+                                    } else if ($filter['bulan'] != 1) {
+                                        $res4 =  $this->query_count_more_1($filter, $re3->pars, $re3->id, 13, -1, '');
+                                    } else {
+                                        $res4 =  $this->query_count_month_1($filter, $re3->pars, $re3->id, 13, -1, '');
+                                    }
+                                    foreach ($res4 as $re4) {
+                                        if ($re4->saldo_sebelum != 0 or $re4->mutasi != 0) {
+                                            $sheet->setCellValue('A' . $sheetrow, substr($re4->name, 1, 12));
+                                            $sheet->setCellValue('E' . $sheetrow, substr($re4->name, 15, 20));
+                                            $sheet->setCellValue('F' . $sheetrow, $re4->saldo_sebelum);
+                                            $sheet->setCellValue('H' . $sheetrow,  $re4->mutasi);
+                                            $sheet->setCellValue('J' . $sheetrow, ($re4->saldo_sebelum + $re4->mutasi));
+                                            $sheetrow++;
+                                            $sum = true;
+                                        }
+                                    }
+                                }
+                                if ($sum == true) {
+                                    $sheet->getStyle('F' . $sheetrow . ':K' . $sheetrow)->getAlignment()->setVertical('right')->setHorizontal('right');
+                                    $sheet->getRowDimension($sheetrow)->setRowHeight(5);
+                                    $sheet->setCellValue('F' . $sheetrow,  '______________');
+                                    $sheet->setCellValue('H' . $sheetrow,  '______________');
+                                    $sheet->setCellValue('J' . $sheetrow, '______________');
+                                    $sheetrow++;
+
+                                    $sheet->setCellValue('F' . $sheetrow,  $re3->saldo_sebelum);
+                                    $sheet->setCellValue('H' . $sheetrow,  $re3->mutasi);
+                                    $sheet->setCellValue('J' . $sheetrow, ($re3->saldo_sebelum + $re3->mutasi));
+                                    $sheetrow++;
+                                    $sheetrow++;
+                                } else {
+
+                                    $sheet->setCellValue('F' . $tmp_row,  $re3->saldo_sebelum);
+                                    $sheet->setCellValue('H' . $tmp_row,  $re3->mutasi);
+                                    $sheet->setCellValue('J' . $tmp_row, ($re3->saldo_sebelum + $re3->mutasi));
+                                    // $sheetrow++;
+                                    //  END LVL 4
+                                }
+                            }
+                        }
+
+                        $sheet->getStyle('F' . $sheetrow . ':K' . $sheetrow)->getAlignment()->setVertical('right')->setHorizontal('right');
+                        $sheet->getRowDimension($sheetrow)->setRowHeight(5);
+                        $sheet->mergeCells("F" . $sheetrow . ":G" . $sheetrow)->setCellValue('F' . $sheetrow,  '________________');
+                        $sheet->mergeCells("H" . $sheetrow . ":I" . $sheetrow)->setCellValue('H' . $sheetrow,  '________________');
+                        $sheet->mergeCells("J" . $sheetrow . ":K" . $sheetrow)->setCellValue('J' . $sheetrow,  '________________');
+                        // $sheet->setCellValue('G' . $sheetrow,  '______________');
+                        // $sheet->setCellValue('H' . $sheetrow, '______________');
+                        // $sheet->setCellValue('I' . $sheetrow,  '______________');
+                        // $sheet->setCellValue('J' . $sheetrow,  '______________');
+                        // $sheet->setCellValue('K' . $sheetrow, '______________');
+                        $sheetrow++;
+
+
+                        $sheet->setCellValue('G' . $sheetrow, $re2->saldo_sebelum);
+                        $sheet->setCellValue('I' . $sheetrow, $re2->mutasi);
+                        $sheet->setCellValue('K' . $sheetrow, ($re2->saldo_sebelum + $re2->mutasi));
+                        $sheetrow++;
+
+                        // ===END LVL 3
+                    }
+                    if ($re2->saldo_sebelum != 0 or $re2->mutasi != 0) {
+                        $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
+                        $sheetrow++;
+                    }
+                }
+            }
+            // if ($re->saldo_sebelum != 0 or $re->mutasi != 0) {
+            //     $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
+            //     $sheetrow++;
+            // }
+            $sheet->getStyle('F' . $sheetrow . ':K' . $sheetrow)->getAlignment()->setVertical('right')->setHorizontal('right');
+            $sheet->getRowDimension($sheetrow)->setRowHeight(5);
+            $sheet->mergeCells("F" . $sheetrow . ":G" . $sheetrow)->setCellValue('F' . $sheetrow,  '______________________');
+            $sheet->mergeCells("H" . $sheetrow . ":I" . $sheetrow)->setCellValue('H' . $sheetrow,  '______________________');
+            $sheet->mergeCells("J" . $sheetrow . ":K" . $sheetrow)->setCellValue('J' . $sheetrow,  '______________________');
+            $sheetrow++;
+
+            $sheet->mergeCells("B" . $sheetrow . ":E" . $sheetrow)->setCellValue('B' . $sheetrow, '** TOTAL ' . $re->title . ' **');
+            $sheet->setCellValue('G' . $sheetrow,  $re->saldo_sebelum);
+            $sheet->setCellValue('I' . $sheetrow,  $re->mutasi);
+            $sheet->setCellValue('J' . $sheetrow, ($re->saldo_sebelum + $re->mutasi));
+            $sheetrow++;
+            // if ($sheetrow == 8) {
+            // $sheet->mergeCells("A" . $sheetrow . ":K" . $sheetrow);
+            $sheetrow++;
         }
         // return $tmp;
     }

@@ -146,6 +146,7 @@ class PageSetup
     const PAPERSIZE_A2_PAPER = 64;
     const PAPERSIZE_A3_TRANSVERSE_PAPER = 65;
     const PAPERSIZE_A3_EXTRA_TRANSVERSE_PAPER = 66;
+    const PAPERSIZE_CFK1 = 67;
 
     // Page orientation
     const ORIENTATION_DEFAULT = 'default';

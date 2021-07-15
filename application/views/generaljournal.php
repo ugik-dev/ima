@@ -32,6 +32,15 @@
                             ?>
                         </div>
                     </div>
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <?php echo form_label('Search'); ?>
+                            <?php
+                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'id' => 'search', 'name' => 'search', 'reqiured' => '', 'value' => $search);
+                            echo form_input($data);
+                            ?>
+                        </div>
+                    </div>
                     <div class="col-lg-3 ">
                         <div class="form-group">
                             <?php echo form_label('Dari Tanggal'); ?>
@@ -50,12 +59,12 @@
                             ?>
                         </div>
                     </div>
-                    <!-- <div class="col-lg-3"> -->
-                    <div class="form-group" style="margin-top: 24px; float: right">
-                        <button class="btn btn-info btn-flat mr-2" type="submit" name="btn_submit_customer" value="true"> <i class=" fa fa-search pull-left"></i> Buat Statement</button>
+                    <div class="col-lg-3">
+                        <div class="form-group" style="margin-top: 24px; float: right">
+                            <button class="btn btn-info btn-flat mr-2" type="submit" name="btn_submit_customer" value="true"> <i class=" fa fa-search pull-left"></i> Buat Statement</button>
 
+                        </div>
                     </div>
-                    <!-- </div> -->
                 </div>
             </div>
             <?php form_close(); ?>

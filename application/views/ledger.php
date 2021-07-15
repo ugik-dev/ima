@@ -27,16 +27,22 @@
                     <div class="col-lg-6">
                         <div class="form-group">
                             <?php echo form_label('Akun'); ?>
-                            <select name="account_head" id="account_head" class="form-control select2 input-lg">
+                            <select name="account_head" id="account_head" class="form-control select2">
                                 <?php echo $accounts_records; ?>
                             </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <?php echo form_label('Search'); ?>
+                            <input class="form-control" type="text" placeholder="Search" name="search" value="<?= $search ?>" />
                         </div>
                     </div>
                     <div class="col-lg-3 ">
                         <div class="form-group">
                             <?php echo form_label('Dari Tanggal'); ?>
                             <?php
-                            $data = array('class' => 'form-control input-lg', 'type' => 'date', 'id' => 'from', 'name' => 'from', 'reqiured' => '', 'value' => $from);
+                            $data = array('class' => 'form-control', 'type' => 'date', 'id' => 'from', 'name' => 'from', 'reqiured' => '', 'value' => $from);
                             echo form_input($data);
                             ?>
                         </div>
