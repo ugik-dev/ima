@@ -1634,9 +1634,9 @@ class Statement_model extends CI_Model
                 'id' => $re->id,
                 'text' =>  $re->title,
                 'data' => [
-                    'saldo_s' => number_format($re->saldo_sebelum, 2),
-                    'mutasi' => number_format($re->mutasi, 2),
-                    'saldo' => number_format(($re->saldo_sebelum + $re->mutasi), 2)
+                    'saldo_s' => $re->saldo_sebelum >= 0 ? number_format($re->saldo_sebelum, 2) : '(' . number_format(-$re->saldo_sebelum, 2) . ')',
+                    'mutasi' => $re->mutasi >= 0 ? number_format($re->mutasi, 2) :   '(' . number_format(-$re->mutasi, 2) . ')',
+                    'saldo' => ($re->saldo_sebelum + $re->mutasi) >= 0 ? number_format(($re->saldo_sebelum + $re->mutasi), 2) :  '(' . number_format(- ($re->saldo_sebelum + $re->mutasi), 2) . ')'
                 ],
                 'state' => ['opened' => true]
             );
@@ -1660,9 +1660,9 @@ class Statement_model extends CI_Model
                             'id' => $re2->id . '-2',
                             'text' => $re2->name,
                             'data' => [
-                                'saldo_s' => number_format($re2->saldo_sebelum, 2),
-                                'mutasi' => number_format($re2->mutasi, 2),
-                                'saldo' => number_format(($re2->saldo_sebelum + $re2->mutasi), 2),
+                                'saldo_s' => $re2->saldo_sebelum >= 0 ? number_format($re2->saldo_sebelum, 2) : '(' . number_format(-$re2->saldo_sebelum, 2) . ')',
+                                'mutasi' => $re2->mutasi >= 0 ? number_format($re2->mutasi, 2) :   '(' . number_format(-$re2->mutasi, 2) . ')',
+                                'saldo' => ($re2->saldo_sebelum + $re2->mutasi) >= 0 ? number_format(($re2->saldo_sebelum + $re2->mutasi), 2) :  '(' . number_format(- ($re2->saldo_sebelum + $re2->mutasi), 2) . ')',
                                 'ins' => '<a onclick="inspect_buku_besar(' . $re2->id . ')"><i class="fa fa-search text-warning mr-5"></i></a>'
                             ],
                             'state' => ['opened' => true]
@@ -1692,9 +1692,9 @@ class Statement_model extends CI_Model
                                     'id' => $re3->id . '-3',
                                     'text' => $re3->name,
                                     'data' => [
-                                        'saldo_s' => number_format($re3->saldo_sebelum, 2),
-                                        'mutasi' => number_format($re3->mutasi, 2),
-                                        'saldo' => number_format(($re3->saldo_sebelum + $re3->mutasi), 2),
+                                        'saldo_s' => $re3->saldo_sebelum >= 0 ? number_format($re3->saldo_sebelum, 2) : '(' . number_format(-$re3->saldo_sebelum, 2) . ')',
+                                        'mutasi' => $re3->mutasi >= 0 ? number_format($re3->mutasi, 2) :   '(' . number_format(-$re3->mutasi, 2) . ')',
+                                        'saldo' => ($re3->saldo_sebelum + $re3->mutasi) >= 0 ? number_format(($re3->saldo_sebelum + $re3->mutasi), 2) :  '(' . number_format(- ($re3->saldo_sebelum + $re3->mutasi), 2) . ')',
                                         'ins' => '<a onclick="inspect_buku_besar(' . $re3->id . ')"><i class="fa fa-search text-warning mr-5"></i></a>'
                                     ],
                                     'state' => ['opened' => true]
