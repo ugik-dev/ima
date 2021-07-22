@@ -218,17 +218,19 @@
         mapInput.name = "account_head";
         mapInput.value = i;
         mapForm.append(mapInput);
-
+        <?php
+        if (strlen((string)$filter['bulan']) ==  1) $tm_bln = '0' . (string) $filter['bulan'];
+        else $tm_bln = $filter['bulan']; ?>
         var mapInput2 = document.createElement("input");
         mapInput2.type = "text";
         mapInput2.name = "from";
-        mapInput2.value = "<?= $filter['tahun'] . '-' . $filter['bulan'] . '-01' ?>";
+        mapInput2.value = "<?= $filter['tahun'] . '-' . $tm_bln . '-01' ?>";
         mapForm.append(mapInput2);
 
         var mapInput3 = document.createElement("input");
         mapInput3.type = "text";
         mapInput3.name = "to";
-        mapInput3.value = "<?= $filter['tahun'] . '-' . $filter['bulan'] . '-31' ?>";
+        mapInput3.value = "<?= $filter['tahun'] . '-' . $tm_bln . '-31' ?>";
         mapForm.append(mapInput3);
 
         document.body.appendChild(mapForm);

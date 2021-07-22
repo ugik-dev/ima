@@ -889,8 +889,10 @@ class Statements extends CI_Controller
 		$to   = html_escape($this->input->post('to'));
 		$data['account_head']   = html_escape($this->input->post('account_head'));
 
-		if ($from == NULL or $to == NULL) {
+		if ($from == NULL) {
 			$from = date('Y-m-') . '01';
+		}
+		if ($to == NULL) {
 			$to = date('Y-m-' . date('t', strtotime($from)));
 		}
 
