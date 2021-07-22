@@ -23,7 +23,6 @@ class Multiple_roles extends CI_Controller
 			'Nama Pengguna',
 			'Email',
 			'Deskripsi',
-			'Hak Akses',
 			'Aksi'
 		);
 

@@ -770,11 +770,11 @@ class Crud_model extends CI_Model
 
     public function get_user_details_menus($filter = [])
     {
-        $this->db->select("mp_users.id as user_id , mp_users.user_name , mp_users.user_email , mp_users.user_description ,mp_menu.name,mp_multipleroles.id as rolesid");
+        $this->db->select("mp_users.id as user_id , mp_users.user_name , mp_users.user_email , mp_users.user_description");
         $this->db->from('mp_users');
         if (!empty($filter['user_id'])) $this->db->where('mp_users.id', $filter['user_id']);
-        $this->db->from('mp_multipleroles');
-        $this->db->join('mp_menu', "mp_users.id = mp_multipleroles.user_id and mp_multipleroles.menu_Id = mp_menu.id ");
+        // $this->db->from('mp_multipleroles');
+        // $this->db->join('mp_menu', "mp_users.id = mp_multipleroles.user_id and mp_multipleroles.menu_Id = mp_menu.id ");
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result();

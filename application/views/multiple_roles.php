@@ -53,23 +53,9 @@
                                                 <?php echo $privileges_obj->user_description; ?>
                                             </td>
                                             <td>
-                                                <?php echo $privileges_obj->name; ?>
-                                            </td>
-                                            <td>
                                                 <div class="btn-group pull pull-right">
-                                                    <button type="button" class="btn btn-info btn-flat">Tindakan</button>
-                                                    <button type="button" class="btn btn-default btn-flat dropdown-toggle" data-toggle="dropdown">
-                                                        <span class="caret"></span>
-                                                        <span class="sr-only">Toggle Dropdown</span>
-                                                    </button>
-                                                    <ul class="dropdown-menu" role="menu">
-                                                        <li>
-                                                            <a onclick="show_modal_page('<?php echo base_url(); ?>multiple_roles/popup/edit_multipleroles_model/<?= $privileges_obj->user_id ?> ')" href="javascript:void(0)"><i class="fa fa-pencil-o"></i> Lihat
-                                                            </a>
-                                                            <a onclick="confirmation_alert('delete this  ','<?php echo base_url(); ?>multiple_roles/delete/<?php echo $privileges_obj->rolesid; ?>')" href="javascript:void(0)"><i class="fa fa-trash-o"></i> Hapus
-                                                            </a>
-                                                        </li>
-                                                    </ul>
+                                                    <a class="btn btn-info btn-flat" onclick=" show_modal_page('<?php echo base_url(); ?>multiple_roles/popup/edit_multipleroles_model/<?= $privileges_obj->user_id ?> ')" href="javascript:void(0)"><i class="fas fa-pencil-alt"></i> Edit
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>
