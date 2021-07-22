@@ -157,7 +157,7 @@
                                   <a onclick="printSingleJurnal2()" class="btn btn-secondary  margin btn-lg pull-right" style="float: right"> <i class="fa fa-print" aria-hidden="true"></i>
                                       Print</a>
                                   <?php
-                                    if ($this->session->userdata('user_id')['nama_role'] == 'accounting') {
+                                    if ($accounting_role) {
                                     ?>
                                       <a href="<?= base_url() . 'statements/edit_jurnal/' . $transaction['parent']->transaction_id . ($draft ? '/draft' : '') ?>" class="btn btn-info  margin btn-lg pull-right" style="float: right"> <i class="fa fa-list-alt" aria-hidden="true"></i>
                                           Edit</a>

@@ -18,6 +18,22 @@ class SecurityModel extends CI_Model
     }
   }
 
+  public function MultiplerolesStatus($rolename)
+  {
+    $this->db->select('mp_multipleroles.id');
+    $this->db->from('mp_multipleroles');
+    $this->db->join('mp_menu', 'mp_menu.id = mp_multipleroles.menu_Id');
+    $this->db->where('mp_multipleroles.user_id', $this->session->userdata('user_id')['id']);
+    $this->db->where('mp_menu.name', $rolename);
+    $res = $this->db->get();
+    $res = $res->result_array();
+    if (!empty($res)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public function apiKeyGuard()
   {
     $headers = getallheaders();

@@ -63,14 +63,17 @@
                                             </tr>';
                                             }
                                         }
-                                        if ($transaction_record['gen_lock'] == 'N') {
+                                        if ($accounting_role) {
                                             $btn_lock = ' 
-                                    <a href="' . base_url() . 'statements/delete_jurnal_draft/' . $transaction_record['transaction_id'] . '" class="btn btn-default btn-outline-danger mr-1 my-1 no-print" style="float: right"><i class="fa fa-trash  pull-left"></i> Delete </a>
+                                            <a href="' . base_url() . 'statements/delete_jurnal_draft/' . $transaction_record['transaction_id'] . '" class="btn btn-default btn-outline-danger mr-1 my-1 no-print" style="float: right"><i class="fa fa-trash  pull-left"></i> Delete </a>
                                             <a href="' . base_url() . 'statements/edit_jurnal/' . $transaction_record['transaction_id'] . '/draft" class="btn btn-default btn-outline-primary  mr-1 my-1  no-print" style="float: right"><i class="fa fa-list-alt pull-left"></i> Edit</a> 
-                                            ';
+                                             <a href="' . base_url() . 'statements/show/' . $transaction_record['transaction_id'] . '/draft" class="btn btn-default btn-outline-primary  mr-1 my-1  no-print" style="float: right"><i class="fa fa-eye  pull-left"></i> Show </a>
+                                         ';
                                         } else {
-                                            $btn_lock = ' ';
+                                            $btn_lock = '        <a href="' . base_url() . 'statements/show/' . $transaction_record['transaction_id'] . '/draft" class="btn btn-default btn-outline-primary  mr-1 my-1  no-print" style="float: right"><i class="fa fa-eye  pull-left"></i> Show </a> ';
                                         }
+
+
 
                                         echo '<tr class="narration" >
                                         <td class="border-bottom-journal" colspan="5">
@@ -79,8 +82,7 @@
                                         <h7> No Jurnal : ' . $transaction_record['no_jurnal'] . '</h7> 
                                         <br>
                                         ' .  $btn_lock . '
-                                        <a href="' . base_url() . 'statements/show/' . $transaction_record['transaction_id'] . '/draft" class="btn btn-default btn-outline-primary  mr-1 my-1  no-print" style="float: right"><i class="fa fa-eye  pull-left"></i> Show </a>
-                                        </td>
+                                       </td>
                                         </tr>';
                                     }
                                     // <a href="' . base_url() . 'statements/copy_jurnal/' . $transaction_record['transaction_id'] . '" class="btn btn-default btn-outline-primary  mr-1 my-1  no-print" style="float: right"><i class="fa fa-copy  pull-left"></i> Copy </a>

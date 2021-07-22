@@ -24,8 +24,6 @@ class Statements extends CI_Controller
 		// DEFINES PAGE TITLE
 		$data['title'] = 'Jurnal Umum';
 
-		// DEFINES WHICH PAGE TO RENDER
-		$data['main_view'] = 'generaljournal';
 
 		$from 	 = html_escape($this->input->post('from'));
 		$no_jurnal 	 = html_escape($this->input->post('no_jurnal'));
@@ -46,7 +44,8 @@ class Statements extends CI_Controller
 
 		$this->load->model('Statement_model');
 		$data['transaction_records'] = $this->Statement_model->fetch_transasctions($filter);
-		// echo json_encode($data['transaction_records']);
+		$data['accounting_role'] = $this->SecurityModel->MultiplerolesStatus('Akuntansi');;
+		// echo json_encode($data['accounting_role']);
 		// die();
 		$data['search'] = $filter['search'];
 		$data['from'] = $from;
@@ -54,6 +53,7 @@ class Statements extends CI_Controller
 		$data['no_jurnal'] = $no_jurnal;
 
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+		$data['main_view'] = 'generaljournal';
 		$this->load->view('main/index.php', $data);
 	}
 
@@ -73,9 +73,11 @@ class Statements extends CI_Controller
 
 	public function draft()
 	{
+		// $this->SecurityModel->MultiplerolesGuard('Akuntansi');
 
 		// DEFINES PAGE TITLE
 		$data['title'] = 'Draft Jurnal Umum';
+		$data['accounting_role'] = $this->SecurityModel->MultiplerolesStatus('Akuntansi');;
 
 		// DEFINES WHICH PAGE TO RENDER
 		$data['main_view'] = 'generaljournal_draft';
@@ -142,6 +144,7 @@ class Statements extends CI_Controller
 			$data['transaction']['new_arr'] = $new_arr;
 			$data['title'] = $data['transaction']['parent']->no_jurnal;
 		}
+		$data['accounting_role'] = $this->SecurityModel->MultiplerolesStatus('Akuntansi');
 		// echo json_encode($data);
 		// var_dump($data['transaction']['sub']);
 		// die();
@@ -150,6 +153,7 @@ class Statements extends CI_Controller
 
 	public function copy_jurnal($id)
 	{
+		$this->SecurityModel->MultiplerolesGuard('Akuntansi');
 
 		$this->load->model('Statement_model');
 		$res_detail = $this->Statement_model->detail_fetch_transasctions(array('id' => $id, 'draft' => false));
@@ -205,6 +209,8 @@ class Statements extends CI_Controller
 
 	public function invoice_to_jurnal($invoice_no)
 	{
+		$this->SecurityModel->MultiplerolesGuard('Akuntansi');
+
 		$this->load->model('InvoiceModel');
 		$result = $this->InvoiceModel->getAllInvoice(array('id' =>  $invoice_no))[0];
 		// echo json_encode($result);
@@ -838,6 +844,8 @@ class Statements extends CI_Controller
 
 	public function edit_jurnal($uri1, $draft = false)
 	{
+		$this->SecurityModel->MultiplerolesGuard('Akuntansi');
+
 		// echo $uri1;
 		// $this->load->model('St')
 		$this->load->model('Crud_model');
@@ -998,7 +1006,7 @@ class Statements extends CI_Controller
 	//Vouchers/journal_voucher
 	function journal_voucher($data_return = NULL)
 	{
-
+		$this->SecurityModel->MultiplerolesGuard('Akuntansi');
 		$this->load->model('Crud_model');
 
 		$data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
@@ -1029,6 +1037,8 @@ class Statements extends CI_Controller
 
 	function marge_jurnal()
 	{
+		$this->SecurityModel->MultiplerolesGuard('Akuntansi');
+
 		$data['title'] = 'Entri Jurnal';
 		$data['main_view'] = 'marge_jurnal';
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
@@ -1037,6 +1047,8 @@ class Statements extends CI_Controller
 
 	function marge_jurnal_process()
 	{
+		$this->SecurityModel->MultiplerolesGuard('Akuntansi');
+
 		$no_jurnal  = html_escape($this->input->post('no_jurnal'));
 
 		// var_dump($no_jurnal);
@@ -1090,7 +1102,8 @@ class Statements extends CI_Controller
 	//USED TO ADD STARTING BALANCES 
 	function opening_balance()
 	{
-		// DEFINES PAGE TITLE
+		$this->SecurityModel->MultiplerolesGuard('Akuntansi');
+
 		$data['title'] = 'Pembukaan Saldo';
 
 		$this->load->model('Crud_model');
@@ -1112,6 +1125,7 @@ class Statements extends CI_Controller
 	//USED TO ADD INTO OPENING BALANCE 
 	function add_new_balance()
 	{
+		$this->SecurityModel->MultiplerolesGuard('Akuntansi');
 
 		$account_head = html_escape($this->input->post('account_head'));
 		$account_nature   = html_escape($this->input->post('account_nature'));
@@ -1176,6 +1190,7 @@ class Statements extends CI_Controller
 	function create_journal_voucher()
 	{
 		try {
+			$this->SecurityModel->MultiplerolesGuard('Akuntansi');
 
 			$id = html_escape($this->input->post('id'));
 			$remove_draft = html_escape($this->input->post('remove_draft'));
@@ -1294,6 +1309,7 @@ class Statements extends CI_Controller
 	function edit_journal_voucher()
 	{
 		try {
+			$this->SecurityModel->MultiplerolesGuard('Akuntansi');
 			$draft_value = html_escape($this->input->post('draft_value'));
 			$description = html_escape($this->input->post('description'));
 			$date   = html_escape($this->input->post('date'));
