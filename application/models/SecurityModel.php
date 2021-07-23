@@ -18,13 +18,38 @@ class SecurityModel extends CI_Model
     }
   }
 
-  public function MultiplerolesStatus($rolename)
+  public function MultiplerolesStatus($rolename, $ajax = false)
   {
     $this->db->select('mp_multipleroles.id');
     $this->db->from('mp_multipleroles');
     $this->db->join('mp_menu', 'mp_menu.id = mp_multipleroles.menu_Id');
     $this->db->where('mp_multipleroles.user_id', $this->session->userdata('user_id')['id']);
-    $this->db->where('mp_menu.name', $rolename);
+    if (is_array($rolename)) {
+      $this->db->where_in('mp_menu.name', $rolename);
+    } else {
+      $this->db->where('mp_menu.name', $rolename);
+    }
+    $res = $this->db->get();
+    $res = $res->result_array();
+    // print_r($this->db->last_query());
+    // die();
+    // redirect('/');
+
+    if (!empty($res)) {
+      return true;
+    } else {
+      if ($ajax) throw new UserException('Kamu tidak berhak mengakses resource ini', UNAUTHORIZED_CODE);
+      return false;
+    }
+  }
+
+  public function MultiplerolesArray($rolename)
+  {
+    $this->db->select('mp_multipleroles.id');
+    $this->db->from('mp_multipleroles');
+    $this->db->join('mp_menu', 'mp_menu.id = mp_multipleroles.menu_Id');
+    $this->db->where('mp_multipleroles.user_id', $this->session->userdata('user_id')['id']);
+    $this->db->where('mp_menu.name in (' . $rolename . ')');
     $res = $this->db->get();
     $res = $res->result_array();
     if (!empty($res)) {

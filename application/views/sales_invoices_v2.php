@@ -1,62 +1,62 @@
 <div class="card card-custom position-relative overflow-hidden">
     <!--begin::Shape-->
-    <div class="container">
-        <div class="alert alert-custom alert-white alert-shadow gutter-b" role="alert">
-            <?php
-            $currency =  $this->db->get_where('mp_langingpage', array('id' => 1))->result_array()[0]['currency'];
-            $attributes = array('id' => 'invoice_form', 'method' => 'post', 'class' => 'form col-lg-12');
-            ?>
-            <?php echo form_open('invoice/manage', $attributes); ?>
-            <div class="row col-lg-12">
+    <!-- <div class="container"> -->
+    <div class="alert alert-custom alert-white" role="alert">
+        <?php
+        $currency =  $this->db->get_where('mp_langingpage', array('id' => 1))->result_array()[0]['currency'];
+        $attributes = array('id' => 'invoice_form', 'method' => 'post', 'class' => 'form col-lg-12');
+        ?>
+        <?php echo form_open('invoice/manage', $attributes); ?>
+        <div class="row col-lg-12">
 
-                <div class="col-lg-3 ">
-                    <div class="form-group margin ">
-                        <?php echo form_label('Dari Tanggal:'); ?>
-                        <div class="input-group date ">
-                            <div class="input-group-addon   ">
-                                <i class="fa fa-calendar "></i>
-                            </div>
-                            <?php
-                            // echo $filter['first_date'];
-                            $data = array('class' => 'form-control  input-lg', 'type' => 'date', 'id' => 'datepicker', 'name' => 'date1', 'value' => $filter['first_date'], 'reqiured' => '');
-                            echo form_input($data);
-                            ?>
+            <div class="col-lg-3 ">
+                <div class="form-group margin ">
+                    <?php echo form_label('Dari Tanggal:'); ?>
+                    <div class="input-group date ">
+                        <div class="input-group-addon   ">
+                            <i class="fa fa-calendar "></i>
                         </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="form-group margin">
-                        <?php echo form_label('Sampai Tanggal:'); ?>
-                        <div class="input-group date">
-                            <div class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </div>
-                            <?php
-                            $data = array('class' => 'form-control  input-lg', 'type' => 'date', 'id' => 'datepicker', 'name' => 'date2', 'value' => $filter['second_date'], 'reqiured' => '');
-                            echo form_input($data);
-                            ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="form-group margin ">
-                        <?php echo form_label('Atau Masukan No Invoice:'); ?>
                         <?php
-                        $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'invoice_no', 'value' => $filter['no_invoice'],);
+                        // echo $filter['first_date'];
+                        $data = array('class' => 'form-control  input-lg', 'type' => 'date', 'id' => 'datepicker', 'name' => 'date1', 'value' => $filter['first_date'], 'reqiured' => '');
                         echo form_input($data);
                         ?>
                     </div>
                 </div>
-                <div class="col-lg-2" style="margin-top:27px;">
+            </div>
+            <div class="col-lg-3">
+                <div class="form-group margin">
+                    <?php echo form_label('Sampai Tanggal:'); ?>
+                    <div class="input-group date">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <?php
+                        $data = array('class' => 'form-control  input-lg', 'type' => 'date', 'id' => 'datepicker', 'name' => 'date2', 'value' => $filter['second_date'], 'reqiured' => '');
+                        echo form_input($data);
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="form-group margin ">
+                    <?php echo form_label('Atau Masukan No Invoice:'); ?>
                     <?php
-                    $data = array('class' => 'btn btn-info btn-outline-secondary margin  pull-right input-lg', 'type' => 'submit', 'name' => 'searchecord', 'value' => 'true', 'content' => '<i class="fa fa-search" aria-hidden="true"></i> Cari');
-                    echo form_button($data);
+                    $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'invoice_no', 'value' => $filter['no_invoice'],);
+                    echo form_input($data);
                     ?>
                 </div>
-                <?php echo form_close(); ?>
             </div>
+            <div class="col-lg-2" style="margin-top:27px;">
+                <?php
+                $data = array('class' => 'btn btn-info btn-outline-secondary margin  pull-right input-lg', 'type' => 'submit', 'name' => 'searchecord', 'value' => 'true', 'content' => '<i class="fa fa-search" aria-hidden="true"></i> Cari');
+                echo form_button($data);
+                ?>
+            </div>
+            <?php echo form_close(); ?>
         </div>
     </div>
+    <!-- </div> -->
 </div>
 
 <!-- <div class="card card-custom position-relative overflow-hidden">
@@ -70,6 +70,7 @@
     </div>
 </div> -->
 <?php
+$cur_user = $this->session->userdata('user_id')['id'];
 for ($i = 0; $i < count($invoices_Record); $i++) {
 ?>
     <hr>
@@ -90,12 +91,15 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
                     <div class="btn-group">
                         <button type="button" class="btn btn-primary dropdown-toggle mr-1 mr-sm-14 my-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
                         <div class="dropdown-menu">
-                            <a class="btn" href="<?php echo base_url() . 'invoice/edit/' . $invoices_Record[$i]['id'] ?>"><i class="fas fa-pencil-alt pull-left"></i>
-                                Edit</a>
+                            <?php
+                            echo  $cur_user == $invoices_Record[$i]['agen_id'] ? (' <a class="btn" href="' . base_url() . 'invoice/edit/' . $invoices_Record[$i]['id'] . '"><i class="fas fa-pencil-alt pull-left"></i> Edit </a>
+                                <a class="btn" href="' . base_url() . 'invoice/delete/' . $invoices_Record[$i]['id'] . '"><i class="fa fa-trash pull-left"></i> Delete </a>
+                                
+                                ') : '';
+                            ?>
+
                             <a class="btn" href="<?php echo base_url() . 'invoice/copy/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-copy pull-left"></i>
                                 Copy</a>
-                            <a class="btn btn-danger" href="<?php echo base_url() . 'invoice/delete/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-trash pull-left"></i>
-                                Delete </a>
                         </div>
                     </div>
                     <a class="btn btn-info mr-1 mr-sm-14 my-1" href="<?php echo base_url() . 'invoice/show/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-eye pull-left"></i>
@@ -147,8 +151,8 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
 
             </div>
         </div>
-        <div class="row table-responsive">
-            <div class="col-xs-12 ">
+        <div class="row table-responsive container-fluid">
+            <div class="col-xs-12">
                 <table class="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -204,7 +208,7 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
                 </table>
             </div>
         </div>
-        <div class="row">
+        <div class="row container-fluid">
             <div class="col-lg-12 col-sm-12 col-xs-12">
                 <div class="table-responsive">
                     <table class="table">

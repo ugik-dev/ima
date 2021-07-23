@@ -1230,6 +1230,7 @@ class Transaction_model extends CI_Model
             'acc_2' => $data['acc_2'],
             'acc_3' => $data['acc_3'],
             'acc_0' => $this->session->userdata('user_id')['name'],
+            'agen_id' => $this->session->userdata('user_id')['id'],
         );
 
         $this->db->trans_start();

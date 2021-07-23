@@ -68,8 +68,8 @@
                                             </td>
                                             <td class="border-top-0 text-right py-4"><?= $item->date_item ?></td>
                                             <td class="border-top-0 text-right py-4"><?= $item->qyt . $item->satuan ?></td>
-                                            <td class="border-top-0 pr-0 py-4 font-size-h6 font-weight-boldest text-right"><?= number_format(($item->amount), 2, ',', '.') ?></td>
-                                            <td class="border-top-0 pr-0 py-4 font-size-h6 font-weight-boldest text-right currency"><?= number_format(($item->amount * $item->qyt), 2, ',', '.')  ?></td>
+                                            <td class="border-top-0 pr-0 py-4 font-size-h6 font-weight-boldest text-right"><?= number_format(($item->amount), 0, ',', '.') ?></td>
+                                            <td class="border-top-0 pr-0 py-4 font-size-h6 font-weight-boldest text-right currency"><?= number_format(($item->amount * $item->qyt), 0, ',', '.')  ?></td>
                                         </tr>
                                 <?php }
                                 } ?>
@@ -78,7 +78,7 @@
                                     <th class="pt-1 pb-9 text-right font-weight-bolder text-muted font-size-lg text-uppercase"></th>
                                     <th class="pt-1 pb-9 text-right pr-0 font-weight-bolder  font-size-lg text-uppercase"><?= $total_qyt ?></th>
                                     <th class="pt-1 pb-9 text-right pr-0 font-weight-bolder text-muted font-size-lg text-uppercase"></th>
-                                    <th class="pt-1 pb-9 text-right font-weight-bolder  font-size-lg text-uppercase"><?= number_format(($total), 2, ',', '.') ?></th>
+                                    <th class="pt-1 pb-9 text-right font-weight-bolder  font-size-lg text-uppercase"><?= number_format(($total), 0, ',', '.') ?></th>
                                 </tr>
                             </tbody>
                         </table>
@@ -145,7 +145,7 @@
                         <!--end::Shape-->
                         <div class="font-weight-boldest font-size-h5">TOTAL</div>
                         <div class="text-right d-flex flex-column">
-                            <span class="font-weight-boldest font-size-h3 line-height-sm"><?= number_format(($total), 2, ',', '.') ?></span>
+                            <span class="font-weight-boldest font-size-h3 line-height-sm"><?= number_format(($total), 0, ',', '.') ?></span>
                         </div>
                     </div>
                     <?php
@@ -179,7 +179,7 @@
                         <!--end::Shape-->
                         <div class="font-weight-boldest font-size-h5">PPN 10%</div>
                         <div class="text-right d-flex flex-column">
-                            <span class="font-weight-boldest font-size-h3 line-height-sm"><?= number_format($tmp1, 2, ',', '.') ?></span>
+                            <span class="font-weight-boldest font-size-h3 line-height-sm"><?= number_format($tmp1, 0, ',', '.') ?></span>
                         </div>
                     </div>
                     <?php
@@ -208,7 +208,7 @@
                         <!--end::Shape-->
                         <div class="font-weight-boldest font-size-h5">TOTAL</div>
                         <div class="text-right d-flex flex-column">
-                            <span class="font-weight-boldest font-size-h3 line-height-sm"><?= number_format(($total), 2, ',', '.') ?></span>
+                            <span class="font-weight-boldest font-size-h3 line-height-sm"><?= number_format(($total), 0, ',', '.') ?></span>
                         </div>
                     </div>
                 </div>

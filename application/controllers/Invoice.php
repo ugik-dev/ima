@@ -79,7 +79,11 @@ class Invoice extends CI_Controller
 	public function delete($id)
 	{
 		$this->load->model(array('SecurityModel', 'InvoiceModel'));
-		$this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
+		$this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
+		$dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
+		if ($dataContent['agen_id'] != $this->session->userdata('user_id')['id'])
+			throw new UserException('Sorry, Yang dapat mengahapus dan edit hanya agen yang bersangkutan', UNAUTHORIZED_CODE);
+
 		$this->InvoiceModel->delete($id);
 		$array_msg = array(
 			'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Delete Successfully',
@@ -355,56 +359,65 @@ class Invoice extends CI_Controller
 
 	public function edit($id)
 	{
-		$this->load->model(array('SecurityModel', 'InvoiceModel'));
-		$this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
+		try {
 
-		if ($id != NULL) {
+			$this->load->model(array('SecurityModel', 'InvoiceModel'));
+			$this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
+
 			$dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
-			$item = count($dataContent['item']);
-			for ($i = 0; $i < $item; $i++) {
-				// if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
-				// 	$status = TRUE;
-				$dataContent['id_item'][$i] =  $dataContent['item'][$i]->id;
-				$dataContent['amount'][$i] = preg_replace("/[^0-9]/", "", $dataContent['item'][$i]->amount);
-				$dataContent['date_item'][$i] =  $dataContent['item'][$i]->date_item;
-				$dataContent['satuan'][$i] =  $dataContent['item'][$i]->satuan;
+			if ($dataContent['agen_id'] != $this->session->userdata('user_id')['id'])
+				throw new UserException('Sorry, Yang dapat mengahapus dan edit hanya agen yang bersangkutan', UNAUTHORIZED_CODE);
+			if ($id != NULL) {
+				$item = count($dataContent['item']);
 
-				$dataContent['keterangan_item'][$i] =  $dataContent['item'][$i]->keterangan_item;
-				$dataContent['qyt'][$i] =  $dataContent['item'][$i]->qyt;
-				// $dataContent['qyt'][$i] = preg_replace("/[^0-9]/", "", $dataContent['item'][$i]->qyt);
+				// die();
+				for ($i = 0; $i < $item; $i++) {
+					// if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
+					// 	$status = TRUE;
+					$dataContent['id_item'][$i] =  $dataContent['item'][$i]->id;
+					$dataContent['amount'][$i] = preg_replace("/[^0-9]/", "", $dataContent['item'][$i]->amount);
+					$dataContent['date_item'][$i] =  $dataContent['item'][$i]->date_item;
+					$dataContent['satuan'][$i] =  $dataContent['item'][$i]->satuan;
+
+					$dataContent['keterangan_item'][$i] =  $dataContent['item'][$i]->keterangan_item;
+					$dataContent['qyt'][$i] =  $dataContent['item'][$i]->qyt;
+					// $dataContent['qyt'][$i] = preg_replace("/[^0-9]/", "", $dataContent['item'][$i]->qyt);
+				}
+			} else {
+				echo 'ngapain cok';
+				return;
 			}
-		} else {
-			echo 'ngapain cok';
-			return;
+			// echo json_encode($item);
+			// echo json_encode($dataContent);
+			// $this->index($dataContent);
+			$this->load->model('Crud_model');
+
+			$data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
+
+			$this->load->model('Accounts_model');
+
+			$data['banks'] = $this->Accounts_model->getAllBank();
+			// DEFINES PAGE TITLE
+			$data['title'] = 'Edit Jurnal';
+			$data['data_return'] = $dataContent;
+			$this->load->model('Statement_model');
+			$data['accounts_records'] = $this->Statement_model->chart_list();
+			$data['patner_record'] = $this->Statement_model->patners_cars_list();
+
+			// DEFINES WHICH PAGE TO RENDER
+			$data['main_view'] = 'invoice_v2_edit';
+
+			// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+			$this->load->view('main/index.php', $data);
+		} catch (Exception $e) {
+			ExceptionHandler::handle($e);
 		}
-		// echo json_encode($item);
-		// echo json_encode($dataContent);
-		// $this->index($dataContent);
-		$this->load->model('Crud_model');
-
-		$data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
-
-		$this->load->model('Accounts_model');
-
-		$data['banks'] = $this->Accounts_model->getAllBank();
-		// DEFINES PAGE TITLE
-		$data['title'] = 'Edit Jurnal';
-		$data['data_return'] = $dataContent;
-		$this->load->model('Statement_model');
-		$data['accounts_records'] = $this->Statement_model->chart_list();
-		$data['patner_record'] = $this->Statement_model->patners_cars_list();
-
-		// DEFINES WHICH PAGE TO RENDER
-		$data['main_view'] = 'invoice_v2_edit';
-
-		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
-		$this->load->view('main/index.php', $data);
 	}
 
 	public function copy($id)
 	{
 		$this->load->model(array('SecurityModel', 'InvoiceModel'));
-		$this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
+		$this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
 
 		if ($id != NULL) {
 			$dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
@@ -470,6 +483,7 @@ class Invoice extends CI_Controller
 	{
 		$this->load->model(array('SecurityModel', 'InvoiceModel'));
 		// $this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
+		$this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
 
 		if ($id != NULL) {
 			$dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
@@ -791,7 +805,7 @@ class Invoice extends CI_Controller
 	public function download($id)
 	{
 		$this->load->model(array('SecurityModel', 'InvoiceModel'));
-		$this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
+		// $this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
 
 		if ($id != NULL) {
 			$dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
