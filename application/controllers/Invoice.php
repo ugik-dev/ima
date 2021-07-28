@@ -1056,7 +1056,14 @@ class Invoice extends CI_Controller
 		$pdf->Cell(5, 8, '', 0, 0);
 		$pdf->SetFont('Arial', 'I', 10);
 		$pdf->MultiCell(88, 6 + $crop2, $this->terbilang($terbilang) . ' Rupiah', 0, 1);
-
+		// $pdf->MultiCell(88, 6 + $crop2, 'QR HERE', 0, 1);
+		// echo base_url() . 'uploads/qrcode/' . $dataContent['inv_key'] . '_' . $dataContent['id'] . '.png';
+		if (file_exists('uploads/qrcode/' . $dataContent['inv_key'] . '_' . $dataContent['id'] . '.png')) {
+			$pdf->Cell(40, 40, $pdf->Image(base_url() . 'uploads/qrcode/' . $dataContent['inv_key'] . '_' . $dataContent['id'] . '.png', 30, $pdf->GetY(), 40, 40), 0, 1, 'R');
+		} else {
+			// echo "The file does not exist";
+		}
+		// die();
 		// if ($cur_y > $pdf->GetY()) {
 		// 	$pdf->SetY($cur_y);
 		// }
@@ -1296,67 +1303,7 @@ class Invoice extends CI_Controller
 		}
 	}
 
-	public function add_customer()
-	{
 
-		// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
-		$this->load->model('Crud_model');
-
-		// DEFINES READ MEDICINE details FORM MEDICINE FORM
-		$customer_name = html_escape($this->input->post('customer_name'));
-		$customer_email = html_escape($this->input->post('customer_email'));
-		$customer_address = html_escape($this->input->post('customer_address'));
-		$customer_contatc1 = html_escape($this->input->post('customer_contatc1'));
-		$customer_contact_two = html_escape($this->input->post('customer_contact_two'));
-		$customer_company = html_escape($this->input->post('customer_company'));
-		$customer_city = html_escape($this->input->post('customer_city'));
-		$customer_country = html_escape($this->input->post('customer_country'));
-		$customer_description = html_escape($this->input->post('customer_description'));
-		$picture = $this->Crud_model->do_upload_picture("customer_picture", "./uploads/customers/");
-
-		// ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY
-		$args = array(
-			'customer_name' => $customer_name,
-			'cus_email' => $customer_email,
-			'cus_address' => $customer_address,
-			'cus_contact_1' => $customer_contatc1,
-			'cus_contact_2' => $customer_contact_two,
-			'cus_company' => $customer_company,
-			'cus_city' => $customer_city,
-			'cus_country' => $customer_country,
-			'cus_description' => $customer_description,
-			'cus_picture' => $picture
-		);
-
-		// CHECK WEATHER EMAIL ADLREADY EXISTS OR NOT IN THE TABLE
-		$email_record_data = $this->Crud_model->check_email_address('mp_customer', 'cus_email', $customer_email);
-		if ($email_record_data == NULL) {
-
-			// DEFINES CALL THE FUNCTION OF insert_data FORM Crud_model CLASS
-			$result = $this->Crud_model->insert_data('mp_customer', $args);
-			if ($result == 1) {
-				$array_msg = array(
-					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Customer added Successfully',
-					'alert' => 'info'
-				);
-				$this->session->set_flashdata('status', $array_msg);
-			} else {
-				$array_msg = array(
-					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error Customer cannot be added',
-					'alert' => 'danger'
-				);
-				$this->session->set_flashdata('status', $array_msg);
-			}
-		} else {
-			$array_msg = array(
-				'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i>Sorry Email already exists !',
-				'alert' => 'danger'
-			);
-			$this->session->set_flashdata('status', $array_msg);
-		}
-
-		redirect('invoice/pos2');
-	}
 
 	public function edit_invoice()
 	{
@@ -1829,12 +1776,12 @@ class Invoice extends CI_Controller
 				$this->session->set_flashdata('status', $array_msg);
 				$this->index($data);
 				return;
-				// redirect('statements/journal_voucher');
 			}
 			// }
 			$result = $this->Transaction_model->invoice_entry($data);
 			// die();
 			if ($result != NULL) {
+				$this->addQRCode('inv/', $result['order_id'], $result['token']);
 				// $this->Transaction_model->activity_edit($result, $acc);
 				$array_msg = array(
 					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',
@@ -1932,5 +1879,28 @@ class Invoice extends CI_Controller
 			// redirect('statements/journal_voucher');
 		}
 		redirect('invoice');
+	}
+
+	public function addQRCode($url, $id, $token)
+	{
+		$this->load->library('ciqrcode'); //pemanggilan library QR CODE
+
+		$config['cacheable']    = false; //boolean, the default is true
+		$config['cachedir']     = './assets/'; //string, the default is application/cache/
+		$config['errorlog']     = './assets/'; //string, the default is application/logs/
+		$config['imagedir']     = './uploads/qrcode/'; //direktori penyimpanan qr code
+		$config['quality']      = true; //boolean, the default is true
+		$config['size']         = '600'; //interger, the default is 1024
+		$config['black']        = array(224, 255, 255); // array, default is array(255,255,255)
+		$config['white']        = array(70, 130, 180); // array, default is array(0,0,0)
+		$this->ciqrcode->initialize($config);
+
+		$image_name = $token . '_' . $id . '.png'; //buat name dari qr code sesuai dengan nim
+
+		$params['data'] = 'https://apps.indometalasia.com/' . $url . $token . '/' . $id; //data yang akan di jadikan QR CODE
+		$params['level'] = 'S'; //H=High
+		$params['size'] = 10;
+		$params['savename'] = FCPATH . $config['imagedir'] . $image_name; //simpan image QR CODE ke folder assets/images/
+		$this->ciqrcode->generate($params); // fungsi untuk generate QR CODE
 	}
 }

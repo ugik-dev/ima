@@ -276,14 +276,25 @@
           if (tpe == undefined) {
               tpe = ''
           }
-          //   console.log(tpe)
+
+          console.log(tpe)
           arus_kas_debit = 0;
           arus_kas_kredit = 0;
           no_rek = '112-0098146017';
           for (var i = 0; i < name.length; i++) {
-              if (name[i].innerHTML.substring(1, 5) == '1.11') {
+              if (name[i].innerHTML.substring(1, 7) == '1.11.1' ||
+                  name[i].innerHTML.substring(1, 7) == '1.11.2' ||
+                  name[i].innerHTML.substring(1, 7) == '1.11.3') {
                   arus_kas_debit = parseInt(debit[i].innerHTML.replace(/[^0-9]/g, ""));
                   arus_kas_kredit = parseInt(kredit[i].innerHTML.replace(/[^0-9]/g, ""));
+                  <?php if ($draft == false) { ?>
+                  <?php } else { ?>
+                      if (arus_kas_debit > 0) {
+                          tpe = 'AM';
+                      }
+                      if (arus_kas_kredit > 0) tpe = 'AK';
+                  <?php } ?>
+
                   if (tpe == 'AM') {
                       displyhide = false
                       show =
@@ -306,7 +317,9 @@
 
               <?php if ($draft == false) { ?>
               <?php } else { ?>
-                  if (arus_kas_debit > 0) tpe = 'AM';
+                  if (arus_kas_debit > 0) {
+                      tpe = 'AM';
+                  }
                   if (arus_kas_kredit > 0) tpe = 'AK';
               <?php } ?>
 

@@ -1,5 +1,6 @@
 /application/config/database.php
 /uploads/cars_picture/*
+/application/cache/*
 !/uploads/cars_picture/default.jpg
 /uploads/customers/*
 !/uploads/customers/default.jpg
@@ -15,3 +16,5 @@
 !/uploads/file_dokumen/
 /uploads/purchase/*
 !/uploads/purchase/default.jpg
+/uploads/qrcode/*
+!/uploads/qrcode/default.png

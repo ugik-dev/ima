@@ -22,7 +22,7 @@ class Login extends CI_Controller
 		//CHECK WEATHER HAS ALREADY SESSION CREATED OR NOT
 		if ($user_data == NULL) {
 			// DEFINES PAGE TITLE
-			$data['title'] = 'Indometal Asia Login';
+			$data['title'] = 'PT Indometal Asia Login';
 
 			// DEFINES PAGE TITLE
 			$data['page_title_model_button_Signin'] = 'Masuk';

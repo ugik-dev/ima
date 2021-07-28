@@ -1215,8 +1215,14 @@ class Transaction_model extends CI_Model
         return $order_id;
     }
 
+    function generateRandomString($length = 10)
+    {
+        return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+    }
     function invoice_entry($data)
     {
+        $generateRandomString = $this->generateRandomString(32);
+        // die();
 
         // $trans_data = $data;
         $trans_data = array(
@@ -1226,6 +1232,7 @@ class Transaction_model extends CI_Model
             'no_invoice' => $data['no_invoice'],
             'payment_metode' => $data['payment_metode'],
             'ppn_pph' => $data['ppn_pph'],
+            'inv_key' => $generateRandomString,
             'acc_1' => $data['acc_1'],
             'acc_2' => $data['acc_2'],
             'acc_3' => $data['acc_3'],
@@ -1257,17 +1264,19 @@ class Transaction_model extends CI_Model
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
             $data = NULL;
+            return NULL;
         } else {
             $this->db->trans_commit();
             $this->record_activity(array('jenis' => 4, 'sub_id' => $order_id, 'desk' => 'Entry Invoice'));
         }
 
-        return $order_id;
+        return array('order_id' => $order_id, 'token' => $generateRandomString);
     }
 
     function invoice_entry_usaha($data)
     {
-
+        echo random_bytes(5);
+        die();
         // $trans_data = $data;
         $trans_data = array(
             'date' => $data['date'],
@@ -1275,6 +1284,7 @@ class Transaction_model extends CI_Model
             'no_invoice' => $data['no_invoice'],
             'payment_metode' => $data['payment_metode'],
             'ppn_pph' => $data['ppn_pph'],
+            // 'inv_key' => $key,
             'acc_0' => $this->session->userdata('user_id')['name'],
         );
 
