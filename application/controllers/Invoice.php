@@ -1788,7 +1788,7 @@ class Invoice extends CI_Controller
 					'alert' => 'info'
 				);
 				$this->session->set_flashdata('status', $array_msg);
-				redirect('invoice/show/' . $result);
+				redirect('invoice/show/' . $result['order_id']);
 			} else {
 				$array_msg = array(
 					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
