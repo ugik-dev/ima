@@ -9,6 +9,9 @@
            <select name="satuan[]" id="satuan" class="form-control">
                <option value="bln"> bln </option>
                <option value="hari"> hari </option>
+               <option value="trip"> trip </option>
+               <option value="unit"> unit </option>
+               <option value="pcs"> pcs </option>
            </select>
        </td>
        <td>
