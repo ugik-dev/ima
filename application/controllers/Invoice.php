@@ -794,14 +794,18 @@ class Invoice extends CI_Controller
 		$freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
 		$freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
 		$freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText($dataContent['name_acc_1'], 'paragraph_bold_underline', array('align' => 'center', 'spaceAfter' => -1));
+		if ($dataContent['id'] == 57) {
 
-		$writer = new Word2007($phpWord);
-		$filename = 'SPB_KW_' . $dataContent['no_invoice'];
-		header('Content-Type: application/msword');
-		header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
-		header('Cache-Control: max-age=0');
-		$writer->save('php://output');
-		// echo json_encode($dataContent);
+			echo json_encode($dataContent);
+		} else {
+
+			$writer = new Word2007($phpWord);
+			$filename = 'SPB_KW_' . $dataContent['no_invoice'];
+			header('Content-Type: application/msword');
+			header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
+			header('Cache-Control: max-age=0');
+			$writer->save('php://output');
+		}
 	}
 
 	public function download($id)
