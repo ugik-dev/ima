@@ -628,6 +628,8 @@ class Invoice extends CI_Controller
 				$table->addCell(200, $cellColSpan)->addText('TOTAL   ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
 				$table->addCell(500, $cellVCentered)->addText('' . number_format((floor($total * 0.10) + floor($total)), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
 				$terbilang = floor($total * 0.10) + floor($total);
+			} else {
+				$terbilang =  floor($total);
 			}
 		}
 		$section->addTextBreak();
@@ -795,7 +797,7 @@ class Invoice extends CI_Controller
 
 		$writer = new Word2007($phpWord);
 		$filename = 'SPB_KW_' . $dataContent['no_invoice'];
-
+		// echo json_encode($dataContent);
 		header('Content-Type: application/msword');
 		header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
 		header('Cache-Control: max-age=0');
