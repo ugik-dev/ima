@@ -797,11 +797,11 @@ class Invoice extends CI_Controller
 
 		$writer = new Word2007($phpWord);
 		$filename = 'SPB_KW_' . $dataContent['no_invoice'];
-		// echo json_encode($dataContent);
-		header('Content-Type: application/msword');
-		header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
-		header('Cache-Control: max-age=0');
-		$writer->save('php://output');
+		echo json_encode($dataContent);
+		// header('Content-Type: application/msword');
+		// header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
+		// header('Cache-Control: max-age=0');
+		// $writer->save('php://output');
 	}
 
 	public function download($id)
