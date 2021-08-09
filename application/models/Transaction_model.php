@@ -1324,7 +1324,7 @@ class Transaction_model extends CI_Model
             return NULL;
         } else {
             $this->db->trans_commit();
-            $this->record_activity(array('jenis' => 4, 'sub_id' => $order_id, 'desk' => 'Entry Invoice'));
+            $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'pembayaran/show/' . $order_id, 'sub_id' => $order_id, 'desk' => 'Entry Pembayaran'));
         }
 
         return array('order_id' => $order_id, 'token' => $generateRandomString);
@@ -1513,7 +1513,7 @@ class Transaction_model extends CI_Model
             return NULL;
         } else {
             $this->db->trans_commit();
-            $this->record_activity(array('jenis' => 5, 'sub_id' => $data['id'], 'desk' => 'Edit Invoice'));
+            $this->record_activity(array('jenis' => 8, 'sub_id' => $data['id'], 'desk' => 'Edit Pembayaran'));
         }
 
         return $data['id'];
@@ -2067,14 +2067,14 @@ class Transaction_model extends CI_Model
 
     function record_activity($data)
     {
-        $sub_data  = array(
-            'user_id'   => $this->session->userdata('user_id')['id'],
-            'jenis'   => $data['jenis'],
-            'desk'   => $data['desk'],
-            'sub_id'   => $data['sub_id']
-        );
+        // $sub_data  = array(
+        $data['user_id']  = $this->session->userdata('user_id')['id'];
+        //     'jenis'   => $data['jenis'],
+        //     'desk'   => $data['desk'],
+        //     'sub_id'   => $data['sub_id']
+        // );
 
-        $this->db->insert('mp_activity', $sub_data);
+        $this->db->insert('mp_activity', $data);
     }
 
     public function delete_jurnal_draft($id)

@@ -355,6 +355,9 @@
                                                                     } else if ($act_today['jenis'] == '6') {
                                                                         $url = '#';
                                                                         echo '  <span class="label label-lg label-light-danger label-inline">Delete Invoice</span>';
+                                                                    } else {
+                                                                        $url = $act_today['url_activity'];
+                                                                        echo '  <span class="label label-lg label-light-' . $act_today['color'] . ' label-inline"> Entry </span>';
                                                                     }  ?>
                                                              </td>
                                                              <td class="text-right pl-0">

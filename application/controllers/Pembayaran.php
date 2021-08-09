@@ -84,7 +84,7 @@ class Pembayaran extends CI_Controller
         if ($dataContent['agen_id'] != $this->session->userdata('user_id')['id'])
             throw new UserException('Sorry, Yang dapat mengahapus dan edit hanya agen yang bersangkutan', UNAUTHORIZED_CODE);
 
-        $this->InvoiceModel->delete($id);
+        $this->InvoiceModel->delete_pembayaran($id);
         $array_msg = array(
             'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Delete Successfully',
             'alert' => 'info'
