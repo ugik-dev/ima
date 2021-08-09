@@ -1273,6 +1273,61 @@ class Transaction_model extends CI_Model
         return array('order_id' => $order_id, 'token' => $generateRandomString);
     }
 
+    function pembayaran_entry($data)
+    {
+        $generateRandomString = $this->generateRandomString(32);
+        // die();
+
+        // $trans_data = $data;
+        $trans_data = array(
+            'date' => $data['date'],
+            'description' => $data['description'],
+            'customer_id' => $data['customer_id'],
+            'no_pembayaran' => $data['no_pembayaran'],
+            'payment_metode' => $data['payment_metode'],
+            'ppn_pph' => $data['ppn_pph'],
+            'percent_jasa' => $data['percent_jasa'],
+            'percent_pph' => $data['percent_pph'],
+            'inv_key' => $generateRandomString,
+            'acc_1' => $data['acc_1'],
+            'acc_2' => $data['acc_2'],
+            'acc_3' => $data['acc_3'],
+            'acc_0' => $this->session->userdata('user_id')['name'],
+            'agen_id' => $this->session->userdata('user_id')['id'],
+        );
+
+        $this->db->trans_start();
+        $this->db->insert('mp_pembayaran', $trans_data);
+        $order_id = $this->db->insert_id();
+        $total_heads = count($data['amount']);
+        for ($i = 0; $i < $total_heads; $i++) {
+
+            if (!empty($data['amount'][$i] && !empty($data['qyt'][$i]))) {
+                $trans_data  = array(
+                    'parent_id'   => $order_id,
+                    'qyt' => $data['qyt'][$i],
+                    'satuan' => $data['satuan'][$i],
+                    'date_item' => $data['date_item'][$i],
+                    'keterangan_item' => $data['keterangan_item'][$i],
+                    'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
+                );
+                $this->db->insert('mp_sub_pembayaran', $trans_data);
+            }
+        }
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $data = NULL;
+            return NULL;
+        } else {
+            $this->db->trans_commit();
+            $this->record_activity(array('jenis' => 4, 'sub_id' => $order_id, 'desk' => 'Entry Invoice'));
+        }
+
+        return array('order_id' => $order_id, 'token' => $generateRandomString);
+    }
+
     function invoice_entry_usaha($data)
     {
         echo random_bytes(5);

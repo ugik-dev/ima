@@ -3,23 +3,18 @@
         <div class="box-body">
             <div class="">
                 <?php
-                $attributes = array('id' => 'invoice', 'method' => 'post', 'class' => '');
+                $attributes = array('id' => 'pembayaran', 'method' => 'post', 'class' => '');
                 ?>
-                <?php echo form_open('invoice/edit_process_invoice', $attributes); ?>
+                <?php echo form_open('pembayaran/create_pembayaran', $attributes); ?>
                 <div class="">
-                    <div class="row no-print invoice">
+                    <div class="row no-print pembayaran">
                         <h4 class=""> <i class="fa fa-check-circle"></i>
-                            Edit Invoice
+                            Entri Pebayaran Mitra
                         </h4>
                         <div class="col-lg-12">
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <?php
-                                        $data = array('class' => 'form-control input-lg', 'type' => '', 'name' => 'id', 'value' => $data_return['id']);
-                                        echo form_input($data);
-                                        ?>
-
                                         <?php echo form_label('Patner'); ?>
                                         <select name="customer_id" id="customer_id" class="form-control select2 input-lg">
                                             <option value="0"> ------- </option>
@@ -29,9 +24,9 @@
                                 </div>
                                 <div class="col-lg-3">
                                     <div class="form-group">
-                                        <?php echo form_label('No Invoice'); ?>
+                                        <?php echo form_label('No Pembayaran'); ?>
                                         <?php
-                                        $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_invoice', 'id' => 'no_invoice');
+                                        $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_pembayaran', 'id' => 'no_pembayaran');
                                         echo form_input($data);
                                         ?>
                                     </div>
@@ -73,18 +68,15 @@
                                     <div class="form-group">
                                         <?php echo form_label('Metode Pembayaran'); ?>
                                         <select name="payment_metode" id="payment_metode" class="form-control input-lg">
-                                            <?php foreach ($banks as $banks_data) {
-                                                echo '<option value="' . $banks_data->id . '"> Transfer ' . $banks_data->bankname . ' (' . $banks_data->accountno . ') </option>';
-                                            } ?>
-
-                                            <option value="99"> Cash </option>
+                                            <option value="0"> Cash</option>
+                                            <option value="2"> Transfer Mandiri A (112-0098146017) </option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row invoice">
+                    <div class="row pembayaran">
                         <div class="col-lg-12 table-responsive">
                             <table class="table table-striped table-hover  ">
                                 <thead>
@@ -99,16 +91,49 @@
                                     </tr>
                                 </thead>
                                 <tbody id="transaction_table_body">
+                                    <tr>
+                                        <td>
+                                            <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / BN 9999 QV" />
+                                        </td>
+                                        <td>
+                                            <input type="text" name="date_item[]" value="" placeholder="eg. 3 Mar sd 27 Feb" class="form-control input-lg" />
+                                        </td>
+                                        <td>
+                                            <select name="satuan[]" id="satuan" class="form-control">
+                                                <option value="bln"> bln </option>
+                                                <option value="hari"> hari </option>
+                                                <option value="trip"> trip </option>
+                                                <option value="unit"> unit </option>
+                                                <option value="pcs"> pcs </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $data = array('class' => 'form-control input-lg', 'name' => 'qyt[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_total()');
+                                            echo form_input($data);
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $data = array('class' => 'form-control input-lg mask',  'name' => 'amount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_total()');
+                                            echo form_input($data);
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $data = array('name' => 'qyt_amount[]', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
+                                            echo form_input($data);
+                                            ?>
 
-                                    <?php
-                                    if ($data_return != NULL) {
+                                        </td>
+                                    </tr>
+
+                                    <?php if ($data_return != NULL) {
                                         $count_rows = count($data_return['amount']);
-                                        echo $count_rows;
-                                        for ($i = 0; $i < $count_rows; $i++) {
+                                        for ($i = 0; $i < $count_rows - 1; $i++) {
                                     ?>
                                             <tr>
                                                 <td>
-                                                    <input type="text" name="id_item[]" value="" class="form-control input-lg" hidden />
                                                     <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / BN 9999 QV" />
                                                 </td>
                                                 <td>
@@ -118,10 +143,6 @@
                                                     <select name="satuan[]" id="satuan" class="form-control">
                                                         <option value="bln"> bln </option>
                                                         <option value="hari"> hari </option>
-                                                        <option value="trip"> trip </option>
-                                                        <option value="unit"> unit </option>
-                                                        <option value="pcs"> pcs </option>
-
                                                     </select>
                                                 </td>
                                                 <td>
@@ -141,12 +162,6 @@
                                                     $data = array('name' => 'qyt_amount[]', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
                                                     echo form_input($data);
                                                     ?>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value="" data-row="1" name="delete_row[<?= $i ?>]" id="delete_row[<?= $i ?>]" onchange="delete_row(<?= $i ?>)">
-                                                        <label class="form-check-label" for="delete_row[<?= $i ?>]">
-                                                            Delete
-                                                        </label>
-                                                    </div>
 
                                                 </td>
                                             </tr>
@@ -158,50 +173,80 @@
 
                                     <tr>
                                         <td colspan="1">
-                                            <button type="button" class="btn btn-primary" name="addline" onclick="add_new_row('<?php echo base_url() . 'invoice/popup/new_row'; ?>')"> <i class="fa fa-plus-circle"></i> Tambah Baris </button>
+                                            <button type="button" class="btn btn-primary" name="addline" onclick="add_new_row('<?php echo base_url() . 'pembayaran/popup/new_row'; ?>')"> <i class="fa fa-plus-circle"></i> Tambah Baris </button>
                                         </td>
                                         <td id="row_loading_status"></td>
                                     </tr>
                                     <tr>
                                         <th colspan="2"></th>
-                                        <th colspan="2">Total: </th>
+                                        <th colspan="2">Sub Total I: </th>
                                         <th>
                                         </th>
                                         <th>
+                                            <input name="sub_total" value="0" disabled class="accounts_total_amount" />
                                             <?php
-                                            $data = array('name' => 'sub_total', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
-                                            echo form_input($data);
+                                            // $data = array('name' => 'sub_total', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
+                                            // echo form_input($data);
 
-                                            if ($data_return != NULL) {
-                                                if ($data_return['ppn_pph'] == '1') {
-                                                    $checked = 'checked="checked"';
-                                                } else {
-                                                    $checked = '';
-                                                }
-                                            } else {
-                                                $checked = '';
-                                            }
+                                            // if ($data_return != NULL) {
+                                            //     if ($data_return['ppn_pph'] == '1') {
+                                            //         $checked = 'checked="checked"';
+                                            //     } else {
+                                            //         $checked = '';
+                                            //     }
+                                            // } else {
+                                            //     $checked = '';
+                                            // }
 
                                             ?>
                                         </th>
                                     </tr>
                                     <tr>
                                         <th colspan="2"></th>
-                                        <th colspan="2">PPN PPh 10%: </th>
-                                        <th colspan="1">
-                                            <div class="col-3">
-                                                <span class="switch switch-icon">
-                                                    <label>
-                                                        <input type="checkbox" <?= $checked ?> name="ppn_pph" onclick='count_total()' />
-                                                        <span></span>
-                                                    </label>
-                                                </span>
+                                        <th colspan="2">Biaya Jasa : </th>
+                                        <th>
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control percent_jasa" name="percent_jasa" id="percent_jasa" min="0" step="0.00001" max="100" onchange='count_total()' placeholder="8,12345" aria-label="" aria-describedby="basic-addon2">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text"> %</span>
+                                                </div>
                                             </div>
+                                            <!-- <input type="number" name="percentage_jasa" class="form-control" min="0" step="0.00001" max="100" onchange='count_total()' /> -->
                                         </th>
                                         <th>
                                             <?php
-                                            $data = array('name' => 'ppn_pph_count', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
+                                            $data = array('name' => 'jasa_count', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
                                             echo form_input($data);
+                                            ?>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2"></th>
+                                        <th colspan="2">Sub Total II: </th>
+                                        <th>
+                                        </th>
+                                        <th>
+                                            <input name="sub_total_2" value="0" disabled class="accounts_total_amount" />
+                                        </th>
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="2"></th>
+                                        <th colspan="2">PPh 23 : </th>
+                                        <th>
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control" min="0" max="5" step="0,0001" id="percent_pph" name="percent_pph" onchange='count_total()' placeholder="2" aria-label="" aria-describedby=" basic-addon2">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text"> %</span>
+                                                </div>
+                                            </div>
+                                            <!-- <input type="number" name="percentage_jasa" class="form-control" min="0" step="0.00001" max="100" onchange='count_total()' /> -->
+                                        </th>
+                                        <th>
+                                            <input name="pph_count" value="0" disabled class="accounts_total_amount" />
+                                            <?php
+                                            // $data = array('name' => 'pph_count', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
+                                            // echo form_input($data);
                                             ?>
                                         </th>
                                     </tr>
@@ -279,20 +324,27 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/invoice.js?v=0.2"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=0.2"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
-    $('#menu_id_6').addClass('menu-item-active menu-item-open menu-item-here"');
-    $('#submenu_id_13').addClass('menu-item-active');
-    no_invoice = $('#no_invoice');
+    $('#menu_id_32').addClass('menu-item-active menu-item-open menu-item-here"')
+    $('#submenu_id_88').addClass('menu-item-active')
+    no_pembayaran = $('#no_pembayaran');
+    // $('.percent_jasa').mask('Z0,000', {
+    //     reverse: true,
+    //     translation: {
+    //         'Z': {
+    //             pattern: /[0-9]/,
+    //             optional: true
+    //         }
+    //     }
+    // });
     description = $('#description');
     date_jurnal = $('#date');
-    payment_metode = $('#payment_metode');
     acc_1 = $('#acc_1');
     acc_2 = $('#acc_2');
     acc_3 = $('#acc_3');
-    var id_item = document.getElementsByName('id_item[]');
     var keterangan_item = document.getElementsByName('keterangan_item[]');
     var date_item = document.getElementsByName('date_item[]');
     var qyt = document.getElementsByName('qyt[]');
@@ -338,26 +390,22 @@
     }
 
     <?php if ($data_return != NULL) {    ?>
-        no_invoice.val('<?= $data_return['no_invoice'] ?>');
+        no_pembayaran.val('<?= $data_return['no_pembayaran'] ?>');
         id_custmer.val('<?= $data_return['customer_id'] ?>');
         date_jurnal.val('<?= $data_return['date'] ?>');
         description.val('<?= $data_return['description'] ?>');
         acc_1.val('<?= $data_return['acc_1'] ?>');
         acc_2.val('<?= $data_return['acc_2'] ?>');
         acc_3.val('<?= $data_return['acc_3'] ?>');
-        payment_metode.val('<?= $data_return['payment_metode'] ?>');
         <?php
         $count_rows = count($data_return['amount']);
 
         for ($i = 0; $i < $count_rows; $i++) { ?>
-
-            id_item[<?= $i ?>].value = '<?= $data_return['id_item'][$i] ?>';
             amount[<?= $i ?>].value = '<?= $data_return['amount'][$i] ?>';
             qyt[<?= $i ?>].value = '<?= $data_return['qyt'][$i] ?>';
             date_item[<?= $i ?>].value = '<?= $data_return['date_item'][$i] ?>';
-            satuan[<?= $i ?>].value = '<?= $data_return['satuan'][$i] ?>';
-
             keterangan_item[<?= $i ?>].value = '<?= $data_return['keterangan_item'][$i] ?>';
+            satuan[<?= $i ?>].value = '<?= $data_return['satuan'][$i] ?>';
 
     <?php
         }
@@ -368,43 +416,5 @@
     });
 
     count_total(true);
-
-
-    function delete_row(row) {
-        // console.log(row);
-        amount[row].value = '';
-        qyt[row].value = '';
-        keterangan_item[row].value = '';
-        date_item[row].value = '';
-
-        i = 0;
-        if ($('input[name="delete_row[' + row + ']"]').prop("checked") == true) {
-            $(this).val("");
-            $(this).prop("readonly", true);
-        } else if (
-            $('input[name="delete_row[' + row + ']"]').prop("checked") == false
-        ) {
-            $(this).prop("readonly", false);
-        }
-        // }
-        //     i++;
-        // });
-        // i = 0;
-        // $('input[name="debitamount[]"]').each(function() {
-        //     if (row == i) {
-        //         if ($('input[name="delete_row[' + row + ']"]').prop("checked") == true) {
-        //             $(this).val("");
-        //             $(this).prop("readonly", true);
-        //         } else if (
-        //             $('input[name="delete_row[' + row + ']"]').prop("checked") == false
-        //         ) {
-        //             $(this).prop("readonly", false);
-        //         }
-        //     }
-        //     i++;
-        // });
-
-        count_total(true);
-    }
 </script>
 <?php $this->load->view('bootstrap_model.php'); ?>

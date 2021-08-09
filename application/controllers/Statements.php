@@ -44,7 +44,7 @@ class Statements extends CI_Controller
 
 		$this->load->model('Statement_model');
 		$data['transaction_records'] = $this->Statement_model->fetch_transasctions($filter);
-		$data['accounting_role'] = $this->SecurityModel->MultiplerolesStatus('Akuntansi');;
+		$data['accounting_role'] = $this->SecurityModel->MultiplerolesStatus('Akuntansi');
 		// echo json_encode($data['accounting_role']);
 		// die();
 		$data['search'] = $filter['search'];

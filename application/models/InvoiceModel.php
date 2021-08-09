@@ -45,6 +45,50 @@ class InvoiceModel extends CI_Model
         return $transaction_records;
     }
 
+    public function getAllPembayaran($filter = [])
+    {
+        $this->db->select("mp_pembayaran.*, mp_payee.customer_name, cus_address , branch as bank_name, accountno as bank_number,title as title_bank,mp_users.title_user as title_acc_1,mp_users.agentname as name_acc_1");
+        $this->db->from('mp_pembayaran');
+        // if (!empty($filter['id']))
+        if (!empty($filter['id'])) $this->db->where('mp_pembayaran.id', $filter['id']);
+        if (!empty($filter['no_pembayaran'])) {
+            $this->db->where('no_pembayaran like "%' . $filter['no_pembayaran'] . '%"');
+        } else {
+            if (!empty($filter['first_date'])) $this->db->where('date >=', $filter['first_date']);
+            if (!empty($filter['second_date'])) $this->db->where('date <=', $filter['second_date']);
+        }
+        $this->db->join('mp_banks', 'mp_banks.id = mp_pembayaran.payment_metode', 'LEFT');
+        $this->db->join('mp_payee', 'mp_payee.id = mp_pembayaran.customer_id', 'LEFT');
+        $this->db->join('mp_users', 'mp_users.id = mp_pembayaran.acc_1', 'LEFT');
+        // $this->db->where('date >=', $date1);
+        // $this->db->where('date <=', $date2);
+        $this->db->order_by('mp_pembayaran.id', 'DESC');
+        $query = $this->db->get();
+        $transaction_records =  $query->result_array();
+        // echo json_encode($transaction_records);
+        // die();
+        // if ($query->num_rows() > 0) {
+        //     $transaction_records =  $query->result_array();
+        $i = 0;
+        if ($transaction_records  != NULL) {
+            foreach ($transaction_records as $transaction_record) {
+                if ($transaction_record  != NULL) {
+                    $this->db->select("mp_sub_pembayaran.*");
+                    $this->db->from('mp_sub_pembayaran');
+                    $this->db->where('mp_sub_pembayaran.parent_id =', $transaction_record['id']);
+                    $sub_query = $this->db->get();
+                    if ($sub_query->num_rows() > 0) {
+                        $sub_query =  $sub_query->result();
+                        $transaction_records[$i]['item'] = $sub_query;
+                    }
+                }
+                $i++;
+            }
+        }
+        return $transaction_records;
+    }
+
+
     public function getAllUsaha($filter = [])
     {
         $this->db->select("mp_invoice_usaha.*, branch as bank_name, accountno as bank_number,title as title_bank");
