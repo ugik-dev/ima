@@ -769,7 +769,7 @@ class Invoice extends CI_Controller
 			$freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
 			$freame7->addCell(1400, $cellVCentered)->addText('TOTAL', 'paragraph_bold', array('spaceAfter' => 0));
 			$freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph_bold', array('spaceAfter' => 0));
-			$freame7->addCell(1600, $cellVCentered)->addText(number_format(($total * 0.10) + $total, '0', ',', '.'), 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'right',));
+			$freame7->addCell(1600, $cellVCentered)->addText(number_format(floor($total * 0.10) + $total, '0', ',', '.'), 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'right',));
 			$freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 1));
 		}
 		$freame7->addRow(0.1);
@@ -786,7 +786,7 @@ class Invoice extends CI_Controller
 		$freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 
 		$freame7->addRow(700);
-		$freame7->addCell(6000, $cellVCentered)->addText('          Rp. ' . number_format(($total * 0.10) + $total, '0', ',', '.'), array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), array('align' => 'left'));
+		$freame7->addCell(6000, $cellVCentered)->addText('          Rp. ' . number_format(floor($total * 0.10) + $total, '0', ',', '.'), array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), array('align' => 'left'));
 		$freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
 		$freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 
