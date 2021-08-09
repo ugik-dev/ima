@@ -12,7 +12,7 @@ class Statement_model extends CI_Model
         $total_credit = 0;
         $form_content = '';
 
-        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.customer_id,mp_generalentry.arr_cars,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock");
+        $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.customer_id,mp_generalentry.arr_cars,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock,url");
         if (!empty($filter['draft'])) {
             if ($filter['draft'] == 'draft')
                 $this->db->from('draft_generalentry as mp_generalentry');
@@ -296,7 +296,7 @@ class Statement_model extends CI_Model
         $total_credit = 0;
         $form_content = '';
 
-        $this->db->select("mp_g.id as transaction_id,mp_payee.customer_name,mp_g.date,mp_g.customer_id,arr_cars,mp_g.naration,mp_g.no_jurnal, gen_lock");
+        $this->db->select("mp_g.id as transaction_id,mp_payee.customer_name,mp_g.date,mp_g.customer_id,arr_cars,mp_g.naration,mp_g.no_jurnal, gen_lock, url");
         if ($filter['draft'])
             $this->db->from('draft_generalentry as mp_g');
         else

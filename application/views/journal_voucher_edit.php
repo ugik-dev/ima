@@ -60,6 +60,10 @@
 
                             $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_jurnal', 'value' => $parent->no_jurnal);
                             echo form_input($data);
+
+                            $data = array('class' => 'hidden', 'type' => 'hidden', 'name' => 'url', 'id' => 'url', 'value' => $parent->url);
+                            echo form_input($data);
+
                             ?>
                         </div>
                         <div class="form-group">
@@ -253,6 +257,7 @@
     form_journal_voucher = $('#form_journal_voucher');
     remove_draft = $('#remove_draft');
     draft_value = $('#draft_value');
+    url_jour = $('#url');
     <?php if ($draft == false) { ?>
         btn_post_jurnal.hide();
         btn_draft.hide();

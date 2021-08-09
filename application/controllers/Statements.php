@@ -247,6 +247,65 @@ class Statements extends CI_Controller
 		$data = array(
 			'description' => $result['description'],
 			'date' => $result['date'],
+			'url' => 'invoice/show/' . $result['id'],
+			'customer_id' => $result['customer_id'],
+			'arr_cars' => '',
+			'no_jurnal' => '',
+			'account_head' => $accounthead,
+			'debitamount' => $debitamount,
+			'creditamount' => $creditamount,
+			'sub_keterangan' => $sub_keterangan,
+			'acc' => $acc
+		);
+		// echo json_encode($result);
+		// echo json_encode($data);
+		$this->journal_voucher($data);
+	}
+
+
+	public function pembayaran_to_jurnal($invoice_no)
+	{
+		$this->SecurityModel->MultiplerolesGuard('Akuntansi');
+
+		$this->load->model('InvoiceModel');
+		$result = $this->InvoiceModel->getAllPembayaran(array('id' =>  $invoice_no))[0];
+		// echo json_encode($result);
+		$amount = 0;
+		$i = 0;
+		$tex = '';
+		foreach ($result['item'] as $itm) {
+			$amount = $amount + ($itm->amount * $itm->qyt);
+			// echo $amount;
+		}
+
+		$amount = $amount - floor($result['percent_jasa'] / 100 * $amount);
+		$ppn =  $result['percent_pph'] / 100 * $amount;
+		$accounthead[0] = 166;
+		$accounthead[1] = 1552;
+		$accounthead[2] = 8;
+		// if ($result['ppn_pph'] == 1) {
+		// }
+		$debitamount[0] = number_format($amount, 2);
+		$debitamount[1] = '';
+		$debitamount[2] = '';
+
+		$creditamount[0] = '';
+		$creditamount[1] = number_format($ppn, 2);
+		$creditamount[2] = number_format($amount - $ppn, 2);
+
+		$sub_keterangan[0] = 'Htg RM';
+		$sub_keterangan[1] = 'Ptg RM';
+		$sub_keterangan[2] = 'Htg RM ';
+
+		$acc[1] = $result['acc_1'];
+		$acc[2] = 0;
+		$acc[3] = 0;
+
+		$data = array(
+			'description' => $result['description'],
+			// 'date' => $result['date'],
+			'date' => date('Y-m-d'),
+			'url' => 'pembayaran/show/' . $result['id'],
 			'customer_id' => $result['customer_id'],
 			'arr_cars' => '',
 			'no_jurnal' => '',
@@ -1203,6 +1262,7 @@ class Statements extends CI_Controller
 			$debitamount   = html_escape($this->input->post('debitamount'));
 			$creditamount   = html_escape($this->input->post('creditamount'));
 			$no_jurnal   = html_escape($this->input->post('no_jurnal'));
+			$url   = html_escape($this->input->post('url'));
 			$sub_keterangan   = html_escape($this->input->post('sub_keterangan'));
 
 			$customer_id   = html_escape($this->input->post('customer_id'));
@@ -1263,6 +1323,7 @@ class Statements extends CI_Controller
 				'sub_keterangan' => $sub_keterangan,
 				'acc' => $acc,
 				'draft_value' => $draft_value,
+				'url' => $url,
 			);
 			// if ($draft_value == 'false')
 			// 	$this->balancing_akumulasi($data);

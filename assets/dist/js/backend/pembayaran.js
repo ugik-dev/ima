@@ -164,21 +164,8 @@ function delete_row(row) {
   // console.log(row);
 
   i = 0;
-  $('input[name="creditamount[]"]').each(function () {
-    if (row == i) {
-      if ($('input[name="delete_row[' + row + ']"]').prop("checked") == true) {
-        $(this).val("");
-        $(this).prop("readonly", true);
-      } else if (
-        $('input[name="delete_row[' + row + ']"]').prop("checked") == false
-      ) {
-        $(this).prop("readonly", false);
-      }
-    }
-    i++;
-  });
-  i = 0;
-  $('input[name="debitamount[]"]').each(function () {
+
+  $('input[name="amount[]"]').each(function () {
     if (row == i) {
       if ($('input[name="delete_row[' + row + ']"]').prop("checked") == true) {
         $(this).val("");
@@ -192,5 +179,5 @@ function delete_row(row) {
     i++;
   });
 
-  count_debits(true);
+  count_total(true);
 }

@@ -185,18 +185,6 @@
                                         <th>
                                             <input name="sub_total" value="0" disabled class="accounts_total_amount" />
                                             <?php
-                                            // $data = array('name' => 'sub_total', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
-                                            // echo form_input($data);
-
-                                            // if ($data_return != NULL) {
-                                            //     if ($data_return['ppn_pph'] == '1') {
-                                            //         $checked = 'checked="checked"';
-                                            //     } else {
-                                            //         $checked = '';
-                                            //     }
-                                            // } else {
-                                            //     $checked = '';
-                                            // }
 
                                             ?>
                                         </th>
@@ -206,12 +194,11 @@
                                         <th colspan="2">Biaya Jasa : </th>
                                         <th>
                                             <div class="input-group mb-3">
-                                                <input type="text" class="form-control percent_jasa" name="percent_jasa" id="percent_jasa" min="0" step="0.00001" max="100" onchange='count_total()' placeholder="8,12345" aria-label="" aria-describedby="basic-addon2">
+                                                <input type="text" class="form-control percent_jasa" name="percent_jasa" id="percent_jasa" min="0" step="0.00001" max="100" onchange='count_total()' placeholder="" aria-label="" aria-describedby="basic-addon2">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text"> %</span>
                                                 </div>
                                             </div>
-                                            <!-- <input type="number" name="percentage_jasa" class="form-control" min="0" step="0.00001" max="100" onchange='count_total()' /> -->
                                         </th>
                                         <th>
                                             <?php
@@ -235,7 +222,7 @@
                                         <th colspan="2">PPh 23 : </th>
                                         <th>
                                             <div class="input-group mb-3">
-                                                <input type="text" class="form-control" min="0" max="5" step="0,0001" id="percent_pph" name="percent_pph" onchange='count_total()' placeholder="2" aria-label="" aria-describedby=" basic-addon2">
+                                                <input type="text" class="form-control" min="0" max="5" step="0,0001" id="percent_pph" name="percent_pph" onchange='count_total()' placeholder="" aria-label="" aria-describedby=" basic-addon2">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text"> %</span>
                                                 </div>

@@ -252,8 +252,8 @@ for ($i = 0; $i < count($pembayarans_Record); $i++) {
 }
 ?>
 <script>
-    $('#menu_id_6').addClass('menu-item-active menu-item-open menu-item-here"')
-    $('#submenu_id_13').addClass('menu-item-active')
+    $('#menu_id_32').addClass('menu-item-active menu-item-open menu-item-here"')
+    $('#submenu_id_87').addClass('menu-item-active')
 </script>
 <?php
 // print "<pre>";

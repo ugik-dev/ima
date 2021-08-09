@@ -15,7 +15,10 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <?php echo form_label('Patner'); ?>
+                                        <?php
+                                        $data = array('class' => 'form-control input-lg', 'type' => 'hidden', 'name' => 'id', 'value' => $data_return['id']);
+                                        echo form_input($data);
+                                        echo form_label('Patner'); ?>
                                         <select name="customer_id" id="customer_id" class="form-control select2 input-lg">
                                             <option value="0"> ------- </option>
                                             <?php echo $patner_record; ?>
@@ -178,7 +181,7 @@
                                         <th colspan="2">Biaya Jasa : </th>
                                         <th>
                                             <div class="input-group mb-3">
-                                                <input type="text" class="form-control percent_jasa" name="percent_jasa" id="percent_jasa" min="0" step="0.00001" max="100" onchange='count_total()' placeholder="8,12345" aria-label="" aria-describedby="basic-addon2">
+                                                <input type="text" class="form-control percent_jasa" value="<?= (float) $data_return['percent_jasa'] ?>" name="percent_jasa" id="percent_jasa" min="0" step="0.00001" max="100" onchange='count_total()' placeholder="" aria-label="" aria-describedby="basic-addon2">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text"> %</span>
                                                 </div>
@@ -207,7 +210,7 @@
                                         <th colspan="2">PPh 23 : </th>
                                         <th>
                                             <div class="input-group mb-3">
-                                                <input type="text" class="form-control" min="0" max="5" step="0,0001" id="percent_pph" name="percent_pph" onchange='count_total()' placeholder="2" aria-label="" aria-describedby=" basic-addon2">
+                                                <input type="text" class="form-control" min="0" max="5" step="0,0001" id="percent_pph" value="<?= (float) $data_return['percent_pph'] ?>" name="percent_pph" onchange='count_total()' placeholder="" aria-label="" aria-describedby=" basic-addon2">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text"> %</span>
                                                 </div>
@@ -296,13 +299,14 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=0.2"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=0.3"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
     $('#menu_id_32').addClass('menu-item-active menu-item-open menu-item-here"')
-    $('#submenu_id_88').addClass('menu-item-active')
+    $('#submenu_id_87').addClass('menu-item-active')
     no_pembayaran = $('#no_pembayaran');
+    payment_metode = $('#payment_metode');
     // $('.percent_jasa').mask('Z0,000', {
     //     reverse: true,
     //     translation: {
@@ -368,6 +372,7 @@
         id_custmer.val('<?= $data_return['customer_id'] ?>');
         date_jurnal.val('<?= $data_return['date'] ?>');
         description.val('<?= $data_return['description'] ?>');
+        payment_metode.val('<?= $data_return['payment_metode'] ?>');
         acc_1.val('<?= $data_return['acc_1'] ?>');
         acc_2.val('<?= $data_return['acc_2'] ?>');
         acc_3.val('<?= $data_return['acc_3'] ?>');
@@ -375,6 +380,7 @@
         $count_rows = count($data_return['amount']);
 
         for ($i = 0; $i < $count_rows; $i++) { ?>
+            id_item[<?= $i ?>].value = '<?= $data_return['id_item'][$i] ?>';
             amount[<?= $i ?>].value = '<?= $data_return['amount'][$i] ?>';
             qyt[<?= $i ?>].value = '<?= $data_return['qyt'][$i] ?>';
             date_item[<?= $i ?>].value = '<?= $data_return['date_item'][$i] ?>';

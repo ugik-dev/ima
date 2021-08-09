@@ -1159,6 +1159,8 @@ class Transaction_model extends CI_Model
             'no_jurnal' => $data['no_jurnal'],
             'generated_source' => 'Journal Voucher'
         );
+        if (!empty($data['url'])) $trans_data['url'] = $data['url'];
+
         $this->db->trans_start();
 
         if ($data['draft_value'] == 'true')
@@ -1441,6 +1443,82 @@ class Transaction_model extends CI_Model
 
         return $data['id'];
     }
+
+
+    function pembayaran_edit($data)
+    {
+
+        // $trans_data = $data;
+        $trans_data = array(
+            'date' => $data['date'],
+            'description' => $data['description'],
+            'customer_id' => $data['customer_id'],
+            'no_pembayaran' => $data['no_pembayaran'],
+            'payment_metode' => $data['payment_metode'],
+            'ppn_pph' => $data['ppn_pph'],
+            'acc_1' => $data['acc_1'],
+            'acc_2' => $data['acc_2'],
+            'acc_3' => $data['acc_3'],
+            'percent_jasa' => $data['percent_jasa'],
+            'percent_pph' => $data['percent_pph'],
+            'acc_0' => $this->session->userdata('user_id')['name'],
+        );
+
+        $this->db->trans_start();
+        $this->db->where('id', $data['id']);
+        $this->db->update('mp_pembayaran', $trans_data);
+        $total_heads = count($data['amount']);
+
+        for ($i = 0; $i < $total_heads; $i++) {
+            if (!empty($data['id_item'][$i])) {
+                if (!empty($data['amount'][$i] && !empty($data['qyt'][$i]))) {
+                    $trans_data  = array(
+                        'qyt' => $data['qyt'][$i],
+                        'satuan' => $data['satuan'][$i],
+                        'date_item' => $data['date_item'][$i],
+                        'keterangan_item' => $data['keterangan_item'][$i],
+                        'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
+                    );
+                    $this->db->where(
+                        'mp_sub_pembayaran.id',
+                        $data['id_item'][$i]
+                    );
+                    $this->db->where('mp_sub_pembayaran.parent_id', $data['id']);
+                    $this->db->update('mp_sub_pembayaran', $trans_data);
+                } else {
+                    $this->db->where(
+                        'mp_sub_pembayaran.id',
+                        $data['id_item'][$i]
+                    );
+                    // $this->db->where('mp_sub_invoice.parent_id', $data['id']);
+                    $this->db->delete('mp_sub_pembayaran');
+                }
+            } else if (!empty($data['amount'][$i] && !empty($data['qyt'][$i]))) {
+                $trans_data  = array(
+                    'parent_id'   => $data['id'],
+                    'satuan' => $data['satuan'][$i],
+                    'qyt' => $data['qyt'][$i],
+                    'date_item' => $data['date_item'][$i],
+                    'keterangan_item' => $data['keterangan_item'][$i],
+                    'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
+                );
+                $this->db->insert('mp_sub_pembayaran', $trans_data);
+            }
+        }
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $data = NULL;
+            return NULL;
+        } else {
+            $this->db->trans_commit();
+            $this->record_activity(array('jenis' => 5, 'sub_id' => $data['id'], 'desk' => 'Edit Invoice'));
+        }
+
+        return $data['id'];
+    }
+
 
     function journal_voucher_edit($data)
     {

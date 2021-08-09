@@ -8,9 +8,10 @@
                   <?php echo form_open('statements/create_journal_voucher', $attributes); ?>
                   <div class="">
                       <div class="row no-print invoice">
-                          <h4 class="purchase-heading"> <i class="fa fa-check-circle"></i>
+                          <h4 class="ml-3"> <i class="fa fa-check-circle mr-2 ml-2"></i>asd
                               <?= $transaction['parent']->no_jurnal ?>
                           </h4>
+
                           <div class="col-md-12 ">
                               <div class="row">
                                   <div class="col-md-6">
@@ -20,21 +21,23 @@
                                       <hr>
                                   </div>
                                   <div class="col-md-6">
-                                      <label>Nama Kendaraan</label>
-                                      <h4><strong id="arr_cars">
-                                              <?php
-                                                $i = 0;
-                                                foreach ($transaction['new_arr'] as $value) {
-                                                    if ($i == 0) {
-                                                        echo $value['no_cars'] . ' (' . $value['name_cars'] . ')';
-                                                        $i = 1;
-                                                    } else {
-                                                        echo ' - ' . $value['no_cars'] . ' (' . $value['name_cars'] . ')';
-                                                    }
-                                                } ?>
+                                      <?php if (!empty($transaction['new_arr'])) { ?>
+                                          <label>Nama Kendaraan</label>
+                                          <h4><strong id="arr_cars">
+                                                  <?php
+                                                    $i = 0;
+                                                    foreach ($transaction['new_arr'] as $value) {
+                                                        if ($i == 0) {
+                                                            echo $value['no_cars'] . ' (' . $value['name_cars'] . ')';
+                                                            $i = 1;
+                                                        } else {
+                                                            echo ' - ' . $value['no_cars'] . ' (' . $value['name_cars'] . ')';
+                                                        }
+                                                    } ?>
 
-                                          </strong></h4>
-                                      <hr>
+                                              </strong></h4>
+                                          <hr>
+                                      <?php } ?>
                                   </div>
                               </div>
                               <div class="row">
@@ -149,6 +152,10 @@
                           <div class="col-md-12 ">
                               <div class="form-group">
                                   <?php
+                                    if (!empty($transaction['parent']->url)) {
+                                        echo '<div class="col-md-12 "> url :  <a href="' . base_url() . $transaction['parent']->url . '"> ' . base_url() . $transaction['parent']->url . '</a> </div> ';
+                                    }
+
                                     if ($doc) {
                                     ?>
                                       <a href="<?= base_url() . 'statements/export_doc/' . $transaction['parent']->transaction_id ?>" class="btn btn-secondary  margin btn-lg pull-right" style="float: right"> <i class="fa fa-download" aria-hidden="true"></i>

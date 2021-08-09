@@ -14,7 +14,7 @@
                 <a type="button" href="<?= base_url('statements/pembayaran_to_jurnal/') . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"> Buat Jurnal Umum</a>
                 <a type="button" href="<?php echo base_url() . 'Pembayaran/edit/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-pencil-alt mr-3 my-1"></i> Edit</a>
                 <a type="button" href="<?php echo base_url() . 'Pembayaran/copy/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-copy mr-3 my-1"> </i> Copy</a>
-                <a type="button" href="<?= base_url('invoice') ?>" class="btn btn-warning font-weight-bolder ml-sm-auto my-1">Create New Invoice</a>
+                <a type="button" href="<?= base_url('invoice') ?>" class="btn btn-warning font-weight-bolder ml-sm-auto my-1">Buat Pembayaran Baru</a>
             </div>
         </div>
     </div>
@@ -267,6 +267,6 @@
     <!-- end: Invoice action-->
 </div>
 <script>
-    $('#menu_id_6').addClass('menu-item-active menu-item-open menu-item-here"')
-    $('#submenu_id_13').addClass('menu-item-active')
+    $('#menu_id_32').addClass('menu-item-active menu-item-open menu-item-here"')
+    $('#submenu_id_87').addClass('menu-item-active')
 </script>

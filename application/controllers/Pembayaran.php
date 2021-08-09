@@ -1827,18 +1827,18 @@ class Pembayaran extends CI_Controller
         if ($status) {
             $this->load->model('Transaction_model');
             // if (!empty($data['no_jurnal'])) {
-            $res = $this->Transaction_model->check_no_pembayaran($data['no_pembayaran'], $data['id']);
+            // $res = $this->Transaction_model->check_no_pembayaran($data['no_pembayaran'], $data['id']);
             // die();
-            if ($res != 0) {
-                $array_msg = array(
-                    'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Invoice Sudah Ada',
-                    'alert' => 'danger'
-                );
-                $this->session->set_flashdata('status', $array_msg);
-                $this->index($data);
-                return;
-                // redirect('statements/journal_voucher');
-            }
+            // if ($res != 0) {
+            //     $array_msg = array(
+            //         'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Invoice Sudah Ada',
+            //         'alert' => 'danger'
+            //     );
+            //     $this->session->set_flashdata('status', $array_msg);
+            //     $this->index($data);
+            //     return;
+            //     // redirect('statements/journal_voucher');
+            // }
             // }
             $result = $this->Transaction_model->pembayaran_edit($data);
             // die();

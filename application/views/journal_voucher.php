@@ -40,6 +40,8 @@
                                 <?php echo form_label('No Jurnal');
                                 $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_jurnal', 'id' => 'no_jurnal');
                                 echo form_input($data);
+                                $data = array('class' => 'hidden', 'type' => 'hidden', 'name' => 'url', 'id' => 'url', 'value' => '');
+                                echo form_input($data);
                                 ?>
                             </div>
                             <div class="form-group">
@@ -239,6 +241,7 @@
     form_journal_voucher = $('#journal_voucher');
     btn_draft = $('#btn_draft');
     no_jurnal = $('#no_jurnal');
+    url_jour = $('#url');
     description = $('#description');
     date_jurnal = $('#date');
     acc_1 = $('#acc_1');
@@ -366,6 +369,7 @@
         id_custmer.val('<?= $data_return['customer_id'] ?>');
         date_jurnal.val('<?= $data_return['date'] ?>');
         description.val('<?= $data_return['description'] ?>');
+        <?php if (!empty($data_return['url'])) echo "url_jour.val('" . $data_return['url'] . "');" ?>
         acc_1.val('<?= $data_return['acc'][1] ?>');
         acc_2.val('<?= $data_return['acc'][2] ?>');
         acc_3.val('<?= $data_return['acc'][3] ?>');

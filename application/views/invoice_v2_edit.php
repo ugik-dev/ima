@@ -16,7 +16,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <?php
-                                        $data = array('class' => 'form-control input-lg', 'type' => '', 'name' => 'id', 'value' => $data_return['id']);
+                                        $data = array('class' => 'form-control input-lg', 'type' => 'hidden', 'name' => 'id', 'value' => $data_return['id']);
                                         echo form_input($data);
                                         ?>
 
