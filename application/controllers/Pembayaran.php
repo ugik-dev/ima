@@ -613,6 +613,7 @@ class Pembayaran extends CI_Controller
             $table->addCell(200, $cellColSpan)->addText('Sub Total II    ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
             $table->addCell(500, $cellVCentered)->addText('' . number_format($total, '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
 
+            $total_kwitansi = $total;
             $potongan_pph = ($dataContent['percent_pph'] / 100 * $total);
             $total = $total - $potongan_pph;
 
@@ -626,6 +627,7 @@ class Pembayaran extends CI_Controller
 
 
             $terbilang =  floor($total);
+            $kw_terbilang =  floor($total_kwitansi);
         }
         $section->addTextBreak();
         $textrun = $section->addTextRun();
@@ -712,7 +714,7 @@ class Pembayaran extends CI_Controller
         $freame5->addCell(100, $cellVCentered)->addText('', 'paragraph', array('spaceAfter' => 0));
         $freame5->addCell(2000, $cellVCentered)->addText('Sejumlah', 'paragraph', array('spaceAfter' => 0));
         $freame5->addCell(1, $cellVCentered)->addText(':', 'paragraph', array('spaceAfter' => 0));
-        $freame5->addCell(7000, $cellVCentered)->addText($this->terbilang($terbilang) . ' Rupiah', 'paragraph_italic', array('spaceAfter' => 0));
+        $freame5->addCell(7000, $cellVCentered)->addText($this->terbilang($kw_terbilang) . ' Rupiah', 'paragraph_italic', array('spaceAfter' => 0));
 
         $freame5->addRow();
         $freame5->addCell(100, $cellVCentered)->addText('', 'paragraph', array('spaceAfter' => 3));
@@ -727,34 +729,42 @@ class Pembayaran extends CI_Controller
         $freame->addRow();
         $freame6 = $freame->addCell(10000, array('valign' => 'top', 'height' => 200, 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)));
         $freame7 = $freame6->addTable($spanTableStyleName);
-        if ($dataContent['ppn_pph'] == 1) {
+        $kw_total = 0;
+        $count_row = count($dataContent['item']);
+        $i = 1;
+        foreach ($dataContent['item'] as $item) {
+
 
             $freame7->addRow();
+            $current_data = ($item->amount * $item->qyt);
+            $current_jasa = ($dataContent['percent_jasa'] / 100) * $current_data;
+            $current_total = $current_data - $current_jasa;
+            $kw_total = $kw_total + $current_total;
 
-            $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-            $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-            $freame7->addCell(1400, $cellVCentered)->addText('SUB TOTAL', 'paragraph', array('spaceAfter' => 0));
-            $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph', array('spaceAfter' => 0));
-            $freame7->addCell(1600, $cellVCentered)->addText(number_format($total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
-            $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-
-            $freame7->addRow();
-            $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-            $freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
-
-            $freame7->addCell(1400, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('PPN', 'paragraph', array('spaceAfter' => 0));
-            $freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('Rp', 'paragraph', array('spaceAfter' => 0));
-            $freame7->addCell(1600, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText(number_format($total * 0.10, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
-            $freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
-
-            $freame7->addRow();
-            $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-            $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-            $freame7->addCell(1400, $cellVCentered)->addText('TOTAL', 'paragraph_bold', array('spaceAfter' => 0));
-            $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph_bold', array('spaceAfter' => 0));
-            $freame7->addCell(1600, $cellVCentered)->addText(number_format(($total * 0.10) + $total, '0', ',', '.'), 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'right',));
-            $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 1));
+            if ($i = $count_row) {
+                $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+                $freame7->addCell(60, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
+                $freame7->addCell(1400, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText($item->date_item, 'paragraph', array('spaceAfter' => 0));
+                $freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('Rp', 'paragraph', array('spaceAfter' => 0));
+                $freame7->addCell(1600, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText(number_format($current_total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
+                $freame7->addCell(60, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
+            } else {
+                $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+                $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+                $freame7->addCell(1400, $cellVCentered)->addText($item->date_item, 'paragraph', array('spaceAfter' => 0));
+                $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph', array('spaceAfter' => 0));
+                $freame7->addCell(1600, $cellVCentered)->addText(number_format($current_total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
+                $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+            }
+            $i++;
         }
+        $freame7->addRow();
+        $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+        $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+        $freame7->addCell(1400, $cellVCentered)->addText('TOTAL', 'paragraph_bold', array('spaceAfter' => 0));
+        $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph_bold', array('spaceAfter' => 0));
+        $freame7->addCell(1600, $cellVCentered)->addText(number_format($kw_total, '0', ',', '.'), 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'right',));
+        $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 1));
         $freame7->addRow(0.1);
         $freame7->addCell(6000)->addText(' ', array('name' => 'Times New Roman', 'size' => 2, 'color' => '000000', 'bold' => true), array('align' => 'center', 'spaceAfter' => -1));
 
@@ -769,7 +779,7 @@ class Pembayaran extends CI_Controller
         $freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 
         $freame7->addRow(700);
-        $freame7->addCell(6000, $cellVCentered)->addText('          Rp. ' . number_format(($total * 0.10) + $total, '0', ',', '.'), array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), array('align' => 'left'));
+        $freame7->addCell(6000, $cellVCentered)->addText('          Rp. ' . number_format($kw_total, '0', ',', '.'), array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), array('align' => 'left'));
         $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
         $freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 

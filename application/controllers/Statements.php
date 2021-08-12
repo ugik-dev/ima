@@ -281,7 +281,7 @@ class Statements extends CI_Controller
 		$amount = $amount - floor($result['percent_jasa'] / 100 * $amount);
 		$ppn =  $result['percent_pph'] / 100 * $amount;
 		$accounthead[0] = 166;
-		$accounthead[1] = 1552;
+		$accounthead[1] = 181;
 		$accounthead[2] = 8;
 		// if ($result['ppn_pph'] == 1) {
 		// }

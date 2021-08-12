@@ -14,7 +14,7 @@
                 <a type="button" href="<?= base_url('statements/pembayaran_to_jurnal/') . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"> Buat Jurnal Umum</a>
                 <a type="button" href="<?php echo base_url() . 'Pembayaran/edit/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-pencil-alt mr-3 my-1"></i> Edit</a>
                 <a type="button" href="<?php echo base_url() . 'Pembayaran/copy/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-copy mr-3 my-1"> </i> Copy</a>
-                <a type="button" href="<?= base_url('invoice') ?>" class="btn btn-warning font-weight-bolder ml-sm-auto my-1">Buat Pembayaran Baru</a>
+                <a type="button" href="<?= base_url('pembayaran') ?>" class="btn btn-warning font-weight-bolder ml-sm-auto my-1">Buat Pembayaran Baru</a>
             </div>
         </div>
     </div>
