@@ -260,7 +260,8 @@
           var dibukukan = document.getElementById("dibukukan").innerHTML;
           var naration = document.getElementById("naration").innerHTML;
           var no_jurnal = document.getElementById("no_jurnal").innerHTML;
-          var arr_cars = document.getElementById("arr_cars").innerHTML;
+          //   return;
+          //   var arr_cars = document.getElementById("arr_cars").innerHTML;
           var mitra_name = document.getElementById("mitra_name").innerHTML;
           var name = document.getElementsByClassName("rinc_name");
           var ket = document.getElementsByClassName("rinc_ket");
@@ -273,7 +274,6 @@
           var show = 0;
           var conskredit = 0;
           var displyhide = true
-
           var tpe = no_jurnal.split("/")[1];
           if (tpe == 'AM' || tpe == 'KM' || tpe == 'DM') {
               tpe = 'AM'
