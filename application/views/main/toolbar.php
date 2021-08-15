@@ -53,10 +53,18 @@
                 </div>
             </div>
             <div class="dropdown">
+                <?php $notif_datas = notif_data($this->session->userdata('user_id')['id']);
+                if ($notif_datas['not_complete'] != 0) {
+                    $label_notif = 'light-danger';
+                } else {
+                    $label_notif = 'done';
+                }
+                ?>
+
                 <!--begin::Toggle-->
                 <div class="topbar-item" data-toggle="dropdown" data-offset="10px,0px" aria-expanded="false">
-                    <div class="btn btn-icon btn-light-danger btn-dropdown btn-lg mr-1 pulse pulse-danger">
-                        <span class="svg-icon svg-icon-xl svg-icon-danger">
+                    <div class="btn btn-icon btn-<?= $label_notif ?> btn-dropdown btn-lg mr-1 pulse pulse-<?= $label_notif ?>">
+                        <span class="svg-icon svg-icon-xl svg-icon-primary">
                             <!--begin::Svg Icon | path:assets/media/svg/icons/Code/Compiling.svg-->
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -78,8 +86,7 @@
                         <!--begin::Title-->
                         <h4 class="d-flex flex-center rounded-top">
                             <span class="text-white">Notifications</span>
-                            <?php $notif_datas = notif_data($this->session->userdata('user_id')['id']);
-                            if ($notif_datas['not_complete'] != 0) {
+                            <?php if ($notif_datas['not_complete'] != 0) {
                                 echo '<span class="btn btn-text btn-light-danger btn-sm font-weight-bold btn-font-md ml-2">' . $notif_datas['not_complete'] . ' Not Complete </span>';
                             }
                             ?>
