@@ -1,4 +1,5 @@
 <?php
+$company_data =   Company_Profile();
 if ($this->session->userdata('user_id') == "") {
     redirect('login');
 } else {
