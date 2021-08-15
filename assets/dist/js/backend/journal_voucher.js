@@ -25,6 +25,7 @@ function count_debits(edit = false) {
     }
   }, 800);
 }
+
 function count_credits() {
   clearTimeout(timmer);
 

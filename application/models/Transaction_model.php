@@ -1163,14 +1163,16 @@ class Transaction_model extends CI_Model
 
         $this->db->trans_start();
 
-        if ($data['draft_value'] == 'true')
+        if ($data['draft_value'] == 'true') {
+            if (!empty($data['notif_id'])) $this->db->set('notif_id', $data['notif_id']);
             $this->db->insert('draft_generalentry', $trans_data);
-        else
+            $order_id = $this->db->insert_id();
+        } else {
             $this->db->insert('mp_generalentry', $trans_data);
-        $order_id = $this->db->insert_id();
-
+            $order_id = $this->db->insert_id();
+            if (!empty($data['notif_id'])) $this->update_notification(array('id' =>  $data['notif_id'], 'status' => '1', 'parent2_id' => $order_id));
+        }
         $total_heads = count($data['account_head']);
-
         for ($i = 0; $i < $total_heads; $i++) {
 
             if (!empty($data['account_head'][$i]) and (!empty($data['debitamount'][$i]) or !empty($data['creditamount'][$i]))) {
@@ -1277,7 +1279,7 @@ class Transaction_model extends CI_Model
 
     function pembayaran_entry($data)
     {
-        $generateRandomString = $this->generateRandomString(32);
+        // $generateRandomString = $this->generateRandomString(32);
         // die();
 
         // $trans_data = $data;
@@ -1290,7 +1292,7 @@ class Transaction_model extends CI_Model
             'ppn_pph' => $data['ppn_pph'],
             'percent_jasa' => $data['percent_jasa'],
             'percent_pph' => $data['percent_pph'],
-            'inv_key' => $generateRandomString,
+            // 'inv_key' => $generateRandomString,
             'acc_1' => $data['acc_1'],
             'acc_2' => $data['acc_2'],
             'acc_3' => $data['acc_3'],
@@ -1326,8 +1328,7 @@ class Transaction_model extends CI_Model
             $this->db->trans_commit();
             $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'pembayaran/show/' . $order_id, 'sub_id' => $order_id, 'desk' => 'Entry Pembayaran'));
         }
-
-        return array('order_id' => $order_id, 'token' => $generateRandomString);
+        return array('order_id' => $order_id);
     }
 
     function invoice_entry_usaha($data)
@@ -2076,6 +2077,21 @@ class Transaction_model extends CI_Model
 
         $this->db->insert('mp_activity', $data);
     }
+
+
+    function update_notification($data)
+    {
+        //     'jenis'   => $data['jenis'],
+        //     'desk'   => $data['desk'],
+        //     'sub_id'   => $data['sub_id']
+        // );
+        $this->db->set('parent2_id', $data['parent2_id']);
+        $this->db->set('status', $data['status']);
+
+        $this->db->where('id', $data['id']);
+        $this->db->update('notification');
+    }
+
 
     public function delete_jurnal_draft($id)
     {

@@ -211,33 +211,34 @@ for ($i = 0; $i < count($pembayarans_Record); $i++) {
                 <div class="table-responsive">
                     <table class="table">
                         <tr class="text-left" style="border-bottom: 2px dotted #eee;">
-                            <th style="width:50%">Subtotal (<?php echo $total; ?>):</th>
+                            <th style="width:50%">Sub Total :</th>
                             <td class="text-right">
                                 <?php echo number_format($total, '2', ',', '.'); ?>
                             </td>
                         </tr>
-
-                        <th style="width:50%">PPN 10%
-
-                        <td class="text-right">
-                            <?php if ($pembayarans_Record[$i]['ppn_pph'] == '1') {
-                                $total_final = $total + ceil(($total * 0.10));
-                                echo number_format(ceil($total * 0.10), '2', ',', '.');
-                            } else {
-                                $total_final = $total;
-                                echo '-';
-                            }
-                            ?>
+                        <?php if ($pembayarans_Record[$i]['percent_jasa'] != '0') {
+                            echo '<tr class="text-left" style="border-bottom: 2px dotted #eee;"> <th style="width:50%">Biaya ' . floatval($pembayarans_Record[$i]['percent_jasa']) . '% : </th><td class="text-right"> -' . number_format((($pembayarans_Record[$i]['percent_jasa'] / 100) * $total), '2', ',', '.') . '</td></tr>
                             <tr style="border-bottom: 2px dotted #eee;">
-                        </td>
-                        </tr>
+                            <th>Sub Total :</th>
+                            <td class="text-right">';
+                            $total = $total - ($pembayarans_Record[$i]['percent_jasa'] / 100) * $total;
+                            echo number_format($total, '2', ',', '.') . '</td></tr>';
+                        }
+                        if ($pembayarans_Record[$i]['percent_pph'] != '0') {
+                            echo '<tr class="text-left" style="border-bottom: 2px dotted #eee;"> <th style="width:50%">Biaya ' . floatval($pembayarans_Record[$i]['percent_pph']) . '% : </th><td class="text-right"> -' . number_format((($pembayarans_Record[$i]['percent_pph'] / 100) * $total), '2', ',', '.') . '</td></tr>
+                            <tr style="border-bottom: 2px dotted #eee;">
+                            <th>Sub Total :</th>
+                            <td class="text-right">';
+                            $total = $total - ($pembayarans_Record[$i]['percent_pph'] / 100) * $total;
+                            echo number_format($total, '2', ',', '.') . '</td></tr>';
+                        }
+                        ?>
                         <?php
                         ?>
-
                         <tr style="border-bottom: 2px dotted #eee;">
                             <th>Total (Rp)
                             <td class="text-right">
-                                <?php echo number_format($total_final, '2', ',', '.'); ?>
+                                <?php echo number_format($total, '2', ',', '.'); ?>
                             </td>
                         </tr>
                     </table>

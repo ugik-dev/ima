@@ -7,7 +7,7 @@
                 <div class="brand flex-column-auto" id="kt_brand">
                     <!--begin::Logo-->
                     <a href="index.html" class="brand-logo">
-                        <img alt="Logo" style='max-width : 100% ' src="<?= base_url() ?>assets/img/ima.png" />
+                        <img alt="Logo" style='max-width : 100% ' src="<?= base_url('assets/img/') . logo ?>" />
                     </a>
                     <!--end::Logo-->
                     <!--begin::Toggle-->
@@ -28,7 +28,9 @@
                 </div>
                 <!--end::Brand-->
                 <!--begin::Aside Menu-->
-                <?php $this->load->view('main/aside_menu.php'); ?>
+                <?php
+                $this->load->view('main/aside_menu.php');
+                ?>
             </div>
         </div>
 

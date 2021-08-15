@@ -8,7 +8,7 @@
                   <?php echo form_open('statements/create_journal_voucher', $attributes); ?>
                   <div class="">
                       <div class="row no-print invoice">
-                          <h4 class="ml-3"> <i class="fa fa-check-circle mr-2 ml-2"></i>asd
+                          <h4 class="ml-3"> <i class="fa fa-check-circle mr-2 ml-2"></i>
                               <?= $transaction['parent']->no_jurnal ?>
                           </h4>
 

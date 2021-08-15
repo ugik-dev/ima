@@ -255,7 +255,9 @@ class Statements extends CI_Controller
 			'debitamount' => $debitamount,
 			'creditamount' => $creditamount,
 			'sub_keterangan' => $sub_keterangan,
-			'acc' => $acc
+			'acc' => $acc,
+			'notif_id' => $result['notif_id']
+
 		);
 		// echo json_encode($result);
 		// echo json_encode($data);
@@ -313,7 +315,8 @@ class Statements extends CI_Controller
 			'debitamount' => $debitamount,
 			'creditamount' => $creditamount,
 			'sub_keterangan' => $sub_keterangan,
-			'acc' => $acc
+			'acc' => $acc,
+			'notif_id' => $result['notif_id']
 		);
 		// echo json_encode($result);
 		// echo json_encode($data);
@@ -1325,6 +1328,9 @@ class Statements extends CI_Controller
 				'draft_value' => $draft_value,
 				'url' => $url,
 			);
+			if (!empty($this->input->post('notif_id'))) {
+				$data['notif_id'] = $this->input->post('notif_id');
+			}
 			// if ($draft_value == 'false')
 			// 	$this->balancing_akumulasi($data);
 			// var_dump($data);;

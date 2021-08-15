@@ -109,11 +109,13 @@
               <!--end:Item-->
               <!--begin::Item-->
               <a href="custom/apps/user/profile-2.html" class="navi-item">
-                  <div class="navi-link">
+                  <div class="navi-link ribbon ribbon-clip ribbon-right">
+                      <!-- <div class="ribbon-target" style="top: 0px;">
+                          <span class="ribbon-inner bg-danger"></span>New
+                      </div> -->
                       <div class="symbol symbol-40 bg-light mr-3">
                           <div class="symbol-label">
                               <span class="svg-icon svg-icon-md svg-icon-danger">
-                                  <!--begin::Svg Icon | path:assets/media/svg/icons/Files/Selected-file.svg-->
                                   <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                                       <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                           <polygon points="0 0 24 0 24 24 0 24" />
@@ -121,8 +123,8 @@
                                           <path d="M6.85714286,3 L14.7364114,3 C15.0910962,3 15.4343066,3.12568431 15.7051108,3.35473959 L20.4686994,7.3839416 C20.8056532,7.66894833 21,8.08787823 21,8.52920201 L21,21.0833333 C21,22.8738751 20.9795521,23 19.1428571,23 L6.85714286,23 C5.02044787,23 5,22.8738751 5,21.0833333 L5,4.91666667 C5,3.12612489 5.02044787,3 6.85714286,3 Z M8,12 C7.44771525,12 7,12.4477153 7,13 C7,13.5522847 7.44771525,14 8,14 L15,14 C15.5522847,14 16,13.5522847 16,13 C16,12.4477153 15.5522847,12 15,12 L8,12 Z M8,16 C7.44771525,16 7,16.4477153 7,17 C7,17.5522847 7.44771525,18 8,18 L11,18 C11.5522847,18 12,17.5522847 12,17 C12,16.4477153 11.5522847,16 11,16 L8,16 Z" fill="#000000" fill-rule="nonzero" />
                                       </g>
                                   </svg>
-                                  <!--end::Svg Icon-->
                               </span>
+                              <span class="label label-light-danger font-weight-bold inline-block">1</span>
                           </div>
                       </div>
                       <div class="navi-text">
@@ -133,8 +135,12 @@
               </a>
               <!--end:Item-->
               <!--begin::Item-->
-              <a href="custom/apps/userprofile-1/overview.html" class="navi-item">
-                  <div class="navi-link">
+              <a href="<?= base_url() ?>user/notification" class="navi-item">
+                  <div class="navi-link ribbon ribbon-clip ribbon-right">
+                      <div class="ribbon-target" style="top: 0px;">
+                          <span class="ribbon-inner bg-danger"></span>New
+                      </div>
+
                       <div class="symbol symbol-40 bg-light mr-3">
                           <div class="symbol-label">
                               <span class="svg-icon svg-icon-md svg-icon-primary">
@@ -151,8 +157,8 @@
                           </div>
                       </div>
                       <div class="navi-text">
-                          <div class="font-weight-bold">My Tasks</div>
-                          <div class="text-muted">latest tasks and projects</div>
+                          <div class="font-weight-bold">Notification</div>
+                          <div class="text-muted">check your new notificaction</div>
                       </div>
                   </div>
               </a>

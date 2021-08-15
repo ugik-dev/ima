@@ -42,6 +42,10 @@
                                 echo form_input($data);
                                 $data = array('class' => 'hidden', 'type' => 'hidden', 'name' => 'url', 'id' => 'url', 'value' => '');
                                 echo form_input($data);
+                                if (!empty($data_return['notif_id'])) {
+                                    $data = array('class' => '', 'type' => '', 'name' => 'notif_id', 'id' => 'notif_id', 'value' => $data_return['notif_id']);
+                                    echo form_input($data);
+                                }
                                 ?>
                             </div>
                             <div class="form-group">

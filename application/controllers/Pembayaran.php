@@ -1766,23 +1766,14 @@ class Pembayaran extends CI_Controller
 
         if ($status) {
             $this->load->model('Transaction_model');
-            // if (!empty($data['no_jurnal'])) {
-            // $res = $this->Transaction_model->check_no_pembayaran($data['no_pembayaran']);
-            // // die();
-            // if ($res != 0) {
-            //     $array_msg = array(
-            //         'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Invoice Sudah Ada',
-            //         'alert' => 'danger'
-            //     );
-            //     $this->session->set_flashdata('status', $array_msg);
-            //     $this->index($data);
-            //     return;
-            // }
-            // }
+            $this->load->model('Crud_model');
+
             $result = $this->Transaction_model->pembayaran_entry($data);
+            $this->Crud_model->insert_data('notification', array('notification_url' => 'pembayaran/show/' . $result['order_id'], 'parent_id' => $result['order_id'], 'to_role' => '23', 'status' => 0, 'deskripsi' => 'Pembayaran Mitra', 'agent_name' => $this->session->userdata('user_id')['name']));
+
             // die();
             if ($result != NULL) {
-                $this->addQRCode('inv/', $result['order_id'], $result['token']);
+                // $this->addQRCode('inv/', $result['order_id'], $result['token']);
                 // $this->Transaction_model->activity_edit($result, $acc);
                 $array_msg = array(
                     'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',

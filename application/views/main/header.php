@@ -4,7 +4,7 @@
 <head>
     <base href="">
     <meta charset="utf-8" />
-    <title>PT Indometal Asia</title>
+    <title> <?= company_name ?></title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <link rel="canonical" href="ugikdev.id" />
@@ -29,16 +29,6 @@
     <link href="<?= base_url() ?>assets/metronic/css/themes/layout/aside/dark.css" rel="stylesheet" type="text/css" />
     <!-- OLD -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/css/import-font.css" />
-    <!-- Theme style -->
-    <!-- <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/css/AdminLTE.css"> -->
-    <!-- AdminLTE Skins. Choose a skin from the css/skins
-       folder instead of downloading all of them to reduce the load. -->
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" /> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script> -->
-    <!-- <link href="<?= base_url() ?>assets/metronic/plugins/custom/jstree/jstree.bundle.css" rel="stylesheet" type="text/css" /> -->
-
-    <!-- iCheck -->
-
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/iCheck/flat/blue.css">
     <!-- Date Picker -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/datepicker/datepicker3.css">

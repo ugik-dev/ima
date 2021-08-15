@@ -35,6 +35,52 @@ if (!function_exists('Fetch_Users_Access_Control_Sub_Menu')) {
 		}
 	}
 }
+
+
+if (!function_exists('Company_Profile')) {
+
+	function Company_Profile()
+	{
+		$CI	= &get_instance();
+		$CI->load->database();
+		$CI->db->select("*");
+		$CI->db->from('mp_langingpage');
+		$query = $CI->db->get();
+		return $query->result_array()[0];
+	}
+}
+
+
+if (!function_exists('notif_data')) {
+
+	function notif_data($id)
+	{
+
+
+		$CI	= &get_instance();
+		$CI->load->database();
+		$CI->db->select("*");
+		$CI->db->from('notification');
+		$CI->db->join('mp_multipleroles', 'notification.to_role = mp_multipleroles.menu_Id', 'LEFT');
+		$CI->db->where('mp_multipleroles.user_id = "' . $id . '" OR notification.to_user = "' . $id . '"');
+		$CI->db->order_by("date_notification", 'DESC');
+		$query = $CI->db->get();
+		$data['notif_data'] = $query->result_array();
+
+		$CI	= &get_instance();
+		$CI->load->database();
+		$CI->db->select("count(*) as not_complete");
+		$CI->db->from('notification');
+		$CI->db->join('mp_multipleroles', 'notification.to_role = mp_multipleroles.menu_Id', 'LEFT');
+		$CI->db->where('(mp_multipleroles.user_id = "' . $id . '" OR notification.to_user = "' . $id . '") AND notification.status = "0"');
+		// $CI->db->where('notification.status = "0"');
+		$CI->db->order_by("date_notification", 'DESC');
+		$query = $CI->db->get();
+		$data['not_complete'] = $query->result_array()[0]['not_complete'];
+
+		return $data;
+	}
+}
 // ------------------------------------------------------------------------
 /* End of file helper.php */
 /* Location: ./system/helpers/Side_Menu_helper.php */

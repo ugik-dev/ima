@@ -14,9 +14,10 @@ class Statement_model extends CI_Model
 
         $this->db->select("mp_generalentry.id as transaction_id,mp_generalentry.customer_id,mp_generalentry.arr_cars,mp_generalentry.date,mp_generalentry.naration,mp_generalentry.no_jurnal, gen_lock,url");
         if (!empty($filter['draft'])) {
-            if ($filter['draft'] == 'draft')
+            if ($filter['draft'] == 'draft') {
+                $this->db->select("mp_generalentry.notif_id");
                 $this->db->from('draft_generalentry as mp_generalentry');
-            else
+            } else
                 $this->db->from('mp_generalentry');
         } else {
 
@@ -52,7 +53,7 @@ class Statement_model extends CI_Model
         }
         $data['parent'] = $transaction_records;
         $data['sub_parent'] = $sub_query;
-        // echo json_encode($filter);
+        // echo json_encode($data);
         // die();
         return $data;
     }

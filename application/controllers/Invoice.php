@@ -1769,6 +1769,7 @@ class Invoice extends CI_Controller
 
 		if ($status) {
 			$this->load->model('Transaction_model');
+			$this->load->model('Crud_model');
 			// if (!empty($data['no_jurnal'])) {
 			$res = $this->Transaction_model->check_no_invoice($data['no_invoice']);
 			// die();
@@ -1783,6 +1784,8 @@ class Invoice extends CI_Controller
 			}
 			// }
 			$result = $this->Transaction_model->invoice_entry($data);
+			$this->Crud_model->insert_data('notification', array('notification_url' => 'invoice/show/' . $result['order_id'], 'parent_id' => $result['order_id'], 'to_role' => '23', 'status' => 0, 'deskripsi' => 'Invoice', 'jenis' => 'invoice', 'agent_name' => $this->session->userdata('user_id')['name']));
+
 			// die();
 			if ($result != NULL) {
 				$this->addQRCode('inv/', $result['order_id'], $result['token']);

@@ -63,6 +63,10 @@
 
                             $data = array('class' => 'hidden', 'type' => 'hidden', 'name' => 'url', 'id' => 'url', 'value' => $parent->url);
                             echo form_input($data);
+                            if (!empty($parent->notif_id)) {
+                                $data = array('class' => '', 'type' => '', 'name' => 'notif_id', 'id' => 'notif_id', 'value' => $parent->notif_id);
+                                echo form_input($data);
+                            }
 
                             ?>
                         </div>

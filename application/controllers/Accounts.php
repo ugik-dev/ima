@@ -6,8 +6,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Accounts extends CI_Controller
 {
   // Accounts
+  public function __construct()
+  {
+    parent::__construct();
+    $this->load->model(array('SecurityModel'));
+    $this->load->helper(array('DataStructure'));
+    $this->db->db_debug = TRUE;
+    // $this->SecurityModel->('')
+  }
   public function index()
   {
+    // $this->SecurityModel->MultiplerolesGuard('Users', true);
 
     // DEFINES PAGE TITLE
     $data['title'] = 'Daftar Akun';
