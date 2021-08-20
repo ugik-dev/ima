@@ -207,7 +207,7 @@
                         <div class="font-weight-boldest font-size-h5">Biaya Jasa <?= floatval($dataContent['percent_jasa']) ?>%</div>
                         <div class="text-right d-flex flex-column">
                             <span class="font-weight-boldest font-size-h3 line-height-sm"><?php
-                                                                                            $potongan_jasa = ($dataContent['percent_jasa'] / 100 * $total);
+                                                                                            $potongan_jasa = ceil($dataContent['percent_jasa'] / 100 * $total);
                                                                                             $total = $total - $potongan_jasa;
                                                                                             echo number_format($potongan_jasa, 0, ',', '.') ?></span>
                         </div>
@@ -262,7 +262,7 @@
                         <div class="font-weight-boldest font-size-h5">PPH 23 <?= floatval($dataContent['percent_pph']) ?>%</div>
                         <div class="text-right d-flex flex-column">
                             <span class="font-weight-boldest font-size-h3 line-height-sm"><?php
-                                                                                            $potongan_pph = ($dataContent['percent_pph'] / 100 * $total);
+                                                                                            $potongan_pph = floor($dataContent['percent_pph'] / 100 * $total);
                                                                                             echo number_format($potongan_pph, 0, ',', '.') ?></span>
                         </div>
                     </div>

@@ -299,7 +299,7 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=0.3"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=0.4"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>

@@ -45,8 +45,9 @@ function count_total(edit = false) {
     // console.log(parseFloat(p_jasa));
     // console.log(parseFloat(p_jasa) + 100);
     console.log(count_val);
+    console.log("sdas");
     if (p_jasa != "" && p_jasa != "0") {
-      biaya_jasa = parseFloat((p_jasa / 100) * count_val, 2).toFixed(2);
+      biaya_jasa = Math.ceil((p_jasa / 100) * count_val);
       console.log(biaya_jasa);
       $('input[name="jasa_count"]').val(formatRupiah2(biaya_jasa));
     } else {
@@ -56,7 +57,7 @@ function count_total(edit = false) {
     $('input[name="sub_total_2"]').val(formatRupiah2(count_val - biaya_jasa));
     setela_jasa = (count_val - biaya_jasa).toFixed(2);
     if (count_val != "" && count_val != "0") {
-      biaya_pph = (setela_jasa * (p_pph / 100)).toFixed(2);
+      biaya_pph = Math.floor((p_pph / 100) * setela_jasa);
       $('input[name="pph_count"]').val(formatRupiah2(biaya_pph));
     } else {
       $('input[name="pph_count"]').val(0);
