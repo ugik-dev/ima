@@ -299,7 +299,7 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=0.4"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=0.6"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
@@ -307,15 +307,6 @@
     $('#submenu_id_87').addClass('menu-item-active')
     no_pembayaran = $('#no_pembayaran');
     payment_metode = $('#payment_metode');
-    // $('.percent_jasa').mask('Z0,000', {
-    //     reverse: true,
-    //     translation: {
-    //         'Z': {
-    //             pattern: /[0-9]/,
-    //             optional: true
-    //         }
-    //     }
-    // });
     description = $('#description');
     date_jurnal = $('#date');
     acc_1 = $('#acc_1');
