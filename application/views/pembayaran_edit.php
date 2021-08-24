@@ -189,10 +189,7 @@
                                             <!-- <input type="number" name="percentage_jasa" class="form-control" min="0" step="0.00001" max="100" onchange='count_total()' /> -->
                                         </th>
                                         <th>
-                                            <?php
-                                            $data = array('name' => 'jasa_count', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
-                                            echo form_input($data);
-                                            ?>
+                                            <input name="am_jasa" id="jasa_count" value="<?= $data_return['am_jasa'] ?>" class=" form-control mask" required onchange='count_total()' />
                                         </th>
                                     </tr>
                                     <tr>
@@ -218,15 +215,32 @@
                                             <!-- <input type="number" name="percentage_jasa" class="form-control" min="0" step="0.00001" max="100" onchange='count_total()' /> -->
                                         </th>
                                         <th>
-                                            <input name="pph_count" value="0" disabled class="accounts_total_amount" />
-                                            <?php
-                                            // $data = array('name' => 'pph_count', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
-                                            // echo form_input($data);
-                                            ?>
+                                            <input name="am_pph" id="pph_count" value="<?= $data_return['am_pph'] ?>" class="form-control mask" required onchange='count_total()' />
                                         </th>
                                     </tr>
                                     <tr>
-                                        <th colspan="2"></th>
+                                        <th> <?php
+                                                if ($data_return != NULL) {
+                                                    if ($data_return['manual_math'] == '1') {
+                                                        $checked = 'checked="checked"';
+                                                    } else {
+                                                        $checked = '';
+                                                    }
+                                                } else {
+                                                    $checked = '';
+                                                }
+                                                ?>
+                                            <div class="col-3">
+                                                <span class="switch switch-icon">
+                                                    <label>
+                                                        <input type="checkbox" <?= $checked ?> name="manual_math" onclick='count_total()' />
+                                                        <span></span>
+                                                    </label>
+                                                    manual
+                                                </span>
+                                            </div>
+                                        </th>
+                                        <th></th>
                                         <th colspan="2">Total Final: </th>
                                         <th>
                                         </th>
@@ -299,7 +313,7 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=0.6"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=2.0"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>

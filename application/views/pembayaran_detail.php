@@ -207,9 +207,9 @@
                         <div class="font-weight-boldest font-size-h5">Biaya Jasa <?= floatval($dataContent['percent_jasa']) ?>%</div>
                         <div class="text-right d-flex flex-column">
                             <span class="font-weight-boldest font-size-h3 line-height-sm"><?php
-                                                                                            $potongan_jasa = ceil($dataContent['percent_jasa'] / 100 * $total);
+                                                                                            $potongan_jasa = floor($dataContent['am_jasa']);
                                                                                             $total = $total - $potongan_jasa;
-                                                                                            echo number_format($potongan_jasa, 0, ',', '.') ?></span>
+                                                                                            echo number_format($dataContent['am_jasa'], 0, ',', '.') ?></span>
                         </div>
                     </div>
                     <br>
@@ -262,8 +262,8 @@
                         <div class="font-weight-boldest font-size-h5">PPH 23 <?= floatval($dataContent['percent_pph']) ?>%</div>
                         <div class="text-right d-flex flex-column">
                             <span class="font-weight-boldest font-size-h3 line-height-sm"><?php
-                                                                                            $potongan_pph = floor($dataContent['percent_pph'] / 100 * $total);
-                                                                                            echo number_format($potongan_pph, 0, ',', '.') ?></span>
+                                                                                            $potongan_pph = floor($dataContent['am_pph']);
+                                                                                            echo number_format($dataContent['am_pph'], 0, ',', '.') ?></span>
                         </div>
                     </div>
                     <br>

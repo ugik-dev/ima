@@ -201,10 +201,7 @@
                                             </div>
                                         </th>
                                         <th>
-                                            <?php
-                                            $data = array('name' => 'jasa_count', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
-                                            echo form_input($data);
-                                            ?>
+                                            <input name="am_jasa" id="jasa_count" value="0" class="form-control mask" required onchange='count_total()' />
                                         </th>
                                     </tr>
                                     <tr>
@@ -230,15 +227,33 @@
                                             <!-- <input type="number" name="percentage_jasa" class="form-control" min="0" step="0.00001" max="100" onchange='count_total()' /> -->
                                         </th>
                                         <th>
-                                            <input name="pph_count" value="0" disabled class="accounts_total_amount" />
-                                            <?php
-                                            // $data = array('name' => 'pph_count', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
-                                            // echo form_input($data);
-                                            ?>
+                                            <!-- <input name="pph_count" value="0" disabled class="accounts_total_amount" /> -->
+                                            <input name="am_pph" id="pph_count" value="0" class="form-control mask" required onchange='count_total()' />
                                         </th>
                                     </tr>
                                     <tr>
-                                        <th colspan="2"></th>
+                                        <th> <?php
+                                                if ($data_return != NULL) {
+                                                    if ($data_return['ppn_pph'] == '1') {
+                                                        $checked = 'checked="checked"';
+                                                    } else {
+                                                        $checked = '';
+                                                    }
+                                                } else {
+                                                    $checked = '';
+                                                }
+                                                ?>
+                                            <div class="col-3">
+                                                <span class="switch switch-icon">
+                                                    <label>
+                                                        <input type="checkbox" <?= $checked ?> name="manual_math" onclick='count_total()' />
+                                                        <span></span>
+                                                    </label>
+                                                    manual
+                                                </span>
+                                            </div>
+                                        </th>
+                                        <th></th>
                                         <th colspan="2">Total Final: </th>
                                         <th>
                                         </th>
@@ -249,9 +264,11 @@
                                             ?>
                                         </th>
                                     </tr>
-
                                 </tfoot>
+
                             </table>
+
+
                         </div>
                         <div class="col-lg-12">
                             <div class="row">
@@ -293,7 +310,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-lg-12 ">
                             <div class="form-group">
                                 <?php
@@ -311,10 +327,25 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=0.6"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=2.0"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
+    // function xx_test() {
+    //     label_jasa = $("#jasa_count");
+    //     console.log(label_jasa)
+    //     if ($('input[name="auto_math"]').is(":checked") == true) {
+    //         console.log("checker");
+    //         // ppn_pph = count_val * 0.1;
+    //         label_jasa.prop("disabled", 'disabled');
+    //     } else {
+    //         console.log("xchecker");
+    //         label_jasa.prop("disabled", false);
+    //         // $('input[name="ppn_pph_count"]').val(0);
+    //     }
+    // }
+
+
     $('#menu_id_32').addClass('menu-item-active menu-item-open menu-item-here"')
     $('#submenu_id_88').addClass('menu-item-active')
     no_pembayaran = $('#no_pembayaran');

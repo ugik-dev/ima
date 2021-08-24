@@ -2,12 +2,24 @@ var timmer;
 function count_total(edit = false) {
   clearTimeout(timmer);
   count_val = 0;
+  label_jasa = $("#jasa_count");
+  label_pph = $("#pph_count");
   timmer = setTimeout(function callback() {
+    if ($('input[name="manual_math"]').is(":checked") == true) {
+      manual_math = true;
+      console.log("checker");
+      label_jasa.prop("readonly", false);
+      label_pph.prop("readonly", false);
+    } else {
+      manual_math = false;
+      label_jasa.prop("readonly", true);
+      label_pph.prop("readonly", true);
+    }
+
     p_jasa = $('input[name="percent_jasa"]').val();
     p_jasa = p_jasa.replace(",", ".");
     $("#percent_jasa").val(p_jasa);
 
-    // console.log(p_jasa / 100);
     if (p_jasa == "") p_jasa = 0;
     p_pph = $('input[name="percent_pph"]').val();
     if (p_pph == "") p_pph = 0;
@@ -16,6 +28,9 @@ function count_total(edit = false) {
     qyt = $('input[name="qyt[]"]');
     amount = $('input[name="amount[]"]');
     qyt_amount = $('input[name="qyt_amount[]"]');
+
+    tmp_jasa = $("#jasa_count").val();
+    tmp_pph = $("#pph_count").val();
     i = 0;
     $('input[name="qyt[]"]').each(function () {
       val1 = 0;
@@ -43,32 +58,31 @@ function count_total(edit = false) {
     $('input[name="sub_total"]').val(formatRupiah2(count_val));
     biaya_jasa = 0;
     biaya_pph = 0;
-    // console.log(parseFloat(p_jasa));
-    // console.log(parseFloat(p_jasa) + 100);
-    console.log(count_val);
-    console.log("sdas");
-    if (p_jasa != "" && p_jasa != "0") {
-      biaya_jasa = Math.ceil((p_jasa / 100) * count_val);
-      console.log(biaya_jasa);
-      $('input[name="jasa_count"]').val(formatRupiah2(biaya_jasa));
+    console.log(tmp_jasa);
+    if (manual_math && (tmp_jasa != "0" || tmp_jasa != "0,00")) {
+      biaya_jasa = parseFloat(
+        tmp_jasa.replaceAll(".", "").replaceAll(",", ".")
+      );
     } else {
-      $('input[name="jasa_count"]').val(0);
+      if (p_jasa != "" && p_jasa != "0") {
+        biaya_jasa = Math.ceil((p_jasa / 100) * count_val);
+        $('input[name="am_jasa"]').val(formatRupiah2(biaya_jasa));
+      } else {
+        $('input[name="am_jasa"]').val(0);
+      }
     }
-
     $('input[name="sub_total_2"]').val(formatRupiah2(count_val - biaya_jasa));
     setela_jasa = (count_val - biaya_jasa).toFixed(2);
-    if (count_val != "" && count_val != "0") {
-      biaya_pph = Math.floor((p_pph / 100) * setela_jasa);
-      $('input[name="pph_count"]').val(formatRupiah2(biaya_pph));
+    if (manual_math && (tmp_pph != "0" || tmp_pph != "0,00")) {
+      biaya_pph = parseFloat(tmp_pph.replaceAll(".", "").replaceAll(",", "."));
     } else {
-      $('input[name="pph_count"]').val(0);
+      if (count_val != "" && count_val != "0") {
+        biaya_pph = Math.floor((p_pph / 100) * setela_jasa);
+        $('input[name="am_pph"]').val(formatRupiah2(biaya_pph));
+      } else {
+        $('input[name="am_pph"]').val(0);
+      }
     }
-    // if ($('input[name="ppn_pph"]').is(":checked") == true) {
-    //   ppn_pph = count_val * 0.1;
-    //   $('input[name="ppn_pph_count"]').val(formatRupiah(ppn_pph));
-    // } else {
-    //   $('input[name="ppn_pph_count"]').val(0);
-    // }
 
     total_final = (setela_jasa - biaya_pph).toFixed(2);
     if (total_final != "" && total_final != "0") {
@@ -76,14 +90,6 @@ function count_total(edit = false) {
     } else {
       $('input[name="total_final"]').val(0);
     }
-    // console.log(ppn_pph);
-
-    // //USED TO CHECK THE VALIDITY OF THIS TRANSACTION
-    // if (edit) {
-    //   count_credits();
-    // } else {
-    //   check_validity();
-    // }
   }, 800);
 }
 

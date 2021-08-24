@@ -1292,6 +1292,10 @@ class Transaction_model extends CI_Model
             'ppn_pph' => $data['ppn_pph'],
             'percent_jasa' => $data['percent_jasa'],
             'percent_pph' => $data['percent_pph'],
+            'manual_math' => $data['manual_math'],
+            'am_jasa' => substr($data['am_jasa'], 0, -2) . '.' . substr($data['am_jasa'], -2),
+            'am_pph' => substr($data['am_pph'], 0, -2) . '.' . substr($data['am_pph'], -2),
+
             // 'inv_key' => $generateRandomString,
             'acc_1' => $data['acc_1'],
             'acc_2' => $data['acc_2'],
@@ -1456,6 +1460,10 @@ class Transaction_model extends CI_Model
             'customer_id' => $data['customer_id'],
             'no_pembayaran' => $data['no_pembayaran'],
             'payment_metode' => $data['payment_metode'],
+            'manual_math' => $data['manual_math'],
+            'am_jasa' => substr($data['am_jasa'], 0, -2) . '.' . substr($data['am_jasa'], -2),
+            'am_pph' => substr($data['am_pph'], 0, -2) . '.' . substr($data['am_pph'], -2),
+
             'ppn_pph' => $data['ppn_pph'],
             'acc_1' => $data['acc_1'],
             'acc_2' => $data['acc_2'],

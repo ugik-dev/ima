@@ -280,8 +280,8 @@ class Statements extends CI_Controller
 			// echo $amount;
 		}
 
-		$amount = $amount - ceil($result['percent_jasa'] / 100 * $amount);
-		$ppn =  floor($result['percent_pph'] / 100 * $amount);
+		$amount = $amount - ceil($result['am_jasa']);
+		$ppn =  floor($result['am_pph']);
 		$accounthead[0] = 166;
 		$accounthead[1] = 181;
 		$accounthead[2] = 8;

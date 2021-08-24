@@ -602,7 +602,7 @@ class Pembayaran extends CI_Controller
             $table->addCell(200, $cellColSpan)->addText('Sub Total I    ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
             $table->addCell(500, $cellVCentered)->addText('' . number_format($total, '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
 
-            $potongan_jasa = ($dataContent['percent_jasa'] / 100 * $total);
+            $potongan_jasa = ($dataContent['am_jasa']);
             $total = $total - $potongan_jasa;
             // echo number_format($potongan_jasa, 0, ',', '.');
             $table->addRow();
@@ -614,7 +614,7 @@ class Pembayaran extends CI_Controller
             $table->addCell(500, $cellVCentered)->addText('' . number_format($total, '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
 
             $total_kwitansi = $total;
-            $potongan_pph = ($dataContent['percent_pph'] / 100 * $total);
+            $potongan_pph = ($dataContent['am_pph']);
             $total = $total - $potongan_pph;
 
             $table->addRow();
@@ -732,38 +732,38 @@ class Pembayaran extends CI_Controller
         $kw_total = 0;
         $count_row = count($dataContent['item']);
         $i = 1;
-        foreach ($dataContent['item'] as $item) {
+        // foreach ($dataContent['item'] as $item) {
 
 
-            $freame7->addRow();
-            $current_data = ($item->amount * $item->qyt);
-            $current_jasa = ($dataContent['percent_jasa'] / 100) * $current_data;
-            $current_total = $current_data - $current_jasa;
-            $kw_total = $kw_total + $current_total;
+        //     $freame7->addRow();
+        //     $current_data = ($item->amount * $item->qyt);
+        //     $current_jasa = ($dataContent['am_jasa']);
+        //     $current_total = $current_data - $current_jasa;
+        //     $kw_total = $kw_total + $current_total;
 
-            if ($i = $count_row) {
-                $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-                $freame7->addCell(60, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
-                $freame7->addCell(1400, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText($item->date_item, 'paragraph', array('spaceAfter' => 0));
-                $freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('Rp', 'paragraph', array('spaceAfter' => 0));
-                $freame7->addCell(1600, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText(number_format($current_total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
-                $freame7->addCell(60, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
-            } else {
-                $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-                $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-                $freame7->addCell(1400, $cellVCentered)->addText($item->date_item, 'paragraph', array('spaceAfter' => 0));
-                $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph', array('spaceAfter' => 0));
-                $freame7->addCell(1600, $cellVCentered)->addText(number_format($current_total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
-                $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-            }
-            $i++;
-        }
+        //     if ($i = $count_row) {
+        //         $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+        //         $freame7->addCell(60, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
+        //         $freame7->addCell(1400, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText($item->date_item, 'paragraph', array('spaceAfter' => 0));
+        //         $freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('Rp', 'paragraph', array('spaceAfter' => 0));
+        //         $freame7->addCell(1600, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText(number_format($current_total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
+        //         $freame7->addCell(60, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
+        //     } else {
+        //         $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+        //         $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+        //         $freame7->addCell(1400, $cellVCentered)->addText($item->date_item, 'paragraph', array('spaceAfter' => 0));
+        //         $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph', array('spaceAfter' => 0));
+        //         $freame7->addCell(1600, $cellVCentered)->addText(number_format($current_total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
+        //         $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+        //     }
+        //     $i++;
+        // }
         $freame7->addRow();
         $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
         $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
         $freame7->addCell(1400, $cellVCentered)->addText('TOTAL', 'paragraph_bold', array('spaceAfter' => 0));
         $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph_bold', array('spaceAfter' => 0));
-        $freame7->addCell(1600, $cellVCentered)->addText(number_format($kw_total, '0', ',', '.'), 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'right',));
+        $freame7->addCell(1600, $cellVCentered)->addText(number_format($total_kwitansi, '0', ',', '.'), 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'right',));
         $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 1));
         $freame7->addRow(0.1);
         $freame7->addCell(6000)->addText(' ', array('name' => 'Times New Roman', 'size' => 2, 'color' => '000000', 'bold' => true), array('align' => 'center', 'spaceAfter' => -1));
@@ -779,7 +779,7 @@ class Pembayaran extends CI_Controller
         $freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 
         $freame7->addRow(700);
-        $freame7->addCell(6000, $cellVCentered)->addText('          Rp. ' . number_format($kw_total, '0', ',', '.'), array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), array('align' => 'left'));
+        $freame7->addCell(6000, $cellVCentered)->addText('          Rp. ' . number_format($total_kwitansi, '0', ',', '.'), array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), array('align' => 'left'));
         $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
         $freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 
@@ -1746,6 +1746,17 @@ class Pembayaran extends CI_Controller
         $data = $this->input->post();
         // echo json_encode($data);
         // die();
+        if ($data['manual_math'] == 'on') {
+            if (empty($data['manual_math'])) {
+                $data['manual_math'] = 'off';
+            }
+            $data['manual_math'] = 1;
+        } else {
+            $data['manual_math'] = 0;
+        }
+        $data['am_pph'] = preg_replace("/[^0-9]/", "", $data['am_pph']);
+        $data['am_jasa'] = preg_replace("/[^0-9]/", "", $data['am_jasa']);
+
         $count_rows = count($data['amount']);
         // if()
         if (empty($data['ppn_pph'])) {
@@ -1809,6 +1820,16 @@ class Pembayaran extends CI_Controller
         $data = $this->input->post();
         // echo json_encode($data);
         // die();
+        if ($data['manual_math'] == 'on') {
+            if (empty($data['manual_math'])) {
+                $data['manual_math'] = 'off';
+            }
+            $data['manual_math'] = 1;
+        } else {
+            $data['manual_math'] = 0;
+        }
+        $data['am_pph'] = preg_replace("/[^0-9]/", "", $data['am_pph']);
+        $data['am_jasa'] = preg_replace("/[^0-9]/", "", $data['am_jasa']);
         $count_rows = count($data['amount']);
         // if()
         if (empty($data['ppn_pph'])) {
