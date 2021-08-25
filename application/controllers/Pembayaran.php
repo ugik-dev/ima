@@ -1269,7 +1269,7 @@ class Pembayaran extends CI_Controller
         if ($page_name  == 'new_row') {
             $this->load->model('Statement_model');
             $data['accounts_records'] = $this->Statement_model->chart_list();
-            $this->load->view('admin_models/accounts/new_row_pembayaran.php', $data);
+            $this->load->view('admin_models/accounts/new_row_invoice.php', $data);
         } else		if ($page_name  == 'add_patner_model') {
             //USED TO REDIRECT LINK
             $data['link'] = 'patners/add_patner';

@@ -632,15 +632,18 @@ class Statement_model extends CI_Model
                         </td>
                         <td  >' . ($total_ledger < 0 ? '( <a class="currency">' . number_format(-$total_ledger, 2, ',', '.') . '</a>)' : '<a class="currency">' . number_format($total_ledger, 2, ',', '.') . '</a>') . '</td>            
                         </tr>';
-
+                        $tot_debit = 0;
+                        $tot_kredit = 0;
                         foreach ($data_leadger['data'] as $single_ledger) {
                             $debitamount = '';
                             $creditamount = '';
 
                             if ($single_ledger->type == 0) {
+                                $tot_debit += $single_ledger->amount;
                                 $debitamount = $single_ledger->amount;
                                 $total_ledger = $total_ledger + $debitamount;
                             } else if ($single_ledger->type == 1) {
+                                $tot_kredit += $single_ledger->amount;
                                 $creditamount = $single_ledger->amount;
                                 $total_ledger = $total_ledger - $creditamount;
                             } else {
@@ -662,6 +665,19 @@ class Statement_model extends CI_Model
                         <td  >' . ($total_ledger < 0 ? '( <a class="currency">' . number_format(-$total_ledger, 2, ',', '.') . '</a>)' : '<a class="currency">' . number_format($total_ledger, 2, ',', '.') . '</a>') . '</td>            
                     </tr>';
                         }
+                        $form_content .= '<tr>
+                        <td></td><td></td><td>TOTAL</td><td>
+                            <a  class="currency">' .
+                            (!empty($tot_debit) ? number_format($tot_debit, 2, ',', '.') : '') .
+                            '</a>
+                        </td>
+                        <td>
+                            <a   class="currency">' .
+                            (!empty($tot_kredit) ? number_format($tot_kredit, 2, ',', '.') : '')
+                            . '</a>
+                        </td>
+                        <td>' . ($total_ledger < 0 ? '( <a class="currency">' . number_format(-$total_ledger, 2, ',', '.') . '</a>)' : '<a class="currency">' . number_format($total_ledger, 2, ',', '.') . '</a>') . '</td>            
+                    </tr>';
                     }
                     $form_content .= '</tbody></table>';
                 }
