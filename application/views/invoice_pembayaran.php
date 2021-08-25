@@ -373,9 +373,7 @@
     // });
     description = $('#description');
     date_jurnal = $('#date');
-    // acc_1 = $('#acc_1');
-    // acc_2 = $('#acc_2');
-    // acc_3 = $('#acc_3');
+
     var keterangan_item = document.getElementsByName('keterangan_item[]');
     var date_item = document.getElementsByName('date_item[]');
     var qyt = document.getElementsByName('qyt[]');

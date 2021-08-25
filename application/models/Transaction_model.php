@@ -1297,9 +1297,9 @@ class Transaction_model extends CI_Model
             'am_pph' => substr($data['am_pph'], 0, -2) . '.' . substr($data['am_pph'], -2),
 
             // 'inv_key' => $generateRandomString,
-            'acc_1' => $data['acc_1'],
-            'acc_2' => $data['acc_2'],
-            'acc_3' => $data['acc_3'],
+            // 'acc_1' => $data['acc_1'],
+            // 'acc_2' => $data['acc_2'],
+            // 'acc_3' => $data['acc_3'],
             'acc_0' => $this->session->userdata('user_id')['name'],
             'agen_id' => $this->session->userdata('user_id')['id'],
         );
