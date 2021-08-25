@@ -3,6 +3,8 @@
         <div class="box-body">
             <div class="">
                 <?php
+                $acc_role = accounting_role($this->session->userdata('user_id')['id']);
+
                 $attributes = array('id' => 'pembayaran', 'method' => 'post', 'class' => '');
                 ?>
                 <?php echo form_open('pembayaran/edit_process_pembayaran', $attributes); ?>
@@ -84,7 +86,8 @@
                             <table class="table table-striped table-hover  ">
                                 <thead>
                                     <tr>
-                                        <th style="width:  400px">Keterangan<?= count($data_return['amount']); ?></th>
+                                        <th style="width:  400px">Keterangan</th>
+                                        <th style="width:  200px">No Polisi</th>
                                         <th style="width:  200px">Tanggal</th>
                                         <th style="width:  120px">Satuan</th>
                                         <th style="width: 80px">Qyt</th>
@@ -103,7 +106,10 @@
                                                 <td>
                                                     <input type="text" name="id_item[]" value="" class="form-control input-lg" hidden />
 
-                                                    <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / BN 9999 QV" />
+                                                    <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / Toyota AVZ" />
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="nopol[]" value="" placeholder="eg. BN 1010 XX / 2018" class="form-control input-lg" />
                                                 </td>
                                                 <td>
                                                     <input type="text" name="date_item[]" value="" placeholder="eg. 3 Mar sd 27 Feb" class="form-control input-lg" />
@@ -153,7 +159,7 @@
                                         <td id="row_loading_status"></td>
                                     </tr>
                                     <tr>
-                                        <th colspan="2"></th>
+                                        <th colspan="3"></th>
                                         <th colspan="2">Sub Total I: </th>
                                         <th>
                                         </th>
@@ -177,7 +183,7 @@
                                         </th>
                                     </tr>
                                     <tr>
-                                        <th colspan="2"></th>
+                                        <th colspan="3"></th>
                                         <th colspan="2">Biaya Jasa : </th>
                                         <th>
                                             <div class="input-group mb-3">
@@ -192,8 +198,8 @@
                                             <input name="am_jasa" id="jasa_count" value="<?= $data_return['am_jasa'] ?>" class=" form-control mask" required onchange='count_total()' />
                                         </th>
                                     </tr>
-                                    <tr>
-                                        <th colspan="2"></th>
+                                    <tr <?= $acc_role == false ? 'hidden' : '' ?>>
+                                        <th colspan="3"></th>
                                         <th colspan="2">Sub Total II: </th>
                                         <th>
                                         </th>
@@ -202,8 +208,8 @@
                                         </th>
                                     </tr>
 
-                                    <tr>
-                                        <th colspan="2"></th>
+                                    <tr <?= $acc_role == false ? 'hidden' : '' ?>>
+                                        <th colspan="3"></th>
                                         <th colspan="2">PPh 23 : </th>
                                         <th>
                                             <div class="input-group mb-3">
@@ -240,7 +246,7 @@
                                                 </span>
                                             </div>
                                         </th>
-                                        <th></th>
+                                        <th colspan="2"></th>
                                         <th colspan="2">Total Final: </th>
                                         <th>
                                         </th>
@@ -255,7 +261,7 @@
                                 </tfoot>
                             </table>
                         </div>
-                        <div class="col-lg-12">
+                        <!-- <div class="col-lg-12">
                             <div class="row">
                                 <div class="col-lg-3">
                                     <div class="form-group">
@@ -294,7 +300,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="col-lg-12 ">
                             <div class="form-group">
@@ -323,15 +329,16 @@
     payment_metode = $('#payment_metode');
     description = $('#description');
     date_jurnal = $('#date');
-    acc_1 = $('#acc_1');
-    acc_2 = $('#acc_2');
-    acc_3 = $('#acc_3');
+    // acc_1 = $('#acc_1');
+    // acc_2 = $('#acc_2');
+    // acc_3 = $('#acc_3');
     var id_item = document.getElementsByName('id_item[]');
 
     var keterangan_item = document.getElementsByName('keterangan_item[]');
     var date_item = document.getElementsByName('date_item[]');
     var qyt = document.getElementsByName('qyt[]');
     var amount = document.getElementsByName('amount[]');
+    var nopol = document.getElementsByName('nopol[]');
     var satuan = document.getElementsByName('satuan[]');
 
 
@@ -378,9 +385,7 @@
         date_jurnal.val('<?= $data_return['date'] ?>');
         description.val('<?= $data_return['description'] ?>');
         payment_metode.val('<?= $data_return['payment_metode'] ?>');
-        acc_1.val('<?= $data_return['acc_1'] ?>');
-        acc_2.val('<?= $data_return['acc_2'] ?>');
-        acc_3.val('<?= $data_return['acc_3'] ?>');
+
         <?php
         $count_rows = count($data_return['amount']);
 
@@ -388,6 +393,7 @@
             id_item[<?= $i ?>].value = '<?= $data_return['id_item'][$i] ?>';
             amount[<?= $i ?>].value = '<?= $data_return['amount'][$i] ?>';
             qyt[<?= $i ?>].value = '<?= $data_return['qyt'][$i] ?>';
+            nopol[<?= $i ?>].value = '<?= $data_return['nopol'][$i] ?>';
             date_item[<?= $i ?>].value = '<?= $data_return['date_item'][$i] ?>';
             keterangan_item[<?= $i ?>].value = '<?= $data_return['keterangan_item'][$i] ?>';
             satuan[<?= $i ?>].value = '<?= $data_return['satuan'][$i] ?>';

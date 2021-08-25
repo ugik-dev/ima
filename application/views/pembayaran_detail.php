@@ -33,7 +33,9 @@
             <a href="' . base_url() . 'statements/show/' . $dataContent['parent2_id'] . '" class="text-success font-weight-bold font-size-h6 mt-2">Klik untuk lihat jurnal</a>
         </div>
         ';
-    } ?>
+    }
+    $acc_role = accounting_role($this->session->userdata('user_id')['id']);
+    ?>
     <div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
         <div class="col-md-9">
             <div class="d-flex font-size-sm flex-wrap">
@@ -41,9 +43,12 @@
                     <button type="button" class="btn btn-primary dropdown-toggle py-3 mr-3 mr-sm-14 my-1 font-weight-bolder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Download File</button>
                     <div class="dropdown-menu">
                         <a type="button" href="<?= base_url('Pembayaran/download_word/') . $dataContent['id'] ?>" class="btn mr-3 my-1">Doc Pembayaran Mitra</a>
+                        <a type="button" href="<?= base_url('Pembayaran/download_word2/') . $dataContent['id'] ?>" class="btn mr-3 my-1">Doc Pembayaran Format 2</a>
                     </div>
                 </div>
-                <a type="button" href="<?= base_url('statements/pembayaran_to_jurnal/') . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"> Buat Jurnal Umum</a>
+                <?php if ($acc_role) { ?>
+                    <a type="button" href="<?= base_url('statements/pembayaran_to_jurnal/') . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"> Buat Jurnal Umum</a>
+                <?php } ?>
                 <a type="button" href="<?php echo base_url() . 'Pembayaran/edit/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-pencil-alt mr-3 my-1"></i> Edit</a>
                 <a type="button" href="<?php echo base_url() . 'Pembayaran/copy/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-copy mr-3 my-1"> </i> Copy</a>
                 <a type="button" href="<?= base_url('pembayaran') ?>" class="btn btn-warning font-weight-bolder ml-sm-auto my-1">Buat Pembayaran Baru</a>

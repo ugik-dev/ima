@@ -33,7 +33,10 @@
                         <a href="' . base_url() . 'statements/show/' . $dataContent['parent2_id'] . '" class="text-success font-weight-bold font-size-h6 mt-2">Klik untuk lihat jurnal</a>
                         </div>
                         ';
-    } ?>
+    }
+    $acc_role = accounting_role($this->session->userdata('user_id')['id']);
+    // $acc_ro;
+    ?>
     <div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
         <div class="col-md-9">
             <div class="d-flex font-size-sm flex-wrap">
@@ -46,7 +49,9 @@
                         <a type="button" href="<?= base_url('invoice/download/') . $dataContent['id'] ?>" class="btn">Invoice PDF</a>
                     </div>
                 </div>
-                <a type="button" href="<?= base_url('statements/invoice_to_jurnal/') . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"> Buat Jurnal Umum</a>
+                <?php if ($acc_role) { ?>
+                    <a type="button" href="<?= base_url('statements/invoice_to_jurnal/') . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"> Buat Jurnal Umum</a>
+                <?php } ?>
                 <a type="button" href="<?php echo base_url() . 'invoice/edit/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-pencil-alt mr-3 my-1"></i> Edit</a>
                 <a type="button" href="<?php echo base_url() . 'invoice/copy/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-copy mr-3 my-1"> </i> Copy</a>
                 <a type="button" href="<?= base_url('invoice') ?>" class="btn btn-warning font-weight-bolder ml-sm-auto my-1">Create New Invoice</a>

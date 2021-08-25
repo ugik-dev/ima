@@ -142,7 +142,7 @@ class InvoiceModel extends CI_Model
     public function delete_pembayaran($id)
     {
         $this->db->where('id', $id);
-        $this->db->delete('mp_invoice_v2');
+        $this->db->delete('mp_pembayaran');
 
         $this->record_activity(array('jenis' => 9, 'sub_id' => $id, 'desk' => 'Delete Pembayaran'));
     }

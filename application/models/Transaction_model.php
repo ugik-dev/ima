@@ -1316,6 +1316,7 @@ class Transaction_model extends CI_Model
                     'qyt' => $data['qyt'][$i],
                     'satuan' => $data['satuan'][$i],
                     'date_item' => $data['date_item'][$i],
+                    'nopol' => $data['nopol'][$i],
                     'keterangan_item' => $data['keterangan_item'][$i],
                     'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
                 );
@@ -1465,14 +1466,18 @@ class Transaction_model extends CI_Model
             'am_pph' => substr($data['am_pph'], 0, -2) . '.' . substr($data['am_pph'], -2),
 
             'ppn_pph' => $data['ppn_pph'],
-            'acc_1' => $data['acc_1'],
+            // 'acc_1' => $data['acc_1'],
             'acc_2' => $data['acc_2'],
             'acc_3' => $data['acc_3'],
             'percent_jasa' => $data['percent_jasa'],
             'percent_pph' => $data['percent_pph'],
-            'acc_0' => $this->session->userdata('user_id')['name'],
+            // 'acc_0' => $this->session->userdata('user_id')['name'],
         );
-
+        if ($data['acc_role']) {
+            $trans_data['acc_1'] = $this->session->userdata('user_id')['name'];
+        } else {
+            $trans_data['acc_0'] = $this->session->userdata('user_id')['name'];
+        }
         $this->db->trans_start();
         $this->db->where('id', $data['id']);
         $this->db->update('mp_pembayaran', $trans_data);
@@ -1485,6 +1490,7 @@ class Transaction_model extends CI_Model
                         'qyt' => $data['qyt'][$i],
                         'satuan' => $data['satuan'][$i],
                         'date_item' => $data['date_item'][$i],
+                        'nopol' => $data['nopol'][$i],
                         'keterangan_item' => $data['keterangan_item'][$i],
                         'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
                     );

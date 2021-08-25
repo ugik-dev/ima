@@ -3,6 +3,7 @@
         <div class="box-body">
             <div class="">
                 <?php
+                $acc_role = accounting_role($this->session->userdata('user_id')['id']);
                 $attributes = array('id' => 'pembayaran', 'method' => 'post', 'class' => '');
                 ?>
                 <?php echo form_open('pembayaran/create_pembayaran', $attributes); ?>
@@ -82,6 +83,7 @@
                                 <thead>
                                     <tr>
                                         <th style="width:  400px">Keterangan</th>
+                                        <th style="width:  200px">No Polisi</th>
                                         <th style="width:  200px">Tanggal</th>
                                         <th style="width:  120px">Satuan</th>
                                         <th style="width: 80px">Qyt</th>
@@ -93,18 +95,22 @@
                                 <tbody id="transaction_table_body">
                                     <tr>
                                         <td>
-                                            <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / BN 9999 QV" />
+                                            <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / Toyota AVZ" />
+                                        </td>
+                                        <td>
+                                            <input type="text" name="nopol[]" value="" placeholder="eg. BN 1010 XX / 2018" class="form-control input-lg" />
                                         </td>
                                         <td>
                                             <input type="text" name="date_item[]" value="" placeholder="eg. 3 Mar sd 27 Feb" class="form-control input-lg" />
                                         </td>
                                         <td>
                                             <select name="satuan[]" id="satuan" class="form-control">
-                                                <option value="bln"> bln </option>
                                                 <option value="hari"> hari </option>
+                                                <option value="bln"> bln </option>
                                                 <option value="trip"> trip </option>
                                                 <option value="unit"> unit </option>
                                                 <option value="pcs"> pcs </option>
+                                                <option value="org/hari"> org/hari </option>
                                             </select>
                                         </td>
                                         <td>
@@ -134,15 +140,22 @@
                                     ?>
                                             <tr>
                                                 <td>
-                                                    <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / BN 9999 QV" />
+                                                    <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / Toyota AVZ" />
+                                                </td>
+                                                <td>
+                                                    <input type="text" name="nopol[]" value="" placeholder="eg. BN 1010 XX / 2018" class="form-control input-lg" />
                                                 </td>
                                                 <td>
                                                     <input type="text" name="date_item[]" value="" placeholder="eg. 3 Mar sd 27 Feb" class="form-control input-lg" />
                                                 </td>
                                                 <td>
                                                     <select name="satuan[]" id="satuan" class="form-control">
-                                                        <option value="bln"> bln </option>
                                                         <option value="hari"> hari </option>
+                                                        <option value="bln"> bln </option>
+                                                        <option value="trip"> trip </option>
+                                                        <option value="unit"> unit </option>
+                                                        <option value="pcs"> pcs </option>
+                                                        <option value="org/hari"> org/hari </option>
                                                     </select>
                                                 </td>
                                                 <td>
@@ -178,7 +191,7 @@
                                         <td id="row_loading_status"></td>
                                     </tr>
                                     <tr>
-                                        <th colspan="2"></th>
+                                        <th colspan="3"></th>
                                         <th colspan="2">Sub Total I: </th>
                                         <th>
                                         </th>
@@ -190,7 +203,7 @@
                                         </th>
                                     </tr>
                                     <tr>
-                                        <th colspan="2"></th>
+                                        <th colspan="3"></th>
                                         <th colspan="2">Biaya Jasa : </th>
                                         <th>
                                             <div class="input-group mb-3">
@@ -204,8 +217,8 @@
                                             <input name="am_jasa" id="jasa_count" value="0" class="form-control mask" required onchange='count_total()' />
                                         </th>
                                     </tr>
-                                    <tr>
-                                        <th colspan="2"></th>
+                                    <tr <?= $acc_role == false ? 'hidden' : '' ?>>
+                                        <th colspan="3"></th>
                                         <th colspan="2">Sub Total II: </th>
                                         <th>
                                         </th>
@@ -214,8 +227,8 @@
                                         </th>
                                     </tr>
 
-                                    <tr>
-                                        <th colspan="2"></th>
+                                    <tr <?= $acc_role == false ? 'hidden' : '' ?>>
+                                        <th colspan="3"></th>
                                         <th colspan="2">PPh 23 : </th>
                                         <th>
                                             <div class="input-group mb-3">
@@ -253,7 +266,7 @@
                                                 </span>
                                             </div>
                                         </th>
-                                        <th></th>
+                                        <th colspan="2"></th>
                                         <th colspan="2">Total Final: </th>
                                         <th>
                                         </th>
@@ -270,7 +283,7 @@
 
 
                         </div>
-                        <div class="col-lg-12">
+                        <!-- <div class="col-lg-12">
                             <div class="row">
                                 <div class="col-lg-3">
                                     <div class="form-group">
@@ -309,7 +322,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="col-lg-12 ">
                             <div class="form-group">
                                 <?php
@@ -360,9 +373,9 @@
     // });
     description = $('#description');
     date_jurnal = $('#date');
-    acc_1 = $('#acc_1');
-    acc_2 = $('#acc_2');
-    acc_3 = $('#acc_3');
+    // acc_1 = $('#acc_1');
+    // acc_2 = $('#acc_2');
+    // acc_3 = $('#acc_3');
     var keterangan_item = document.getElementsByName('keterangan_item[]');
     var date_item = document.getElementsByName('date_item[]');
     var qyt = document.getElementsByName('qyt[]');
@@ -412,9 +425,7 @@
         id_custmer.val('<?= $data_return['customer_id'] ?>');
         date_jurnal.val('<?= $data_return['date'] ?>');
         description.val('<?= $data_return['description'] ?>');
-        acc_1.val('<?= $data_return['acc_1'] ?>');
-        acc_2.val('<?= $data_return['acc_2'] ?>');
-        acc_3.val('<?= $data_return['acc_3'] ?>');
+
         <?php
         $count_rows = count($data_return['amount']);
 

@@ -78,21 +78,24 @@ class Pembayaran extends CI_Controller
 
     public function delete($id)
     {
-        $this->load->model(array('SecurityModel', 'InvoiceModel'));
-        $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
-        $dataContent = $this->InvoiceModel->getAllPembayaran(array('id' =>  $id))[0];
-        if ($dataContent['agen_id'] != $this->session->userdata('user_id')['id'])
-            throw new UserException('Sorry, Yang dapat mengahapus dan edit hanya agen yang bersangkutan', UNAUTHORIZED_CODE);
+        try {
+            $this->load->model(array('SecurityModel', 'InvoiceModel'));
+            $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
+            $dataContent = $this->InvoiceModel->getAllPembayaran(array('id' =>  $id))[0];
+            if ($dataContent['agen_id'] != $this->session->userdata('user_id')['id'])
+                throw new UserException('Sorry, Yang dapat mengahapus dan edit hanya agen yang bersangkutan', UNAUTHORIZED_CODE);
 
-        $this->InvoiceModel->delete_pembayaran($id);
-        $array_msg = array(
-            'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Delete Successfully',
-            'alert' => 'info'
-        );
-        $this->session->set_flashdata('status', $array_msg);
-        // $this->index($data);
-        // return;
-        redirect('pembayaran/manage');
+            $this->InvoiceModel->delete_pembayaran($id);
+            $array_msg = array(
+                'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Delete Successfully',
+                'alert' => 'info'
+            );
+            $this->session->set_flashdata('status', $array_msg);
+
+            redirect('pembayaran/manage');
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
     }
 
     //pembayaran/clear_temp_pembayaran
@@ -347,7 +350,8 @@ class Pembayaran extends CI_Controller
             $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
 
             $dataContent = $this->InvoiceModel->getAllPembayaran(array('id' =>  $id))[0];
-            if ($dataContent['agen_id'] != $this->session->userdata('user_id')['id'])
+            $acc_role = $this->SecurityModel->MultiplerolesStatus('Akuntansi');
+            if ($dataContent['agen_id'] != $this->session->userdata('user_id')['id'] && (!$acc_role))
                 throw new UserException('Sorry, Yang dapat mengahapus dan edit hanya agen yang bersangkutan', UNAUTHORIZED_CODE);
             if ($id != NULL) {
                 $item = count($dataContent['item']);
@@ -360,6 +364,7 @@ class Pembayaran extends CI_Controller
                     $dataContent['amount'][$i] = preg_replace("/[^0-9]/", "", $dataContent['item'][$i]->amount);
                     $dataContent['date_item'][$i] =  $dataContent['item'][$i]->date_item;
                     $dataContent['satuan'][$i] =  $dataContent['item'][$i]->satuan;
+                    $dataContent['nopol'][$i] =  $dataContent['item'][$i]->nopol;
 
                     $dataContent['keterangan_item'][$i] =  $dataContent['item'][$i]->keterangan_item;
                     $dataContent['qyt'][$i] =  $dataContent['item'][$i]->qyt;
@@ -799,6 +804,199 @@ class Pembayaran extends CI_Controller
         // }
     }
 
+    public function download_word2($id)
+    {
+        $this->load->model(array('SecurityModel', 'InvoiceModel'));
+        // $this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
+        $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
+
+        if ($id != NULL) {
+            $dataContent = $this->InvoiceModel->getAllPembayaran(array('id' =>  $id))[0];
+        } else {
+            echo 'ERROR';
+            return;
+        }
+        $date_item = false;
+        $total = 0;
+        $total_qyt = 0;
+
+        $phpWord = new \PhpOffice\PhpWord\PhpWord();
+
+        $tanggal = $this->tanggal_indonesia($dataContent['date']);
+        $phpWord->addFontStyle('paragraph_bold', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'bold' => true));
+        $phpWord->addFontStyle('paragraph_italic', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'italic' => true));
+        $phpWord->addFontStyle('paragraph_underline', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'underline' => 'single'));
+        $phpWord->addFontStyle('paragraph_bold_underline', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'underline' => 'single', 'bold' => true));
+        $phpWord->addFontStyle('paragraph2', array('spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(106), 'name' => 'Times New Roman', 'size' => 11, 'color' => '000000'));
+
+        // $pageStyle = [
+        //     'breakType' => 'continuous', 'colsNum' => 2,
+        //     'pageSizeW' =>
+        //     \PhpOffice\PhpWord\Shared\Converter::inchToTwip(8.4),
+        //     'pageSizeH' =>
+        //     \PhpOffice\PhpWord\Shared\Converter::inchToTwip(11.7),
+        //     'marginLeft' => 1500, 'marginRight' => 1000,
+        //     'marginTop' => 1700,
+        //     'marginBottom' => 1000
+        // ];
+        // $section = $phpWord->addSection($pageStyle);
+        $section = $phpWord->addSection([
+            'breakType' => 'continuous', 'colsNum' => 1,
+            'pageSizeW' =>
+            \PhpOffice\PhpWord\Shared\Converter::inchToTwip(8.4),
+            'pageSizeH' =>
+            \PhpOffice\PhpWord\Shared\Converter::inchToTwip(11.7),
+            'marginLeft' => 1500, 'marginRight' => 1000,
+            'marginTop' => 1700,
+            'marginBottom' => 1000,
+            'orientation' => 'landscape'
+        ]);
+
+        $section->addText("PT INDOMETAL ASIA", 'paragraph_bold', array('spaceAfter' => 100, 'align' => 'center'));
+        $section->addText("DAFTAR KENDARAAN INSIDENTIL", 'paragraph_bold', array('spaceAfter' => 100, 'align' => 'center'));
+        $section->addText(strtoupper($dataContent['description']), 'paragraph_bold', array('spaceAfter' => 100, 'align' => 'center'));
+        $section->addTextBreak();
+        // if ($format == 2) {
+        //     $section->addText("Menurut Surat Perjanjian Nomor 0122.E/Tbk/SP-2000/21-S11.4 tanggal 01 April 2021 antara PT Timah Tbk dengan PT Indometal Asia tentang Kerjasama Kegiatan Eksplorasi Timah di Wilayah Izin Usaha Pertambangan PT Timah Tbk, dengan ini kami sampaikan tagihan atas perjanjian tersebut dengan rincian : ", 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
+        // } else {
+        //     $section->addText("Bersama ini kami sampaikan tagihan " . $dataContent['description'] . ' sebagai berikut :', 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
+        // }
+        // $section->addTextBreak();
+        $fancyTableStyle = array('borderSize' => 1, 'borderColor' => '000000', 'height' => 100, 'cellMarginButtom' => -100, 'cellMarginTop' => 100, 'cellMarginLeft' => 100, 'cellMarginRight' => 100, 'spaceAfter' => -100);
+        $cellVCentered = array('valign' => 'center', 'align' => 'center', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
+        $spanTableStyleName = 'Colspan Rowspan';
+        $phpWord->addTableStyle($spanTableStyleName, $fancyTableStyle);
+        $table = $section->addTable($spanTableStyleName);
+        if ($dataContent['item']  != NULL) {
+            foreach ($dataContent['item'] as $item) {
+                $total = $total + (floor($item->amount) * $item->qyt);
+                $total_qyt =  $total_qyt + ($item->qyt);
+                if (!empty($item->date_item))
+                    $date_item = true;
+            }
+        }
+        $cellRowSpan = array('vMerge' => 'restart', 'valign' => 'center', 'bgColor' => 'e1e3e1');
+        $cellRowContinue = array('vMerge' => 'continue');
+        $cellHCentered = array('alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER);
+        $cellVCentered = array('valign' => 'center');
+        // if ($date_item) {
+        $fancyTableCellStyle = array('valign' => 'center');
+        $table->addRow();
+        $cell1 = $table->addCell(2000, $cellRowSpan);
+        $textrun1 = $cell1->addTextRun($cellHCentered);
+        $textrun1->addText('KETERANGAN', 'paragraph_bold', array('spaceAfter' => 0));
+        $cell1 = $table->addCell(2000, $cellRowSpan);
+        $textrun1 = $cell1->addTextRun($cellHCentered);
+        $textrun1->addText('NOPOL', 'paragraph_bold', array('spaceAfter' => 0));
+        $cell1 = $table->addCell(2000, $cellRowSpan);
+        $textrun1 = $cell1->addTextRun($cellHCentered);
+        $textrun1->addText('TANGGAL', 'paragraph_bold', array('spaceAfter' => 0));
+        $cell1 = $table->addCell(2000, $cellRowSpan);
+        $textrun1 = $cell1->addTextRun($cellHCentered);
+        $textrun1->addText('QYT', 'paragraph_bold', array('spaceAfter' => 0));
+        $cell1 = $table->addCell(2000, $cellRowSpan);
+        $textrun1 = $cell1->addTextRun($cellHCentered);
+        $textrun1->addText('HARGA (Rp)', 'paragraph_bold', array('spaceAfter' => 0));
+        $cell1 = $table->addCell(2000, $cellRowSpan);
+        $textrun1 = $cell1->addTextRun($cellHCentered);
+        $textrun1->addText('SUB TOTAL (Rp)', 'paragraph_bold', array('spaceAfter' => 0));
+        if ($dataContent['item']  != NULL) {
+            foreach ($dataContent['item'] as $item) {
+                $table->addRow();
+                $table->addCell(3500, $cellVCentered)->addText($item->keterangan_item, null, array('spaceAfter' => 0));
+                $table->addCell(1200, $cellVCentered)->addText($item->nopol, null, array('spaceAfter' => 0));
+                $table->addCell(1200, $cellVCentered)->addText($item->date_item, null, array('spaceAfter' => 0));
+                $table->addCell(1000, $cellVCentered)->addText($item->qyt . ' ' . $item->satuan, null, array('spaceAfter' => 0, 'align' => 'center'));
+                $table->addCell(1500, $cellVCentered)->addText(number_format(floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
+                $table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
+            }
+            $table->addRow();
+            $cellColSpan = array('gridSpan' => 5, 'valign' => 'center');
+            $table->addCell(200, $cellColSpan)->addText('Sub Total I    ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+            $table->addCell(500, $cellVCentered)->addText('' . number_format($total, '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+
+
+
+            $terbilang =  floor($total);
+            // $kw_terbilang =  floor($total_kwitansi);
+        }
+        $section->addTextBreak();
+        // $textrun = $section->addTextRun();
+        // $textrun->addText("Terbilang : ", 'paragraph');
+        // $textrun->addText($this->terbilang($terbilang) . ' Rupiah', 'paragraph_bold');
+
+        $pageStyle = [
+            'breakType' => 'continuous', 'colsNum' => 2,
+            // 'pageSizeW' => $paper->getWidth(),
+            'pageSizeW' =>
+            \PhpOffice\PhpWord\Shared\Converter::inchToTwip(8.4),
+            'pageSizeH' =>
+            \PhpOffice\PhpWord\Shared\Converter::inchToTwip(11.7),
+            'marginLeft' => 1000, 'marginRight' => 1000,
+            'marginTop' => 1700,
+            'marginBottom' => 1000,
+            'orientation' => 'landscape'
+        ];
+        $section = $phpWord->addSection($pageStyle);
+        // $section->addTextBreak();
+        // $year = explode("-", $dataContent['input_date'])[0];
+        // $section->addText("Tanggal\t: " . $tanggal, 'paragraph', array('spaceAfter' => 100));
+        $section->addText("Mengetahui,", 'paragraph', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
+        $section->addText("PT INDOMETAL ASIA ", 'paragraph', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
+        $section->addText("Direktur", 'paragraph', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
+        // $section->addText("Mengetahui,", 'paragraph', array('spaceAfter' => 100));
+        $section->addTextBreak(3);
+        $section->addText("SETIAWAN RAHARJO", 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
+        // $textrun->addText("Perihal\t\t: ", 'paragraph');
+        $section->addTextBreak(1);
+
+        $section->addText('Pangkalpinang, ' . $this->tanggal_indo($dataContent['date']), 'paragraph', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
+        $section->addText("PT INDOMETAL ASIA ", 'paragraph', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
+        $Text_to_Add = htmlentities("Ka. Usaha & Barang/Jasa");
+        $section->addText($Text_to_Add, 'paragraph', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
+        // $section->addText("Mengetahui,", 'paragraph', array('spaceAfter' => 100));
+        $section->addTextBreak(3);
+        $section->addText($dataContent['acc_0'], 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
+        // $textrun->addText("Perihal\t\t: ", 'paragraph');
+        $textrun = $section->addTextRun();
+
+        $pageStyle = [
+            'breakType' => 'continuous', 'colsNum' => 1,
+            // 'pageSizeW' => $paper->getWidth(),
+            'pageSizeW' =>
+            \PhpOffice\PhpWord\Shared\Converter::inchToTwip(8.4),
+            'pageSizeH' =>
+            \PhpOffice\PhpWord\Shared\Converter::inchToTwip(11.7),
+            'marginLeft' => 1500, 'marginRight' => 1000,
+            'marginTop' => 1700,
+            'marginBottom' => 1000,
+            'orientation' => 'landscape'
+        ];
+        $section = $phpWord->addSection($pageStyle);
+        // $freame = $homekwintansi->addTable($spanTableStyleName);
+        // $freame->addRow(1000);
+        // $freame2 = $freame->addCell(12000, array('valign' => 'top', 'borderBottomColor' => 'ffffff', 'borderBottomSize' => '6', 'height' => 200, 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)));
+
+        // $freame2->addImage(
+        //     base_url('assets/img/ima-transparent2.png'),
+        //     array(
+        //         'height'           => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(1.3)),
+        //         'positioning'      => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
+        //         'posHorizontal' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
+        //         'posVertical' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
+        //         'marginLeft'       => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(0.5)),
+        //         'marginTop'        => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(0.1)),
+        //     )
+        // );
+
+        $writer = new Word2007($phpWord);
+        $filename = 'SPB_KW_' . $dataContent['no_pembayaran'];
+        header('Content-Type: application/msword');
+        header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
+        // }
+    }
     public function download($id)
     {
         $this->load->model(array('SecurityModel', 'InvoiceModel'));
@@ -1269,7 +1467,7 @@ class Pembayaran extends CI_Controller
         if ($page_name  == 'new_row') {
             $this->load->model('Statement_model');
             $data['accounts_records'] = $this->Statement_model->chart_list();
-            $this->load->view('admin_models/accounts/new_row_invoice.php', $data);
+            $this->load->view('admin_models/accounts/new_row_pembayaran.php', $data);
         } else		if ($page_name  == 'add_patner_model') {
             //USED TO REDIRECT LINK
             $data['link'] = 'patners/add_patner';
@@ -1832,6 +2030,7 @@ class Pembayaran extends CI_Controller
         $data['am_jasa'] = preg_replace("/[^0-9]/", "", $data['am_jasa']);
         $count_rows = count($data['amount']);
         // if()
+        $data['acc_role'] = $this->SecurityModel->MultiplerolesStatus('Akuntansi');
         if (empty($data['ppn_pph'])) {
             $data['ppn_pph'] = '0';
         } else {

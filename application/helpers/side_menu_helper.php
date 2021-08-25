@@ -37,6 +37,31 @@ if (!function_exists('Fetch_Users_Access_Control_Sub_Menu')) {
 }
 
 
+if (!function_exists('accounting_role')) {
+
+	function accounting_role($user_id = '')
+	{
+		// $this->session->userdata();
+		// akuntansi menu_id = 23
+
+		$CI	= &get_instance();
+		$CI->load->database();
+		$CI->db->select("*");
+		$CI->db->from('mp_multipleroles');
+		$CI->db->where('menu_id', '23');
+		$CI->db->where('user_id', $user_id);
+		$CI->db->limit(1);
+		$query = $CI->db->get();
+		if ($query->num_rows() > 0) {
+			// return $query->result();
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+
+
 if (!function_exists('Company_Profile')) {
 
 	function Company_Profile()
