@@ -280,7 +280,7 @@ class Statements extends CI_Controller
 			// echo $amount;
 		}
 
-		$amount = $amount - ceil($result['am_jasa']);
+		$amount = $amount - pembayaran($result['am_jasa']);
 		$ppn =  floor($result['am_pph']);
 		$accounthead[0] = 166;
 		$accounthead[1] = 181;
