@@ -714,7 +714,7 @@ class Pembayaran extends CI_Controller
 
             $freame7->addRow();
             $current_data = ($item->amount * $item->qyt);
-            $current_jasa = ($dataContent['percent_jasa'] / 100 * $current_data);
+            $current_jasa = ceil($dataContent['percent_jasa'] / 100 * $current_data);
             // $current_pph = ($dataContent['percent_pph'] / 100 * ($current_data - $current_jasa));
             $current_total = $current_data - $current_jasa;
             $kw_total = $kw_total + $current_total;
