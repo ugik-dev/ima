@@ -27,26 +27,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-lg-3">
-                                    <div class="form-group">
-                                        <?php echo form_label('No Pembayaran'); ?>
-                                        <?php
-                                        $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_pembayaran', 'id' => 'no_pembayaran');
-                                        echo form_input($data);
-                                        ?>
-                                    </div>
-                                    <div class="form-group" id='label_kendaraan' style="display: none">
-                                        <label>Kendaraan</label>
-                                        <div class="row">
-                                            <div class="col-lg-10" id='layer_cars'>
-                                            </div>
-                                            <div class="col-lg-2">
-                                                <button type="button" style="display:none" class="btn btn-primary" id="addcars"> <i class="fa fa-plus-circle"></i> </button>
-                                            </div>
-                                        </div>
 
-                                    </div>
-                                </div>
                                 <div class="col-lg-3">
                                     <div class="form-group">
                                         <?php echo form_label('Tanggal'); ?>
@@ -325,7 +306,6 @@
 <script>
     $('#menu_id_32').addClass('menu-item-active menu-item-open menu-item-here"')
     $('#submenu_id_87').addClass('menu-item-active')
-    no_pembayaran = $('#no_pembayaran');
     payment_metode = $('#payment_metode');
     description = $('#description');
     date_jurnal = $('#date');
@@ -380,7 +360,6 @@
     }
 
     <?php if ($data_return != NULL) {    ?>
-        no_pembayaran.val('<?= $data_return['no_pembayaran'] ?>');
         id_custmer.val('<?= $data_return['customer_id'] ?>');
         date_jurnal.val('<?= $data_return['date'] ?>');
         description.val('<?= $data_return['description'] ?>');

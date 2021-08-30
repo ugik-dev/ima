@@ -54,8 +54,8 @@ class InvoiceModel extends CI_Model
         $this->db->from('mp_pembayaran');
         // if (!empty($filter['id']))
         if (!empty($filter['id'])) $this->db->where('mp_pembayaran.id', $filter['id']);
-        if (!empty($filter['no_pembayaran'])) {
-            $this->db->where('no_pembayaran like "%' . $filter['no_pembayaran'] . '%"');
+        if (!empty($filter['search'])) {
+            $this->db->where('description like "%' . $filter['search'] . '%" OR mp_payee.customer_name like "%' . $filter['search'] . '%"  OR mp_pembayaran.id = "' . $filter['search'] . '"');
         } else {
             if (!empty($filter['first_date'])) $this->db->where('date >=', $filter['first_date']);
             if (!empty($filter['second_date'])) $this->db->where('date <=', $filter['second_date']);

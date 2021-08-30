@@ -40,9 +40,9 @@
             </div>
             <div class="col-lg-3">
                 <div class="form-group margin ">
-                    <?php echo form_label('Atau Masukan No Pembayaran:'); ?>
+                    <?php echo form_label('Search'); ?>
                     <?php
-                    $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'pembayaran_no', 'value' => $filter['no_pembayaran'],);
+                    $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'search', 'value' => !empty($filter['search']) ? $filter['search'] : '',);
                     echo form_input($data);
                     ?>
                 </div>

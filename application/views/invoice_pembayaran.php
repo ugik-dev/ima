@@ -17,30 +17,10 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <?php echo form_label('Patner'); ?>
-                                        <select name="customer_id" id="customer_id" class="form-control select2 input-lg">
+                                        <select name="customer_id" id="customer_id" class="form-control select2">
                                             <option value="0"> ------- </option>
                                             <?php echo $patner_record; ?>
                                         </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3">
-                                    <div class="form-group">
-                                        <?php echo form_label('No Pembayaran'); ?>
-                                        <?php
-                                        $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_pembayaran', 'id' => 'no_pembayaran');
-                                        echo form_input($data);
-                                        ?>
-                                    </div>
-                                    <div class="form-group" id='label_kendaraan' style="display: none">
-                                        <label>Kendaraan</label>
-                                        <div class="row">
-                                            <div class="col-lg-10" id='layer_cars'>
-                                            </div>
-                                            <div class="col-lg-2">
-                                                <button type="button" style="display:none" class="btn btn-primary" id="addcars"> <i class="fa fa-plus-circle"></i> </button>
-                                            </div>
-                                        </div>
-
                                     </div>
                                 </div>
                                 <div class="col-lg-3">
@@ -344,33 +324,9 @@
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
-    // function xx_test() {
-    //     label_jasa = $("#jasa_count");
-    //     console.log(label_jasa)
-    //     if ($('input[name="auto_math"]').is(":checked") == true) {
-    //         console.log("checker");
-    //         // ppn_pph = count_val * 0.1;
-    //         label_jasa.prop("disabled", 'disabled');
-    //     } else {
-    //         console.log("xchecker");
-    //         label_jasa.prop("disabled", false);
-    //         // $('input[name="ppn_pph_count"]').val(0);
-    //     }
-    // }
-
-
     $('#menu_id_32').addClass('menu-item-active menu-item-open menu-item-here"')
     $('#submenu_id_88').addClass('menu-item-active')
-    no_pembayaran = $('#no_pembayaran');
-    // $('.percent_jasa').mask('Z0,000', {
-    //     reverse: true,
-    //     translation: {
-    //         'Z': {
-    //             pattern: /[0-9]/,
-    //             optional: true
-    //         }
-    //     }
-    // });
+
     description = $('#description');
     date_jurnal = $('#date');
 
@@ -419,7 +375,6 @@
     }
 
     <?php if ($data_return != NULL) {    ?>
-        no_pembayaran.val('<?= $data_return['no_pembayaran'] ?>');
         id_custmer.val('<?= $data_return['customer_id'] ?>');
         date_jurnal.val('<?= $data_return['date'] ?>');
         description.val('<?= $data_return['description'] ?>');

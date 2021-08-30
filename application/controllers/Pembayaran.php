@@ -308,7 +308,7 @@ class Pembayaran extends CI_Controller
         $this->load->model('Accounts_model');
         $filter['first_date'] = html_escape($this->input->post('date1'));
         $filter['second_date'] = html_escape($this->input->post('date2'));
-        $filter['no_pembayaran'] = html_escape($this->input->post('pembayaran_no'));
+        $filter['search'] = html_escape($this->input->post('search'));
 
         if ($filter['first_date'] == NULL && $filter['second_date'] == NULL) {
             $filter['first_date'] = date('Y-m-01');
@@ -453,7 +453,7 @@ class Pembayaran extends CI_Controller
         $pdf->Cell(96, 6, '', 0, 0, 'R');
         $pdf->Cell(77, 6, 'Number#', 0, 1, 'R');
         $pdf->Cell(96, 6, '', 0, 0, 'R');
-        $pdf->Cell(77, 6,  $dataContent['no_pembayaran'], 0, 1, 'R');
+        $pdf->Cell(77, 6,  $dataContent['id'], 0, 1, 'R');
         $pdf->SetFont('Arial', 'BI', 14);
         $pdf->SetDrawColor(0, 0, 0);
         $pdf->SetXY(12, 65);
@@ -507,34 +507,6 @@ class Pembayaran extends CI_Controller
             'marginBottom' => 1000
         ];
         $section = $phpWord->addSection($pageStyle);
-        // $section->addTextBreak();
-        // $year = explode("-", $dataContent['input_date'])[0];
-        // $section->addText("Nomor\t\t: " . $dataContent['no_pembayaran'], 'paragraph', array('spaceAfter' => 100));
-        // $section->addText("Tanggal\t: " . $tanggal, 'paragraph', array('spaceAfter' => 100));
-        // $section->addText("Lampiran\t: 1 (satu) berkas", 'paragraph', array('spaceAfter' => 100));
-        // $textrun = $section->addTextRun();
-        // $textrun->addText("Perihal\t\t: ", 'paragraph');
-        // $textrun->addText("Permohonan Pembayaran", 'paragraph_bold');
-        // $section->addTextBreak();
-        // $section->addTextBreak();
-
-        // // $textrun->addTextBreak();
-        // if ($format == 2) {
-        //     $section->addText("\t\tKepada Yth.", 'paragraph', array('spaceAfter' => 100));
-        //     $section->addText("\t\tKepada Divisi Ekplorasi", 'paragraph', array('spaceAfter' => 100));
-        //     $section->addText("\t\t" . $dataContent['customer_name'], 'paragraph', array('spaceAfter' => 100));
-        //     $section->addText("\t\tJl. Jend. Sudirman No.51", 'paragraph', array('spaceAfter' => 100));
-        //     // $section->addText("\t\tdi -", 'paragraph', array('spaceAfter' => 0));
-        //     $section->addText("\t\t\t" . $dataContent['cus_address'], 'paragraph', array('spaceAfter' => 0));
-        // } else {
-        //     $section->addText("\t\tKepada Yth.", 'paragraph', array('spaceAfter' => 100));
-        //     $section->addText("\t\tDirektur Keuangan", 'paragraph', array('spaceAfter' => 100));
-        //     $section->addText("\t\t" . $dataContent['customer_name'], 'paragraph', array('spaceAfter' => 100));
-        //     $section->addText("\t\tu.p Ka Akuntansi Utang/Pajak", 'paragraph', array('spaceAfter' => 100));
-        //     $section->addText("\t\tdi -", 'paragraph', array('spaceAfter' => 0));
-        //     $section->addText("\t\t\t" . $dataContent['cus_address'], 'paragraph', array('spaceAfter' => 0));
-        // }
-
         $section = $phpWord->addSection([
             'breakType' => 'continuous', 'colsNum' => 1,
             'pageSizeW' =>
@@ -737,32 +709,37 @@ class Pembayaran extends CI_Controller
         $kw_total = 0;
         $count_row = count($dataContent['item']);
         $i = 1;
-        // foreach ($dataContent['item'] as $item) {
+        foreach ($dataContent['item'] as $item) {
 
 
-        //     $freame7->addRow();
-        //     $current_data = ($item->amount * $item->qyt);
-        //     $current_jasa = ($dataContent['am_jasa']);
-        //     $current_total = $current_data - $current_jasa;
-        //     $kw_total = $kw_total + $current_total;
+            $freame7->addRow();
+            $current_data = ($item->amount * $item->qyt);
+            $current_jasa = ($dataContent['percent_jasa'] / 100 * $current_data);
+            // $current_pph = ($dataContent['percent_pph'] / 100 * ($current_data - $current_jasa));
+            $current_total = $current_data - $current_jasa;
+            $kw_total = $kw_total + $current_total;
 
-        //     if ($i = $count_row) {
-        //         $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-        //         $freame7->addCell(60, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
-        //         $freame7->addCell(1400, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText($item->date_item, 'paragraph', array('spaceAfter' => 0));
-        //         $freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('Rp', 'paragraph', array('spaceAfter' => 0));
-        //         $freame7->addCell(1600, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText(number_format($current_total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
-        //         $freame7->addCell(60, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
-        //     } else {
-        //         $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-        //         $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-        //         $freame7->addCell(1400, $cellVCentered)->addText($item->date_item, 'paragraph', array('spaceAfter' => 0));
-        //         $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph', array('spaceAfter' => 0));
-        //         $freame7->addCell(1600, $cellVCentered)->addText(number_format($current_total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
-        //         $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-        //     }
-        //     $i++;
-        // }
+            if ($i == $count_row) {
+                // $current_total = 0;
+                $freame7->addCell(3000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+                $freame7->addCell(60, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
+                $freame7->addCell(3400, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText($item->date_item, 'paragraph', array('spaceAfter' => 0));
+                $freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('Rp', 'paragraph', array('spaceAfter' => 0));
+                if (number_format($kw_total, '0', ',', '.') != number_format($total_kwitansi, '0', ',', '.'))
+                    $freame7->addCell(1600, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('manual', 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
+                else
+                    $freame7->addCell(1600, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText(number_format($current_total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
+                $freame7->addCell(60, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
+            } else {
+                $freame7->addCell(3000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+                $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+                $freame7->addCell(3400, $cellVCentered)->addText($item->nopol ? $item->nopol : $item->description, 'paragraph', array('spaceAfter' => 0));
+                $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph', array('spaceAfter' => 0));
+                $freame7->addCell(1600, $cellVCentered)->addText(number_format($current_total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
+                $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+            }
+            $i++;
+        }
         $freame7->addRow();
         $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
         $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
@@ -796,7 +773,7 @@ class Pembayaran extends CI_Controller
         // 	echo json_encode($dataContent);
         // } else {
         $writer = new Word2007($phpWord);
-        $filename = 'SPB_KW_' . $dataContent['no_pembayaran'];
+        $filename = 'PMT_' . $dataContent['id'];
         header('Content-Type: application/msword');
         header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
         header('Cache-Control: max-age=0');
@@ -990,7 +967,7 @@ class Pembayaran extends CI_Controller
         // );
 
         $writer = new Word2007($phpWord);
-        $filename = 'SPB_KW_' . $dataContent['no_pembayaran'];
+        $filename = 'PMT_' . $dataContent['id'];
         header('Content-Type: application/msword');
         header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
         header('Cache-Control: max-age=0');
@@ -1030,7 +1007,7 @@ class Pembayaran extends CI_Controller
         $pdf->SetFont('Arial', '', 9.5);
 
         $pdf->SetTextColor(107, 104, 104);
-        $pdf->Cell(40, 6, 'INVOICE TO. ', 0, 1);
+        $pdf->Cell(40, 6, 'PAYMENT TO. ', 0, 1);
         $pdf->SetTextColor(20, 20, 20);
         $pdf->Cell(5, 6, '', 0, 0, 'C');
         $pdf->MultiCell(40, 6, $dataContent['customer_name'], 0, 1);
@@ -1039,10 +1016,10 @@ class Pembayaran extends CI_Controller
         // $pdf->Cell(5, 6, '', 0, 1);
 
         $pdf->SetTextColor(107, 104, 104);
-        $pdf->Cell(35, 6, 'INVOICE NO. ', 0, 1);
+        $pdf->Cell(35, 6, 'NO. ', 0, 1);
         $pdf->SetTextColor(20, 20, 20);
         $pdf->Cell(5, 6, '', 0, 0, 'C');
-        $pdf->MultiCell(40, 6,  $dataContent['no_pembayaran'], 0, 1);
+        $pdf->MultiCell(40, 6,  $dataContent['id'], 0, 1);
         // $pdf->Cell(5, 6, '', 0, 1);
 
         $pdf->SetTextColor(107, 104, 104);
@@ -1365,8 +1342,8 @@ class Pembayaran extends CI_Controller
         // $pdf->Rect(10, 13, 190, $cur_y - 10, 'D');
 
 
-        $filename = 'INV_' .
-            $dataContent['no_pembayaran'] . '.pdf';
+        $filename = 'PMT_' .
+            $dataContent['id'] . '.pdf';
 
         $pdf->Output('', $filename, false);
     }
@@ -2047,24 +2024,9 @@ class Pembayaran extends CI_Controller
 
         if ($status) {
             $this->load->model('Transaction_model');
-            // if (!empty($data['no_jurnal'])) {
-            // $res = $this->Transaction_model->check_no_pembayaran($data['no_pembayaran'], $data['id']);
-            // die();
-            // if ($res != 0) {
-            //     $array_msg = array(
-            //         'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Invoice Sudah Ada',
-            //         'alert' => 'danger'
-            //     );
-            //     $this->session->set_flashdata('status', $array_msg);
-            //     $this->index($data);
-            //     return;
-            //     // redirect('statements/journal_voucher');
-            // }
-            // }
             $result = $this->Transaction_model->pembayaran_edit($data);
             // die();
             if ($result != NULL) {
-                // $this->Transaction_model->activity_edit($result, $acc);
                 $array_msg = array(
                     'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',
                     'alert' => 'info'
