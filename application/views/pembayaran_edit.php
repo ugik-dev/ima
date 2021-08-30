@@ -205,6 +205,17 @@
                                             <input name="am_pph" id="pph_count" value="<?= $data_return['am_pph'] ?>" class="form-control mask" required onchange='count_total()' />
                                         </th>
                                     </tr>
+                                    <tr <?= $acc_role == false ? 'hidden' : '' ?>>
+                                        <th colspan="3"></th>
+                                        <th colspan="3">
+                                            <input type="text" class="form-control" id="par_label" value="<?= $data_return['par_label'] ?>" name="par_label" onchange='count_total()' placeholder="Lebih Bayar / Kurang Bayar">
+                                        </th>
+                                        <th>
+                                            <!-- <input name="pph_count" value="0" disabled class="accounts_total_amount" /> -->
+                                            <input name="par_am" id="par_am" value="<?= $data_return['par_am'] ?>" class="form-control mask" required onchange='count_total()' />
+                                        </th>
+                                    </tr>
+
                                     <tr>
                                         <th> <?php
                                                 if ($data_return != NULL) {
@@ -300,7 +311,7 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=2.0"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=2.001"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>

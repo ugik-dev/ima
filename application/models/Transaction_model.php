@@ -1302,6 +1302,10 @@ class Transaction_model extends CI_Model
             'acc_0' => $this->session->userdata('user_id')['name'],
             'agen_id' => $this->session->userdata('user_id')['id'],
         );
+        if (!empty($data['par_label'] && !empty($data['par_am']))) {
+            $trans_data['par_label'] =  $data['par_label'];
+            $trans_data['par_am']  = substr($data['par_am'], 0, -2) . '.' . substr($data['par_am'], -2);
+        }
 
         $this->db->trans_start();
         $this->db->insert('mp_pembayaran', $trans_data);
@@ -1471,6 +1475,11 @@ class Transaction_model extends CI_Model
             'percent_pph' => $data['percent_pph'],
             // 'acc_0' => $this->session->userdata('user_id')['name'],
         );
+        if (!empty($data['par_label'] && !empty($data['par_am']))) {
+            $trans_data['par_label'] =  $data['par_label'];
+            $trans_data['par_am']  = substr($data['par_am'], 0, -2) . '.' . substr($data['par_am'], -2);
+        }
+
         if ($data['acc_role']) {
             $trans_data['acc_1'] = $this->session->userdata('user_id')['name'];
         } else {

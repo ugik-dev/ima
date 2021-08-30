@@ -1921,16 +1921,17 @@ class Pembayaran extends CI_Controller
         $data = $this->input->post();
         // echo json_encode($data);
         // die();
+        if (empty($data['manual_math'])) {
+            $data['manual_math'] = 'off';
+        }
         if ($data['manual_math'] == 'on') {
-            if (empty($data['manual_math'])) {
-                $data['manual_math'] = 'off';
-            }
             $data['manual_math'] = 1;
         } else {
             $data['manual_math'] = 0;
         }
         $data['am_pph'] = preg_replace("/[^0-9]/", "", $data['am_pph']);
         $data['am_jasa'] = preg_replace("/[^0-9]/", "", $data['am_jasa']);
+        $data['par_am'] = preg_replace("/[^0-9]/", "", $data['par_am']);
 
         $count_rows = count($data['amount']);
         // if()

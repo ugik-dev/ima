@@ -4,6 +4,11 @@ function count_total(edit = false) {
   count_val = 0;
   label_jasa = $("#jasa_count");
   label_pph = $("#pph_count");
+  par_label = $("#par_label").val().toLowerCase();
+  par_am = parseFloat(
+    $("#par_am").val().replaceAll(".", "").replaceAll(",", ".")
+  );
+  console.log(par_am);
   timmer = setTimeout(function callback() {
     if ($('input[name="manual_math"]').is(":checked") == true) {
       manual_math = true;
@@ -58,7 +63,6 @@ function count_total(edit = false) {
     $('input[name="sub_total"]').val(formatRupiah2(count_val));
     biaya_jasa = 0;
     biaya_pph = 0;
-    console.log(tmp_jasa);
     if (manual_math && (tmp_jasa != "0" || tmp_jasa != "0,00")) {
       biaya_jasa = parseFloat(
         tmp_jasa.replaceAll(".", "").replaceAll(",", ".")
@@ -83,8 +87,17 @@ function count_total(edit = false) {
         $('input[name="am_pph"]').val(0);
       }
     }
-
     total_final = (setela_jasa - biaya_pph).toFixed(2);
+
+    if (par_am > 0) {
+      if (par_label.includes("lebih"))
+        total_final = parseFloat(total_final) - parseFloat(par_am);
+      else if (par_label.includes("kurang"))
+        total_final = parseFloat(total_final) + parseFloat(par_am);
+    }
+    console.log("runs min");
+    console.log(total_final);
+
     if (total_final != "" && total_final != "0") {
       $('input[name="total_final"]').val(formatRupiah2(total_final));
     } else {
