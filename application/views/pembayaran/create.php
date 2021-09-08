@@ -228,9 +228,14 @@
                                         <th colspan="3"></th>
                                         <th colspan="3">
                                             <input type="text" class="form-control" id="par_label" name="par_label" onchange='count_total()' placeholder="Lebih Bayar / Kurang Bayar">
+                                            <span class="switch switch-sm switch-icon-plus">
+                                                <label>
+                                                    <input type="checkbox" checked="checked" name="select" />
+                                                    <span></span>
+                                                </label>
+                                            </span>
                                         </th>
                                         <th>
-                                            <!-- <input name="pph_count" value="0" disabled class="accounts_total_amount" /> -->
                                             <input name="par_am" id="par_am" value="0" class="form-control mask" required onchange='count_total()' />
                                         </th>
                                     </tr>

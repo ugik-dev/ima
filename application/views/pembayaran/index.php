@@ -1,6 +1,4 @@
 <div class="card card-custom position-relative overflow-hidden">
-    <!--begin::Shape-->
-    <!-- <div class="container"> -->
     <div class="alert alert-custom alert-white" role="alert">
         <?php
         $currency =  $this->db->get_where('mp_langingpage', array('id' => 1))->result_array()[0]['currency'];
@@ -17,7 +15,6 @@
                             <i class="fa fa-calendar "></i>
                         </div>
                         <?php
-                        // echo $filter['first_date'];
                         $data = array('class' => 'form-control  input-lg', 'type' => 'date', 'id' => 'datepicker', 'name' => 'date1', 'value' => $filter['first_date'], 'reqiured' => '');
                         echo form_input($data);
                         ?>
@@ -56,19 +53,9 @@
             <?php echo form_close(); ?>
         </div>
     </div>
-    <!-- </div> -->
 </div>
 
-<!-- <div class="card card-custom position-relative overflow-hidden">
-    <div class="row">
-        <div class="col-lg-12 ">
-            <h4 class="purchase-heading">
-                <i class="fa fa-hand-o-right" aria-hidden="true"></i>
-                DAFTAR INVOICE
-            </h4>
-        </div>
-    </div>
-</div> -->
+
 <?php
 $cur_user = $this->session->userdata('user_id')['id'];
 for ($i = 0; $i < count($pembayarans_Record); $i++) {
@@ -79,31 +66,7 @@ for ($i = 0; $i < count($pembayarans_Record); $i++) {
         <div class="row justify-content-center py-8 px-8 py-md-10 px-md-0">
             <div class="row col-lg-12">
                 <div class=" col-lg-7"></div>
-                <div class="col-lg-5">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-primary dropdown-toggle mr-1 mr-sm-14 my-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Download File</button>
-                        <div class="dropdown-menu">
-                            <a type="button" href="<?= base_url('pembayaran/download_word/') . $pembayarans_Record[$i]['id'] ?>" class="btn mr-3 my-1">Document</a>
-                        </div>
-                    </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-primary dropdown-toggle mr-1 mr-sm-14 my-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
-                        <div class="dropdown-menu">
-                            <?php
-                            echo  $cur_user == $pembayarans_Record[$i]['agen_id'] ? (' <a class="btn" href="' . base_url() . 'pembayaran/edit/' . $pembayarans_Record[$i]['id'] . '"><i class="fas fa-pencil-alt pull-left"></i> Edit </a>
-                                <a class="btn" href="' . base_url() . 'pembayaran/delete/' . $pembayarans_Record[$i]['id'] . '"><i class="fa fa-trash pull-left"></i> Delete </a>
-                                
-                                ') : '';
-                            ?>
 
-                            <a class="btn" href="<?php echo base_url() . 'pembayaran/copy/' . $pembayarans_Record[$i]['id'] ?>"><i class="fa fa-copy pull-left"></i>
-                                Copy</a>
-                        </div>
-                    </div>
-                    <a class="btn btn-info mr-1 mr-sm-14 my-1" href="<?php echo base_url() . 'pembayaran/show/' . $pembayarans_Record[$i]['id'] ?>"><i class="fa fa-eye pull-left"></i>
-
-                        Show </a>
-                </div>
             </div>
         </div>
         <div class="row">
@@ -127,25 +90,38 @@ for ($i = 0; $i < count($pembayarans_Record); $i++) {
                     <b>Deskripsi : </b> <?php echo $pembayarans_Record[$i]['description']; ?>
                 </div>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
-
-                    <b> Metode Pembayaran: </b>
-                    <?php
-                    if ($pembayarans_Record[$i]['payment_metode'] != 99) {
-                        echo $pembayarans_Record[$i]['bank_name'] . ' ' . $pembayarans_Record[$i]['bank_number'];
-                    } else {
-                        echo "Cash";
-                    }
-                    ?>
-
-
-                    <b>
-                    </b>
+                    <b> Agen : </b><?= $pembayarans_Record[$i]['acc_0'] ?>
                 </div>
             </div>
             <div class="col-lg-3 col-sm-3 col-xs-12  ">
-                <div class="col-lg-12 col-sm-12 col-xs-12 ">
-                    <b> Agen : </b><?= $pembayarans_Record[$i]['acc_0'] ?>
+                <!-- <div class="col-lg-5"> -->
+                <!-- <div class="btn-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle mr-1 mr-sm-14 my-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Download File</button>
+                    <div class="dropdown-menu">
+                        <a type="button" href="<?= base_url('pembayaran/download_word/') . $pembayarans_Record[$i]['id'] ?>" class="btn mr-3 my-1">Document</a>
+                    </div>
+                </div> -->
+
+
+                <!-- </div>> -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle mr-1 mr-sm-14 my-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
+                    <div class="dropdown-menu">
+                        <?php
+                        echo  $cur_user == $pembayarans_Record[$i]['agen_id'] ? (' <a class="btn" href="' . base_url() . 'pembayaran/edit/' . $pembayarans_Record[$i]['id'] . '"><i class="fas fa-pencil-alt pull-left"></i> Edit </a>
+                                <a class="btn" href="' . base_url() . 'pembayaran/delete/' . $pembayarans_Record[$i]['id'] . '"><i class="fa fa-trash pull-left"></i> Delete </a>
+                                
+                                ') : '';
+                        ?>
+
+                        <a class="btn" href="<?php echo base_url() . 'pembayaran/copy/' . $pembayarans_Record[$i]['id'] ?>"><i class="fa fa-copy pull-left"></i>
+                            Copy</a>
+                    </div>
                 </div>
+                <a class="btn btn-info mr-1 mr-sm-14 my-1" href="<?php echo base_url() . 'pembayaran/show/' . $pembayarans_Record[$i]['id'] ?>"><i class="fa fa-eye pull-left"></i>
+
+                    Show </a>
+                <!-- </div> -->
 
             </div>
         </div>
@@ -217,20 +193,22 @@ for ($i = 0; $i < count($pembayarans_Record); $i++) {
                             </td>
                         </tr>
                         <?php if ($pembayarans_Record[$i]['percent_jasa'] != '0') {
-                            echo '<tr class="text-left" style="border-bottom: 2px dotted #eee;"> <th style="width:50%">Biaya ' . floatval($pembayarans_Record[$i]['percent_jasa']) . '% : </th><td class="text-right"> -' . number_format((($pembayarans_Record[$i]['percent_jasa'] / 100) * $total), '2', ',', '.') . '</td></tr>
-                            <tr style="border-bottom: 2px dotted #eee;">
-                            <th>Sub Total :</th>
-                            <td class="text-right">';
-                            $total = $total - ($pembayarans_Record[$i]['percent_jasa'] / 100) * $total;
-                            echo number_format($total, '2', ',', '.') . '</td></tr>';
+                            echo '<tr class="text-left" style="border-bottom: 2px dotted #eee;"> <th style="width:50%">Biaya Jasa ' . floatval($pembayarans_Record[$i]['percent_jasa']) . '% : </th><td class="text-right"> -' . number_format(($pembayarans_Record[$i]['am_jasa']), '2', ',', '.') . '</td></tr>';
+                            $total = $total - $pembayarans_Record[$i]['am_jasa'];
                         }
                         if ($pembayarans_Record[$i]['percent_pph'] != '0') {
-                            echo '<tr class="text-left" style="border-bottom: 2px dotted #eee;"> <th style="width:50%">Biaya ' . floatval($pembayarans_Record[$i]['percent_pph']) . '% : </th><td class="text-right"> -' . number_format((($pembayarans_Record[$i]['percent_pph'] / 100) * $total), '2', ',', '.') . '</td></tr>
-                            <tr style="border-bottom: 2px dotted #eee;">
-                            <th>Sub Total :</th>
-                            <td class="text-right">';
-                            $total = $total - ($pembayarans_Record[$i]['percent_pph'] / 100) * $total;
-                            echo number_format($total, '2', ',', '.') . '</td></tr>';
+                            echo '<tr class="text-left" style="border-bottom: 2px dotted #eee;"> <th style="width:50%">PPH ' . floatval($pembayarans_Record[$i]['percent_pph']) . '% : </th><td class="text-right"> -' . number_format(($pembayarans_Record[$i]['am_pph']), '2', ',', '.')  . '</td></tr>';
+                            $total = $total - $pembayarans_Record[$i]['am_pph'];
+                        }
+                        if ($pembayarans_Record[$i]['par_am'] > 0) {
+                            echo '<tr class="text-left" style="border-bottom: 2px dotted #eee;"> <th style="width:50%">' . $pembayarans_Record[$i]['par_label'] . ' :</th><td class="text-right"> ';
+                            if (stripos(strtolower($pembayarans_Record[$i]['par_label']), 'lebih') !== false) {
+                                $total = $total - $pembayarans_Record[$i]['par_am'];
+                                echo " - Rp " . number_format(($pembayarans_Record[$i]['par_am']), '2', ',', '.')  . '</td></tr>';
+                            } else {
+                                $total = $total + $pembayarans_Record[$i]['par_am'];
+                                echo " + Rp " . number_format(($pembayarans_Record[$i]['par_am']), '2', ',', '.')  . '</td></tr>';
+                            }
                         }
                         ?>
                         <?php

@@ -77312,6 +77312,19 @@ code {
   line-height: 0;
 }
 
+.switch.switch-icon-plus input:checked ~ span:after {
+  font-family: Arial;
+  font-weight: bold;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  content: "-";
+  line-height: 0;
+}
+
+
 .switch input:empty ~ span {
   margin: 2px 0;
   height: 30px;

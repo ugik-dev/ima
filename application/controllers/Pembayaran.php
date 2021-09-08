@@ -35,11 +35,45 @@ class Pembayaran extends CI_Controller
         $data['patner_record'] = $this->Statement_model->patners_cars_list();
 
         // DEFINES WHICH PAGE TO RENDER
-        $data['main_view'] = 'invoice_pembayaran';
+        $data['main_view'] = 'pembayaran/create';
 
         // DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
         $this->load->view('main/index.php', $data);
     }
+
+    function create2($data_return = NULL)
+    {
+
+        $this->load->model('Crud_model');
+
+        $data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
+
+        //$ledger
+        $from = html_escape($this->input->post('from'));
+        $to   = html_escape($this->input->post('to'));
+
+        if ($from == NULL or $to == NULL) {
+
+            $from = date('Y-m-') . '1';
+            $to =  date('Y-m-') . '31';
+        }
+        $this->load->model('Accounts_model');
+
+        $data['banks'] = $this->Accounts_model->getAllBank();
+        // DEFINES PAGE TITLE
+        $data['title'] = 'Entry Pembayaran';
+        $data['data_return'] = $data_return;
+        $this->load->model('Statement_model');
+        $data['accounts_records'] = $this->Statement_model->chart_list();
+        $data['patner_record'] = $this->Statement_model->patners_cars_list();
+
+        // DEFINES WHICH PAGE TO RENDER
+        $data['main_view'] = 'pembayaran/create2';
+
+        // DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+        $this->load->view('main/index.php', $data);
+    }
+
     function delete_item_temporary($item_id)
     {
         // DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
@@ -328,7 +362,7 @@ class Pembayaran extends CI_Controller
         $data['Model_Button_Title'] = "Update pembayarans";
         $data['pembayarans_Record'] = $result_pembayarans;
 
-        $data['main_view'] = 'sales_pembayaran_v2';
+        $data['main_view'] = 'pembayaran/index';
         $this->load->view('main/index.php', $data);
         // } else {
         // 	// DEFINES WHICH PAGE TO RENDER
@@ -392,7 +426,7 @@ class Pembayaran extends CI_Controller
             $data['patner_record'] = $this->Statement_model->patners_cars_list();
 
             // DEFINES WHICH PAGE TO RENDER
-            $data['main_view'] = 'pembayaran_edit';
+            $data['main_view'] = 'pembayaran/edit';
 
             // DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
             $this->load->view('main/index.php', $data);
@@ -517,19 +551,10 @@ class Pembayaran extends CI_Controller
             'marginTop' => 1700,
             'marginBottom' => 1000
         ]);
-        // $section->addTextBreak();
-        // $section->addTextBreak();
-        // $section->addTextBreak();
 
         $section->addText("PEMBAYARAN RENTAL MOBIL KE MITRA", 'paragraph_bold', array('spaceAfter' => 100, 'align' => 'center'));
         $section->addText(strtoupper($dataContent['description']), 'paragraph_bold', array('spaceAfter' => 100, 'align' => 'center'));
         $section->addTextBreak();
-        // if ($format == 2) {
-        //     $section->addText("Menurut Surat Perjanjian Nomor 0122.E/Tbk/SP-2000/21-S11.4 tanggal 01 April 2021 antara PT Timah Tbk dengan PT Indometal Asia tentang Kerjasama Kegiatan Eksplorasi Timah di Wilayah Izin Usaha Pertambangan PT Timah Tbk, dengan ini kami sampaikan tagihan atas perjanjian tersebut dengan rincian : ", 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
-        // } else {
-        //     $section->addText("Bersama ini kami sampaikan tagihan " . $dataContent['description'] . ' sebagai berikut :', 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
-        // }
-        // $section->addTextBreak();
         $fancyTableStyle = array('borderSize' => 1, 'borderColor' => '000000', 'height' => 100, 'cellMarginButtom' => -100, 'cellMarginTop' => 100, 'cellMarginLeft' => 100, 'cellMarginRight' => 100, 'spaceAfter' => -100);
         $cellVCentered = array('valign' => 'center', 'align' => 'center', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
         $spanTableStyleName = 'Colspan Rowspan';
@@ -598,6 +623,18 @@ class Pembayaran extends CI_Controller
             $table->addCell(200, $cellColSpan)->addText('PPH 23  ' . floatval($dataContent['percent_pph']) . '%    ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
             $table->addCell(500, $cellVCentered)->addText('' . number_format($potongan_pph, '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
 
+
+            // if ($dataContent['par_am'] > 0) {
+            //     $table->addRow();
+            //     $table->addCell(200, $cellColSpan)->addText($dataContent['par_label'], 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+            //     if (stripos(strtolower($dataContent['par_label']), 'lebih') !== false) {
+            //         $total = $total - $dataContent['par_am'];
+            //     } else {
+            //         $total = $total + $dataContent['par_am'];
+            //         $table->addCell(500, $cellVCentered)->addText('' . number_format($dataContent['par_am'], '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+            //     }
+            // }
+
             $table->addRow();
             $table->addCell(200, $cellColSpan)->addText('TOTAL FINAL   ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
             $table->addCell(500, $cellVCentered)->addText('' . number_format($total, '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
@@ -614,9 +651,6 @@ class Pembayaran extends CI_Controller
 
         $section->addTextBreak(1);
         $section->addText("Pangkalpinang, " . $tanggal, 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
-        //  array('align' => 'center')
-
-        // $section->addText("Direktur", 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
         $section->addTextBreak(2);
 
         $section->addText($dataContent['customer_name'], 'paragraph_bold_underline', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
@@ -709,8 +743,22 @@ class Pembayaran extends CI_Controller
         $kw_total = 0;
         $count_row = count($dataContent['item']);
         $i = 1;
+        // if ($dataContent['par_am'] > 0) {
+        //     $freame7->addRow();
+        //     $freame7->addCell(3000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+        //     $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+        //     $freame7->addCell(3400, $cellVCentered)->addText($dataContent['par_label'], 'paragraph', array('spaceAfter' => 0));
+        //     $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph', array('spaceAfter' => 0));
+        //     if (stripos(strtolower($dataContent['par_label']), 'lebih') !== false) {
+        //         $freame7->addCell(1600, $cellVCentered)->addText(number_format($dataContent['par_am'], '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
+        //         $total = $total - $dataContent['par_am'];
+        //     } else {
+        //         $total = $total + $dataContent['par_am'];
+        //         $table->addCell(500, $cellVCentered)->addText('' . number_format($dataContent['par_am'], '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+        //     }
+        //     $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+        // }
         foreach ($dataContent['item'] as $item) {
-
 
             $freame7->addRow();
             $current_data = ($item->amount * $item->qyt);
@@ -806,17 +854,6 @@ class Pembayaran extends CI_Controller
         $phpWord->addFontStyle('paragraph_bold_underline', array('name' => 'Times New Roman', 'size' => 11, 'color' => '000000', 'underline' => 'single', 'bold' => true));
         $phpWord->addFontStyle('paragraph2', array('spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(106), 'name' => 'Times New Roman', 'size' => 11, 'color' => '000000'));
 
-        // $pageStyle = [
-        //     'breakType' => 'continuous', 'colsNum' => 2,
-        //     'pageSizeW' =>
-        //     \PhpOffice\PhpWord\Shared\Converter::inchToTwip(8.4),
-        //     'pageSizeH' =>
-        //     \PhpOffice\PhpWord\Shared\Converter::inchToTwip(11.7),
-        //     'marginLeft' => 1500, 'marginRight' => 1000,
-        //     'marginTop' => 1700,
-        //     'marginBottom' => 1000
-        // ];
-        // $section = $phpWord->addSection($pageStyle);
         $section = $phpWord->addSection([
             'breakType' => 'continuous', 'colsNum' => 1,
             'pageSizeW' =>
@@ -833,12 +870,6 @@ class Pembayaran extends CI_Controller
         $section->addText("DAFTAR KENDARAAN INSIDENTIL", 'paragraph_bold', array('spaceAfter' => 100, 'align' => 'center'));
         $section->addText(strtoupper($dataContent['description']), 'paragraph_bold', array('spaceAfter' => 100, 'align' => 'center'));
         $section->addTextBreak();
-        // if ($format == 2) {
-        //     $section->addText("Menurut Surat Perjanjian Nomor 0122.E/Tbk/SP-2000/21-S11.4 tanggal 01 April 2021 antara PT Timah Tbk dengan PT Indometal Asia tentang Kerjasama Kegiatan Eksplorasi Timah di Wilayah Izin Usaha Pertambangan PT Timah Tbk, dengan ini kami sampaikan tagihan atas perjanjian tersebut dengan rincian : ", 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
-        // } else {
-        //     $section->addText("Bersama ini kami sampaikan tagihan " . $dataContent['description'] . ' sebagai berikut :', 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
-        // }
-        // $section->addTextBreak();
         $fancyTableStyle = array('borderSize' => 1, 'borderColor' => '000000', 'height' => 100, 'cellMarginButtom' => -100, 'cellMarginTop' => 100, 'cellMarginLeft' => 100, 'cellMarginRight' => 100, 'spaceAfter' => -100);
         $cellVCentered = array('valign' => 'center', 'align' => 'center', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
         $spanTableStyleName = 'Colspan Rowspan';
@@ -950,21 +981,7 @@ class Pembayaran extends CI_Controller
             'orientation' => 'landscape'
         ];
         $section = $phpWord->addSection($pageStyle);
-        // $freame = $homekwintansi->addTable($spanTableStyleName);
-        // $freame->addRow(1000);
-        // $freame2 = $freame->addCell(12000, array('valign' => 'top', 'borderBottomColor' => 'ffffff', 'borderBottomSize' => '6', 'height' => 200, 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)));
 
-        // $freame2->addImage(
-        //     base_url('assets/img/ima-transparent2.png'),
-        //     array(
-        //         'height'           => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(1.3)),
-        //         'positioning'      => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
-        //         'posHorizontal' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
-        //         'posVertical' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
-        //         'marginLeft'       => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(0.5)),
-        //         'marginTop'        => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(0.1)),
-        //     )
-        // );
 
         $writer = new Word2007($phpWord);
         $filename = 'PMT_' . $dataContent['id'];
@@ -1228,118 +1245,6 @@ class Pembayaran extends CI_Controller
         $pdf->Cell(5, 8, '', 0, 0);
         $pdf->SetFont('Arial', 'I', 10);
         $pdf->MultiCell(88, 6 + $crop2, $this->terbilang($terbilang) . ' Rupiah', 0, 1);
-        // $pdf->MultiCell(88, 6 + $crop2, 'QR HERE', 0, 1);
-        // echo base_url() . 'uploads/qrcode/' . $dataContent['inv_key'] . '_' . $dataContent['id'] . '.png';
-        // if (file_exists('uploads/qrcode/' . $dataContent['inv_key'] . '_' . $dataContent['id'] . '.png')) {
-        //     $pdf->Cell(40, 40, $pdf->Image(base_url() . 'uploads/qrcode/' . $dataContent['inv_key'] . '_' . $dataContent['id'] . '.png', 30, $pdf->GetY(), 40, 40), 0, 1, 'R');
-        // } else {
-        //     // echo "The file does not exist";
-        // }
-        // die();
-        // if ($cur_y > $pdf->GetY()) {
-        // 	$pdf->SetY($cur_y);
-        // }
-        // $pdf->Cell(1, 10 + $crop, '', 0, 1);
-        // $pdf->Cell(115, 6, '', 0, 0);
-        // $pdf->SetFont('Arial', 'B', 10);
-        // $pdf->Cell(60, 4, 'PT. INDOMETAL ASIA', 0, 1, 'C');
-        // $pdf->Cell(115, 3, '', 0, 0);
-        // $pdf->Cell(60, 3, $dataContent['title_acc_1'], 0, 1, 'C');
-
-        // $pdf->Cell(1, 22, '', 0, 1);
-        // $pdf->Cell(115, 6, '', 0, 0);
-        // $pdf->SetFont('Arial', 'BU', 10);
-        // $pdf->Cell(60, 6, $dataContent['name_acc_1'], 0, 1, 'C');
-
-
-        // $pdf->AddPage();
-
-        // $pdf->Cell(173, 16, $pdf->Image(base_url() . "assets/img/ima.jpg", 15, 16, 100, 14), 0, 1);
-        // $pdf->Cell(10, 30, '', 0, 0, 'C');
-        // $pdf->SetFont('Times', 'B', 12);
-
-        // $pdf->Cell(173, 6, 'KWITANSI', 0, 1, 'C');
-        // $pdf->SetFont('Times', '', 12);
-
-        // $pdf->Cell(173, 6, '', 0, 1);
-        // $pdf->Cell(5, 6, '', 0, 0);
-        // $pdf->Cell(50, 6, 'Sudah Terima Dari', 0, 0, 'L');
-        // $pdf->Cell(3, 6, ':', 0, 0);
-        // $pdf->SetFont('Times', 'B', 12);
-
-        // $pdf->Cell(120, 6, $dataContent['customer_name'], 0, 1, 'L');
-        // $pdf->SetFont('Times', '', 12);
-
-        // $pdf->Cell(5, 6, '', 0, 0);
-        // $pdf->Cell(50, 6, 'Sejumlah', 0, 0, 'L');
-        // $pdf->Cell(3, 6, ':', 0, 0);
-        // $pdf->SetFont('Times', 'I', 12);
-
-        // $pdf->MultiCell(120, 6, $this->terbilang($terbilang) . ' Rupiah', 0, 'L');
-        // $pdf->SetFont('Times', '', 12);
-
-        // $pdf->Cell(5, 6, '', 0, 0);
-        // $pdf->Cell(50, 6, 'Untuk Pembayaran', 0, 0, 'L');
-        // $pdf->Cell(3, 6, ':', 0, 0);
-        // $pdf->MultiCell(120, 6, $dataContent['description'], 0, 'L');
-
-        // if ($dataContent['ppn_pph'] == 1) {
-
-        // 	$pdf->Cell(100, 6, '', 0, 0, 'L');
-        // 	$pdf->Cell(30, 6, 'SUB TOTAL', 0, 0, 'L');
-        // 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-        // 	$pdf->Cell(38, 6,  number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
-        // 	$pdf->Cell(100, 6, '', 0, 0);
-        // 	$pdf->Cell(30, 6, 'PPN 10%', 0, 0, 'L');
-        // 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-        // 	$pdf->Cell(38, 6, number_format(floor($total * 0.10), '0', ',', '.'), 0, 1, 'R');
-        // 	$pdf->SetLineWidth(0.5);
-        // 	$pdf->Line(110, $pdf->GetY(), 190, $pdf->GetY());
-        // 	$pdf->Cell(100, 6, '', 0, 0);
-        // 	$pdf->Cell(30, 6, 'TOTAL', 0, 0, 'L');
-        // 	$pdf->SetFont('Times', 'B', 12);
-
-        // 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-        // 	$pdf->Cell(38, 6, number_format(floor($total * 0.10) + floor($total)), 0, 1, 'R');
-        // } else {
-        // 	$pdf->Cell(100, 6, '', 0, 0, 'L');
-        // 	$pdf->Cell(30, 6, 'SUB TOTAL', 0, 0, 'L');
-        // 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-        // 	$pdf->Cell(38, 6,  number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
-        // 	$pdf->Cell(100, 6, '', 0, 0);
-        // 	$pdf->Cell(30, 6, 'PPN', 0, 0, 'L');
-        // 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-        // 	$pdf->Cell(38, 6, '-', 0, 1, 'R');
-        // 	$pdf->SetLineWidth(0.5);
-        // 	$pdf->Line(110, $pdf->GetY(), 190, $pdf->GetY());
-        // 	$pdf->Cell(100, 6, '', 0, 0);
-        // 	$pdf->Cell(30, 6, 'TOTAL', 0, 0, 'L');
-        // 	$pdf->SetFont('Times', 'B', 12);
-
-        // 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
-        // 	$pdf->Cell(38, 6, number_format(floor($total)), 0, 1, 'R');
-        // }
-        // $pdf->SetFont('Times', '', 12);
-
-        // $pdf->Cell(1, 5, '', 0, 1);
-        // $pdf->Cell(115, 6, '', 0, 0);
-        // $pdf->Cell(60, 4, 'Pangkalpinang, ' . $this->tanggal_indo($dataContent['date']), 0, 1, 'C');
-
-        // $pdf->SetFont('Times', 'B', 16);
-        // $pdf->Cell(1, 13, '', 0, 1);
-        // $pdf->Cell(1, 10, '                    Rp    ' . number_format(floor($terbilang)), 0, 1);
-
-        // $pdf->Cell(115, 6, '', 0, 0);
-        // // $pdf->SetFont('Arial', 'BU', 10);
-        // $pdf->SetFont('Times', 'B', 12);
-
-
-        // $pdf->Cell(60, 6, $dataContent['name_acc_1'], 0, 1, 'C');
-        // $cur_y = $pdf->GetY();
-        // $pdf->SetXY(10, 13);
-        // // $pdf->Cell(190, $cur_y - 10, '', 1, 0);
-        // $pdf->Rect(11, 14, 190, $cur_y - 10, 'D');
-        // $pdf->Rect(10, 13, 190, $cur_y - 10, 'D');
 
 
         $filename = 'PMT_' .
@@ -1424,7 +1329,7 @@ class Pembayaran extends CI_Controller
             } else {
 
                 $data['dataContent'] = $result[0];
-                $data['main_view'] = 'pembayaran_detail';
+                $data['main_view'] = 'pembayaran/detail';
             }
             // DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
             $this->load->view('main/index.php', $data);
@@ -1448,17 +1353,10 @@ class Pembayaran extends CI_Controller
         } else		if ($page_name  == 'add_patner_model') {
             //USED TO REDIRECT LINK
             $data['link'] = 'patners/add_patner';
-
-            //model name available in admin models folder
             $this->load->view('admin_models/add_models/add_patner_model.php', $data);
         } else if ($page_name  == 'edit_pembayaran_model') {
-            // DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
             $this->load->model('Accounts_model');
-
-            // GET THE ROW FROM DATABASE FROM TABLE ID
             $data['pembayaran_data'] = $this->Accounts_model->get_by_id("mp_pembayarans", "mp_sales", $param);
-
-            //model name available in admin models folder
             $this->load->view('admin_models/edit_models/edit_pembayaran_model.php', $data);
         } else if ($page_name  == 'add_customer_payment_pos_model') {
             $this->load->model('Accounts_model');
@@ -1931,7 +1829,7 @@ class Pembayaran extends CI_Controller
         }
         $data['am_pph'] = preg_replace("/[^0-9]/", "", $data['am_pph']);
         $data['am_jasa'] = preg_replace("/[^0-9]/", "", $data['am_jasa']);
-        $data['par_am'] = preg_replace("/[^0-9]/", "", $data['par_am']);
+
 
         $count_rows = count($data['amount']);
         // if()
@@ -2006,6 +1904,9 @@ class Pembayaran extends CI_Controller
         }
         $data['am_pph'] = preg_replace("/[^0-9]/", "", $data['am_pph']);
         $data['am_jasa'] = preg_replace("/[^0-9]/", "", $data['am_jasa']);
+        $data['par_am'] = preg_replace("/[^0-9]/", "", $data['par_am']);
+
+
         $count_rows = count($data['amount']);
         // if()
         $data['acc_role'] = $this->SecurityModel->MultiplerolesStatus('Akuntansi');
