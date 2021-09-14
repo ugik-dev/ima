@@ -51,7 +51,7 @@
                         <button type="button" class="btn btn-primary dropdown-toggle py-3 mr-3 mr-sm-14 my-1 font-weight-bolder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Buat Jurnal</button>
                         <div class="dropdown-menu">
                             <a type="button" href="<?= base_url('statements/pembayaran_to_jurnal/') . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"> Format 1</a>
-                            <a type="button" href="<?= base_url('statements/pembayaran_to_jurnal2/') . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"> Format 2</a>
+                            <a type="button" href="<?= base_url('statements/pembayaran_to_jurnal/') . $dataContent['id'] ?>/2" class="btn btn-light-primary font-weight-bolder mr-3 my-1"> Format 2</a>
                         </div>
                     </div>
                 <?php } ?>

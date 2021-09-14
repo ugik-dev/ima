@@ -52,7 +52,9 @@
 
 						$type_options = array(
 							'Lancar'  => 'Lancar',
-							'Tetap'  => 'Tetap'
+							'Tidak Lancar'  => 'Tidak Lancar',
+							'Tetap'  => 'Tetap',
+							'Tidak Tetap'  => ' Tidak Tetap',
 						);
 
 						$extra = array(

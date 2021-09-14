@@ -265,7 +265,7 @@ class Statements extends CI_Controller
 	}
 
 
-	public function pembayaran_to_jurnal($invoice_no)
+	public function pembayaran_to_jurnal($invoice_no, $format = 1)
 	{
 		$this->SecurityModel->MultiplerolesGuard('Akuntansi');
 
@@ -281,23 +281,38 @@ class Statements extends CI_Controller
 
 		$amount = $amount - $result['am_jasa'];
 		$ppn =  floor($result['am_pph']);
-		$accounthead[0] = 166;
-		$accounthead[1] = 181;
-		$accounthead[2] = 8;
-		// if ($result['ppn_pph'] == 1) {
+		if ($format == 2) {
+			$accounthead[0] = 1408;
+			$accounthead[1] = 166;
+			$debitamount[0] = number_format($amount, 2);
+			$debitamount[1] = '';
+			$creditamount[0] = '';
+			// $creditamount[1] = number_format($ppn, 2);
+			$creditamount[1] = number_format($amount - $ppn, 2);
+			$sub_keterangan[0] = 'Htg RM ' . $result['description'];
+			$sub_keterangan[1] = 'Htg RM ' . $result['description'];
+		} else {
+
+			$accounthead[0] = 166;
+			$accounthead[1] = 181;
+			$accounthead[2] = 8;
+			$debitamount[0] = number_format($amount, 2);
+			$debitamount[1] = '';
+			$debitamount[2] = '';
+			$creditamount[0] = '';
+			$creditamount[1] = number_format($ppn, 2);
+			$creditamount[2] = number_format($amount - $ppn, 2);
+			$sub_keterangan[0] = 'Htg RM';
+			$sub_keterangan[1] = 'Ptg RM';
+			$sub_keterangan[2] = 'Htg RM ';
+		}
+
+		// if (!empty($result['par_am']) && !empty($result['par_label'])) {
+		// 	$accounthead[3] = 0;
+		// 	$debitamount[3] = '';
+		// 	$creditamount[3] = number_format($result['par_am'], 2);
+		// 	$sub_keterangan[3] = $result['par_label'];
 		// }
-		$debitamount[0] = number_format($amount, 2);
-		$debitamount[1] = '';
-		$debitamount[2] = '';
-
-		$creditamount[0] = '';
-		$creditamount[1] = number_format($ppn, 2);
-		$creditamount[2] = number_format($amount - $ppn, 2);
-
-		$sub_keterangan[0] = 'Htg RM';
-		$sub_keterangan[1] = 'Ptg RM';
-		$sub_keterangan[2] = 'Htg RM ';
-
 		$acc[1] = $result['acc_1'];
 		$acc[2] = 0;
 		$acc[3] = 0;

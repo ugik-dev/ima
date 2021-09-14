@@ -23,7 +23,7 @@ class Download extends CI_Controller
             $filter['nature'] = "'Expense','Revenue'";
         } else {
             $fn = 'NERACA_SALDO';
-            $filter['nature'] = "'Assets','Liability','Equity','Expense','Revenue'";
+            $filter['nature'] = "'Assets','Liability','Equity'";
         }
 
         if (empty($filter['periode'])) {
