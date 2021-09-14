@@ -624,16 +624,20 @@ class Pembayaran extends CI_Controller
             $table->addCell(500, $cellVCentered)->addText('' . number_format($potongan_pph, '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
 
 
-            // if ($dataContent['par_am'] > 0) {
-            //     $table->addRow();
-            //     $table->addCell(200, $cellColSpan)->addText($dataContent['par_label'], 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
-            //     if (stripos(strtolower($dataContent['par_label']), 'lebih') !== false) {
-            //         $total = $total - $dataContent['par_am'];
-            //     } else {
-            //         $total = $total + $dataContent['par_am'];
-            //         $table->addCell(500, $cellVCentered)->addText('' . number_format($dataContent['par_am'], '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
-            //     }
-            // }
+            if ((float)$dataContent['par_am'] > 0) {
+                $table->addRow();
+                $table->addCell(200, $cellColSpan)->addText($dataContent['par_label'], 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+                if (stripos(strtolower($dataContent['par_label']), 'lebih') !== false) {
+                    $total = $total - $dataContent['par_am'];
+                    $par_am = -$dataContent['par_am'];
+                } else {
+                    $total = $total + $dataContent['par_am'];
+                    $par_am = $dataContent['par_am'];
+                }
+                $table->addCell(500, $cellVCentered)->addText('' . number_format($dataContent['par_am'], '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+            } else {
+                $par_am = 0;
+            }
 
             $table->addRow();
             $table->addCell(200, $cellColSpan)->addText('TOTAL FINAL   ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
@@ -725,7 +729,7 @@ class Pembayaran extends CI_Controller
         $freame5->addCell(100, $cellVCentered)->addText('', 'paragraph', array('spaceAfter' => 0));
         $freame5->addCell(2000, $cellVCentered)->addText('Sejumlah', 'paragraph', array('spaceAfter' => 0));
         $freame5->addCell(1, $cellVCentered)->addText(':', 'paragraph', array('spaceAfter' => 0));
-        $freame5->addCell(7000, $cellVCentered)->addText($this->terbilang($kw_terbilang) . ' Rupiah', 'paragraph_italic', array('spaceAfter' => 0));
+        $freame5->addCell(7000, $cellVCentered)->addText($this->terbilang($kw_terbilang + $par_am) . ' Rupiah', 'paragraph_italic', array('spaceAfter' => 0));
 
         $freame5->addRow();
         $freame5->addCell(100, $cellVCentered)->addText('', 'paragraph', array('spaceAfter' => 3));
@@ -743,21 +747,21 @@ class Pembayaran extends CI_Controller
         $kw_total = 0;
         $count_row = count($dataContent['item']);
         $i = 1;
-        // if ($dataContent['par_am'] > 0) {
-        //     $freame7->addRow();
-        //     $freame7->addCell(3000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-        //     $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-        //     $freame7->addCell(3400, $cellVCentered)->addText($dataContent['par_label'], 'paragraph', array('spaceAfter' => 0));
-        //     $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph', array('spaceAfter' => 0));
-        //     if (stripos(strtolower($dataContent['par_label']), 'lebih') !== false) {
-        //         $freame7->addCell(1600, $cellVCentered)->addText(number_format($dataContent['par_am'], '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
-        //         $total = $total - $dataContent['par_am'];
-        //     } else {
-        //         $total = $total + $dataContent['par_am'];
-        //         $table->addCell(500, $cellVCentered)->addText('' . number_format($dataContent['par_am'], '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
-        //     }
-        //     $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-        // }
+        if ((float) $dataContent['par_am'] > 0) {
+            $freame7->addRow();
+            $freame7->addCell(3000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+            $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+            $freame7->addCell(3400, $cellVCentered)->addText($dataContent['par_label'], 'paragraph', array('spaceAfter' => 0));
+            $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph', array('spaceAfter' => 0));
+            if (stripos(strtolower($dataContent['par_label']), 'lebih') !== false) {
+                $freame7->addCell(1600, $cellVCentered)->addText(number_format($dataContent['par_am'], '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
+                $total = $total - $dataContent['par_am'];
+            } else {
+                $total = $total + $dataContent['par_am'];
+                $table->addCell(500, $cellVCentered)->addText('' . number_format($dataContent['par_am'], '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+            }
+            $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
+        }
         foreach ($dataContent['item'] as $item) {
 
             $freame7->addRow();
@@ -793,7 +797,7 @@ class Pembayaran extends CI_Controller
         $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
         $freame7->addCell(1400, $cellVCentered)->addText('TOTAL', 'paragraph_bold', array('spaceAfter' => 0));
         $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph_bold', array('spaceAfter' => 0));
-        $freame7->addCell(1600, $cellVCentered)->addText(number_format($total_kwitansi, '0', ',', '.'), 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'right',));
+        $freame7->addCell(1600, $cellVCentered)->addText(number_format($total_kwitansi + $par_am, '0', ',', '.'), 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'right',));
         $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 1));
         $freame7->addRow(0.1);
         $freame7->addCell(6000)->addText(' ', array('name' => 'Times New Roman', 'size' => 2, 'color' => '000000', 'bold' => true), array('align' => 'center', 'spaceAfter' => -1));
