@@ -454,6 +454,8 @@ class Statement_model extends CI_Model
                 $heads_record =  $query->result();
                 foreach ($heads_record as $single_head) {
                     $data_leadger = $this->get_ledger_transactions($single_head->id, $filter);
+                    // echo json_encode($data_leadger);
+                    // die();
                     if ($data_leadger != NULL) {
                         $j = 0;
                         // $total_ledger = 0;
@@ -462,6 +464,7 @@ class Statement_model extends CI_Model
                         } else {
                             $total_ledger = $data_leadger['saldo_awal'];
                         }
+
                         if ($k == 0) {
                             $sheet->mergeCells("A" . $sheetrow . ":F" . $sheetrow);
                             $sheet->setCellValue('A' . $sheetrow, $accounts_types[$i]);
@@ -493,17 +496,39 @@ class Statement_model extends CI_Model
                             $sheet->setCellValue('A' . $sheetrow, $single_ledger->date);
                             $sheet->setCellValue('B' . $sheetrow, $single_ledger->no_jurnal);
                             $sheet->setCellValue('C' . $sheetrow, $single_ledger->sub_keterangan);
-                            if ($single_ledger->type == 0) {
-                                $debitamount = $single_ledger->amount;
-                                $sheet->setCellValue('D' . $sheetrow, $single_ledger->amount);
-                                $total_ledger = $total_ledger + $debitamount;
-                            } else if (
-                                $single_ledger->type == 1
-                            ) {
-                                $creditamount = $single_ledger->amount;
-                                $sheet->setCellValue('E' . $sheetrow, $single_ledger->amount);
-                                $total_ledger = $total_ledger - $creditamount;
+                            if ($accounts_types[$i] == 'Liability') {
+                                if ($single_ledger->type == 0) {
+                                    $debitamount = $single_ledger->amount;
+                                    $sheet->setCellValue('D' . $sheetrow, $single_ledger->amount);
+                                    $total_ledger = $total_ledger - $debitamount;
+                                } else if ($single_ledger->type == 1) {
+                                    $creditamount = $single_ledger->amount;
+                                    $sheet->setCellValue('E' . $sheetrow, $single_ledger->amount);
+                                    $total_ledger = $total_ledger + $creditamount;
+                                }
+                            } else {
+                                if ($single_ledger->type == 0) {
+                                    $debitamount = $single_ledger->amount;
+                                    $sheet->setCellValue('D' . $sheetrow, $single_ledger->amount);
+                                    $total_ledger = $total_ledger + $debitamount;
+                                } else if ($single_ledger->type == 1) {
+                                    $creditamount = $single_ledger->amount;
+                                    $sheet->setCellValue('E' . $sheetrow, $single_ledger->amount);
+                                    $total_ledger = $total_ledger - $creditamount;
+                                }
                             }
+
+
+
+                            // if ($single_ledger->type == 0) {
+                            //     $debitamount = $single_ledger->amount;
+                            //     $sheet->setCellValue('D' . $sheetrow, $single_ledger->amount);
+                            //     $total_ledger = $total_ledger + $debitamount;
+                            // } else if ($single_ledger->type == 1) {
+                            //     $creditamount = $single_ledger->amount;
+                            //     $sheet->setCellValue('E' . $sheetrow, $single_ledger->amount);
+                            //     $total_ledger = $total_ledger - $creditamount;
+                            // }
                             $sheet->setCellValue('F' . $sheetrow, $total_ledger);
 
                             $sheetrow++;
@@ -610,7 +635,6 @@ class Statement_model extends CI_Model
                 foreach ($heads_record as $single_head) {
                     $data_leadger = $this->get_ledger_transactions($single_head->id, $filter);
                     if ($data_leadger != NULL) {
-
                         if ($data_leadger['saldo_awal'] == 0) {
                             $total_ledger = 0;
                         } else {
@@ -645,16 +669,27 @@ class Statement_model extends CI_Model
                         foreach ($data_leadger['data'] as $single_ledger) {
                             $debitamount = '';
                             $creditamount = '';
-
-                            if ($single_ledger->type == 0) {
-                                $tot_debit += $single_ledger->amount;
-                                $debitamount = $single_ledger->amount;
-                                $total_ledger = $total_ledger + $debitamount;
-                            } else if ($single_ledger->type == 1) {
-                                $tot_kredit += $single_ledger->amount;
-                                $creditamount = $single_ledger->amount;
-                                $total_ledger = $total_ledger - $creditamount;
+                            if ($accounts_types[$i] == 'Liability') {
+                                if ($single_ledger->type == 0) {
+                                    $tot_debit += $single_ledger->amount;
+                                    $debitamount = $single_ledger->amount;
+                                    $total_ledger = $total_ledger - $debitamount;
+                                } else if ($single_ledger->type == 1) {
+                                    $tot_kredit += $single_ledger->amount;
+                                    $creditamount = $single_ledger->amount;
+                                    $total_ledger = $total_ledger + $creditamount;
+                                }
                             } else {
+
+                                if ($single_ledger->type == 0) {
+                                    $tot_debit += $single_ledger->amount;
+                                    $debitamount = $single_ledger->amount;
+                                    $total_ledger = $total_ledger + $debitamount;
+                                } else if ($single_ledger->type == 1) {
+                                    $tot_kredit += $single_ledger->amount;
+                                    $creditamount = $single_ledger->amount;
+                                    $total_ledger = $total_ledger - $creditamount;
+                                }
                             }
 
                             // $total_ledger = number_format($total_ledger, '2', '.', '');
