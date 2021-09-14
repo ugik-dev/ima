@@ -520,7 +520,15 @@ class Statement_model extends CI_Model
     {
         $date1 = $filter['from'];
         $date2 = $filter['to'];
-        $this->db->select("SUM(IF(mp_sub_entry.type = 0,amount, -amount)) as saldo_awal");
+        // IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
+        //                                     (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
+        //                                     (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
+        //                                    ,0)
+        $this->db->select("SUM(
+            IF(SUBSTR(mp_head.name, 2, 1) in (2),
+                IF(mp_sub_entry.type = 1,amount, -amount),
+                IF(mp_sub_entry.type = 0,amount, -amount))
+            ) as saldo_awal");
         $this->db->from('mp_sub_entry');
         $this->db->join('mp_head', "mp_head.id = mp_sub_entry.accounthead");
         $this->db->join('mp_generalentry', 'mp_generalentry.id = mp_sub_entry.parent_id');
