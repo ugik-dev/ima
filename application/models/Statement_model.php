@@ -462,9 +462,6 @@ class Statement_model extends CI_Model
                         } else {
                             $total_ledger = $data_leadger['saldo_awal'];
                         }
-                        if ($single_head->nature == 'Liability') {
-                            $total_ledger = -$total_ledger;
-                        }
                         if ($k == 0) {
                             $sheet->mergeCells("A" . $sheetrow . ":F" . $sheetrow);
                             $sheet->setCellValue('A' . $sheetrow, $accounts_types[$i]);
@@ -496,31 +493,16 @@ class Statement_model extends CI_Model
                             $sheet->setCellValue('A' . $sheetrow, $single_ledger->date);
                             $sheet->setCellValue('B' . $sheetrow, $single_ledger->no_jurnal);
                             $sheet->setCellValue('C' . $sheetrow, $single_ledger->sub_keterangan);
-                            if ($single_head->nature == 'Liability') {
-                                if ($single_ledger->type == 0) {
-                                    $debitamount = $single_ledger->amount;
-                                    $sheet->setCellValue('D' . $sheetrow, $single_ledger->amount);
-                                    $total_ledger = $total_ledger - $debitamount;
-                                } else if (
-                                    $single_ledger->type == 1
-                                ) {
-                                    $creditamount = $single_ledger->amount;
-                                    $sheet->setCellValue('E' . $sheetrow, $single_ledger->amount);
-                                    $total_ledger = $total_ledger + $creditamount;
-                                }
-                            } else {
-
-                                if ($single_ledger->type == 0) {
-                                    $debitamount = $single_ledger->amount;
-                                    $sheet->setCellValue('D' . $sheetrow, $single_ledger->amount);
-                                    $total_ledger = $total_ledger + $debitamount;
-                                } else if (
-                                    $single_ledger->type == 1
-                                ) {
-                                    $creditamount = $single_ledger->amount;
-                                    $sheet->setCellValue('E' . $sheetrow, $single_ledger->amount);
-                                    $total_ledger = $total_ledger - $creditamount;
-                                }
+                            if ($single_ledger->type == 0) {
+                                $debitamount = $single_ledger->amount;
+                                $sheet->setCellValue('D' . $sheetrow, $single_ledger->amount);
+                                $total_ledger = $total_ledger + $debitamount;
+                            } else if (
+                                $single_ledger->type == 1
+                            ) {
+                                $creditamount = $single_ledger->amount;
+                                $sheet->setCellValue('E' . $sheetrow, $single_ledger->amount);
+                                $total_ledger = $total_ledger - $creditamount;
                             }
                             $sheet->setCellValue('F' . $sheetrow, $total_ledger);
 
@@ -620,15 +602,13 @@ class Statement_model extends CI_Model
                 foreach ($heads_record as $single_head) {
                     $data_leadger = $this->get_ledger_transactions($single_head->id, $filter);
                     if ($data_leadger != NULL) {
+
                         if ($data_leadger['saldo_awal'] == 0) {
                             $total_ledger = 0;
                         } else {
                             $total_ledger = $data_leadger['saldo_awal'];
                         }
 
-                        if ($single_head->nature == 'Liability') {
-                            $total_ledger = -$total_ledger;
-                        }
                         $form_content .= '<hr />                                       
                     
                         <table id="1" class="table table-striped table-hover">
@@ -658,37 +638,17 @@ class Statement_model extends CI_Model
                             $debitamount = '';
                             $creditamount = '';
 
-                            if ($single_head->nature == 'Liability') {
-                                if ($single_ledger->type == 0) {
-                                    $tot_debit += $single_ledger->amount;
-                                    $debitamount = $single_ledger->amount;
-                                    $total_ledger = $total_ledger - $debitamount;
-                                } else if ($single_ledger->type == 1) {
-                                    $tot_kredit += $single_ledger->amount;
-                                    $creditamount = $single_ledger->amount;
-                                    $total_ledger = $total_ledger + $creditamount;
-                                }
+                            if ($single_ledger->type == 0) {
+                                $tot_debit += $single_ledger->amount;
+                                $debitamount = $single_ledger->amount;
+                                $total_ledger = $total_ledger + $debitamount;
+                            } else if ($single_ledger->type == 1) {
+                                $tot_kredit += $single_ledger->amount;
+                                $creditamount = $single_ledger->amount;
+                                $total_ledger = $total_ledger - $creditamount;
                             } else {
-                                if ($single_ledger->type == 0) {
-                                    $tot_debit += $single_ledger->amount;
-                                    $debitamount = $single_ledger->amount;
-                                    $total_ledger = $total_ledger + $debitamount;
-                                } else if ($single_ledger->type == 1) {
-                                    $tot_kredit += $single_ledger->amount;
-                                    $creditamount = $single_ledger->amount;
-                                    $total_ledger = $total_ledger - $creditamount;
-                                }
                             }
 
-                            // if ($single_ledger->type == 0) {
-                            //     $tot_debit += $single_ledger->amount;
-                            //     $debitamount = $single_ledger->amount;
-                            //     $total_ledger = $total_ledger + $debitamount;
-                            // } else if ($single_ledger->type == 1) {
-                            //     $tot_kredit += $single_ledger->amount;
-                            //     $creditamount = $single_ledger->amount;
-                            //     $total_ledger = $total_ledger - $creditamount;
-                            // }
                             // $total_ledger = number_format($total_ledger, '2', '.', '');
 
                             $form_content .= '<tr>
@@ -1532,7 +1492,7 @@ class Statement_model extends CI_Model
                         SELECT
                             ROUND(
                                 SUM(
-                                      IF(SUBSTR(mp_head.name, 2, 1) in (1,5) ,
+                                      IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
                                             (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
                                             (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
                                 ),2
@@ -1775,149 +1735,10 @@ class Statement_model extends CI_Model
         return $tmp;
     }
 
-    function query_count_more_1_type($filter, $nature, $type)
-    {
-        $QUERY = 'SELECT       COALESCE((
-                                    SELECT
-                                        ROUND(SUM(
-                                            IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
-                                                (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
-                                                (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount))
-                                            )  
-                                        ),2) 
-                                    FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_head.nature = "' . $nature . '" AND mp_head.type = "' . $type . '" AND mp_generalentry.date < "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND	mp_generalentry.date >= "' . $filter['tahun'] . '-1-1"
-                                    ),0) saldo_sebelum,
-                                COALESCE((
-                                    SELECT
-                                        ROUND(SUM(
-                                            IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
-                                            (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
-                                            (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
-                                        ),2) 
-                                    FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_head.nature = "' . $nature . '" AND mp_head.type = "' . $type . '" AND  mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
-                                    ),0)  mutasi,
-                                mp_head.id,
-                                mp_head.name
-                                FROM
-                                `mp_head`
-                                WHERE
-                                   
-                                         mp_head.nature = "' . $nature . '"
-                                        AND mp_head.type =  "' . $type . '"
-                        ORDER BY mp_head.type 
-                        limit 1
-                        ';
-        $res = $this->db->query($QUERY);
-        return $res->result()[0];
-        // die();
-    }
-
-    function query_count_month_1_type($filter, $nature, $type)
-    {
-        $QUERY = 'SELECT COALESCE((
-                                    SELECT
-                                        ROUND(SUM(
-                                                IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
-                                                (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
-                                                (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
-                                        ),2) 
-                                    FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_sub_entry.parent_id =  "-' . $filter['tahun'] . '"  AND 
-                                    mp_head.nature = "' . $nature . '" AND mp_head.type = "' . $type . '" AND mp_generalentry.date = "' . $filter['tahun'] . '-1-1" 
-                                    ),0) saldo_sebelum,
-                                COALESCE((
-                                    SELECT
-                                        ROUND(SUM(
-                                                     IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
-                                                (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
-                                                (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
-                                       
-                                        ),2) 
-                                    FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_sub_entry.parent_id > 0  AND 
-                                    mp_head.nature = "' . $nature . '" AND mp_head.type = "' . $type . '" AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
-                                    ),0)  mutasi,
-                                mp_head.id,
-                                mp_head.name
-                                FROM
-                                    `mp_head`
-                                                                       limit 1
-                        ';
-        $res = $this->db->query($QUERY);
-        return $res->result()[0];
-        // die();
-    }
-
-
-
-    function query_count_tahunan_type(
-        $filter,
-        $nature,
-        $type
-    ) {
-        $QUERY = 'SELECT COALESCE((
-                                    SELECT
-                                        ROUND(SUM(
-                                                IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
-                                                (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
-                                                (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
-                                                )
-                                            ,2) 
-                                    FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_sub_entry.parent_id =  "-' . $filter['tahun'] . '"  AND 
-                                     mp_head.nature = "' . $nature . '" AND mp_head.type = "' . $type . '" AND  mp_generalentry.date = "' . $filter['tahun'] . '-1-1" 
-                                    ),0) saldo_sebelum,
-                                COALESCE((
-                                    SELECT
-                                        ROUND(SUM(
-                                               IF(SUBSTR(mp_head.name, 2, 1) in (1,5),
-                                                (IF(mp_sub_entry.type = 0,mp_sub_entry.amount,-mp_sub_entry.amount)),
-                                                (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
-                                        ),2) 
-                                    FROM
-                                        mp_sub_entry
-                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
-                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
-                                    WHERE
-                                    mp_sub_entry.parent_id > 0  AND 
-                                     mp_head.nature = "' . $nature . '" AND mp_head.type = "' . $type . '" AND  mp_generalentry.date >= "' . $filter['tahun'] . '-1-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-12-31"
-                                    ),0)  mutasi,
-                                mp_head.id,
-                                mp_head.name
-                                FROM
-                                    `mp_head`
-                                     limit 1
-                        ';
-        $res = $this->db->query($QUERY);
-        return $res->result()[0];
-    }
-
     function query_count_more_1($filter, $pars, $id, $leng, $var1, $var2)
     {
         $QUERY = 'SELECT
-                                    @names := SUBSTR(mp_head.name, 1, ' . $leng . ') as pars,SUBSTR(mp_head.name, 2, ' . $leng . ') as title, type,
+                                    @names := SUBSTR(mp_head.name, 1, ' . $leng . ') as pars,SUBSTR(mp_head.name, 2, ' . $leng . ') as title,
                                     COALESCE((
                                     SELECT
                                         ROUND(SUM(
@@ -1966,7 +1787,7 @@ class Statement_model extends CI_Model
 
     function query_count_tahunan($filter, $pars, $id, $leng, $var1, $var2)
     {
-        $QUERY = 'SELECT @names := SUBSTR(mp_head.name, 1, ' . $leng . ') as pars,SUBSTR(mp_head.name, 2, 9) as title, type,
+        $QUERY = 'SELECT @names := SUBSTR(mp_head.name, 1, ' . $leng . ') as pars,SUBSTR(mp_head.name, 2, 9) as title,
                         COALESCE((
                                     SELECT
                                         ROUND(SUM(
@@ -2016,7 +1837,7 @@ class Statement_model extends CI_Model
 
     function query_count_month_1($filter, $pars, $id, $leng, $var1, $var2)
     {
-        $QUERY = 'SELECT @names := SUBSTR(mp_head.name, 1, ' . $leng . ') as pars,SUBSTR(mp_head.name, 2, 9) as title, type,
+        $QUERY = 'SELECT @names := SUBSTR(mp_head.name, 1, ' . $leng . ') as pars,SUBSTR(mp_head.name, 2, 9) as title,
                         COALESCE((
                                     SELECT
                                         ROUND(SUM(
@@ -2751,7 +2572,7 @@ class Statement_model extends CI_Model
     {
         if ($filter['periode'] == 'tahunan') {
             $QUERY = 'SELECT
-                        @names := SUBSTR(mp_head.name, 1, 3) as pars,nature as title,mp_head.type,
+                        @names := SUBSTR(mp_head.name, 1, 3) as pars,nature as title,
                         COALESCE((
                         SELECT
                             ROUND(
@@ -2804,7 +2625,7 @@ class Statement_model extends CI_Model
             ';
         } else if ($filter['bulan'] != 1) {
             $QUERY = 'SELECT
-                        @names := SUBSTR(mp_head.name, 1, 3) as pars,nature as title, mp_head.type,
+                        @names := SUBSTR(mp_head.name, 1, 3) as pars,nature as title,
                         COALESCE((
                         SELECT
                             ROUND(SUM(
@@ -2853,7 +2674,7 @@ class Statement_model extends CI_Model
             ';
         } else {
             $QUERY = 'SELECT
-                        @names := SUBSTR(mp_head.name, 1, 3) as pars,nature as title, mp_head.type,
+                        @names := SUBSTR(mp_head.name, 1, 3) as pars,nature as title,
                         COALESCE((
                         SELECT
                             ROUND(
@@ -2911,12 +2732,20 @@ class Statement_model extends CI_Model
         $i = 0;
         $sheetrow = 10;
         foreach ($res as $re) {
-            $current_type = $re->type;
+
+            // $sheet->setCellValue('A' . $sheetrow, substr($re->title, 0, 12));
             $sheet->mergeCells("B" . $sheetrow . ":E" . $sheetrow)->setCellValue('B' . $sheetrow, $re->title);
+            // $sheet->setCellValue('F' . $sheetrow,  $re->saldo_sebelum);
+            // $sheet->setCellValue('G' . $sheetrow,  $re->mutasi);
+            // $sheet->setCellValue('H' . $sheetrow, ($re->saldo_sebelum + $re->mutasi));
             $sheetrow++;
+            // if ($sheetrow == 8) {
             $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
             $sheetrow++;
-            if ($re->saldo_sebelum != 0 or $re->mutasi != 0) {
+            // }
+            if (
+                $re->saldo_sebelum != 0 or $re->mutasi != 0
+            ) {
                 if (
                     $filter['periode'] == 'tahunan'
                 ) {
@@ -2926,44 +2755,11 @@ class Statement_model extends CI_Model
                 } else {
                     $res2 =  $this->query_count_month_1($filter, $re->pars, $re->id, 5, -2, '000.000');
                 }
-
                 // print_r($this->db->last_query());
                 // // echo json_encode($res2);
                 // die();
                 $k = 0;
                 foreach ($res2 as $re2) {
-                    if ($current_type != $re2->type) {
-                        if ($re->title == 'Assets') {
-                            // if (
-                            //     $filter['periode'] == 'tahunan'
-                            // ) {
-                            //     $lancar_tidak_lancar =  $this->query_count_tahunan_type($filter, $re->title, $current_type);
-                            // } else if ($filter['bulan'] != 1) {
-                            //     $lancar_tidak_lancar =  $this->query_count_more_1_type($filter, $re->title, $current_type);
-                            // } else {
-                            //     $lancar_tidak_lancar =  $this->query_count_month_1_type($filter, $re->title, $current_type);
-                            // }
-                            // echo 'Aktiva ' . $current_type;
-                            // var_dump($lancar_tidak_lancar[0]);
-                            // die();
-                            // $sheet->setCellValue('A' . $sheetrow, '');
-                            // $sheet->mergeCells("C" . $sheetrow . ":E" . $sheetrow)->setCellValue('C' . $sheetrow, 'Aktiva ' . $current_type);
-                            // $sheet->getStyle('F' . $sheetrow . ':K' . $sheetrow)->getAlignment()->setVertical('right')->setHorizontal('right');
-                            // $sheet->getRowDimension($sheetrow)->setRowHeight(5);
-                            // $sheet->setCellValue('F' . $sheetrow,  '______________');
-                            // $sheet->setCellValue('H' . $sheetrow,  '______________');
-                            // $sheet->setCellValue('J' . $sheetrow, '______________');
-                            // $sheetrow++;
-
-                            // $sheet->setCellValue('F' . $sheetrow,  $lancar_tidak_lancar->saldo_sebelum);
-                            // $sheet->setCellValue('H' . $sheetrow,  $lancar_tidak_lancar->mutasi);
-                            // $sheet->setCellValue('J' . $sheetrow, ($lancar_tidak_lancar->saldo_sebelum + $lancar_tidak_lancar->mutasi));
-                            // $sheetrow++;
-                            // $sheetrow++;
-                            $current_type = $re2->type;
-                        };
-                        // die();
-                    }
                     if ($re2->saldo_sebelum != 0 or $re2->mutasi != 0) {
                         $sheet->setCellValue('A' . $sheetrow, substr($re2->name, 0, 14));
                         $sheet->mergeCells("C" . $sheetrow . ":E" . $sheetrow)->setCellValue('C' . $sheetrow, substr($re2->name, 15, 25));
@@ -2978,6 +2774,7 @@ class Statement_model extends CI_Model
                         } else {
                             $res3 =  $this->query_count_month_1($filter, $re2->pars, $re2->id, 9, -1, '000');
                         }
+
 
                         foreach ($res3 as $re3) {
                             if (
@@ -3041,6 +2838,11 @@ class Statement_model extends CI_Model
                         $sheet->mergeCells("F" . $sheetrow . ":G" . $sheetrow)->setCellValue('F' . $sheetrow,  '________________');
                         $sheet->mergeCells("H" . $sheetrow . ":I" . $sheetrow)->setCellValue('H' . $sheetrow,  '________________');
                         $sheet->mergeCells("J" . $sheetrow . ":K" . $sheetrow)->setCellValue('J' . $sheetrow,  '________________');
+                        // $sheet->setCellValue('G' . $sheetrow,  '______________');
+                        // $sheet->setCellValue('H' . $sheetrow, '______________');
+                        // $sheet->setCellValue('I' . $sheetrow,  '______________');
+                        // $sheet->setCellValue('J' . $sheetrow,  '______________');
+                        // $sheet->setCellValue('K' . $sheetrow, '______________');
                         $sheetrow++;
 
 
@@ -3056,13 +2858,6 @@ class Statement_model extends CI_Model
                         $sheetrow++;
                     }
                 }
-                // if ($current_type != 'Lancar') {
-                //     if ($re->title == 'Assets') {
-                //         // echo 'Aktiva ' . $current_type;
-                //         $current_type = 'Lancar';
-                //     };
-                //     // die();
-                // }
             }
             // if ($re->saldo_sebelum != 0 or $re->mutasi != 0) {
             //     $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
@@ -3080,11 +2875,9 @@ class Statement_model extends CI_Model
             $sheet->setCellValue('I' . $sheetrow,  $re->mutasi);
             $sheet->setCellValue('J' . $sheetrow, ($re->saldo_sebelum + $re->mutasi));
             $sheetrow++;
+            // if ($sheetrow == 8) {
+            // $sheet->mergeCells("A" . $sheetrow . ":K" . $sheetrow);
             $sheetrow++;
-            if ($re->nature == 'Aseet') {
-                // Hitung Assets Tetap Aseets 
-
-            }
         }
         // return $tmp;
     }
