@@ -86,6 +86,7 @@
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" href="<?= base_url() . 'download/xls_neraca_saldo?' . (!empty($xls) ? 'laba_rugi=true&' : '') . 'periode=' . $filter['periode'] . '&tahun=' . $filter['tahun'] . '&bulan=' . $filter['bulan'] ?>"> Format 1</a>
                             <a class="dropdown-item" href="<?= base_url() . 'download/xls_neraca_saldo?' . (!empty($xls) ? 'laba_rugi=true&' : '') . 'periode=' . $filter['periode'] . '&tahun=' . $filter['tahun'] . '&bulan=' . $filter['bulan'] ?>&template=2"> Format 2</a>
+                            <a class="dropdown-item" href="<?= base_url() . 'NeracaSaldo/download?' . (!empty($xls) ? 'laba_rugi=true&' : '') . 'periode=' . $filter['periode'] . '&tahun=' . $filter['tahun'] . '&bulan=' . $filter['bulan'] ?>&template=2"> Format 3</a>
                         </div>
                     </div>
                 </div>

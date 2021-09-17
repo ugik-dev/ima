@@ -10,7 +10,7 @@
 	<!-- <div class="row"> -->
 	<div class="box box-danger">
 		<div class="box-body">
-			<div class="col-md-6">
+			<div class="col-md-12">
 				<?php
 				$attributes = array('id' => 'chart_of_accounts_form', 'method' => 'post', 'class' => 'form-horizontal');
 				?>
@@ -67,7 +67,7 @@
 		translation: {
 
 			'#': {
-				pattern: /[ a-zA-Z0-9]/
+				pattern: /[0-9A-Za-z!#$%&'*+/=?^_`{|}~\- ]/
 			},
 			placeholder: "__/__/____"
 		}

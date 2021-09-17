@@ -642,8 +642,6 @@ class Pembayaran extends CI_Controller
             $table->addRow();
             $table->addCell(200, $cellColSpan)->addText('TOTAL FINAL   ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
             $table->addCell(500, $cellVCentered)->addText('' . number_format($total, '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
-
-
             $terbilang =  floor($total);
             $kw_terbilang =  floor($total_kwitansi);
         }
@@ -762,6 +760,7 @@ class Pembayaran extends CI_Controller
             }
             $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
         }
+
         foreach ($dataContent['item'] as $item) {
 
             $freame7->addRow();

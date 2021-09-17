@@ -2783,7 +2783,7 @@ class Statement_model extends CI_Model
             // $sheet->setCellValue('H' . $sheetrow, ($re->saldo_sebelum + $re->mutasi));
             $sheetrow++;
             // if ($sheetrow == 8) {
-            $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
+            // $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
             $sheetrow++;
             // }
             if (
@@ -2853,16 +2853,16 @@ class Statement_model extends CI_Model
                                     }
                                 }
                                 if ($sum == true) {
-                                    $sheet->getStyle('F' . $sheetrow . ':K' . $sheetrow)->getAlignment()->setVertical('right')->setHorizontal('right');
+                                    $sheet->getStyle('G' . $sheetrow . ':L' . $sheetrow)->getAlignment()->setVertical('right')->setHorizontal('right');
                                     $sheet->getRowDimension($sheetrow)->setRowHeight(5);
-                                    $sheet->setCellValue('F' . $sheetrow,  '______________');
-                                    $sheet->setCellValue('H' . $sheetrow,  '______________');
-                                    $sheet->setCellValue('J' . $sheetrow, '______________');
+                                    $sheet->setCellValue('G' . $sheetrow, '______________');
+                                    $sheet->setCellValue('I' . $sheetrow, '______________');
+                                    $sheet->setCellValue('K' . $sheetrow, '______________');
                                     $sheetrow++;
 
-                                    $sheet->setCellValue('F' . $sheetrow,  $re3->saldo_sebelum);
-                                    $sheet->setCellValue('H' . $sheetrow,  $re3->mutasi);
-                                    $sheet->setCellValue('J' . $sheetrow, ($re3->saldo_sebelum + $re3->mutasi));
+                                    $sheet->setCellValue('G' . $sheetrow,  $re3->saldo_sebelum);
+                                    $sheet->setCellValue('I' . $sheetrow,  $re3->mutasi);
+                                    $sheet->setCellValue('K' . $sheetrow, ($re3->saldo_sebelum + $re3->mutasi));
                                     $sheetrow++;
                                     $sheetrow++;
                                 } else {
@@ -2878,9 +2878,9 @@ class Statement_model extends CI_Model
 
                         $sheet->getStyle('F' . $sheetrow . ':K' . $sheetrow)->getAlignment()->setVertical('right')->setHorizontal('right');
                         $sheet->getRowDimension($sheetrow)->setRowHeight(5);
-                        $sheet->mergeCells("F" . $sheetrow . ":G" . $sheetrow)->setCellValue('F' . $sheetrow,  '________________');
-                        $sheet->mergeCells("H" . $sheetrow . ":I" . $sheetrow)->setCellValue('H' . $sheetrow,  '________________');
-                        $sheet->mergeCells("J" . $sheetrow . ":K" . $sheetrow)->setCellValue('J' . $sheetrow,  '________________');
+                        $sheet->mergeCells("F" . $sheetrow . ":G" . $sheetrow)->setCellValue('F' . $sheetrow,  '__________________');
+                        $sheet->mergeCells("H" . $sheetrow . ":I" . $sheetrow)->setCellValue('H' . $sheetrow,  '__________________');
+                        $sheet->mergeCells("J" . $sheetrow . ":K" . $sheetrow)->setCellValue('J' . $sheetrow,  '__________________');
                         // $sheet->setCellValue('G' . $sheetrow,  '______________');
                         // $sheet->setCellValue('H' . $sheetrow, '______________');
                         // $sheet->setCellValue('I' . $sheetrow,  '______________');
@@ -2897,7 +2897,7 @@ class Statement_model extends CI_Model
                         // ===END LVL 3
                     }
                     if ($re2->saldo_sebelum != 0 or $re2->mutasi != 0) {
-                        $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
+                        // $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
                         $sheetrow++;
                     }
                 }
@@ -2908,9 +2908,9 @@ class Statement_model extends CI_Model
             // }
             $sheet->getStyle('F' . $sheetrow . ':K' . $sheetrow)->getAlignment()->setVertical('right')->setHorizontal('right');
             $sheet->getRowDimension($sheetrow)->setRowHeight(5);
-            $sheet->mergeCells("F" . $sheetrow . ":G" . $sheetrow)->setCellValue('F' . $sheetrow,  '______________________');
-            $sheet->mergeCells("H" . $sheetrow . ":I" . $sheetrow)->setCellValue('H' . $sheetrow,  '______________________');
-            $sheet->mergeCells("J" . $sheetrow . ":K" . $sheetrow)->setCellValue('J' . $sheetrow,  '______________________');
+            $sheet->mergeCells("F" . $sheetrow . ":G" . $sheetrow)->setCellValue('F' . $sheetrow,  '________________________');
+            $sheet->mergeCells("H" . $sheetrow . ":I" . $sheetrow)->setCellValue('H' . $sheetrow,  '________________________');
+            $sheet->mergeCells("J" . $sheetrow . ":K" . $sheetrow)->setCellValue('J' . $sheetrow,  '________________________');
             $sheetrow++;
 
             $sheet->mergeCells("B" . $sheetrow . ":E" . $sheetrow)->setCellValue('B' . $sheetrow, '** TOTAL ' . $re->title . ' **');

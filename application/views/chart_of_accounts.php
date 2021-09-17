@@ -5,7 +5,8 @@
              <div class="pull pull-right">
                  <button type="button" class="btn btn-info btn-outline-primary" onclick="show_modal_page('<?php echo base_url() . 'accounts/popup/add_chart_of_accounts'; ?>')"><i class="fa fa-plus-square" aria-hidden="true"></i> Buat Akun
                  </button>
-                 <button onclick="printDiv('print-section')" class="btn btn-default btn-outline-primary   pull-right "><i class="fa fa-print  pull-left"></i> Cetak</button>
+                 <!-- <button onclick="printDiv('print-section')" class="btn btn-default btn-outline-primary   pull-right "><i class="fa fa-print  pull-left"></i> Cetak</button> -->
+                 <a href="<?= base_url() ?>download/chart_of_account" class="btn btn-default btn-outline-primary  pull-right "><i class="fa fa-download  pull-left"></i> Excel</a>
              </div>
          </div>
      </div>
@@ -92,7 +93,7 @@
              'columnDefs': [],
              deferRender: true,
              "order": [
-                 [0, "desc"]
+                 [0, "asc"]
              ]
          });
      });

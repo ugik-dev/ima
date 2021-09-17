@@ -240,4 +240,71 @@ class Download extends CI_Controller
         echo json_encode(array('error' => false, 'data' => $data));
         redirect('dashboard');
     }
+
+    public function chart_of_account()
+    {
+        $this->load->model('AccountModel');
+
+        $spreadsheet = new Spreadsheet();
+        $styleArray = array(
+            'font'  => array(
+                'size'  => 10,
+                'name'  => 'Courier'
+            )
+        );
+        $spreadsheet->getDefaultStyle()
+            ->applyFromArray($styleArray);
+
+        $spreadsheet->getActiveSheet()->setPrintGridlines(false);
+        $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // $spreadsheet->getActiveSheet()->getColumnDimension('A')->setVisible(false);
+        $sheet->getColumnDimension('A')->setWidth(15);
+        $sheet->getColumnDimension('B')->setWidth(5);
+        $sheet->getColumnDimension('C')->setWidth(5);
+        $sheet->getColumnDimension('D')->setWidth(5);
+        $sheet->getColumnDimension('E')->setWidth(35);
+        $sheet->getColumnDimension('F')->setWidth(20);
+        $sheet->getColumnDimension('G')->setWidth(20);
+        $spreadsheet->getActiveSheet()->getStyle('A6:G6')->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
+        // $spreadsheet->getActiveSheet()->getStyle('A6:H6')->getFont()->setSize(13)->setBold(true);
+        // $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->setSize(13)->setBold(true);
+        $spreadsheet->getActiveSheet()->getStyle('A1:A5')->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
+
+        $sheet->getStyle('F:H')->getNumberFormat()->setFormatCode("_(* #,##0.00_);_(* \(#,##0.00\);_(* \"-\"??_);_(@_)");
+        // $sheet->getStyle('F:H')->getNumberFormat()->setFormatCode(PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+        $this->load->model('Statement_model');
+        $sheet->mergeCells("A1:G1");
+        $sheet->mergeCells("A2:G2");
+        $sheet->mergeCells("A3:G3");
+        $sheet->mergeCells("A4:G4");
+        $sheet->mergeCells("A5:G5");
+
+        $sheet->setCellValue('A1', 'PT INDOMETAL ASIA');
+        $sheet->setCellValue('A2', 'Jalan Sanggul Dewa No.6, Kota Pangkalpinang, Bangka Belitung');
+        $sheet->setCellValue('A3', 'KODE AKUN');
+
+        $namaBulan = array("Januari", "Februaru", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
+        $sheet->setCellValue('A6', 'NO AKUN');
+        $sheet->mergeCells("B6:E6")->setCellValue('B6', 'NAMA AKUN');
+        $sheet->setCellValue('F6', 'KELOMPOK');
+        $sheet->setCellValue('G6', 'TIPE');
+        // $sheet->setCellValue('H6', 'SALDO');
+        // $sheet->setCellValue('F5', 'SALDO');
+
+        $sheet->getStyle('A6:G6')->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE);
+        $sheet->getStyle('A6:G6')->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE);
+        $this->AccountModel->chart_of_account($sheet);
+        $writer = new Xlsx($spreadsheet);
+
+        // $filename = 'NERACA_SALDO_' . $filter['from'] . '_sd_' . $filter['to'];
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="kode_akun.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer->save('php://output'); // download file 
+
+    }
 }
