@@ -491,6 +491,8 @@ class Invoice extends CI_Controller
 			echo 'ERROR';
 			return;
 		}
+		// echo json_encode($dataContent);
+		// die();
 		$date_item = false;
 		$total = 0;
 		$total_qyt = 0;
@@ -527,12 +529,24 @@ class Invoice extends CI_Controller
 		$section->addText("Lampiran\t: 1 (satu) berkas", 'paragraph', array('spaceAfter' => 100));
 		$textrun = $section->addTextRun();
 		$textrun->addText("Perihal\t\t: ", 'paragraph');
-		$textrun->addText("Permohonan Pembayaran", 'paragraph_bold');
-		$section->addTextBreak();
+		if ($format == 3) {
+			$textrun->addText("Permohonan Biaya Sewa", 'paragraph_bold');
+			$textrun->addText("\t\t\t  Tangki BBM", 'paragraph_bold');
+		} else {
+			$textrun->addText("Permohonan Pembayaran", 'paragraph_bold');
+			$section->addTextBreak();
+		}
 		$section->addTextBreak();
 
 		// $textrun->addTextBreak();
-		if ($format == 2) {
+		if ($format == 3) {
+			$section->addText("\tKepada Yth.", 'paragraph', array('spaceAfter' => 100));
+			$section->addText("\tDirektur", 'paragraph', array('spaceAfter' => 100));
+			$section->addText("\t" . $dataContent['customer_name'], 'paragraph_bold', array('spaceAfter' => 100));
+			$section->addText("\t" .  $dataContent['cus_address'], 'paragraph', array('spaceAfter' => 100));
+			$section->addText("\tdi -", 'paragraph', array('spaceAfter' => 0));
+			$section->addText("\t\t" . $dataContent['cus_town'], 'paragraph_bold', array('spaceAfter' => 0));
+		} else if ($format == 2) {
 			$section->addText("\t\tKepada Yth.", 'paragraph', array('spaceAfter' => 100));
 			$section->addText("\t\tKepada Divisi Ekplorasi", 'paragraph', array('spaceAfter' => 100));
 			$section->addText("\t\t" . $dataContent['customer_name'], 'paragraph', array('spaceAfter' => 100));
@@ -560,11 +574,13 @@ class Invoice extends CI_Controller
 		]);
 		$section->addTextBreak();
 		$section->addTextBreak();
-		$section->addTextBreak();
+		// $section->addTextBreak();
 
 		$section->addText("Dengan hormat,", 'paragraph', array('spaceAfter' => 100));
 		// $section->addTextBreak();
-		if ($format == 2) {
+		if ($format == 3) {
+			$section->addText("Bersama ini kami sampaikan permohonan pembayara " . $dataContent['description'] . " berdasarkan Addendum Nomor 001/ADD/IA-A000/2019-S3 tanggal 23 Januari 2019 dengan perincian sebagai berikut: ", 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
+		} else if ($format == 2) {
 			$section->addText("Menurut Surat Perjanjian Nomor 0122.E/Tbk/SP-2000/21-S11.4 tanggal 01 April 2021 antara PT Timah Tbk dengan PT Indometal Asia tentang Kerjasama Kegiatan Eksplorasi Timah di Wilayah Izin Usaha Pertambangan PT Timah Tbk, dengan ini kami sampaikan tagihan atas perjanjian tersebut dengan rincian : ", 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
 		} else {
 			$section->addText("Bersama ini kami sampaikan tagihan " . $dataContent['description'] . ' sebagai berikut :', 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
@@ -593,9 +609,11 @@ class Invoice extends CI_Controller
 		$cell1 = $table->addCell(2000, $cellRowSpan);
 		$textrun1 = $cell1->addTextRun($cellHCentered);
 		$textrun1->addText('KETERANGAN', 'paragraph_bold', array('spaceAfter' => 0));
-		$cell1 = $table->addCell(2000, $cellRowSpan);
-		$textrun1 = $cell1->addTextRun($cellHCentered);
-		$textrun1->addText('TANGGAL', 'paragraph_bold', array('spaceAfter' => 0));
+		if ($date_item) {
+			$cell1 = $table->addCell(2000, $cellRowSpan);
+			$textrun1 = $cell1->addTextRun($cellHCentered);
+			$textrun1->addText('TANGGAL', 'paragraph_bold', array('spaceAfter' => 0));
+		}
 		$cell1 = $table->addCell(2000, $cellRowSpan);
 		$textrun1 = $cell1->addTextRun($cellHCentered);
 		$textrun1->addText('QYT', 'paragraph_bold', array('spaceAfter' => 0));
@@ -609,24 +627,24 @@ class Invoice extends CI_Controller
 			foreach ($dataContent['item'] as $item) {
 				$table->addRow();
 				$table->addCell(3500, $cellVCentered)->addText($item->keterangan_item, null, array('spaceAfter' => 0));
-				$table->addCell(1200, $cellVCentered)->addText($item->date_item, null, array('spaceAfter' => 0));
+				if ($date_item) $table->addCell(1200, $cellVCentered)->addText($item->date_item, null, array('spaceAfter' => 0));
 				$table->addCell(1000, $cellVCentered)->addText($item->qyt . ' ' . $item->satuan, null, array('spaceAfter' => 0, 'align' => 'center'));
 				$table->addCell(1500, $cellVCentered)->addText(number_format(floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
 				$table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
 			}
 			$table->addRow();
-			$cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
+			$cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
 			$table->addCell(200, $cellColSpan)->addText('JUMLAH    ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
 			$table->addCell(500, $cellVCentered)->addText('' . number_format($total, '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
 			if ($dataContent['ppn_pph'] == 1) {
 				$table->addRow();
-				$cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
+				$cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
 				$table->addCell(200, $cellColSpan)->addText('PPN 10%    ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
-				$table->addCell(500, $cellVCentered)->addText('' . number_format(floor($total * 0.10), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+				$table->addCell(500, $cellVCentered)->addText('' . number_format(round($total * 0.10), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
 				$table->addRow();
-				$cellColSpan = array('gridSpan' => 4, 'valign' => 'center');
+				$cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
 				$table->addCell(200, $cellColSpan)->addText('TOTAL   ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
-				$table->addCell(500, $cellVCentered)->addText('' . number_format((floor($total * 0.10) + floor($total)), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+				$table->addCell(500, $cellVCentered)->addText('' . number_format((round($total * 0.10) + floor($total)), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
 				$terbilang = floor($total * 0.10) + floor($total);
 			} else {
 				$terbilang =  floor($total);

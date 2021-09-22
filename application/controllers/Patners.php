@@ -205,6 +205,7 @@ class Patners extends CI_Controller
         $customer_contact_two = html_escape($this->input->post('customer_contact_two'));
         $customer_company = html_escape($this->input->post('customer_company'));
         $customer_region = html_escape($this->input->post('customer_region'));
+        $head_label = html_escape($this->input->post('head_label'));
         $customer_town = html_escape($this->input->post('customer_town'));
         $customer_description = html_escape($this->input->post('customer_description'));
         $picture = $this->Crud_model->do_upload_picture("customer_picture", "./uploads/customers/");
@@ -224,6 +225,7 @@ class Patners extends CI_Controller
             'cus_date' => date('Y-m-d'),
             'cus_picture' => $picture,
             'customer_nationalid' => $customer_cnic,
+            'head_label' => $head_label,
             'type' => 'patners'
         );
 
@@ -305,6 +307,7 @@ class Patners extends CI_Controller
         $customer_region = html_escape($this->input->post('customer_region'));
         $customer_town = html_escape($this->input->post('customer_town'));
         $customer_description = html_escape($this->input->post('customer_description'));
+        $head_label = html_escape($this->input->post('head_label'));
         $picture = $this->Crud_model->do_upload_picture("customer_picture", "./uploads/customers/");
 
         $upload_data = $this->upload->data();
@@ -330,6 +333,7 @@ class Patners extends CI_Controller
                 'cus_company' => $customer_company,
                 'cus_region' => $customer_region,
                 'cus_town' => $customer_town,
+                'head_label' => $head_label,
                 'cus_description' => $customer_description,
                 'cus_type' => $customer_type,
                 'cus_date' => date('Y-m-d'),

@@ -46,6 +46,7 @@
                     <div class="dropdown-menu">
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>" class="btn mr-3 my-1">To KA Akuntansi</a>
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>/2" class="btn mr-3 my-1">To Divisi Eksplorasi</a>
+                        <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>/3" class="btn mr-3 my-1">Sewa Tangki BBM</a>
                         <a type="button" href="<?= base_url('invoice/download/') . $dataContent['id'] ?>" class="btn">Invoice PDF</a>
                     </div>
                 </div>

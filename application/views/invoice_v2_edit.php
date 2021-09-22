@@ -116,11 +116,13 @@
                                                 </td>
                                                 <td>
                                                     <select name="satuan[]" id="satuan" class="form-control">
+                                                        <option value="thn"> thn </option>
                                                         <option value="bln"> bln </option>
                                                         <option value="hari"> hari </option>
                                                         <option value="trip"> trip </option>
                                                         <option value="unit"> unit </option>
                                                         <option value="pcs"> pcs </option>
+                                                        <option value="pkt"> pkt </option>
 
                                                     </select>
                                                 </td>

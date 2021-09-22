@@ -6,7 +6,7 @@ class InvoiceModel extends CI_Model
 {
     public function getAllInvoice($filter = [])
     {
-        $this->db->select("mp_invoice_v2.*,notification.id as notif_id,notification.parent2_id, notification.status as notif_status,mp_payee.customer_name, cus_address , branch as bank_name, accountno as bank_number,title as title_bank,mp_users.title_user as title_acc_1,mp_users.agentname as name_acc_1");
+        $this->db->select("mp_invoice_v2.*,notification.id as notif_id,notification.parent2_id, notification.status as notif_status,mp_payee.customer_name, cus_address, cus_town, head_label , branch as bank_name, accountno as bank_number,title as title_bank,mp_users.title_user as title_acc_1,mp_users.agentname as name_acc_1");
         $this->db->from('mp_invoice_v2');
         // if (!empty($filter['id']))
         if (!empty($filter['id'])) $this->db->where('mp_invoice_v2.id', $filter['id']);
