@@ -191,7 +191,7 @@
                     </div>
                     <?php
                     if ($dataContent['ppn_pph'] == 1) {
-                        $tmp1 = floor($total * 0.10);
+                        $tmp1 = round($total * 0.10);
                         $total = $total + $tmp1;
                     } else {
                         $tmp1 = 0;
