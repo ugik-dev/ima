@@ -103,7 +103,7 @@
                                     <?php
                                     if ($data_return != NULL) {
                                         $count_rows = count($data_return['amount']);
-                                        echo $count_rows;
+                                        // echo $count_rows;    
                                         for ($i = 0; $i < $count_rows; $i++) {
                                     ?>
                                             <tr>
@@ -281,7 +281,7 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/invoice.js?v=0.2"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/invoice.js?v=0.33"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>

@@ -91,7 +91,6 @@ class AdministrationModel extends CI_Model
         return $data['id_dokumen'];
     }
 
-
     public function deleteDokumen($data)
     {
         // ini_set('date.timezone', 'Asia/Jakarta');

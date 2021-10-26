@@ -71,7 +71,7 @@ if (!function_exists('Company_Profile')) {
 		$CI->db->select("*");
 		$CI->db->from('mp_langingpage');
 		$query = $CI->db->get();
-		return $query->result_array()[0];
+		$res = $query->result_array();
 	}
 }
 

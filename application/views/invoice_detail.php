@@ -1,5 +1,9 @@
 <div class="card card-custom position-relative overflow-hidden" id="print-section">
-    <?php if ($dataContent['notif_status'] == 0 && !empty($dataContent['notif_id'])) {
+    <?php
+
+    use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Floor;
+
+    if ($dataContent['notif_status'] == 0 && !empty($dataContent['notif_id'])) {
         echo '
         <div class="row col bg-light-danger px-10 py-2 rounded-sm ml-0">
         
@@ -191,7 +195,7 @@
                     </div>
                     <?php
                     if ($dataContent['ppn_pph'] == 1) {
-                        $tmp1 = round($total * 0.10);
+                        $tmp1 = floor($total * 0.10);
                         $total = $total + $tmp1;
                     } else {
                         $tmp1 = 0;

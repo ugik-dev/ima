@@ -2517,6 +2517,7 @@ class Statement_model extends CI_Model
         }
         $res = $this->db->query($QUERY);
         $res = $res->result();
+
         $i = 0;
         $sheetrow = 7;
         foreach ($res as $re) {
@@ -2608,6 +2609,24 @@ class Statement_model extends CI_Model
                 $sheetrow++;
             }
         }
+
+        if ($filter['nature'] == "'Expense','Revenue'") {
+            // foreach ($res as $co_laba_rugi) {
+            $co['saldo_sebelum'] = number_format($res[0]->saldo_sebelum - $res[1]->saldo_sebelum, 2, '.', '');
+            $co['mutasi'] = number_format($res[0]->mutasi - $res[1]->mutasi, 2, '.', '');
+            $co['current_saldo'] = number_format($co['saldo_sebelum'] + $co['mutasi'], 2, '.', '');
+            // }
+            $sheet->mergeCells("B" . $sheetrow . ":E" . $sheetrow)->setCellValue('B' . $sheetrow, 'Total Laba/Rugi');
+            $sheet->setCellValue('F' . $sheetrow,  $co['saldo_sebelum']);
+            $sheet->setCellValue('G' . $sheetrow,  $co['mutasi']);
+            $sheet->setCellValue('H' . $sheetrow, $co['current_saldo']);
+            $sheetrow++;
+            // if ($sheetrow == 8) {
+            $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
+            $sheetrow++;
+        }
+        // echo json_encode($res);
+        // die();
         // return $tmp;
     }
 
@@ -2921,6 +2940,35 @@ class Statement_model extends CI_Model
             // if ($sheetrow == 8) {
             // $sheet->mergeCells("A" . $sheetrow . ":K" . $sheetrow);
             $sheetrow++;
+
+            if ($filter['nature'] == "'Expense','Revenue'") {
+                // foreach ($res as $co_laba_rugi) {
+                $co['saldo_sebelum'] = number_format(
+                    $res[0]->saldo_sebelum - $res[1]->saldo_sebelum,
+                    2,
+                    '.',
+                    ''
+                );
+                $co['mutasi'] = number_format($res[0]->mutasi - $res[1]->mutasi, 2, '.', '');
+                $co['current_saldo'] = number_format($co['saldo_sebelum'] + $co['mutasi'], 2, '.', '');
+                // }
+                $sheet->getStyle('F' . $sheetrow . ':K' . $sheetrow)->getAlignment()->setVertical('right')->setHorizontal('right');
+                $sheet->getRowDimension($sheetrow)->setRowHeight(5);
+                $sheet->mergeCells("F" . $sheetrow . ":G" . $sheetrow)->setCellValue('F' . $sheetrow,  '__________________________________');
+                $sheet->mergeCells("H" . $sheetrow . ":I" . $sheetrow)->setCellValue('H' . $sheetrow,  '__________________________________');
+                $sheet->mergeCells("J" . $sheetrow . ":K" . $sheetrow)->setCellValue('J' . $sheetrow,  '__________________________________');
+                $sheetrow++;
+                $sheet->mergeCells("B" . $sheetrow . ":E" . $sheetrow)->setCellValue(
+                    'B' . $sheetrow,
+                    '** TOTAL LABA/RUGI **'
+                );
+                $sheet->setCellValue('G' . $sheetrow,  $co['saldo_sebelum']);
+                $sheet->setCellValue('I' . $sheetrow,  $co['mutasi']);
+                $sheet->setCellValue('J' . $sheetrow, $co['current_saldo']);
+                // if ($sheetrow == 8) {
+                $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
+                $sheetrow++;
+            }
         }
         // return $tmp;
     }

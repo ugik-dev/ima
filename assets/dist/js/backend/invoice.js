@@ -44,7 +44,12 @@ function count_total(edit = false) {
       $('input[name="sub_total"]').val(0);
     }
     if ($('input[name="ppn_pph"]').is(":checked") == true) {
-      ppn_pph = count_val * 0.1;
+      console.log(count_val);
+      str_count_val = count_val.toString();
+      str_count_val = str_count_val.substring(0, str_count_val.length - 2);
+      ppn_pph = Math.floor(str_count_val * 0.1) + "00";
+      ppn_pph = parseInt(ppn_pph);
+      // console.log(ppn_pph + "00");
       $('input[name="ppn_pph_count"]').val(formatRupiah(ppn_pph));
     } else {
       $('input[name="ppn_pph_count"]').val(0);
