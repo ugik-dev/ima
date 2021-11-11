@@ -496,7 +496,7 @@ class Statement_model extends CI_Model
                             $sheet->setCellValue('A' . $sheetrow, $single_ledger->date);
                             $sheet->setCellValue('B' . $sheetrow, $single_ledger->no_jurnal);
                             $sheet->setCellValue('C' . $sheetrow, $single_ledger->sub_keterangan);
-                            if ($accounts_types[$i] == 'Liability') {
+                            if ($accounts_types[$i] == 'Liability' or $accounts_types[$i] == 'Revenue') {
                                 if ($single_ledger->type == 0) {
                                     $debitamount = $single_ledger->amount;
                                     $sheet->setCellValue('D' . $sheetrow, $single_ledger->amount);
