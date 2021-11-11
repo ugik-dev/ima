@@ -550,7 +550,7 @@ class Statement_model extends CI_Model
         //                                     (IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)))
         //                                    ,0)
         $this->db->select("SUM(
-            IF(SUBSTR(mp_head.name, 2, 1) in (2),
+            IF(SUBSTR(mp_head.name, 2, 1) in (2,4),
                 IF(mp_sub_entry.type = 1,amount, -amount),
                 IF(mp_sub_entry.type = 0,amount, -amount))
             ) as saldo_awal");
@@ -669,7 +669,7 @@ class Statement_model extends CI_Model
                         foreach ($data_leadger['data'] as $single_ledger) {
                             $debitamount = '';
                             $creditamount = '';
-                            if ($accounts_types[$i] == 'Liability') {
+                            if ($accounts_types[$i] == 'Liability' or $accounts_types[$i] == 'Revenue') {
                                 if ($single_ledger->type == 0) {
                                     $tot_debit += $single_ledger->amount;
                                     $debitamount = $single_ledger->amount;
