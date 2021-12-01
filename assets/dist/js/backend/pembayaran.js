@@ -1,4 +1,5 @@
 var timmer;
+var new_row_html = ``;
 function count_total(edit = false) {
   clearTimeout(timmer);
   count_val = 0;
