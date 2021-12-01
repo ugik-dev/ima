@@ -8,11 +8,21 @@ use PhpOffice\PhpWord\Writer\Word2007;
 
 class Pembayaran extends CI_Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->model(array('General_model'));
+        // $this->load->helper(array('DataStructure'));
+        $this->db->db_debug = TRUE;
+    }
     function index($data_return = NULL)
     {
 
         $this->load->model('Crud_model');
-
+        $this->load->model('General_model');
+        $data['satuan'] = $this->General_model->getAllUnit();
+        $data['jenis_pembayaran'] = $this->General_model->getAllJenisPembayaran();
+        $data['form_url'] = 'create_pembayaran';
         $data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
 
         //$ledger
@@ -35,7 +45,7 @@ class Pembayaran extends CI_Controller
         $data['patner_record'] = $this->Statement_model->patners_cars_list();
 
         // DEFINES WHICH PAGE TO RENDER
-        $data['main_view'] = 'pembayaran/create';
+        $data['main_view'] = 'pembayaran/edit';
 
         // DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
         $this->load->view('main/index.php', $data);
@@ -74,41 +84,6 @@ class Pembayaran extends CI_Controller
         $this->load->view('main/index.php', $data);
     }
 
-    function delete_item_temporary($item_id)
-    {
-        // DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
-        $this->load->model('Crud_model');
-
-        //FETCH THE ITEM FROM DATABSE TABLE TO ADD AGAIN TO STOCK
-        $result = $this->Crud_model->fetch_record_by_id('mp_temp_barcoder_pembayaran', $item_id);
-
-        //FETCH THE ITEM FROM STOCK TABLE 
-        $result_stock = $this->Crud_model->fetch_record_by_id('mp_productslist', $result[0]->product_id);
-
-        // TABLENAME AND ID FOR DATABASE Actions
-        $args = array(
-            'table_name' => 'mp_productslist',
-            'id' => $result[0]->product_id
-        );
-
-        $data = array(
-            'quantity' => $result_stock[0]->quantity + $result[0]->qty
-        );
-
-        // CALL THE METHOD FROM Crud_model CLASS FIRST ARG CONTAINES TABLENAME AND OTHER CONTAINS DATA
-        $this->Crud_model->edit_record_id($args, $data);
-
-        // DEFINES TO DELETE THE ROW FROM TABLE AGAINST ID
-        $this->Crud_model->delete_record('mp_temp_barcoder_pembayaran', $item_id);
-
-        //USER ID
-        $user_name = $this->session->userdata('user_id');
-
-        //LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-        $data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_pembayaran', 'pos', $user_name['id']);
-
-        $this->load->view('pembayaran_template.php', $data);
-    }
 
     public function delete($id)
     {
@@ -424,7 +399,9 @@ class Pembayaran extends CI_Controller
             $this->load->model('Statement_model');
             $data['accounts_records'] = $this->Statement_model->chart_list();
             $data['patner_record'] = $this->Statement_model->patners_cars_list();
-
+            $data['satuan'] = $this->General_model->getAllUnit();
+            $data['jenis_pembayaran'] = $this->General_model->getAllJenisPembayaran();
+            $data['form_url'] = 'edit_process_pembayaran';
             // DEFINES WHICH PAGE TO RENDER
             $data['main_view'] = 'pembayaran/edit';
 
@@ -1351,7 +1328,11 @@ class Pembayaran extends CI_Controller
         $this->load->model('Crud_model');
         if ($page_name  == 'new_row') {
             $this->load->model('Statement_model');
-            $data['accounts_records'] = $this->Statement_model->chart_list();
+            // $data['accounts_records'] = $this->Statement_model->chart_list();
+            $this->load->model('General_model');
+            $data['satuan'] = $this->General_model->getAllUnit();
+            $data['jenis_pembayaran'] = $this->General_model->getAllJenisPembayaran();
+
             $this->load->view('admin_models/accounts/new_row_pembayaran.php', $data);
         } else		if ($page_name  == 'add_patner_model') {
             //USED TO REDIRECT LINK
@@ -1832,7 +1813,8 @@ class Pembayaran extends CI_Controller
         }
         $data['am_pph'] = preg_replace("/[^0-9]/", "", $data['am_pph']);
         $data['am_jasa'] = preg_replace("/[^0-9]/", "", $data['am_jasa']);
-
+        $data['lebih_bayar_am'] = preg_replace("/[^0-9]/", "", $data['lebih_bayar_am']);
+        $data['kurang_bayar_am'] = preg_replace("/[^0-9]/", "", $data['kurang_bayar_am']);
 
         $count_rows = count($data['amount']);
         // if()
@@ -1897,18 +1879,24 @@ class Pembayaran extends CI_Controller
         $data = $this->input->post();
         // echo json_encode($data);
         // die();
-        if ($data['manual_math'] == 'on') {
-            if (empty($data['manual_math'])) {
-                $data['manual_math'] = 'off';
+        if (!empty($data['manual_math']))
+            if ($data['manual_math'] == 'on') {
+                if (empty($data['manual_math'])) {
+                    $data['manual_math'] = 'off';
+                }
+                $data['manual_math'] = 1;
+            } else {
+                $data['manual_math'] = 0;
             }
-            $data['manual_math'] = 1;
-        } else {
+        else
             $data['manual_math'] = 0;
-        }
+
         $data['am_pph'] = preg_replace("/[^0-9]/", "", $data['am_pph']);
         $data['am_jasa'] = preg_replace("/[^0-9]/", "", $data['am_jasa']);
         $data['par_am'] = preg_replace("/[^0-9]/", "", $data['par_am']);
 
+        $data['lebih_bayar_am'] = preg_replace("/[^0-9]/", "", $data['lebih_bayar_am']);
+        $data['kurang_bayar_am'] = preg_replace("/[^0-9]/", "", $data['kurang_bayar_am']);
 
         $count_rows = count($data['amount']);
         // if()

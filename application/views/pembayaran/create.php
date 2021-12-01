@@ -73,7 +73,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="transaction_table_body">
-                                    <tr>
+                                    <tr id="firs_row">
                                         <td>
                                             <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / Toyota AVZ" />
                                         </td>
@@ -85,12 +85,10 @@
                                         </td>
                                         <td>
                                             <select name="satuan[]" id="satuan" class="form-control">
-                                                <option value="hari"> hari </option>
-                                                <option value="bln"> bln </option>
-                                                <option value="trip"> trip </option>
-                                                <option value="unit"> unit </option>
-                                                <option value="pcs"> pcs </option>
-                                                <option value="org/hari"> org/hari </option>
+                                                <?php foreach ($satuan as $st) {
+                                                    echo '<option value="' . $st['name_unit'] . '"> ' . $st['name_unit'] . ' </option>';
+                                                } ?>
+
                                             </select>
                                         </td>
                                         <td>
@@ -130,12 +128,9 @@
                                                 </td>
                                                 <td>
                                                     <select name="satuan[]" id="satuan" class="form-control">
-                                                        <option value="hari"> hari </option>
-                                                        <option value="bln"> bln </option>
-                                                        <option value="trip"> trip </option>
-                                                        <option value="unit"> unit </option>
-                                                        <option value="pcs"> pcs </option>
-                                                        <option value="org/hari"> org/hari </option>
+                                                        <?php foreach ($satuan as $st) {
+                                                            echo '<option value="' . $st['name_unit'] . '"> ' . $st['name_unit'] . ' </option>';
+                                                        } ?>
                                                     </select>
                                                 </td>
                                                 <td>
@@ -390,12 +385,21 @@
     }
 
     <?php if ($data_return != NULL) {    ?>
+
         id_custmer.val('<?= $data_return['customer_id'] ?>');
         date_jurnal.val('<?= $data_return['date'] ?>');
         description.val('<?= $data_return['description'] ?>');
 
         <?php
         $count_rows = count($data_return['amount']);
+
+        for ($i = 0; $i < $count_rows; $i++) { ?>
+            console.log('addrow')
+            add_new_row('<?php echo base_url() . 'pembayaran/popup/new_row'; ?>');
+
+        <?php
+        }
+
 
         for ($i = 0; $i < $count_rows; $i++) { ?>
             amount[<?= $i ?>].value = '<?= $data_return['amount'][$i] ?>';

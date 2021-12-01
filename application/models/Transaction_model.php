@@ -1294,7 +1294,10 @@ class Transaction_model extends CI_Model
             'manual_math' => $data['manual_math'],
             'am_jasa' => substr($data['am_jasa'], 0, -2) . '.' . substr($data['am_jasa'], -2),
             'am_pph' => substr($data['am_pph'], 0, -2) . '.' . substr($data['am_pph'], -2),
-
+            'lebih_bayar_am' => substr($data['lebih_bayar_am'], 0, -2) . '.' . substr($data['lebih_bayar_am'], -2),
+            'kurang_bayar_am' => substr($data['kurang_bayar_am'], 0, -2) . '.' . substr($data['kurang_bayar_am'], -2),
+            'lebih_bayar_ket' => $data['lebih_bayar_ket'],
+            'kurang_bayar_ket' => $data['kurang_bayar_ket'],
             // 'inv_key' => $generateRandomString,
             // 'acc_1' => $data['acc_1'],
             // 'acc_2' => $data['acc_2'],
@@ -1302,10 +1305,10 @@ class Transaction_model extends CI_Model
             'acc_0' => $this->session->userdata('user_id')['name'],
             'agen_id' => $this->session->userdata('user_id')['id'],
         );
-        if (!empty($data['par_label'] && !empty($data['par_am']))) {
-            $trans_data['par_label'] =  $data['par_label'];
-            $trans_data['par_am']  = substr($data['par_am'], 0, -2) . '.' . substr($data['par_am'], -2);
-        }
+        // if (!empty($data['par_label'] && !empty($data['par_am']))) {
+        //     $trans_data['par_label'] =  $data['par_label'];
+        //     $trans_data['par_am']  = substr($data['par_am'], 0, -2) . '.' . substr($data['par_am'], -2);
+        // }
 
         $this->db->trans_start();
         $this->db->insert('mp_pembayaran', $trans_data);
@@ -1468,17 +1471,21 @@ class Transaction_model extends CI_Model
             'am_pph' => substr($data['am_pph'], 0, -2) . '.' . substr($data['am_pph'], -2),
 
             'ppn_pph' => $data['ppn_pph'],
-            // 'acc_1' => $data['acc_1'],
+            'jenis_pembayaran' => $data['jenis_pembayaran'],
             'acc_2' => $data['acc_2'],
             'acc_3' => $data['acc_3'],
             'percent_jasa' => $data['percent_jasa'],
             'percent_pph' => $data['percent_pph'],
+            'lebih_bayar_ket' => $data['lebih_bayar_ket'],
+            'kurang_bayar_ket' => $data['kurang_bayar_ket'],
+            'lebih_bayar_am' => substr($data['lebih_bayar_am'], 0, -2) . '.' . substr($data['lebih_bayar_am'], -2),
+            'kurang_bayar_am' => substr($data['kurang_bayar_am'], 0, -2) . '.' . substr($data['kurang_bayar_am'], -2),
             // 'acc_0' => $this->session->userdata('user_id')['name'],
         );
-        if (!empty($data['par_label'] && !empty($data['par_am']))) {
-            $trans_data['par_label'] =  $data['par_label'];
-            $trans_data['par_am']  = substr($data['par_am'], 0, -2) . '.' . substr($data['par_am'], -2);
-        }
+        // if (!empty($data['par_label'] && !empty($data['par_am']))) {
+        //     $trans_data['par_label'] =  $data['par_label'];
+        //     $trans_data['par_am']  = substr($data['par_am'], 0, -2) . '.' . substr($data['par_am'], -2);
+        // }
 
         if ($data['acc_role']) {
             $trans_data['acc_1'] = $this->session->userdata('user_id')['name'];

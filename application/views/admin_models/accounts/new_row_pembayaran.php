@@ -10,12 +10,9 @@
        </td>
        <td>
            <select name="satuan[]" id="satuan" class="form-control">
-               <option value="hari"> hari </option>
-               <option value="bln"> bln </option>
-               <option value="trip"> trip </option>
-               <option value="unit"> unit </option>
-               <option value="pcs"> pcs </option>
-               <option value="org/hari"> org/hari </option>
+               <?php foreach ($satuan as $st) {
+                    echo '<option value="' . $st['name_unit'] . '"> ' . $st['name_unit'] . ' </option>';
+                } ?>
 
            </select>
        </td>
