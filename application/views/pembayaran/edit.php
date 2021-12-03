@@ -89,19 +89,8 @@
                                     </tr>
                                 </thead>
                                 <tbody id="transaction_table_body">
-                                    <?php
-                                    // if ($data_return != NULL) {
-                                    //     $count_rows = count($data_return['amount']);
-                                    //     for ($i = 0; $i < $count_rows; $i++) {
-                                    ?>
-
-                                    <?php
-                                    // }
-                                    // }  
-                                    ?>
                                 </tbody>
                                 <tfoot>
-
                                     <tr>
                                         <td colspan="1">
                                             <button type="button" class="btn btn-primary" id="addline"> <i class="fa fa-plus-circle"></i> Tambah Baris </button>
@@ -115,6 +104,19 @@
                                         </th>
                                         <th>
                                             <input name="sub_total" value="0" disabled class="accounts_total_amount" />
+                                            <?php
+
+                                            ?>
+                                        </th>
+                                    </tr>
+
+                                    <tr>
+                                        <th colspan="3"></th>
+                                        <th colspan="2">Pembulatan Sub Total I: </th>
+                                        <th>
+                                        </th>
+                                        <th>
+                                            <input name="pembulatan" value="0" disabled class="accounts_total_amount" />
                                             <?php
 
                                             ?>
@@ -245,6 +247,19 @@
     // $this->load->view()
     ?>
     var timmer;
+    $('#menu_id_32').addClass('menu-item-active menu-item-open menu-item-here"')
+    $('#submenu_id_87').addClass('menu-item-active')
+    payment_metode = $('#payment_metode');
+    description = $('#description');
+    jenis_pembayaran = $('#jenis_pembayaran');
+    date_jurnal = $('#date');
+    var id_item = document.getElementsByName('id_item[]');
+    var keterangan_item = document.getElementsByName('keterangan_item[]');
+    var date_item = document.getElementsByName('date_item[]');
+    var qyt = document.getElementsByName('qyt[]');
+    var amount = document.getElementsByName('amount[]');
+    var nopol = document.getElementsByName('nopol[]');
+    var satuan = document.getElementsByName('satuan[]');
     var transaction_table_body = $('#transaction_table_body');
     var addline = $('#addline');
     var new_row_html = `                                   <tr class="row_item[]">
@@ -254,7 +269,7 @@
                                             <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / Toyota AVZ" />
                                         </td>
                                         <td>
-                                            <input type="text" name="nopol[]" value="" class="form-control input-lg nopol" />
+                                            <input type="text" name="nopol[]" value="" step="0.002" class="form-control input-lg nopol" />
                                         </td>
                                         <td>
                                             <input type="text" name="date_item[]" value="" class="form-control input-lg date_item" />
@@ -352,6 +367,11 @@
             });
 
             $('input[name="sub_total"]').val(formatRupiah2(count_val));
+            // console.log(jenis_pembayaran.val())
+            if (jenis_pembayaran.val() == 2) {
+                count_val = Math.floor(count_val / 100) * 100;
+                $('input[name="pembulatan"]').val(formatRupiah2(count_val));
+            }
             biaya_jasa = 0;
             biaya_pph = 0;
             if (manual_math && (tmp_jasa != "0" || tmp_jasa != "0,00")) {
@@ -394,51 +414,6 @@
                 $('input[name="total_final"]').val(0);
             }
         }, 800);
-    }
-
-    function count_credits() {
-        clearTimeout(timmer);
-
-        timmer = setTimeout(function callback() {
-            var total_credits = 0;
-            $('input[name="creditamount[]"]').each(function() {
-                if ($(this).val() != "") {
-                    curency = parseFloat(
-                        $(this)
-                        .val()
-                        .replace(/[^0-9]/g, "")
-                    );
-                    total_credits = total_credits + curency;
-                }
-            });
-
-            $('input[name="total_credit_amount"]').val(formatRupiah(total_credits));
-
-            //USED TO CHECK THE VALIDITY OF THIS TRANSACTION
-            check_validity();
-        }, 800);
-    }
-
-    function check_validity() {
-
-        var total_debit = $('input[name="total_debit_amount"]').val();
-        var total_credit = $('input[name="total_credit_amount"]').val();
-        total_debit = parseInt(total_debit.replace(/[^0-9]/g, ""));
-        total_credit = parseInt(total_credit.replace(/[^0-9]/g, ""));
-        // console.log(total_debit);
-        if (total_debit != total_credit) {
-            if (total_debit < total_credit) {
-                $("#transaction_validity").html(formatRupiah(total_credit - total_debit));
-            } else {
-                $("#transaction_validity").html(formatRupiah(total_debit - total_credit));
-            }
-
-            //USED TO DISABLED THE BUTTON IF ANY ERROR OCCURED
-            $("#btn_save_transaction").prop("disabled", true);
-        } else {
-            $("#transaction_validity").html("");
-            $("#btn_save_transaction").prop("disabled", false);
-        }
     }
 
     function formatRupiah2(angka, prefix) {
@@ -514,19 +489,7 @@
         count_total(true);
     }
 
-    $('#menu_id_32').addClass('menu-item-active menu-item-open menu-item-here"')
-    $('#submenu_id_87').addClass('menu-item-active')
-    payment_metode = $('#payment_metode');
-    description = $('#description');
-    jenis_pembayaran = $('#jenis_pembayaran');
-    date_jurnal = $('#date');
-    var id_item = document.getElementsByName('id_item[]');
-    var keterangan_item = document.getElementsByName('keterangan_item[]');
-    var date_item = document.getElementsByName('date_item[]');
-    var qyt = document.getElementsByName('qyt[]');
-    var amount = document.getElementsByName('amount[]');
-    var nopol = document.getElementsByName('nopol[]');
-    var satuan = document.getElementsByName('satuan[]');
+
 
     jenis_pembayaran.on('change', function() {
         if (jenis_pembayaran.val() == '1') {
@@ -543,6 +506,7 @@
             });
             $('.nopol').prop('type', 'number');
         }
+        count_total();
     })
 
 

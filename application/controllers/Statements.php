@@ -306,12 +306,6 @@ class Statements extends CI_Controller
 			$sub_keterangan[2] = ($result['jenis_pembayaran'] == '1' ? 'Htg RM ' : "Htg Reklamasi ") . $result['description'];
 		}
 
-		// if (!empty($result['par_am']) && !empty($result['par_label'])) {
-		// 	$accounthead[3] = 0;
-		// 	$debitamount[3] = '';
-		// 	$creditamount[3] = number_format($result['par_am'], 2);
-		// 	$sub_keterangan[3] = $result['par_label'];
-		// }
 		$acc[1] = $result['acc_1'];
 		$acc[2] = 0;
 		$acc[3] = 0;
