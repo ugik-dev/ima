@@ -83,22 +83,43 @@ class Payment_model extends CI_Model
     }
 
 
-    public function addPayment($data)
-    {
-        $this->db->insert('dt_jenis_pembayaran', $data);
-        ExceptionHandler::handleDBError($this->db->error(), "Tambah Payment", "Payment");
-        $id_ins = $this->db->insert_id();
-        return $id_ins;
-    }
+    // public function addPayment($data)
+    // {
+    //     $this->db->insert('dt_jenis_pembayaran', $data);
+    //     ExceptionHandler::handleDBError($this->db->error(), "Tambah Payment", "Payment");
+    //     $id_ins = $this->db->insert_id();
+    //     return $id_ins;
+    // }
 
-    public function editPayment($data)
+    // public function editPayment($data)
+    // {
+    //     $this->db->where('id', $data['id']);
+
+    //     $this->db->update('dt_jenis_pembayaran', $data);
+    //     ExceptionHandler::handleDBError($this->db->error(), "Edit Payment", "Payment");
+    //     return $data['id'];
+    // }
+
+    public function editJenisPembayaran($data)
     {
         $this->db->where('id', $data['id']);
 
-        $this->db->update('dt_jenis_pembayaran', $data);
+        $this->db->update('ref_jenis_pembayaran', $data);
         ExceptionHandler::handleDBError($this->db->error(), "Edit Payment", "Payment");
         return $data['id'];
     }
+
+    public function editRefAccount($data)
+    {
+        $this->db->where('ref_id', $data['ref_id']);
+
+        $this->db->update('ref_account', $data);
+        ExceptionHandler::handleDBError($this->db->error(), "Edit Payment", "Payment");
+        return $data['ref_id'];
+    }
+
+
+
     public function deletePayment($data)
     {
         $this->db->where('id', $data['id']);
@@ -335,5 +356,107 @@ class Payment_model extends CI_Model
             $this->db->trans_commit();
             return $id_trans;
         }
+    }
+
+
+    function pembayaran_entry($data)
+    {
+        // $generateRandomString = $this->generateRandomString(32);
+        // die();
+
+        // $trans_data = $data;
+        $trans_data = array(
+            'date' => $data['date'],
+            'description' => $data['description'],
+            'customer_id' => $data['customer_id'],
+            'payment_metode' => $data['payment_method'],
+            'ppn_pph' => $data['ppn_pph'],
+            'percent_jasa' => $data['percent_jasa'],
+            'percent_pph' => $data['percent_pph'],
+            'manual_math' => $data['manual_math'],
+            'am_jasa' => $data['am_jasa'],
+            'am_pph' => $data['am_pph'],
+            'lebih_bayar_am' => $data['lebih_bayar_am'],
+            'kurang_bayar_am' => $data['kurang_bayar_am'],
+            'lebih_bayar_ket' => $data['lebih_bayar_ket'],
+            'kurang_bayar_ket' => $data['kurang_bayar_ket'],
+            'sub_total' => $data['sub_total'],
+            'sub_total_2' => $data['sub_total_2'],
+            'pembulatan' => $data['pembulatan'],
+            // 'inv_key' => $generateRandomString,
+            // 'acc_1' => $data['acc_1'],
+            // 'acc_2' => $data['acc_2'],
+            // 'acc_3' => $data['acc_3'],
+            'acc_0' => $this->session->userdata('user_id')['name'],
+            'agen_id' => $this->session->userdata('user_id')['id'],
+        );
+        // if (!empty($data['par_label'] && !empty($data['par_am']))) {
+        //     $trans_data['par_label'] =  $data['par_label'];
+        //     $trans_data['par_am']  = substr($data['par_am'], 0, -2) . '.' . substr($data['par_am'], -2);
+        // }
+
+        $this->db->trans_start();
+        $this->db->insert('mp_pembayaran', $trans_data);
+        $order_id = $this->db->insert_id();
+        $total_heads = count($data['amount']);
+        for ($i = 0; $i < $total_heads; $i++) {
+
+            if (!empty($data['amount'][$i] && !empty($data['qyt'][$i]))) {
+                $trans_data  = array(
+                    'parent_id'   => $order_id,
+                    'qyt' => $data['qyt'][$i],
+                    'satuan' => $data['satuan'][$i],
+                    'date_item' => $data['date_item'][$i],
+                    'nopol' => $data['nopol'][$i],
+                    'keterangan_item' => $data['keterangan_item'][$i],
+                    'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
+                );
+                $this->db->insert('mp_sub_pembayaran', $trans_data);
+            }
+        }
+
+        // $data['generalentry']['ref_number'] = $this->gen_number($data['generalentry']);
+        $data['generalentry']['url'] = 'pembayaran/show/' . $order_id;
+        $this->db->insert('mp_generalentry', $data['generalentry']);
+
+        $gen_id = $this->db->insert_id();
+
+        foreach ($data['sub_entry'] as $sub) {
+            $sub['parent_id'] = $gen_id;
+            $this->db->insert('mp_sub_entry', $sub);
+        }
+
+        // $data['sub_entry'][0]['parent_id'] = $order_id;
+        // $data['sub_entry'][1]['parent_id'] = $order_id;
+        // $this->db->insert('mp_sub_entry', $data['sub_entry'][1]);
+
+        // $this->db->where('id', $data['id']);
+        // $this->db->set('transaction_status	', 1);
+        // $this->db->set('transaction_id', $order_id);
+        // $this->db->update('dt_bank_transaction');
+
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $data = NULL;
+            return NULL;
+        } else {
+            $this->db->trans_commit();
+            $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'pembayaran/show/' . $order_id, 'sub_id' => $order_id, 'desk' => 'Entry Pembayaran'));
+        }
+        return array('order_id' => $order_id, 'parent2_id' => $gen_id);
+    }
+
+    function record_activity($data)
+    {
+        // $sub_data  = array(
+        $data['user_id']  = $this->session->userdata('user_id')['id'];
+        //     'jenis'   => $data['jenis'],
+        //     'desk'   => $data['desk'],
+        //     'sub_id'   => $data['sub_id']
+        // );
+
+        $this->db->insert('mp_activity', $data);
     }
 }

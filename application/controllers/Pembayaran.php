@@ -11,10 +11,11 @@ class Pembayaran extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model(array('General_model'));
+        $this->load->model(array('General_model', 'Payment_model'));
         // $this->load->helper(array('DataStructure'));
         $this->db->db_debug = TRUE;
     }
+
     function index($data_return = NULL)
     {
 
@@ -22,6 +23,7 @@ class Pembayaran extends CI_Controller
         $this->load->model('General_model');
         $data['satuan'] = $this->General_model->getAllUnit();
         $data['jenis_pembayaran'] = $this->General_model->getAllJenisPembayaran();
+        $data['ref_account'] = $this->General_model->getAllRefAccount(array('ref_type' => 'payment_method'));
         $data['form_url'] = 'create_pembayaran';
         $data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
 
@@ -49,6 +51,59 @@ class Pembayaran extends CI_Controller
 
         // DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
         $this->load->view('main/index.php', $data);
+    }
+
+    public function jenis_pembayaran()
+    {
+        try {
+            // $crud = $this->SecurityModel->Aksessbility_VCRUD('pembayaran', 'jenis_pembayaran', 'view');
+            $data['accounts'] = $this->General_model->getAllBaganAkun(array('by_DataStructure' => true));
+            $data['title'] = 'List Jenis Pembayaran';
+            $data['main_view'] = 'pembayaran/jenis_pembayaran';
+            // $data['vcrud'] = $crud;
+            $data['vcrud'] = array('parent_id' => 32, 'id_menulist' => 89);
+            $this->load->view('main/index2.php', $data);
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
+
+    public function ref_accounts()
+    {
+        try {
+            // $crud = $this->SecurityModel->Aksessbility_VCRUD('pembayaran', 'jenis_pembayaran', 'view');
+            $data['accounts'] = $this->General_model->getAllBaganAkun(array('by_DataStructure' => true));
+            $data['payment_method'] = $this->General_model->getAllRefAccount(array('ref_type' => 'payment_method'));
+            $data['title'] = 'List Ref Accounts';
+            $data['main_view'] = 'pembayaran/ref_accounts';
+            // $data['vcrud'] = $crud;
+            $data['vcrud'] = array('parent_id' => 32, 'id_menulist' => 89);
+            $this->load->view('main/index2.php', $data);
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
+
+    public function editRefAccount()
+    {
+        try {
+            // $this->SecurityModel->Aksessbility_VCRUD('production', 'product_list', 'update', true);
+            $data = $this->input->post();
+            // $data['default_price'] =
+            //     number_format(
+            //         str_replace(',', '.', preg_replace('#[^,0-9-]+#i', '', $data['default_price'])),
+            //         2,
+            //         '.',
+            //         ''
+            //     );
+            $accounts = $this->Payment_model->editRefAccount($data);
+            $data = $this->General_model->getAllRefAccount(array('id' => $accounts, 'by_id' => true))[$accounts];
+            echo json_encode(array('error' => false, 'data' => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
     }
 
     function create2($data_return = NULL)
@@ -106,6 +161,22 @@ class Pembayaran extends CI_Controller
             ExceptionHandler::handle($e);
         }
     }
+
+    public function editJenisPembayaran()
+    {
+        try {
+            $this->load->model(array('SecurityModel', 'InvoiceModel'));
+            $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
+            $data = $this->input->post();
+            $this->Payment_model->editJenisPembayaran($data);
+            $data = $this->General_model->getAllJenisPembayaran(array('id' =>  $data['id'], 'by_id' => true))[$data['id']];
+            echo json_encode(array("error" => false, "data" => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
+
 
     //pembayaran/clear_temp_pembayaran
     //USED TO CLEAR TEMP INVOICE
@@ -1820,7 +1891,8 @@ class Pembayaran extends CI_Controller
         $this->load->model('InvoiceModel');
         if ($pembayaran_no != NULL) {
             $result = $this->InvoiceModel->getAllPembayaran(array('id' =>  $pembayaran_no));
-
+            // echo json_encode($result);
+            // die();
             if (empty($result)) {
                 $data['main_view'] = 'error-5';
                 $data['message'] = 'Sepertinya data yang anda cari tidak ditemukan atau sudah di hapus.';
@@ -2317,78 +2389,128 @@ class Pembayaran extends CI_Controller
 
     function create_pembayaran()
     {
-        $status = FALSE;
-        $data = $this->input->post();
-        // echo json_encode($data);
-        // die();
-        if (empty($data['manual_math'])) {
-            $data['manual_math'] = 'off';
-        }
-        if ($data['manual_math'] == 'on') {
-            $data['manual_math'] = 1;
-        } else {
-            $data['manual_math'] = 0;
-        }
-        $data['am_pph'] = preg_replace("/[^0-9]/", "", $data['am_pph']);
-        $data['am_jasa'] = preg_replace("/[^0-9]/", "", $data['am_jasa']);
-        $data['lebih_bayar_am'] = preg_replace("/[^0-9]/", "", $data['lebih_bayar_am']);
-        $data['kurang_bayar_am'] = preg_replace("/[^0-9]/", "", $data['kurang_bayar_am']);
-
-        $count_rows = count($data['amount']);
-        // if()
-        if (empty($data['ppn_pph'])) {
-            $data['ppn_pph'] = '0';
-        } else {
-            $data['ppn_pph'] = '1';
-        }
-
-        if (empty($data['date'])) {
-            $data['date'] = date('Y-m-d');
-        }
-
-        for ($i = 0; $i < $count_rows; $i++) {
-            if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
-                $status = TRUE;
-            $data['amount'][$i] = preg_replace("/[^0-9]/", "", $data['amount'][$i]);
-        }
-
-        if ($status) {
-            $this->load->model('Transaction_model');
-            $this->load->model('Crud_model');
-
-            $result = $this->Transaction_model->pembayaran_entry($data);
-            $this->Crud_model->insert_data('notification', array('notification_url' => 'pembayaran/show/' . $result['order_id'], 'parent_id' => $result['order_id'], 'to_role' => '23', 'status' => 0, 'deskripsi' => 'Pembayaran Mitra', 'agent_name' => $this->session->userdata('user_id')['name']));
-
+        try {
+            $status = FALSE;
+            $data = $this->input->post();
+            // echo json_encode($data);
             // die();
-            if ($result != NULL) {
-                // $this->addQRCode('inv/', $result['order_id'], $result['token']);
-                // $this->Transaction_model->activity_edit($result, $acc);
-                $array_msg = array(
-                    'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',
-                    'alert' => 'info'
-                );
-                $this->session->set_flashdata('status', $array_msg);
-                redirect('pembayaran/show/' . $result['order_id']);
-            } else {
-                $array_msg = array(
-                    'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
-                    'alert' => 'danger'
-                );
-                $this->session->set_flashdata('status', $array_msg);
-                $this->index($data);
-                return;
+            if (empty($data['manual_math'])) {
+                $data['manual_math'] = 'off';
             }
-        } else {
-            $array_msg = array(
-                'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
-                'alert' => 'danger'
-            );
-            $this->session->set_flashdata('status', $array_msg);
-            $this->index($data);
-            return;
-            // redirect('statements/journal_voucher');
+            if ($data['manual_math'] == 'on') {
+                $data['manual_math'] = 1;
+            } else {
+                $data['manual_math'] = 0;
+            }
+            // $data['am_pph'] = preg_replace("/[^0-9]/", "", $data['am_pph']);
+            $data['am_pph'] = substr(preg_replace("/[^0-9]/", "", $data['am_pph']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['am_pph']), -2);
+            $data['am_jasa'] = substr(preg_replace("/[^0-9]/", "", $data['am_jasa']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['am_jasa']), -2);
+            $data['lebih_bayar_am'] = substr(preg_replace("/[^0-9]/", "", $data['lebih_bayar_am']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['lebih_bayar_am']), -2);
+            $data['kurang_bayar_am'] = substr(preg_replace("/[^0-9]/", "", $data['kurang_bayar_am']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['kurang_bayar_am']), -2);
+            $data['total_final'] = substr(preg_replace("/[^0-9]/", "", $data['total_final']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['total_final']), -2);
+            $data['sub_total'] = substr(preg_replace("/[^0-9]/", "", $data['sub_total']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['sub_total']), -2);
+            $data['sub_total_2'] = substr(preg_replace("/[^0-9]/", "", $data['sub_total_2']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['sub_total_2']), -2);
+            if (!empty($data['pembulatan'])) $data['pembulatan'] = substr(preg_replace("/[^0-9]/", "", $data['pembulatan']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['pembulatan']), -2);
+
+            $count_rows = count($data['amount']);
+            // if()
+            if (empty($data['ppn_pph'])) {
+                $data['ppn_pph'] = '0';
+            } else {
+                $data['ppn_pph'] = '1';
+            }
+
+            if (empty($data['date'])) {
+                $data['date'] = date('Y-m-d');
+            }
+
+            for ($i = 0; $i < $count_rows; $i++) {
+                if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
+                    $status = TRUE;
+                $data['amount'][$i] = preg_replace("/[^0-9]/", "", $data['amount'][$i]);
+            }
+
+            if ($status) {
+                $this->load->model('Transaction_model');
+                $this->load->model('Crud_model');
+                $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date'], 'AK');
+                $data['generalentry'] = array(
+                    'date' => $data['date'],
+                    'naration' => $data['description'],
+                    'customer_id' => $data['customer_id'],
+                    'no_jurnal' => $this->General_model->gen_number($data['date'], 'AK'),
+                    'generated_source' => 'Pembayaran'
+                );
+
+                $i = 0;
+                $jp = $this->General_model->getAllJenisPembayaran(array('by_id' => true, 'id' => $data['jenis_pembayaran']))[$data['jenis_pembayaran']];
+                $data['sub_entry'][$i] = array(
+                    'accounthead' => $data['status_pembayaran'] == 'paid' ? $jp['ac_paid'] : $jp['ac_unpaid'],
+                    'type' => $jp['ac_unpaid_type'],
+                    'amount' => $data['sub_total_2']
+                );
+                $i++;
+                if (!empty($data['am_pph'])) {
+                    $jp = $this->General_model->getAllRefAccount(array('ref_type' => 'pph_23'))[0];
+                    $data['sub_entry'][$i] = array(
+                        'accounthead' => $jp['ref_account'],
+                        'type' => 1,
+                        'amount' => $data['am_pph']
+                    );
+                    $i++;
+                }
+                $jp = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_method']))[$data['payment_method']];
+                $data['sub_entry'][$i] = array(
+                    'accounthead' => $jp['ref_account'],
+                    'type' => 1,
+                    'amount' => $data['total_final']
+                );
+                $i++;
+
+
+
+                // for ($i = 0; $i < 2; $i++) {
+                //     $data['sub_entry'][$i] = array(
+                //         'account_head' => $jp['ac_paid'],
+                //         'type' => $jp['ac_paid_type'],
+                //         'amount' => substr($data['total_final'], 0, -2) . '.' . substr($data['total_final'], -2)
+                //     );
+                // }
+                // echo json_encode($data);
+                // die();
+                $result = $this->Payment_model->pembayaran_entry($data);
+                // die();
+                $this->Crud_model->insert_data('notification', array('notification_url' => 'pembayaran/show/' . $result['order_id'], 'parent_id' => $result['order_id'], 'parent2_id' => $result['parent2_id'], 'to_role' => '23', 'status' => 1, 'deskripsi' => 'Pembayaran Mitra', 'agent_name' => $this->session->userdata('user_id')['name']));
+
+                // die();
+                if ($result != NULL) {
+                    // $this->addQRCode('inv/', $result['order_id'], $result['token']);
+                    // $this->Transaction_model->activity_edit($result, $acc);
+                    // $array_msg = array(
+                    //     'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',
+                    //     'alert' => 'info'
+                    // );
+                    // $this->session->set_flashdata('status', $array_msg);
+                    // redirect('pembayaran/show/' . $result['order_id']);
+                } else {
+                    throw new UserException('Please check data!');
+
+                    // $array_msg = array(
+                    //     'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
+                    //     'alert' => 'danger'
+                    // );
+                    // $this->session->set_flashdata('status', $array_msg);
+                    // $this->index($data);
+                    // return;
+                }
+            } else {
+                throw new UserException('Please check data!');
+            }
+            echo json_encode(array('error' => false, 'data' => $result['order_id']));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
         }
-        redirect('pembayaran');
+        // redirect('pembayaran');
     }
 
     function edit_process_pembayaran()

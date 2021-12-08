@@ -63,8 +63,8 @@ class InvoiceModel extends CI_Model
         $this->db->join('mp_banks', 'mp_banks.id = mp_pembayaran.payment_metode', 'LEFT');
         $this->db->join('mp_payee', 'mp_payee.id = mp_pembayaran.customer_id', 'LEFT');
         $this->db->join('mp_users', 'mp_users.id = mp_pembayaran.acc_1', 'LEFT');
-        $this->db->join('notification', 'notification.parent_id = mp_pembayaran.id', 'LEFT');
-        $this->db->where('notification.jenis', 'pembayaran');
+        $this->db->join('notification', 'notification.parent_id = mp_pembayaran.id AND notification.jenis = "pembayaran"', 'LEFT');
+        // $this->db->where('notification.jenis', 'pembayaran');
         // $this->db->where('date <=', $date2);
         $this->db->order_by('mp_pembayaran.id', 'DESC');
         $query = $this->db->get();

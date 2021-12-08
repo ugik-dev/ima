@@ -36,6 +36,29 @@ class General extends CI_Controller
         }
     }
 
+    public function getAllJenisPembayaran()
+    {
+        try {
+            $filter = $this->input->get();
+            // $filter
+            $data = $this->General_model->getAllJenisPembayaran($filter);
+            echo json_encode(array('error' => false, 'data' => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
+    public function getAllRefAccounts()
+    {
+        try {
+            $filter = $this->input->get();
+            $data = $this->General_model->getAllRefAccount($filter);
+            echo json_encode(array('error' => false, 'data' => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
 
     public function product_search($search_result)
     {
