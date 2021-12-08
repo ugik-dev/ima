@@ -505,10 +505,9 @@
                     }
                     //  return;
                     var d = json['data']
-                    dataBanks[d['id']] = d;
+
                     swal.fire(swalSuccessConfigure);
-                    // renderBanks(dataBanks);
-                    // BankModal.self.modal('hide');
+                    window.location = '<?= base_url() ?>pembayaran/show/' + d;
                 },
                 error: function(e) {}
             });
