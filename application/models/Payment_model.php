@@ -380,6 +380,7 @@ class Payment_model extends CI_Model
             'kurang_bayar_am' => $data['kurang_bayar_am'],
             'lebih_bayar_ket' => $data['lebih_bayar_ket'],
             'kurang_bayar_ket' => $data['kurang_bayar_ket'],
+            'jenis_pembayaran' => $data['jenis_pembayaran'],
             'sub_total' => $data['sub_total'],
             'sub_total_2' => $data['sub_total_2'],
             'pembulatan' => $data['pembulatan'],

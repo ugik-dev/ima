@@ -428,7 +428,6 @@ class Pembayaran extends CI_Controller
 
             $this->load->model(array('SecurityModel', 'InvoiceModel'));
             $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
-
             $dataContent = $this->InvoiceModel->getAllPembayaran(array('id' =>  $id))[0];
             $acc_role = $this->SecurityModel->MultiplerolesStatus('Akuntansi');
             if ($dataContent['agen_id'] != $this->session->userdata('user_id')['id'] && (!$acc_role))
@@ -473,6 +472,8 @@ class Pembayaran extends CI_Controller
             $data['satuan'] = $this->General_model->getAllUnit();
             $data['jenis_pembayaran'] = $this->General_model->getAllJenisPembayaran();
             $data['form_url'] = 'edit_process_pembayaran';
+            $data['ref_account'] = $this->General_model->getAllRefAccount(array('ref_type' => 'payment_method'));
+
             // DEFINES WHICH PAGE TO RENDER
             $data['main_view'] = 'pembayaran/edit';
 

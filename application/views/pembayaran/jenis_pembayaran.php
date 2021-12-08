@@ -28,11 +28,11 @@
                          <table class="table table-bordered table-hover table-checkable mt-10" id="FDataTable">
                              <thead>
                                  <tr>
-                                     <th>Nama Payment</th>
-                                     <th>Harga Default</th>
-                                     <th>Pajak</th>
-                                     <th>Akun Pendapatan</th>
-                                     <th>Status</th>
+                                     <th>ID</th>
+                                     <th>Nama Pembayaran</th>
+                                     <th>Akun saat Lunas</th>
+                                     <th>Akun saat Hutang</th>
+                                     <th>Aksi</th>
                                  </tr>
                              </thead>
                              <tbody>
@@ -311,7 +311,7 @@
                  var button = `    ${ editButton + deleteButton} `;
 
 
-                 renderData.push([d['id'], d['jenis_pembayaran'], d['ac_paid'], d['ac_unpaid'], button]);
+                 renderData.push([d['id'], d['jenis_pembayaran'], d['name_paid'], d['name_unpaid'], button]);
              });
              FDataTable.clear().rows.add(renderData).draw('full-hold');
          }
