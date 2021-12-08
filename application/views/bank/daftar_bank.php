@@ -61,7 +61,7 @@
                             echo form_label('Nama Bank:');
                             $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'bankname', 'id' => 'bankname', 'placeholder' => 'e.g Standard chartered', 'reqiured' => '');
                             echo form_input($data);
-                            $data = array('type' => 'text', 'name' => 'id', 'id' => 'id', 'placeholder' => '');
+                            $data = array('type' => 'hidden', 'name' => 'id', 'id' => 'id', 'placeholder' => '');
                             echo form_input($data);
                             ?>
                      </div>
