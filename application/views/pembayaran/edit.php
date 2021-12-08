@@ -507,7 +507,7 @@
                     var d = json['data']
 
                     swal.fire(swalSuccessConfigure);
-                    window.location = '<?= base_url() ?>pembayaran/show/' + d;
+                    // window.location = '<?= base_url() ?>pembayaran/show/' + d;
                 },
                 error: function(e) {}
             });

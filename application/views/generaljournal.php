@@ -157,11 +157,13 @@
                                         <td class="border-bottom-journal" colspan="5">
                                         <h6">' . (empty($transaction_record['naration']) ? '-' : $transaction_record['naration']) . '</h6>
                                         
-                                        <h7> No Jurnal : ' . $transaction_record['no_jurnal'] . '</h7> 
+                                        <h7> || No Jurnal : ' . $transaction_record['no_jurnal'] . '</h7> 
                                         <br>
                                         ' . $btn_act . '
                                          </td>
-                                        </tr>';
+
+                                        </tr>
+                                        <tr><td colspan="5"><hr></td><tr>';
                                     }
                                     // echo $transaction_records;
                                     ?>

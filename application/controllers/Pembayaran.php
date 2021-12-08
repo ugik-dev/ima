@@ -2514,7 +2514,7 @@ class Pembayaran extends CI_Controller
         // redirect('pembayaran');
     }
 
-    function edit_process_pembayaran()
+    function edit_process_pembayaranold()
     {
         $status = FALSE;
         $data = $this->input->post();
@@ -2587,6 +2587,115 @@ class Pembayaran extends CI_Controller
             // redirect('statements/journal_voucher');
         }
         redirect('pembayaran');
+    }
+    function edit_process_pembayaran()
+    {
+        try {
+            $status = FALSE;
+            $data = $this->input->post();
+            // echo json_encode($data);
+            // die();
+            if (empty($data['manual_math'])) {
+                $data['manual_math'] = 'off';
+            }
+            if ($data['manual_math'] == 'on') {
+                $data['manual_math'] = 1;
+            } else {
+                $data['manual_math'] = 0;
+            }
+            // $data['am_pph'] = preg_replace("/[^0-9]/", "", $data['am_pph']);
+            $data['am_pph'] = substr(preg_replace("/[^0-9]/", "", $data['am_pph']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['am_pph']), -2);
+            $data['am_jasa'] = substr(preg_replace("/[^0-9]/", "", $data['am_jasa']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['am_jasa']), -2);
+            $data['lebih_bayar_am'] = substr(preg_replace("/[^0-9]/", "", $data['lebih_bayar_am']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['lebih_bayar_am']), -2);
+            $data['kurang_bayar_am'] = substr(preg_replace("/[^0-9]/", "", $data['kurang_bayar_am']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['kurang_bayar_am']), -2);
+            $data['total_final'] = substr(preg_replace("/[^0-9]/", "", $data['total_final']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['total_final']), -2);
+            $data['sub_total'] = substr(preg_replace("/[^0-9]/", "", $data['sub_total']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['sub_total']), -2);
+            $data['sub_total_2'] = substr(preg_replace("/[^0-9]/", "", $data['sub_total_2']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['sub_total_2']), -2);
+            if (!empty($data['pembulatan'])) $data['pembulatan'] = substr(preg_replace("/[^0-9]/", "", $data['pembulatan']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['pembulatan']), -2);
+
+            $count_rows = count($data['amount']);
+            // if()
+            if (empty($data['ppn_pph'])) {
+                $data['ppn_pph'] = '0';
+            } else {
+                $data['ppn_pph'] = '1';
+            }
+
+            if (empty($data['date'])) {
+                $data['date'] = date('Y-m-d');
+            }
+
+            for ($i = 0; $i < $count_rows; $i++) {
+                if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
+                    $status = TRUE;
+                $data['amount'][$i] = preg_replace("/[^0-9]/", "", $data['amount'][$i]);
+            }
+
+            if ($status) {
+                $this->load->model('Transaction_model');
+                $this->load->model('Crud_model');
+                $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date'], 'AK');
+                $data['generalentry'] = array(
+                    'date' => $data['date'],
+                    'naration' => $data['description'],
+                    'customer_id' => $data['customer_id'],
+                    'no_jurnal' => $this->General_model->gen_number($data['date'], 'AK'),
+                    'generated_source' => 'Pembayaran'
+                );
+
+                $i = 0;
+                $jp = $this->General_model->getAllJenisPembayaran(array('by_id' => true, 'id' => $data['jenis_pembayaran']))[$data['jenis_pembayaran']];
+                $data['sub_entry'][$i] = array(
+                    'accounthead' => $data['status_pembayaran'] == 'paid' ? $jp['ac_paid'] : $jp['ac_unpaid'],
+                    'type' => $jp['ac_unpaid_type'],
+                    'amount' => $data['sub_total_2']
+                );
+                $i++;
+                if (!empty($data['am_pph'])) {
+                    $jp = $this->General_model->getAllRefAccount(array('ref_type' => 'pph_23'))[0];
+                    $data['sub_entry'][$i] = array(
+                        'accounthead' => $jp['ref_account'],
+                        'type' => 1,
+                        'amount' => $data['am_pph']
+                    );
+                    $i++;
+                }
+                $jp = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_method']))[$data['payment_method']];
+                $data['sub_entry'][$i] = array(
+                    'accounthead' => $jp['ref_account'],
+                    'type' => 1,
+                    'amount' => $data['total_final']
+                );
+                $i++;
+
+
+
+                // for ($i = 0; $i < 2; $i++) {
+                //     $data['sub_entry'][$i] = array(
+                //         'account_head' => $jp['ac_paid'],
+                //         'type' => $jp['ac_paid_type'],
+                //         'amount' => substr($data['total_final'], 0, -2) . '.' . substr($data['total_final'], -2)
+                //     );
+                // }
+                // echo json_encode($data);
+                // die();
+                $result = $this->Payment_model->pembayaran_edit($data);
+                // die();
+                // $this->Crud_model->insert_data('notification', array('notification_url' => 'pembayaran/show/' . $result['order_id'], 'parent_id' => $result['order_id'], 'parent2_id' => $result['parent2_id'], 'to_role' => '23', 'status' => 1, 'deskripsi' => 'Pembayaran Mitra', 'agent_name' => $this->session->userdata('user_id')['name']));
+
+                // die();
+                // if ($result != NULL) {
+                // } else {
+                //     throw new UserException('Please check data!');
+                // }
+            } else {
+                throw new UserException('Please check data!');
+            }
+            echo json_encode(array('error' => false, 'data' => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+        // redirect('pembayaran');
     }
 
     public function addQRCode($url, $id, $token)
