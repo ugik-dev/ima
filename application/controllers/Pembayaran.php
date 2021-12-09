@@ -91,13 +91,6 @@ class Pembayaran extends CI_Controller
         try {
             // $this->SecurityModel->Aksessbility_VCRUD('production', 'product_list', 'update', true);
             $data = $this->input->post();
-            // $data['default_price'] =
-            //     number_format(
-            //         str_replace(',', '.', preg_replace('#[^,0-9-]+#i', '', $data['default_price'])),
-            //         2,
-            //         '.',
-            //         ''
-            //     );
             $accounts = $this->Payment_model->editRefAccount($data);
             $data = $this->General_model->getAllRefAccount(array('id' => $accounts, 'by_id' => true))[$accounts];
             echo json_encode(array('error' => false, 'data' => $data));
@@ -2448,7 +2441,8 @@ class Pembayaran extends CI_Controller
                 $data['sub_entry'][$i] = array(
                     'accounthead' => $data['status_pembayaran'] == 'paid' ? $jp['ac_paid'] : $jp['ac_unpaid'],
                     'type' => $jp['ac_unpaid_type'],
-                    'amount' => $data['sub_total_2']
+                    'amount' => $data['sub_total_2'],
+                    'sub_keterangan' => "Htg " . $data['description'],
                 );
                 $i++;
                 if (!empty($data['am_pph'])) {
@@ -2456,7 +2450,8 @@ class Pembayaran extends CI_Controller
                     $data['sub_entry'][$i] = array(
                         'accounthead' => $jp['ref_account'],
                         'type' => 1,
-                        'amount' => $data['am_pph']
+                        'amount' => $data['am_pph'],
+                        'sub_keterangan' => "Ptg " . $data['description'],
                     );
                     $i++;
                 }
@@ -2464,7 +2459,8 @@ class Pembayaran extends CI_Controller
                 $data['sub_entry'][$i] = array(
                     'accounthead' => $jp['ref_account'],
                     'type' => 1,
-                    'amount' => $data['total_final']
+                    'amount' => $data['total_final'],
+                    'sub_keterangan' => "Ptg " . $data['description'],
                 );
                 $i++;
 
@@ -2639,7 +2635,6 @@ class Pembayaran extends CI_Controller
                     'date' => $data['date'],
                     'naration' => $data['description'],
                     'customer_id' => $data['customer_id'],
-                    'no_jurnal' => $this->General_model->gen_number($data['date'], 'AK'),
                     'generated_source' => 'Pembayaran'
                 );
 
@@ -2648,6 +2643,7 @@ class Pembayaran extends CI_Controller
                 $data['sub_entry'][$i] = array(
                     'accounthead' => $data['status_pembayaran'] == 'paid' ? $jp['ac_paid'] : $jp['ac_unpaid'],
                     'type' => $jp['ac_unpaid_type'],
+                    'sub_keterangan' => 'Htg ' . $data['description'],
                     'amount' => $data['sub_total_2']
                 );
                 $i++;
@@ -2656,6 +2652,7 @@ class Pembayaran extends CI_Controller
                     $data['sub_entry'][$i] = array(
                         'accounthead' => $jp['ref_account'],
                         'type' => 1,
+                        'sub_keterangan' => 'Ptg ' . $data['description'],
                         'amount' => $data['am_pph']
                     );
                     $i++;
@@ -2664,6 +2661,7 @@ class Pembayaran extends CI_Controller
                 $data['sub_entry'][$i] = array(
                     'accounthead' => $jp['ref_account'],
                     'type' => 1,
+                    'sub_keterangan' => 'Htg ' . $data['description'],
                     'amount' => $data['total_final']
                 );
                 $i++;
@@ -2679,6 +2677,7 @@ class Pembayaran extends CI_Controller
                 // }
                 // echo json_encode($data);
                 // die();
+                $data['old_data'] = $this->Payment_model->getAllPembayaran(array('id' => $data['id'], 'by_id' => true))[$data['id']];
                 $result = $this->Payment_model->pembayaran_edit($data);
                 // die();
                 // $this->Crud_model->insert_data('notification', array('notification_url' => 'pembayaran/show/' . $result['order_id'], 'parent_id' => $result['order_id'], 'parent2_id' => $result['parent2_id'], 'to_role' => '23', 'status' => 1, 'deskripsi' => 'Pembayaran Mitra', 'agent_name' => $this->session->userdata('user_id')['name']));

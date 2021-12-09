@@ -5,6 +5,16 @@
 class General_model extends CI_Model
 {
 
+    // function getAllGeneralenral($id)
+    // {
+    //     $this->db->select("gen_lock as gen_lock");
+    //     $this->db->from('mp_generalentry');
+    //     $this->db->where('id',  $id);
+    //     $query = $this->db->get();
+    //     return $query->result_array()[0]['gen_lock'];
+    // }
+
+
     public function getAllBaganAkun($filter = [])
     {
         $this->db->from('mp_head');

@@ -230,7 +230,7 @@
                                             <th>
                                             </th>
                                             <th>
-                                                <select name="status_pembayaran" id="payment_method" class="form-control input-lg">
+                                                <select name="status_pembayaran" id="status_pembayaran" class="form-control input-lg">
                                                     <option value="paid"> Sudah di bayar (Akun Beban)</option>
                                                     <option value="unpaid"> Belum dibayar (Akun Hutang) </option>
                                                 </select>
@@ -273,6 +273,7 @@
     description = $('#description');
     jenis_pembayaran = $('#jenis_pembayaran');
     date_jurnal = $('#date');
+    status_pembayaran = $("#status_pembayaran");
     var pembayaran_form = $('#pembayaran_form');
 
     var id_item = document.getElementsByName('id_item[]');
@@ -331,6 +332,7 @@
         count_val = 0;
         label_jasa = $("#jasa_count");
         label_pph = $("#pph_count");
+
         lebih_bayar_ket = $("#lebih_bayar_ket").val();
         lebih_bayar_am = parseFloat(
             $("#lebih_bayar_am").val().replaceAll(".", "").replaceAll(",", ".")
@@ -622,6 +624,7 @@
         description.val('<?= $data_return['description'] ?>');
         payment_method.val('<?= $data_return['payment_metode'] ?>');
         jenis_pembayaran.val('<?= $data_return['jenis_pembayaran'] ?>');
+        status_pembayaran.val('<?= $data_return['status_pembayaran'] ?>');
         jenis_pembayaran.trigger('change');
         <?php
         $count_rows = count($data_return['amount']);

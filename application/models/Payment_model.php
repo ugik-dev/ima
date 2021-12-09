@@ -18,6 +18,20 @@ class Payment_model extends CI_Model
             return NULL;
         }
     }
+    public function getAllPembayaran($filter = [])
+    {
+        $this->db->from('mp_pembayaran mpp');
+        if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
+        // if (!empty($filter['id_parent1'])) $this->db->where('gen.id', $filter['id']);
+        // $this->db->order_by('gen.status, gen.id,  sub.id_item ', 'DESC');
+        $res = $this->db->get();
+        if (!empty($filter['by_id'])) {
+            return DataStructure::keyValue($res->result_array(), 'id');
+        }
+        $res = $res->result_array();
+        return $res;
+    }
+
 
     public function getDetailTransaction($filter = [], $keys = true)
     {
@@ -361,10 +375,7 @@ class Payment_model extends CI_Model
 
     function pembayaran_entry($data)
     {
-        // $generateRandomString = $this->generateRandomString(32);
-        // die();
-
-        // $trans_data = $data;
+        $this->db->trans_start();
         $trans_data = array(
             'date' => $data['date'],
             'description' => $data['description'],
@@ -384,6 +395,7 @@ class Payment_model extends CI_Model
             'sub_total' => $data['sub_total'],
             'sub_total_2' => $data['sub_total_2'],
             'pembulatan' => $data['pembulatan'],
+            'status_pembayaran' => $data['status_pembayaran'],
             // 'inv_key' => $generateRandomString,
             // 'acc_1' => $data['acc_1'],
             // 'acc_2' => $data['acc_2'],
@@ -392,7 +404,6 @@ class Payment_model extends CI_Model
             'agen_id' => $this->session->userdata('user_id')['id'],
         );
 
-        $this->db->trans_start();
         $this->db->insert('mp_pembayaran', $trans_data);
         $order_id = $this->db->insert_id();
         $total_heads = count($data['amount']);
@@ -412,7 +423,6 @@ class Payment_model extends CI_Model
             }
         }
 
-        // $data['generalentry']['ref_number'] = $this->gen_number($data['generalentry']);
         $data['generalentry']['url'] = 'pembayaran/show/' . $order_id;
         $this->db->insert('mp_generalentry', $data['generalentry']);
 
@@ -423,16 +433,16 @@ class Payment_model extends CI_Model
             $this->db->insert('mp_sub_entry', $sub);
         }
 
-        // $data['sub_entry'][0]['parent_id'] = $order_id;
-        // $data['sub_entry'][1]['parent_id'] = $order_id;
-        // $this->db->insert('mp_sub_entry', $data['sub_entry'][1]);
+        $this->db->set('general_id', $gen_id);
+        $this->db->where('id', $order_id);
+        $this->db->update('mp_pembayaran');
 
-        // $this->db->where('id', $data['id']);
-        // $this->db->set('transaction_status	', 1);
-        // $this->db->set('transaction_id', $order_id);
-        // $this->db->update('dt_bank_transaction');
+        $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
+        $this->db->set("date_acc_0", date('Y-m-d'));
+        $this->db->set("id_transaction", $gen_id);
+        $this->db->insert('mp_approv');
 
-
+        $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'pembayaran/show/' . $order_id, 'sub_id' => $order_id, 'desk' => 'Entry Pembayaran'));
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
@@ -440,7 +450,6 @@ class Payment_model extends CI_Model
             return NULL;
         } else {
             $this->db->trans_commit();
-            $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'pembayaran/show/' . $order_id, 'sub_id' => $order_id, 'desk' => 'Entry Pembayaran'));
         }
         return array('order_id' => $order_id, 'parent2_id' => $gen_id);
     }
@@ -467,19 +476,11 @@ class Payment_model extends CI_Model
             'sub_total' => $data['sub_total'],
             'sub_total_2' => $data['sub_total_2'],
             'pembulatan' => $data['pembulatan'],
-            // 'inv_key' => $generateRandomString,
-            // 'acc_1' => $data['acc_1'],
-            // 'acc_2' => $data['acc_2'],
-            // 'acc_3' => $data['acc_3'],
+            'status_pembayaran' => $data['status_pembayaran'],
             'acc_0' => $this->session->userdata('user_id')['name'],
             'agen_id' => $this->session->userdata('user_id')['id'],
         );
 
-        if ($data['acc_role']) {
-            $trans_data['acc_1'] = $this->session->userdata('user_id')['name'];
-        } else {
-            $trans_data['acc_0'] = $this->session->userdata('user_id')['name'];
-        }
         $this->db->trans_start();
         $this->db->where('id', $data['id']);
         $this->db->update('mp_pembayaran', $trans_data);
@@ -522,6 +523,27 @@ class Payment_model extends CI_Model
                 $this->db->insert('mp_sub_pembayaran', $trans_data);
             }
         }
+        // $this->db->reset_query();
+        $this->db->where('id', $data['old_data']['general_id']);
+        $this->db->update('mp_generalentry', $data['generalentry']);
+
+        // $this->db->reset_query();
+        $this->db->where('parent_id', $data['old_data']['general_id']);
+        $this->db->delete('mp_sub_entry');
+
+        foreach ($data['sub_entry'] as $sub) {
+            $sub['parent_id'] = $data['old_data']['general_id'];
+            $this->db->insert('mp_sub_entry', $sub);
+        }
+
+
+        $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
+        $this->db->set("date_acc_0", date('Y-m-d'));
+        $this->db->where("id_transaction", $data['old_data']['general_id']);
+        $this->db->update('mp_approv');
+
+        $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'pembayaran/show/' . $data['id'], 'sub_id' => $data['id'], 'desk' => 'Edit Pembayaran'));
+
 
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {
@@ -530,7 +552,7 @@ class Payment_model extends CI_Model
             return NULL;
         } else {
             $this->db->trans_commit();
-            $this->record_activity(array('jenis' => 8, 'sub_id' => $data['id'], 'desk' => 'Edit Pembayaran'));
+            // $this->record_activity(array('jenis' => 8, 'sub_id' => $data['id'], 'desk' => 'Edit Pembayaran'));
         }
 
         return $data['id'];

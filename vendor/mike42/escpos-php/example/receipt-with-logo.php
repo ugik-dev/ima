@@ -1,10 +1,12 @@
 <?php
 require __DIR__ . '/../autoload.php';
+
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 
 /* Fill in your own connector here */
+
 $connector = new FilePrintConnector("php://stdout");
 
 /* Information for the receipt */
@@ -26,53 +28,53 @@ $logo = EscposImage::load("resources/escpos-php.png", false);
 $printer = new Printer($connector);
 
 /* Print top logo */
-$printer -> setJustification(Printer::JUSTIFY_CENTER);
-$printer -> graphics($logo);
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer->graphics($logo);
 
 /* Name of shop */
-$printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
-$printer -> text("ExampleMart Ltd.\n");
-$printer -> selectPrintMode();
-$printer -> text("Shop No. 42.\n");
-$printer -> feed();
+$printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
+$printer->text("ExampleMart Ltd.\n");
+$printer->selectPrintMode();
+$printer->text("Shop No. 42.\n");
+$printer->feed();
 
 /* Title of receipt */
-$printer -> setEmphasis(true);
-$printer -> text("SALES INVOICE\n");
-$printer -> setEmphasis(false);
+$printer->setEmphasis(true);
+$printer->text("SALES INVOICE\n");
+$printer->setEmphasis(false);
 
 /* Items */
-$printer -> setJustification(Printer::JUSTIFY_LEFT);
-$printer -> setEmphasis(true);
-$printer -> text(new item('', '$'));
-$printer -> setEmphasis(false);
+$printer->setJustification(Printer::JUSTIFY_LEFT);
+$printer->setEmphasis(true);
+$printer->text(new item('', '$'));
+$printer->setEmphasis(false);
 foreach ($items as $item) {
-    $printer -> text($item);
+    $printer->text($item);
 }
-$printer -> setEmphasis(true);
-$printer -> text($subtotal);
-$printer -> setEmphasis(false);
-$printer -> feed();
+$printer->setEmphasis(true);
+$printer->text($subtotal);
+$printer->setEmphasis(false);
+$printer->feed();
 
 /* Tax and total */
-$printer -> text($tax);
-$printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
-$printer -> text($total);
-$printer -> selectPrintMode();
+$printer->text($tax);
+$printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
+$printer->text($total);
+$printer->selectPrintMode();
 
 /* Footer */
-$printer -> feed(2);
-$printer -> setJustification(Printer::JUSTIFY_CENTER);
-$printer -> text("Thank you for shopping at ExampleMart\n");
-$printer -> text("For trading hours, please visit example.com\n");
-$printer -> feed(2);
-$printer -> text($date . "\n");
+$printer->feed(2);
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer->text("Thank you for shopping at ExampleMart\n");
+$printer->text("For trading hours, please visit example.com\n");
+$printer->feed(2);
+$printer->text($date . "\n");
 
 /* Cut the receipt and open the cash drawer */
-$printer -> cut();
-$printer -> pulse();
+$printer->cut();
+$printer->pulse();
 
-$printer -> close();
+$printer->close();
 
 /* A wrapper to do organise item names & prices into columns */
 class item
@@ -83,22 +85,22 @@ class item
 
     public function __construct($name = '', $price = '', $dollarSign = false)
     {
-        $this -> name = $name;
-        $this -> price = $price;
-        $this -> dollarSign = $dollarSign;
+        $this->name = $name;
+        $this->price = $price;
+        $this->dollarSign = $dollarSign;
     }
-    
+
     public function __toString()
     {
         $rightCols = 10;
         $leftCols = 38;
-        if ($this -> dollarSign) {
+        if ($this->dollarSign) {
             $leftCols = $leftCols / 2 - $rightCols / 2;
         }
-        $left = str_pad($this -> name, $leftCols) ;
-        
-        $sign = ($this -> dollarSign ? '$ ' : '');
-        $right = str_pad($sign . $this -> price, $rightCols, ' ', STR_PAD_LEFT);
+        $left = str_pad($this->name, $leftCols);
+
+        $sign = ($this->dollarSign ? '$ ' : '');
+        $right = str_pad($sign . $this->price, $rightCols, ' ', STR_PAD_LEFT);
         return "$left$right\n";
     }
 }
