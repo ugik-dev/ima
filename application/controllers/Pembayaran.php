@@ -2460,7 +2460,7 @@ class Pembayaran extends CI_Controller
                     'accounthead' => $jp['ref_account'],
                     'type' => 1,
                     'amount' => $data['total_final'],
-                    'sub_keterangan' => "Ptg " . $data['description'],
+                    'sub_keterangan' => "Htg " . $data['description'],
                 );
                 $i++;
 
