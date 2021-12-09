@@ -2690,7 +2690,7 @@ class Pembayaran extends CI_Controller
             } else {
                 throw new UserException('Please check data!');
             }
-            echo json_encode(array('error' => false, 'data' => $data));
+            echo json_encode(array('error' => false, 'data' => $data['id']));
         } catch (Exception $e) {
             ExceptionHandler::handle($e);
         }
