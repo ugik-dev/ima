@@ -638,7 +638,9 @@
             id_item[<?= $i ?>].value = '<?= $data_return['id_item'][$i] ?>';
             amount[<?= $i ?>].value = '<?= $data_return['amount'][$i] ?>';
             qyt[<?= $i ?>].value = '<?= $data_return['qyt'][$i] ?>';
-            nopol[<?= $i ?>].value = '<?= $data_return['nopol'][$i] ?>';
+            nopol[<?= $i ?>].value = '<?php
+                                        // $data_return['nopol'][$i] 
+                                        ?>';
             date_item[<?= $i ?>].value = '<?= $data_return['date_item'][$i] ?>';
             keterangan_item[<?= $i ?>].value = '<?= $data_return['keterangan_item'][$i] ?>';
             satuan[<?= $i ?>].value = '<?= $data_return['satuan'][$i] ?>';
