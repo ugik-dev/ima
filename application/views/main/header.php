@@ -39,7 +39,7 @@
     <!-- Datatable css -->
     <!-- <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/datatables/dataTables.bootstrap.css"> -->
     <!-- Select2 -->
-    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/select2/select2.min.css">
+    <!-- <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/select2/select2.min.css"> -->
     <!-- Bootstrap Color Picker -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/colorpicker/bootstrap-colorpicker.min.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/css/custom.css">
