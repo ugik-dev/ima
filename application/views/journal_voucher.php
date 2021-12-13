@@ -76,9 +76,33 @@
                                 <tbody id="transaction_table_body">
                                     <tr>
                                         <td>
-                                            <select name="account_head[]" class="form-control select2 input-lg">
-                                                <?php echo $accounts_records; ?>
+                                            <select name="account_head[]" id='account_head[]' class="form-control select2">
+                                                <option value=""> ---------------------------------------------------- </option>
+                                                <?php
+                                                foreach ($accounts_records as $lv1) {
+                                                    // echo '<optgroup label="[' . $lv1['head_number'] . '] ' . $lv1['name'] . '">';
+                                                    foreach ($lv1['children'] as $lv2) {
+                                                        echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
+                                                        foreach ($lv2['children'] as $lv3) {
+                                                            if (empty($lv3['children'])) {
+                                                                echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
+                                                                echo '</option>';
+                                                            } else {
+                                                                echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
+                                                                foreach ($lv3['children'] as $lv4) {
+                                                                    echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
+                                                                    echo '</option>';
+                                                                }
+                                                                echo '</optgroup>';
+                                                            }
+                                                        }
+                                                        echo '</optgroup>';
+                                                    }
+                                                    // echo '</optgroup>';
+                                                }
+                                                ?>
                                             </select>
+
                                         </td>
                                         <!-- <td>
                                         </td> -->
@@ -111,9 +135,33 @@
                                     ?>
                                             <tr>
                                                 <td>
-                                                    <select name="account_head[]" class="form-control select2 input-lg">
-                                                        <?php echo $accounts_records; ?>
+                                                    <select name="account_head[]" id='account_head[]' class="form-control select2">
+                                                        <option value=""> ---------------------------------------------------- </option>
+                                                        <?php
+                                                        foreach ($accounts_records as $lv1) {
+                                                            // echo '<optgroup label="[' . $lv1['head_number'] . '] ' . $lv1['name'] . '">';
+                                                            foreach ($lv1['children'] as $lv2) {
+                                                                echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
+                                                                foreach ($lv2['children'] as $lv3) {
+                                                                    if (empty($lv3['children'])) {
+                                                                        echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
+                                                                        echo '</option>';
+                                                                    } else {
+                                                                        echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
+                                                                        foreach ($lv3['children'] as $lv4) {
+                                                                            echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
+                                                                            echo '</option>';
+                                                                        }
+                                                                        echo '</optgroup>';
+                                                                    }
+                                                                }
+                                                                echo '</optgroup>';
+                                                            }
+                                                            // echo '</optgroup>';
+                                                        }
+                                                        ?>
                                                     </select>
+
                                                 </td>
                                                 <!-- <td>
                                         </td> -->

@@ -20,8 +20,69 @@ class Payment_model extends CI_Model
     }
     public function getAllPembayaran($filter = [])
     {
+        $this->db->select('mpp.* , gen.no_jurnal');
         $this->db->from('mp_pembayaran mpp');
+        $this->db->join('mp_generalentry gen', 'gen.id = mpp.general_id', 'LEFT');
         if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
+        // if (!empty($filter['id_parent1'])) $this->db->where('gen.id', $filter['id']);
+        // $this->db->order_by('gen.status, gen.id,  sub.id_item ', 'DESC');
+        $res = $this->db->get();
+        if (!empty($filter['by_id'])) {
+            return DataStructure::keyValue($res->result_array(), 'id');
+        }
+        $res = $res->result_array();
+        return $res;
+    }
+
+    public function getAllPembayaranWithItem($filter = [])
+    {
+        $this->db->select('mpp.* , gen.no_jurnal,sub.id as item_id, sub.parent_id as parent_item, amount, qyt, date_item, keterangan_item, satuan, nopol');
+        $this->db->from('mp_pembayaran mpp');
+        $this->db->join('mp_generalentry gen', 'gen.id = mpp.general_id', 'LEFT');
+        $this->db->join('mp_sub_pembayaran sub', 'mpp.id = sub.parent_id', 'LEFT');
+        if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
+        // if (!empty($filter['id_parent1'])) $this->db->where('gen.id', $filter['id']);
+        // $this->db->order_by('gen.status, gen.id,  sub.id_item ', 'DESC');
+        $res = $this->db->get();
+        $ret = DataStructure::groupByRecursive2(
+            $res->result_array(),
+            ['id'],
+            ['item_id'],
+            [
+                [
+                    'id', 'no_jurnal', 'id', 'input_date', 'agen_id', 'acc_0', 'acc_1', 'acc_2', 'acc_3', 'date',
+                    'description', 'customer_id', 'payment_metode', 'ppn_pph', 'no_pembayaran', 'inv_key', 'percent_jasa', 'percent_pph',
+                    'am_jasa', 'am_pph', 'manual_math', 'par_label', 'par_am', 'sub_total', 'sub_total_2', 'jenis_pembayaran',
+                    'lebih_bayar_ket', 'lebih_bayar_am', 'kurang_bayar_ket', 'kurang_bayar_am', 'pembulatan', 'payed', 'am_back', 'status_pembayaran', 'general_id'
+                ],
+                ["item_id", "amount", "qyt", "date_item", 'nopol', "keterangan_item", "satuan"]
+            ],
+            ['items']
+        );
+        // $res = $res->result_array();
+        return $ret;
+    }
+
+    public function getAllPembayaranItem($filter = [])
+    {
+        $this->db->select("mp_sub_pembayaran.*");
+        $this->db->from('mp_sub_pembayaran');
+        $this->db->where('mp_sub_pembayaran.parent_id =', $filter['parent_id']);
+        $sub_query = $this->db->get();
+        if ($sub_query->num_rows() > 0) {
+            $sub_query =  $sub_query->result_array();
+            $sub_query;
+        }
+    }
+    public function getAllPelunasan($filter = [])
+    {
+        $this->db->select('mpp.* , us.agentname , gen.no_jurnal');
+        $this->db->from('dt_pelunasan_mitra mpp');
+        $this->db->join('mp_users us', 'mpp.agen_id = us.id', 'LEFT');
+        $this->db->join('mp_generalentry gen', 'gen.id = mpp.general_id', 'LEFT');
+        if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
+        if (!empty($filter['parent_id'])) $this->db->where('mpp.parent_id', $filter['parent_id']);
+        if (!empty($filter['ex_id'])) $this->db->where('mpp.id <> ' . $filter['ex_id']);
         // if (!empty($filter['id_parent1'])) $this->db->where('gen.id', $filter['id']);
         // $this->db->order_by('gen.status, gen.id,  sub.id_item ', 'DESC');
         $res = $this->db->get();
@@ -396,6 +457,9 @@ class Payment_model extends CI_Model
             'sub_total_2' => $data['sub_total_2'],
             'pembulatan' => $data['pembulatan'],
             'status_pembayaran' => $data['status_pembayaran'],
+            'payed' => $data['payed'],
+            'lebih_bayar_ac' => $data['lebih_bayar_ac'],
+            'kurang_bayar_ac' => $data['kurang_bayar_ac'],
             // 'inv_key' => $generateRandomString,
             // 'acc_1' => $data['acc_1'],
             // 'acc_2' => $data['acc_2'],
@@ -477,6 +541,9 @@ class Payment_model extends CI_Model
             'sub_total_2' => $data['sub_total_2'],
             'pembulatan' => $data['pembulatan'],
             'status_pembayaran' => $data['status_pembayaran'],
+            'lebih_bayar_ac' => $data['lebih_bayar_ac'],
+            'kurang_bayar_ac' => $data['kurang_bayar_ac'],
+            'payed' => $data['payed'],
             'acc_0' => $this->session->userdata('user_id')['name'],
             'agen_id' => $this->session->userdata('user_id')['id'],
         );
@@ -523,11 +590,11 @@ class Payment_model extends CI_Model
                 $this->db->insert('mp_sub_pembayaran', $trans_data);
             }
         }
-        // $this->db->reset_query();
+
+        // UPDATE GENERAL ENTRY 
         $this->db->where('id', $data['old_data']['general_id']);
         $this->db->update('mp_generalentry', $data['generalentry']);
 
-        // $this->db->reset_query();
         $this->db->where('parent_id', $data['old_data']['general_id']);
         $this->db->delete('mp_sub_entry');
 
@@ -552,11 +619,158 @@ class Payment_model extends CI_Model
             return NULL;
         } else {
             $this->db->trans_commit();
-            // $this->record_activity(array('jenis' => 8, 'sub_id' => $data['id'], 'desk' => 'Edit Pembayaran'));
+            $this->record_activity(array('jenis' => 8, 'sub_id' => $data['id'], 'desk' => 'Edit Pembayaran'));
         }
 
         return $data['id'];
     }
+
+    function add_pelunasan($data)
+    {
+        $this->db->trans_start();
+        $trans_data = array(
+            'parent_id' => $data['parent_id'],
+            'date_pembayaran' => $data['date_pembayaran'],
+            'nominal' => $data['nominal'],
+            'agen_id' => $this->session->userdata('user_id')['id'],
+        );
+
+        $this->db->insert('dt_pelunasan_mitra', $trans_data);
+        $order_id = $this->db->insert_id();
+
+        $data['generalentry']['url'] = 'pembayaran/show/' . $data['parent_id'];
+        $this->db->insert('mp_generalentry', $data['generalentry']);
+
+        $gen_id = $this->db->insert_id();
+
+        foreach ($data['sub_entry'] as $sub) {
+            $sub['parent_id'] = $gen_id;
+            $this->db->insert('mp_sub_entry', $sub);
+        }
+
+
+        $this->db->set('general_id', $gen_id);
+        $this->db->where('id', $order_id);
+        $this->db->update('dt_pelunasan_mitra');
+
+        $this->db->set("status_pembayaran", $data['status_pembayaran']);
+        $this->db->where("id", $data['parent_id']);
+        $this->db->update('mp_pembayaran');
+
+        $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
+        $this->db->set("date_acc_0", date('Y-m-d'));
+        $this->db->set("id_transaction", $gen_id);
+        $this->db->insert('mp_approv');
+
+        $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'pembayaran/show/' . $data['parent_id'], 'sub_id' => $order_id, 'desk' => 'Entry Pembayaran'));
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $data = NULL;
+            return NULL;
+        } else {
+            $this->db->trans_commit();
+        }
+        return array('order_id' => $order_id, 'parent2_id' => $gen_id);
+    }
+
+    function edit_pelunasan($data)
+    {
+        $this->db->trans_start();
+        $trans_data = array(
+            'parent_id' => $data['parent_id'],
+            'date_pembayaran' => $data['date_pembayaran'],
+            'nominal' => $data['nominal'],
+            'agen_id' => $this->session->userdata('user_id')['id'],
+        );
+
+        $this->db->where('id', $data['id']);
+        $this->db->update('dt_pelunasan_mitra', $trans_data);
+        // $order_id = $this->db->insert_id();
+
+        // $data['generalentry']['url'] = 'pembayaran/show/' . $data['parent_id'];
+        $this->db->where('id', $data['generalentry']['id']);
+        $this->db->update('mp_generalentry', $data['generalentry']);
+
+        // $gen_id = $this->db->insert_id();
+        $this->db->where('parent_id', $data['generalentry']['id']);
+        $this->db->delete('mp_sub_entry');
+
+        foreach ($data['sub_entry'] as $sub) {
+            $sub['parent_id'] = $data['generalentry']['id'];
+            $this->db->insert('mp_sub_entry', $sub);
+        }
+
+
+        // $this->db->set('general_id', $gen_id);
+        // $this->db->where('id', $order_id);
+        // $this->db->update('dt_pelunasan_mitra');
+
+
+        $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
+        $this->db->set("date_acc_0", date('Y-m-d'));
+        $this->db->where("id_transaction", $data['generalentry']['id']);
+        $this->db->update('mp_approv');
+
+        $this->db->set("status_pembayaran", $data['status_pembayaran']);
+        $this->db->where("id", $data['parent_id']);
+        $this->db->update('mp_pembayaran');
+
+
+        $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'pembayaran/show/' . $data['parent_id'], 'sub_id' => $data['parent_id'], 'desk' => 'Edit Pembayaran'));
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $data = NULL;
+            return NULL;
+        } else {
+            $this->db->trans_commit();
+        }
+        return array('order_id' => $data['parent_id'], 'parent2_id' => $data['parent_id']);
+    }
+
+    function delete_pelunasan($data)
+    {
+        $this->db->trans_start();
+
+
+        $this->db->where('id', $data['id']);
+        $this->db->delete('dt_pelunasan_mitra');
+        // $order_id = $this->db->insert_id();
+
+        // $data['generalentry']['url'] = 'pembayaran/show/' . $data['parent_id'];
+        $this->db->where('id', $data['self_data']['general_id']);
+        $this->db->delete('mp_generalentry');
+
+        // $gen_id = $this->db->insert_id();
+        $this->db->where('parent_id', $data['self_data']['general_id']);
+        $this->db->delete('mp_sub_entry');
+
+        // $this->db->set('general_id', $gen_id);
+        // $this->db->where('id', $order_id);
+        // $this->db->update('dt_pelunasan_mitra');
+
+        $this->db->where("id_transaction", $data['self_data']['general_id']);
+        $this->db->delete('mp_approv');
+
+        $this->db->set("status_pembayaran", $data['status_pembayaran']);
+        $this->db->where("id", $data['old_data']['id']);
+        $this->db->update('mp_pembayaran');
+
+
+        $this->record_activity(array('jenis' => '0', 'color' => 'primary',  'desk' => 'Delelte Pembayaran'));
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $data = NULL;
+            return NULL;
+        } else {
+            $this->db->trans_commit();
+        }
+        // return array('order_id' => $data['parent_id'], 'parent2_id' => $data['parent_id']);
+    }
+
+
 
 
     function record_activity($data)

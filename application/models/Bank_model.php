@@ -11,7 +11,7 @@ class Bank_model extends CI_Model
         $this->db->select('bt.*, ba.name as akun_name');
         $this->db->from('mp_banks as bt');
         $this->db->join('mp_head as ba', 'ba.id = bt.relation_head', 'LEFT');
-        if (!empty($filter['id'])) $this->db->where('mp_banks.id', $filter['id']);
+        if (!empty($filter['id'])) $this->db->where('bt.id', $filter['id']);
 
         $query = $this->db->get();
         if (!empty($filter['by_id'])) {
@@ -120,6 +120,7 @@ class Bank_model extends CI_Model
         ExceptionHandler::handleDBError($this->db->error(), "Edit Bank", "Bank");
         return $data['id'];
     }
+
     public function deleteBank($data)
     {
         $this->db->where('id', $data['id']);

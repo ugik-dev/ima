@@ -53,7 +53,7 @@ class General_model extends CI_Model
     public function getAllPayee($filter = [])
     {
         $this->db->from('mp_payee');
-        if (!empty($filter['id'])) $this->db->where('getAllPayee.id', $filter['id']);
+        if (!empty($filter['id'])) $this->db->where('id', $filter['id']);
 
         $query = $this->db->get();
         if (!empty($filter['by_id'])) {
@@ -67,9 +67,10 @@ class General_model extends CI_Model
 
     public function getAllRefAccount($filter = [])
     {
-        $this->db->select('ref_account.*, head.name as ref_account_name');
-        $this->db->from('ref_account');
-        $this->db->join('mp_head as head', 'head.id = ref_account', 'LEFT');
+        $this->db->select('ref.*, head.name as ref_account_name, banks.*');
+        $this->db->from('ref_account ref');
+        $this->db->join('mp_head as head', 'head.id = ref.ref_account', 'LEFT');
+        $this->db->join('mp_banks as banks', 'banks.relation_head = head.id', 'LEFT');
 
         if (!empty($filter['ref_id'])) $this->db->where('ref_id', $filter['ref_id']);
         if (!empty($filter['ref_type'])) $this->db->where('ref_type', $filter['ref_type']);
@@ -139,10 +140,11 @@ class General_model extends CI_Model
     public function getAllJenisPembayaran($filter = [])
     {
 
-        $this->db->select('ref.*, head_paid.name as name_paid, head_unpaid.name as name_unpaid');
+        $this->db->select('ref.*, head_paid.name as name_paid, head_unpaid.name as name_unpaid ,head_piutang.name as name_piutang');
         $this->db->from('ref_jenis_pembayaran as ref');
         $this->db->join('mp_head as head_paid', 'head_paid.id = ref.ac_paid', 'LEFT');
         $this->db->join('mp_head as head_unpaid', 'head_unpaid.id = ref.ac_unpaid', 'LEFT');
+        $this->db->join('mp_head as head_piutang', 'head_piutang.id = ref.ac_piutang', 'LEFT');
         // echo 'sds';
         if (!empty($filter['id'])) $this->db->where('ref.id', $filter['id']);
 

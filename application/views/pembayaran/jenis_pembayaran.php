@@ -32,6 +32,7 @@
                                      <th>Nama Pembayaran</th>
                                      <th>Akun saat Lunas</th>
                                      <th>Akun saat Hutang</th>
+                                     <th>Akun saat Lebih Bayar</th>
                                      <th>Aksi</th>
                                  </tr>
                              </thead>
@@ -44,6 +45,7 @@
          </div>
      </div>
  </div>
+
  <div class="modal fade" id="accounts_modal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
      <div class="modal-dialog modal-lg" role="document">
          <div class="modal-content">
@@ -125,8 +127,54 @@
                          </div>
 
                          <div class="form-group col-sm-9">
-                             <label> Akun Lunas </label>
+                             <label> Akun Hutang </label>
                              <select name="ac_unpaid" id='ac_unpaid' class="form-control select2 input-lg">
+                                 <?php
+                                    foreach ($accounts as $lv1) {
+                                        // echo '<optgroup label="[' . $lv1['head_number'] . '] ' . $lv1['name'] . '">';
+                                        foreach ($lv1['children'] as $lv2) {
+                                            echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
+                                            foreach ($lv2['children'] as $lv3) {
+                                                if (empty($lv3['children'])) {
+                                                    echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
+                                                    echo '</option>';
+                                                } else {
+                                                    echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
+                                                    foreach ($lv3['children'] as $lv4) {
+                                                        echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
+                                                        echo '</option>';
+                                                    }
+                                                    echo '</optgroup>';
+                                                }
+                                            }
+                                            echo '</optgroup>';
+                                        }
+                                        // echo '</optgroup>';
+                                    }
+                                    ?>
+                             </select>
+                         </div>
+                         <div class="col-sm-12">
+                             <hr>
+                         </div>
+                     </div>
+
+                     <div class="row">
+                         <div class="col-sm-12">
+                             <h4>Case Piutang</h4>
+                         </div>
+                         <div class="form-group col-sm-3">
+                             <label>Posisi</label>
+                             <select name="ac_piutang_type" id='ac_piutang_type' class="form-control input-lg">
+                                 <option value="0">Debit</option>
+                                 <option value="1">Kredit</option>
+                             </select>
+
+                         </div>
+
+                         <div class="form-group col-sm-9">
+                             <label> Akun Piutang </label>
+                             <select name="ac_piutang" id='ac_piutang' class="form-control select2 input-lg">
                                  <?php
                                     foreach ($accounts as $lv1) {
                                         // echo '<optgroup label="[' . $lv1['head_number'] . '] ' . $lv1['name'] . '">';
@@ -188,6 +236,8 @@
              'ac_unpaid_type': $('#accounts_modal').find('#ac_unpaid_type'),
              'ac_paid_type': $('#accounts_modal').find('#ac_paid_type'),
              'ac_paid': $('#accounts_modal').find('#ac_paid'),
+             'ac_piutang_type': $('#accounts_modal').find('#ac_piutang_type'),
+             'ac_piutang': $('#accounts_modal').find('#ac_piutang'),
          }
 
 
@@ -311,7 +361,7 @@
                  var button = `    ${ editButton + deleteButton} `;
 
 
-                 renderData.push([d['id'], d['jenis_pembayaran'], d['name_paid'], d['name_unpaid'], button]);
+                 renderData.push([d['id'], d['jenis_pembayaran'], d['name_paid'], d['name_unpaid'], d['name_piutang'], button]);
              });
              FDataTable.clear().rows.add(renderData).draw('full-hold');
          }
@@ -327,7 +377,8 @@
              PaymentModal.ac_unpaid_type.val(currentData['ac_unpaid_type']).change();
              PaymentModal.ac_paid_type.val(currentData['ac_paid_type']).change();
              PaymentModal.ac_unpaid.val(currentData['ac_unpaid']).change();
-             PaymentModal.ac_paid.val(currentData['ac_paid']).change();
+             PaymentModal.ac_piutang_type.val(currentData['ac_piutang_type']).change();
+             PaymentModal.ac_piutang.val(currentData['ac_piutang']).change();
          })
 
 
@@ -374,6 +425,11 @@
                  if (result.dismiss === "cancel") {
                      return;
                  }
+                 swal.fire({
+                     title: 'Loading Payment...',
+                     allowOutsideClick: false
+                 });
+                 swal.showLoading();
                  $.ajax({
                      url: url,
                      'type': 'POST',

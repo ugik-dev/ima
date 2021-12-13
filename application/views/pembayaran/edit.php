@@ -168,7 +168,36 @@
                                             </th>
                                         </tr>
                                         <tr <?= $acc_role == false ? 'hidden' : '' ?>>
-                                            <th colspan="3"></th>
+                                            <th colspan="3">
+                                                <div id="lebih_ac_layout" style="display: none;">
+                                                    <select name="lebih_bayar_ac" id='lebih_bayar_ac' class="form-control select2">
+                                                        <option value=""> --- </option>
+                                                        <?php
+                                                        foreach ($accounts as $lv1) {
+                                                            // echo '<optgroup label="[' . $lv1['head_number'] . '] ' . $lv1['name'] . '">';
+                                                            foreach ($lv1['children'] as $lv2) {
+                                                                echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
+                                                                foreach ($lv2['children'] as $lv3) {
+                                                                    if (empty($lv3['children'])) {
+                                                                        echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
+                                                                        echo '</option>';
+                                                                    } else {
+                                                                        echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
+                                                                        foreach ($lv3['children'] as $lv4) {
+                                                                            echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
+                                                                            echo '</option>';
+                                                                        }
+                                                                        echo '</optgroup>';
+                                                                    }
+                                                                }
+                                                                echo '</optgroup>';
+                                                            }
+                                                            // echo '</optgroup>';
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                            </th>
                                             <th colspan="3">
                                                 <input type="text" class="form-control" id="lebih_bayar_ket" value="<?= (!empty($data_return['lebih_bayar_ket']) ? $data_return['lebih_bayar_ket']  : '') ?>" name="lebih_bayar_ket" placeholder="Keterangan Lebih Bayar">
                                             </th>
@@ -179,7 +208,36 @@
                                         </tr>
 
                                         <tr <?= $acc_role == false ? 'hidden' : '' ?>>
-                                            <th colspan="3"></th>
+                                            <th colspan="3">
+                                                <div id="kurang_ac_layout" style="display: none;">
+                                                    <select name="kurang_bayar_ac" id='kurang_bayar_ac' class="form-control select2">
+                                                        <option value=""> --- </option>
+                                                        <?php
+                                                        foreach ($accounts as $lv1) {
+                                                            // echo '<optgroup label="[' . $lv1['head_number'] . '] ' . $lv1['name'] . '">';
+                                                            foreach ($lv1['children'] as $lv2) {
+                                                                echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
+                                                                foreach ($lv2['children'] as $lv3) {
+                                                                    if (empty($lv3['children'])) {
+                                                                        echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
+                                                                        echo '</option>';
+                                                                    } else {
+                                                                        echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
+                                                                        foreach ($lv3['children'] as $lv4) {
+                                                                            echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
+                                                                            echo '</option>';
+                                                                        }
+                                                                        echo '</optgroup>';
+                                                                    }
+                                                                }
+                                                                echo '</optgroup>';
+                                                            }
+                                                            // echo '</optgroup>';
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                            </th>
                                             <th colspan="3">
                                                 <input type="text" class="form-control" id="kurang_bayar_ket" value="<?= (!empty($data_return['kurang_bayar_ket']) ? $data_return['kurang_bayar_ket']  : '')  ?>" name="kurang_bayar_ket" placeholder="Keterangan Kurang Bayar">
                                             </th>
@@ -222,24 +280,29 @@
                                                 ?>
                                             </th>
                                         </tr>
-
                                         <tr>
+                                            <th> </th>
+                                            <th colspan="2"></th>
+                                            <th colspan="2">Uang yang bayarkan : </th>
+                                            <th>
+                                            </th>
+                                            <th>
+                                                <input name="payed" id="payed" value="0,00" class="form-control mask" required />
+                                            </th>
+                                        </tr>
+                                        <!-- <tr>
                                             <th> </th>
                                             <th colspan="2"></th>
                                             <th colspan="2">Status Pembayaran: </th>
                                             <th>
                                             </th>
                                             <th>
-                                                <select name="status_pembayaran" id="status_pembayaran" class="form-control input-lg">
+                                                <select name="payed" id="payed" class="form-control input-lg">
                                                     <option value="paid"> Sudah di bayar (Akun Beban)</option>
                                                     <option value="unpaid"> Belum dibayar (Akun Hutang) </option>
                                                 </select>
                                             </th>
-                                        </tr>
-
-
-
-
+                                        </tr> -->
                                     </tfoot>
                                 </table>
                             </div>
@@ -273,7 +336,11 @@
     description = $('#description');
     jenis_pembayaran = $('#jenis_pembayaran');
     date_jurnal = $('#date');
-    status_pembayaran = $("#status_pembayaran");
+    kurang_bayar_ac = $('#kurang_bayar_ac');
+    lebih_bayar_ac = $('#lebih_bayar_ac');
+
+
+    payed = $("#payed");
     var pembayaran_form = $('#pembayaran_form');
 
     var id_item = document.getElementsByName('id_item[]');
@@ -426,10 +493,16 @@
 
             if (lebih_bayar_am > 0) {
                 total_final = parseFloat(total_final) - parseFloat(lebih_bayar_am);
+                document.getElementById("lebih_ac_layout").style.display = "block";
+            } else {
+                document.getElementById("lebih_ac_layout").style.display = "none";
             }
 
             if (kurang_bayar_am > 0) {
                 total_final = parseFloat(total_final) + parseFloat(kurang_bayar_am);
+                document.getElementById("kurang_ac_layout").style.display = "block";
+            } else {
+                document.getElementById("kurang_ac_layout").style.display = "none";
             }
 
             if (total_final != "" && total_final != "0") {
@@ -493,6 +566,11 @@
             if (result.dismiss === "cancel") {
                 return;
             }
+            swal.fire({
+                title: 'Loading Payment...',
+                allowOutsideClick: false
+            });
+            swal.showLoading();
             $.ajax({
                 url: url,
                 'type': 'POST',
@@ -624,7 +702,9 @@
         description.val('<?= $data_return['description'] ?>');
         payment_method.val('<?= $data_return['payment_metode'] ?>');
         jenis_pembayaran.val('<?= $data_return['jenis_pembayaran'] ?>');
-        status_pembayaran.val('<?= $data_return['status_pembayaran'] ?>');
+        lebih_bayar_ac.val('<?= $data_return['lebih_bayar_ac'] ?>');
+        kurang_bayar_ac.val('<?= $data_return['kurang_bayar_ac'] ?>');
+        payed.val('<?= $data_return['payed'] ?>');
         jenis_pembayaran.trigger('change');
         <?php
         $count_rows = count($data_return['amount']);

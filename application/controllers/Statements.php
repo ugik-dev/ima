@@ -12,7 +12,7 @@ class Statements extends CI_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model(array('SecurityModel', 'Statement_model', 'Transaction_model'));
+		$this->load->model(array('SecurityModel', 'Statement_model', 'Transaction_model', 'General_model'));
 		$this->SecurityModel->MultiplerolesGuard('Statement');
 		$this->load->helper(array('DataStructure'));
 		$this->db->db_debug = TRUE;
@@ -1096,7 +1096,8 @@ class Statements extends CI_Controller
 		$data['title'] = 'Entri Jurnal';
 		$data['data_return'] = $data_return;
 		$this->load->model('Statement_model');
-		$data['accounts_records'] = $this->Statement_model->chart_list();
+		$data['accounts_records'] = $this->General_model->getAllBaganAkun(array('by_DataStructure' => true));
+		// $data['accounts_records'] = $this->Statement_model->chart_list();
 		$data['patner_record'] = $this->Statement_model->patners_cars_list();
 
 		// DEFINES WHICH PAGE TO RENDER
@@ -1251,7 +1252,9 @@ class Statements extends CI_Controller
 
 		if ($page_name  == 'new_row') {
 			$this->load->model('Statement_model');
-			$data['accounts_records'] = $this->Statement_model->chart_list();
+			// $data['accounts_records'] = $this->Statement_model->chart_list();
+			$data['accounts_records'] = $this->General_model->getAllBaganAkun(array('by_DataStructure' => true));
+
 			$this->load->view('admin_models/accounts/new_row.php', $data);
 		}
 	}
