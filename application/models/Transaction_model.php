@@ -1558,7 +1558,6 @@ class Transaction_model extends CI_Model
             'customer_id' => $data['customer_id'],
             'arr_cars' => $data['arr_cars'],
             'no_jurnal' => $data['no_jurnal'],
-            'generated_source' => 'Journal Voucher'
         );
 
         $this->db->trans_start();

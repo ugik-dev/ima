@@ -204,15 +204,7 @@ class General_model extends CI_Model
         $this->db->where('MONTH(DATE)', explode('-', $date)[1]);
         $this->db->where('YEAR(DATE)', explode('-', $date)[0]);
         $query = $this->db->get();
-        // if (!empty($filter['by_id'])) {
         $res =  $query->result_array();
-        // if ($data['generated_source'] == 'deposit') {
-        //     $s2 = 'DEP';
-        // } else if ($data['generated_source'] == 'paid') {
-        //     $s2 = 'CEK';
-        // } else {
-        //     $s2 = 'JV';
-        // }
 
         if (!empty($res)) {
             $res = $res[0];
@@ -238,6 +230,51 @@ class General_model extends CI_Model
         return $number;
         // }
         // MONTH(happened_at) = 1 and YEAR(happened_at) = 2009
+    }
+
+    public function gen_numberABC($date, $type, $sources)
+    {
+        $this->db->from('mp_generalentry');
+        // $this->db->from('limit', 1);
+        $this->db->limit(1);
+        $this->db->order_by("no_jurnal", 'DESC');
+
+        // if (!empty($filter['account_head'])) $this->db->where('dt_head.id', $filter['account_head']);
+        // if (!empty($filter['id'])) $this->db->where('dt_head.id', $filter['id']);
+        // SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '.', -2), ']', 1)
+        $this->db->where(
+            "SUBSTRING_INDEX(SUBSTRING_INDEX(no_jurnal, '/', 2),'/',-1) = '" . $type . "'"
+        );
+
+        $this->db->where(
+            "generated_source",
+            $sources
+        );
+        $this->db->where('MONTH(DATE)', explode('-', $date)[1]);
+        $this->db->where('YEAR(DATE)', explode('-', $date)[0]);
+        $query = $this->db->get();
+        $res =  $query->result_array();
+
+        if (!empty($res)) {
+            $x = substr($res[0]['no_jurnal'], -1);
+            $x = is_numeric($x);
+            if ($x) {
+                $x = $res[0]['no_jurnal'] . 'B';
+            } else {
+                if (substr($res[0]['no_jurnal'], -1) != 'Z') {
+                    $letter = substr($res[0]['no_jurnal'], -1);
+                    $letterAscii = ord($letter);
+                    $letterAscii++;
+                    $letter = chr($letterAscii);
+                    $x = substr($res[0]['no_jurnal'], 0, -1) . $letter;
+                } else {
+                    $x = substr($res[0]['no_jurnal'], 0, -1) . 'AA';
+                }
+            }
+            return $x;
+        } else {
+            return $this->gen_number($date, $type) . 'A';
+        }
     }
 
     function getRomawi($bln)
