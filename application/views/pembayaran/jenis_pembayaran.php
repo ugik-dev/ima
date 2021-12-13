@@ -377,6 +377,7 @@
              PaymentModal.ac_unpaid_type.val(currentData['ac_unpaid_type']).change();
              PaymentModal.ac_paid_type.val(currentData['ac_paid_type']).change();
              PaymentModal.ac_unpaid.val(currentData['ac_unpaid']).change();
+             PaymentModal.ac_paid.val(currentData['ac_paid']).change();
              PaymentModal.ac_piutang_type.val(currentData['ac_piutang_type']).change();
              PaymentModal.ac_piutang.val(currentData['ac_piutang']).change();
          })
