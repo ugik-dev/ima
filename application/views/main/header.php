@@ -39,7 +39,7 @@
     <!-- Datatable css -->
     <!-- <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/datatables/dataTables.bootstrap.css"> -->
     <!-- Select2 -->
-    <!-- <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/select2/select2.min.css"> -->
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/select2/select2.min.css">
     <!-- Bootstrap Color Picker -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/colorpicker/bootstrap-colorpicker.min.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/css/custom.css">
@@ -53,7 +53,7 @@
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/js/core.js">
     <!-- trree -->
-    <script type='text/javascript' src='http://code.jquery.com/jquery-2.1.0.js'></script>
+    <script type='text/javascript' src='<?php echo base_url(); ?>assets/jquery/jquery-2.1.0.js'></script>
     <script type='text/javascript' src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
     <script src="<?= base_url('assets/') ?>js/FileUploader.js"></script>
