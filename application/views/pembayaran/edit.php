@@ -563,7 +563,7 @@
         // var button = isAdd ? BankModal.addBtn : BankModal.saveEditBtn;
 
         Swal.fire(swalSaveConfigure).then((result) => {
-            if (result.dismiss === "cancel") {
+            if (result.isConfirmed == false) {
                 return;
             }
             // swal.fire({

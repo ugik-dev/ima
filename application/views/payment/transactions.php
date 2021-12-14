@@ -309,7 +309,7 @@
          FDataTable.on('click', '.delete', function() {
              var currentData = $(this).data('id');
              Swal.fire(swalDeleteConfigure).then((result) => {
-                 if (result.dismiss === "cancel") {
+                 if (result.isConfirmed == false) {
                      return;
                  }
                  $.ajax({
@@ -346,7 +346,7 @@
          //      var button = isAdd ? ProductModal.addBtn : ProductModal.saveEditBtn;
 
          //      Swal.fire(swalSaveConfigure).then((result) => {
-         //          if (result.dismiss === "cancel") {
+         //          if (result.isConfirmed == false) {
          //              return;
          //          }
          //          $.ajax({

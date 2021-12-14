@@ -13,7 +13,16 @@ class General extends CI_Controller
         $this->db->db_debug = TRUE;
     }
 
-
+    function getAllPelunasanInvoice()
+    {
+        try {
+            $filter = $this->input->get();
+            $data = $this->General_model->getAllPelunasanInvoice($filter);
+            echo json_encode(array('error' => false, 'data' => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
     public function getAllProduct()
     {
         try {
@@ -42,6 +51,18 @@ class General extends CI_Controller
             $filter = $this->input->get();
             // $filter
             $data = $this->General_model->getAllJenisPembayaran($filter);
+            echo json_encode(array('error' => false, 'data' => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
+    public function getAllJenisInvoice()
+    {
+        try {
+            $filter = $this->input->get();
+            // $filter
+            $data = $this->General_model->getAllJenisInvoice($filter);
             echo json_encode(array('error' => false, 'data' => $data));
         } catch (Exception $e) {
             ExceptionHandler::handle($e);

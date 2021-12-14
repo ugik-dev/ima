@@ -14,6 +14,24 @@ class General_model extends CI_Model
     //     return $query->result_array()[0]['gen_lock'];
     // }
 
+    function getAllPelunasanInvoice($filter = [])
+    {
+        $this->db->select('mpp.* , us.agentname , gen.no_jurnal');
+        $this->db->from('dt_pelunasan_invoice mpp');
+        $this->db->join('mp_users us', 'mpp.agen_id = us.id', 'LEFT');
+        $this->db->join('mp_generalentry gen', 'gen.id = mpp.general_id', 'LEFT');
+        if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
+        if (!empty($filter['parent_id'])) $this->db->where('mpp.parent_id', $filter['parent_id']);
+        if (!empty($filter['ex_id'])) $this->db->where('mpp.id <> ' . $filter['ex_id']);
+        // if (!empty($filter['id_parent1'])) $this->db->where('gen.id', $filter['id']);
+        // $this->db->order_by('gen.status, gen.id,  sub.id_item ', 'DESC');
+        $res = $this->db->get();
+        if (!empty($filter['by_id'])) {
+            return DataStructure::keyValue($res->result_array(), 'id');
+        }
+        $res = $res->result_array();
+        return $res;
+    }
 
     public function getAllBaganAkun($filter = [])
     {
@@ -158,6 +176,31 @@ class General_model extends CI_Model
         return $res;
     }
 
+    public function getAllJenisInvoice($filter = [])
+    {
+
+        $this->db->select('ref.*, head_paid.name as name_paid, head_unpaid.name as name_unpaid ,head_piutang.name as name_piutang');
+        $this->db->from('ref_jenis_invoice as ref');
+        $this->db->join(
+            'mp_head as head_paid',
+            'head_paid.id = ref.ac_paid',
+            'LEFT'
+        );
+        $this->db->join('mp_head as head_unpaid', 'head_unpaid.id = ref.ac_unpaid', 'LEFT');
+        $this->db->join('mp_head as head_piutang', 'head_piutang.id = ref.ac_piutang', 'LEFT');
+        // echo 'sds';
+        if (!empty($filter['id'])) $this->db->where('ref.id', $filter['id']);
+
+        $query = $this->db->get();
+        // var_dump($query);
+        if (!empty($filter['by_id'])) {
+            return DataStructure::keyValue($query->result_array(), 'id');
+        }
+
+        $res = $query->result_array();
+        return $res;
+    }
+
 
     public function profit_monthly()
     {
@@ -191,6 +234,8 @@ class General_model extends CI_Model
     public function gen_number($date, $type)
     {
         $this->db->from('mp_generalentry');
+        // var_dump($date);
+        // die();
         // $this->db->from('limit', 1);
         $this->db->limit(1);
         $this->db->order_by("no_jurnal", 'DESC');
@@ -205,7 +250,6 @@ class General_model extends CI_Model
         $this->db->where('YEAR(DATE)', explode('-', $date)[0]);
         $query = $this->db->get();
         $res =  $query->result_array();
-
         if (!empty($res)) {
             $res = $res[0];
 

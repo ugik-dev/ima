@@ -29,7 +29,7 @@
                              <thead>
                                  <tr>
                                      <th>ID</th>
-                                     <th>Nama Pembayaran</th>
+                                     <th>Nama Invoice</th>
                                      <th>Akun saat Lunas</th>
                                      <th>Akun saat Hutang</th>
                                      <th>Akun saat Lebih Bayar</th>
@@ -61,8 +61,8 @@
                      <div class="form-group col-lg-6">
                          <input name="id" id="id" type="hidden" />
                          <?php
-                            echo form_label('Nama Jenis Pembayaran :');
-                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'jenis_pembayaran', 'id' => 'jenis_pembayaran', 'placeholder' => 'e.g Timah', 'reqiured' => '');
+                            echo form_label('Nama Jenis Invoice :');
+                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'jenis_invoice', 'id' => 'jenis_invoice', 'placeholder' => 'e.g Timah', 'reqiured' => '');
                             echo form_input($data);
                             ?>
                      </div>
@@ -204,7 +204,14 @@
                              <hr>
                          </div>
                      </div>
-
+                     <div class="form-group col-lg-6">
+                         <label>Tujuan Divisi</label>
+                         <input class="form-control" type="text" name="to_divisi" id="to_divisi" />
+                     </div>
+                     <div class="form-group col-lg-6">
+                         <label>Text Paragraph 1</label>
+                         <textarea class="form-control" id="paragraph_1" name="paragraph_1" rows=3></textarea>
+                     </div>
                      <!-- </div> -->
                  </div>
                  <div class="modal-footer">
@@ -231,13 +238,15 @@
              'addBtn': $('#accounts_modal').find('#add_btn'),
              'saveEditBtn': $('#accounts_modal').find('#save_edit_btn'),
              'id': $('#accounts_modal').find('#id'),
-             'jenis_pembayaran': $('#accounts_modal').find('#jenis_pembayaran'),
+             'jenis_invoice': $('#accounts_modal').find('#jenis_invoice'),
              'ac_unpaid': $('#accounts_modal').find('#ac_unpaid'),
              'ac_unpaid_type': $('#accounts_modal').find('#ac_unpaid_type'),
              'ac_paid_type': $('#accounts_modal').find('#ac_paid_type'),
              'ac_paid': $('#accounts_modal').find('#ac_paid'),
              'ac_piutang_type': $('#accounts_modal').find('#ac_piutang_type'),
              'ac_piutang': $('#accounts_modal').find('#ac_piutang'),
+             'to_divisi': $('#accounts_modal').find('#to_divisi'),
+             'paragraph_1': $('#accounts_modal').find('#paragraph_1'),
          }
 
 
@@ -326,7 +335,7 @@
              });
              swal.showLoading();
              return $.ajax({
-                 url: `<?php echo base_url('General/getAllJenisPembayaran?by_id=true') ?>`,
+                 url: `<?php echo base_url('General/getAllJenisInvoice?by_id=true') ?>`,
                  'type': 'GET',
                  data: {},
                  success: function(data) {
@@ -361,7 +370,7 @@
                  var button = `    ${ editButton + deleteButton} `;
 
 
-                 renderData.push([d['id'], d['jenis_pembayaran'], d['name_paid'], d['name_unpaid'], d['name_piutang'], button]);
+                 renderData.push([d['id'], d['jenis_invoice'], d['name_paid'], d['name_unpaid'], d['name_piutang'], button]);
              });
              FDataTable.clear().rows.add(renderData).draw('full-hold');
          }
@@ -373,7 +382,9 @@
              PaymentModal.saveEditBtn.show();
              var currentData = dataPayments[$(this).data('id')];
              PaymentModal.id.val(currentData['id']);
-             PaymentModal.jenis_pembayaran.val(currentData['jenis_pembayaran']);
+             PaymentModal.to_divisi.val(currentData['to_divisi']);
+             PaymentModal.paragraph_1.val(currentData['paragraph_1']);
+             PaymentModal.jenis_invoice.val(currentData['jenis_invoice']);
              PaymentModal.ac_unpaid_type.val(currentData['ac_unpaid_type']).change();
              PaymentModal.ac_paid_type.val(currentData['ac_paid_type']).change();
              PaymentModal.ac_unpaid.val(currentData['ac_unpaid']).change();
@@ -384,44 +395,42 @@
 
 
          FDataTable.on('click', '.delete', function() {
-             //  swal("Simpan Gagal", json['message'], "error");
-             //  return;
-             //  var currentData = $(this).data('id');
-             //  Swal.fire(swalDeleteConfigure).then((result) => {
-             //      if (result.isConfirmed == false) {
-             //          return;
-             //      }
-             //      $.ajax({
-             //          url: "<?= base_url('payment/deletePayment') ?>",
-             //          'type': 'get',
-             //          data: {
-             //              'id': currentData
-             //          },
+             var currentData = $(this).data('id');
+             Swal.fire(swalDeleteConfigure).then((result) => {
+                 if (result.isConfirmed == false) {
+                     return;
+                 }
+                 $.ajax({
+                     url: "<?= base_url('payment/deletePayment') ?>",
+                     'type': 'get',
+                     data: {
+                         'id': currentData
+                     },
 
-             //          success: function(data) {
-             //              var json = JSON.parse(data);
-             //              if (json['error']) {
-             //                  swal("Simpan Gagal", json['message'], "error");
-             //                  return;
-             //              }
-             //              //  return;
-             //              var d = json['data']
-             //              delete dataPayments[d['id']];
-             //              swal.fire("Simpan Berhasil", "", "success");
-             //              renderPayments(dataPayments);
-             //              PaymentModal.self.modal('hide');
-             //          },
-             //          error: function(e) {}
-             //      });
-             //  });
+                     success: function(data) {
+                         var json = JSON.parse(data);
+                         if (json['error']) {
+                             swal("Simpan Gagal", json['message'], "error");
+                             return;
+                         }
+                         //  return;
+                         var d = json['data']
+                         delete dataPayments[d['id']];
+                         swal.fire("Simpan Berhasil", "", "success");
+                         renderPayments(dataPayments);
+                         PaymentModal.self.modal('hide');
+                     },
+                     error: function(e) {}
+                 });
+             });
 
          })
 
          PaymentModal.form.submit(function(event) {
              event.preventDefault();
              var isAdd = PaymentModal.addBtn.is(':visible');
-             var url = "<?= site_url('pembayaran/') ?>";
-             url += isAdd ? "addPayment" : "editJenisPembayaran";
+             var url = "<?= site_url('invoice/') ?>";
+             url += isAdd ? "addPayment" : "editJenisInvoice";
              var button = isAdd ? PaymentModal.addBtn : PaymentModal.saveEditBtn;
 
              Swal.fire(swalSaveConfigure).then((result) => {

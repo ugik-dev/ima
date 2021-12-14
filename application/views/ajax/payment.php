@@ -34,7 +34,7 @@
         event.preventDefault();
         var url = "<?= base_url('payment/') ?>" + action;
         Swal.fire(swalSaveConfigure).then((result) => {
-            if (result.dismiss === "cancel") {
+            if (result.isConfirmed == false) {
                 return;
             }
             $.ajax({

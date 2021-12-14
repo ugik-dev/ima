@@ -17,7 +17,7 @@ class InvoiceModel extends CI_Model
             if (!empty($filter['second_date'])) $this->db->where('date <=', $filter['second_date']);
         }
         $this->db->join('mp_banks', 'mp_banks.id = mp_invoice_v2.payment_metode', 'LEFT');
-        $this->db->join('mp_payee', 'mp_payee.id = mp_invoice_v2.customer_id');
+        $this->db->join('mp_payee', 'mp_payee.id = mp_invoice_v2.customer_id', 'LEFT');
         $this->db->join('mp_users', 'mp_users.id = mp_invoice_v2.acc_1', 'LEFT');
         $this->db->join('notification', 'notification.parent_id = mp_invoice_v2.id AND notification.jenis = "invoice"', 'LEFT');
         // $this->db->where('notification.jenis', 'pembayaran');

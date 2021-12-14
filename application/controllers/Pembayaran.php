@@ -38,7 +38,6 @@ class Pembayaran extends CI_Controller
         $data['ref_account'] = $this->General_model->getAllRefAccount(array('ref_type' => 'payment_method'));
         $data['form_url'] = 'create_pembayaran';
         $data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
-
         $data['accounts'] = $this->General_model->getAllBaganAkun(array('by_DataStructure' => true));
 
 
@@ -185,202 +184,6 @@ class Pembayaran extends CI_Controller
 
 
 
-    //pembayaran/clear_temp_pembayaran
-    //USED TO CLEAR TEMP INVOICE
-    function clear_temp_pembayaran()
-    {
-        // DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
-        $this->load->model('Crud_model');
-
-        //GET THE CURRENT USER
-        $user_name = $this->session->userdata('user_id');
-
-        //FETCH THE ITEM FROM DATABSE TABLE TO ADD AGAIN TO STOCK
-        $result = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_pembayaran', 'pos', $user_name['id']);
-
-        if ($result  != NULL) {
-
-            foreach ($result as $single_item) {
-                //FETCH THE ITEM FROM STOCK TABLE 
-                $result_stock = $this->Crud_model->fetch_record_by_id('mp_productslist', $single_item->product_id);
-
-                // TABLENAME AND ID FOR DATABASE Actions
-                $args = array(
-                    'table_name' => 'mp_productslist',
-                    'id' => $single_item->product_id
-                );
-
-
-                $data = array(
-                    'quantity' => $result_stock[0]->quantity + $single_item->qty
-                );
-
-                // CALL THE METHOD FROM Crud_model CLASS FIRST ARG CONTAINES TABLENAME AND OTHER CONTAINS DATA
-                $this->Crud_model->edit_record_id($args, $data);
-            }
-
-            $this->Crud_model->delete_record_by_userid('mp_temp_barcoder_pembayaran', 'pos', $user_name['id']);
-        }
-
-        //LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-        $data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_pembayaran', 'pos', $user_name['id']);
-
-        $this->load->view('pembayaran_template.php', $data);
-    }
-
-    //pembayaran/add_barcode_item
-    //USED TO ADD ITEM INTO TEMP INVOICE TABLE USING BARCODE
-    function add_barcode_item($barcode)
-    {
-        // DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
-        $this->load->model('Crud_model');
-
-        $user_name = $this->session->userdata('user_id');
-
-        $result = $this->Crud_model->fetch_attr_record_by_id('mp_productslist', 'barcode', $barcode);
-        if ($result != NULL) {
-
-            $check_item_in_temp = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_pembayaran', 'barcode', $barcode, $user_name['id'], 'pos');
-
-            if ($result[0]->quantity > 0) {
-                $stockargs   = array(
-                    'table_name' => 'mp_productslist',
-                    'id' => $result[0]->id,
-                );
-
-                $stockdata = array(
-                    'quantity' => $result[0]->quantity - 1
-                );
-
-                $this->Crud_model->edit_record_id($stockargs, $stockdata);
-
-                if ($check_item_in_temp != NULL) {
-                    $qty = '';
-
-                    $qty = $check_item_in_temp[0]->qty + 1;
-
-                    $args = array(
-                        'table_name' => 'mp_temp_barcoder_pembayaran',
-                        'id' => $check_item_in_temp[0]->id
-                    );
-
-                    $data = array(
-                        'qty' => $qty
-                    );
-
-                    $this->Crud_model->edit_record_id($args, $data);
-                } else {
-                    $tax_amount = ($result[0]->tax / 100) * $result[0]->retail;
-
-                    // ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY FOR EVERY ITERATION
-                    $temp_data = array(
-                        'barcode' => $result[0]->barcode,
-                        'product_no' => $result[0]->sku,
-                        'product_id' => $result[0]->id,
-                        'product_name' => $result[0]->product_name,
-                        'mg' => $result[0]->mg,
-                        'price' => $result[0]->retail,
-                        'purchase' => $result[0]->purchase,
-                        'qty' => 1,
-                        'tax' => $tax_amount,
-                        'agentid' => $user_name['id'],
-                        'source' => 'pos'
-                    );
-
-                    // DEFINES CALL THE FUNCTION OF insert_data FORM Crud_model CLASS
-                    $result = $this->Crud_model->insert_data('mp_temp_barcoder_pembayaran', $temp_data);
-                }
-            }
-        }
-        //LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-        $data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_pembayaran', 'pos', $user_name['id']);
-        // echo json_encode($data);
-        // $this->load->view('pembayaran_template.php', $data);
-    }
-
-    //pembayaran/add_selected_item
-    //USED TO ADD ITEM INTO TEMP INVOICE TABLE USING BARCODE
-    function add_selected_item($id)
-    {
-        // DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
-        $this->load->model('Crud_model');
-        $user_name = $this->session->userdata('user_id');
-
-        if ($id != '') {
-            $result = $this->Crud_model->fetch_record_by_id('mp_productslist', $id);
-
-            $check_item_in_temp = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_pembayaran', 'product_id', $id, $user_name['id'], 'pos');
-
-
-            if ($result[0]->quantity >= 0) {
-                $stockargs   = array(
-                    'table_name' => 'mp_productslist',
-                    'id' => $result[0]->id,
-                );
-
-                $stockdata = array(
-                    'quantity' => $result[0]->quantity - 1
-                );
-
-                $this->Crud_model->edit_record_id($stockargs, $stockdata);
-
-                if ($check_item_in_temp != NULL) {
-                    $qty = $check_item_in_temp[0]->qty + 1;
-
-                    $args = array(
-                        'table_name' => 'mp_temp_barcoder_pembayaran',
-                        'id' => $check_item_in_temp[0]->id
-                    );
-
-                    $data = array(
-                        'qty' => $qty
-                    );
-
-                    $this->Crud_model->edit_record_id($args, $data);
-                } else {
-                    if ($result != NULL) {
-                        $tax_amount = ($result[0]->tax / 100) * $result[0]->retail;
-
-                        // ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY FOR EVERY ITERATION
-                        $args = array(
-                            'barcode' => $result[0]->barcode,
-                            'product_no' => $result[0]->sku,
-                            'product_id' => $result[0]->id,
-                            'product_name' => $result[0]->product_name,
-                            'mg' => $result[0]->mg,
-                            'price' => $result[0]->retail,
-                            'purchase' => $result[0]->purchase,
-                            'qty' => 1,
-                            'tax' => $tax_amount,
-                            'agentid' => $user_name['id'],
-                            'source' => 'pos'
-                        );
-                        // DEFINES CALL THE FUNCTION OF insert_data FORM Crud_model CLASS
-                        $result = $this->Crud_model->insert_data('mp_temp_barcoder_pembayaran', $args);
-                    }
-                }
-            }
-            //LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-            $data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_pembayaran', 'pos', $user_name['id']);
-            // echo json_encode(array('error' => false, 'data' => $id));
-            $this->load->view('pembayaran_template.php', $data);
-        }
-    }
-
-    //pembayaran/search_result_manual
-    //USED TO SEARCH MANUAL ITEMS
-    function search_result_manual($search_result)
-    {
-        if ($search_result != NULL) {
-            // DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
-            $this->load->model('Crud_model');
-
-            $result = $this->Crud_model->search_items_stock($search_result);
-            //LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-            $data['search_result'] = $result;
-            $this->load->view('search_list.php', $data);
-        }
-    }
 
     // pembayaran/manage
     public function manage()
@@ -3036,5 +2839,18 @@ class Pembayaran extends CI_Controller
         $params['size'] = 10;
         $params['savename'] = FCPATH . $config['imagedir'] . $image_name; //simpan image QR CODE ke folder assets/images/
         $this->ciqrcode->generate($params); // fungsi untuk generate QR CODE
+    }
+
+    public function kwitansi_print()
+    {
+        $data = $this->input->get();
+        // echo json_encode($data);
+        // die();
+        if (empty($data['date'])) $data['date'] = date('Y-m-d');
+        $data['date'] = 'Pangkalpinang, ' . $this->tanggal_indonesia($data['date']);
+
+        $data['terbilang'] = $this->terbilang((int)$data['nominal']) . ' Rupiah';
+        $data['nominal'] = number_format((int)$data['nominal'], 0, ',', '.');
+        $this->load->view('pembayaran/print_kwitansi.php', $data);
     }
 }

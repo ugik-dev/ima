@@ -8,6 +8,31 @@ use PhpOffice\PhpWord\Writer\Word2007;
 
 class Invoice extends CI_Controller
 {
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->model(array('General_model', 'Invoice_model', 'Statement_model'));
+		// $this->load->helper(array('DataStructure'));
+		$this->db->db_debug = TRUE;
+	}
+
+
+	public function editJenisInvoice()
+	{
+		try {
+			$this->load->model(array('SecurityModel', 'InvoiceModel'));
+			$this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
+			$data = $this->input->post();
+			$this->Invoice_model->editJenisInvoice($data);
+			$data = $this->General_model->getAllJenisInvoice(array('id' =>  $data['id'], 'by_id' => true))[$data['id']];
+			echo json_encode(array("error" => false, "data" => $data));
+		} catch (Exception $e) {
+			ExceptionHandler::handle($e);
+		}
+	}
+
+
+
 	function index($data_return = NULL)
 	{
 
@@ -26,16 +51,22 @@ class Invoice extends CI_Controller
 		}
 		$this->load->model('Accounts_model');
 
-		$data['banks'] = $this->Accounts_model->getAllBank();
+		// $data['banks'] = $this->Accounts_model->getAllBank();
 		// DEFINES PAGE TITLE
 		$data['title'] = 'Entry Invoice';
 		$data['data_return'] = $data_return;
 		$this->load->model('Statement_model');
 		$data['accounts_records'] = $this->Statement_model->chart_list();
 		$data['patner_record'] = $this->Statement_model->patners_cars_list();
+		$data['jenis_invoice'] = $this->General_model->getAllJenisInvoice();
+		// var_dump($data['jenis_invoice']);
+		// die();
+		$data['satuan'] = $this->General_model->getAllUnit();
+		$data['ref_account'] = $this->General_model->getAllRefAccount(array('ref_type' => 'payment_method'));
+		$data['form_url'] = 'create_invoice';
 
 		// DEFINES WHICH PAGE TO RENDER
-		$data['main_view'] = 'invoice_v2';
+		$data['main_view'] = 'invoice/form_invoice';
 
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
 		$this->load->view('main/index.php', $data);
@@ -95,202 +126,7 @@ class Invoice extends CI_Controller
 		redirect('invoice/manage');
 	}
 
-	//invoice/clear_temp_invoice
-	//USED TO CLEAR TEMP INVOICE
-	function clear_temp_invoice()
-	{
-		// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
-		$this->load->model('Crud_model');
 
-		//GET THE CURRENT USER
-		$user_name = $this->session->userdata('user_id');
-
-		//FETCH THE ITEM FROM DATABSE TABLE TO ADD AGAIN TO STOCK
-		$result = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
-
-		if ($result  != NULL) {
-
-			foreach ($result as $single_item) {
-				//FETCH THE ITEM FROM STOCK TABLE 
-				$result_stock = $this->Crud_model->fetch_record_by_id('mp_productslist', $single_item->product_id);
-
-				// TABLENAME AND ID FOR DATABASE Actions
-				$args = array(
-					'table_name' => 'mp_productslist',
-					'id' => $single_item->product_id
-				);
-
-
-				$data = array(
-					'quantity' => $result_stock[0]->quantity + $single_item->qty
-				);
-
-				// CALL THE METHOD FROM Crud_model CLASS FIRST ARG CONTAINES TABLENAME AND OTHER CONTAINS DATA
-				$this->Crud_model->edit_record_id($args, $data);
-			}
-
-			$this->Crud_model->delete_record_by_userid('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
-		}
-
-		//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
-
-		$this->load->view('invoice_template.php', $data);
-	}
-
-	//invoice/add_barcode_item
-	//USED TO ADD ITEM INTO TEMP INVOICE TABLE USING BARCODE
-	function add_barcode_item($barcode)
-	{
-		// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
-		$this->load->model('Crud_model');
-
-		$user_name = $this->session->userdata('user_id');
-
-		$result = $this->Crud_model->fetch_attr_record_by_id('mp_productslist', 'barcode', $barcode);
-		if ($result != NULL) {
-
-			$check_item_in_temp = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_invoice', 'barcode', $barcode, $user_name['id'], 'pos');
-
-			if ($result[0]->quantity > 0) {
-				$stockargs   = array(
-					'table_name' => 'mp_productslist',
-					'id' => $result[0]->id,
-				);
-
-				$stockdata = array(
-					'quantity' => $result[0]->quantity - 1
-				);
-
-				$this->Crud_model->edit_record_id($stockargs, $stockdata);
-
-				if ($check_item_in_temp != NULL) {
-					$qty = '';
-
-					$qty = $check_item_in_temp[0]->qty + 1;
-
-					$args = array(
-						'table_name' => 'mp_temp_barcoder_invoice',
-						'id' => $check_item_in_temp[0]->id
-					);
-
-					$data = array(
-						'qty' => $qty
-					);
-
-					$this->Crud_model->edit_record_id($args, $data);
-				} else {
-					$tax_amount = ($result[0]->tax / 100) * $result[0]->retail;
-
-					// ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY FOR EVERY ITERATION
-					$temp_data = array(
-						'barcode' => $result[0]->barcode,
-						'product_no' => $result[0]->sku,
-						'product_id' => $result[0]->id,
-						'product_name' => $result[0]->product_name,
-						'mg' => $result[0]->mg,
-						'price' => $result[0]->retail,
-						'purchase' => $result[0]->purchase,
-						'qty' => 1,
-						'tax' => $tax_amount,
-						'agentid' => $user_name['id'],
-						'source' => 'pos'
-					);
-
-					// DEFINES CALL THE FUNCTION OF insert_data FORM Crud_model CLASS
-					$result = $this->Crud_model->insert_data('mp_temp_barcoder_invoice', $temp_data);
-				}
-			}
-		}
-		//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
-		// echo json_encode($data);
-		// $this->load->view('invoice_template.php', $data);
-	}
-
-	//invoice/add_selected_item
-	//USED TO ADD ITEM INTO TEMP INVOICE TABLE USING BARCODE
-	function add_selected_item($id)
-	{
-		// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
-		$this->load->model('Crud_model');
-		$user_name = $this->session->userdata('user_id');
-
-		if ($id != '') {
-			$result = $this->Crud_model->fetch_record_by_id('mp_productslist', $id);
-
-			$check_item_in_temp = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_invoice', 'product_id', $id, $user_name['id'], 'pos');
-
-
-			if ($result[0]->quantity >= 0) {
-				$stockargs   = array(
-					'table_name' => 'mp_productslist',
-					'id' => $result[0]->id,
-				);
-
-				$stockdata = array(
-					'quantity' => $result[0]->quantity - 1
-				);
-
-				$this->Crud_model->edit_record_id($stockargs, $stockdata);
-
-				if ($check_item_in_temp != NULL) {
-					$qty = $check_item_in_temp[0]->qty + 1;
-
-					$args = array(
-						'table_name' => 'mp_temp_barcoder_invoice',
-						'id' => $check_item_in_temp[0]->id
-					);
-
-					$data = array(
-						'qty' => $qty
-					);
-
-					$this->Crud_model->edit_record_id($args, $data);
-				} else {
-					if ($result != NULL) {
-						$tax_amount = ($result[0]->tax / 100) * $result[0]->retail;
-
-						// ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY FOR EVERY ITERATION
-						$args = array(
-							'barcode' => $result[0]->barcode,
-							'product_no' => $result[0]->sku,
-							'product_id' => $result[0]->id,
-							'product_name' => $result[0]->product_name,
-							'mg' => $result[0]->mg,
-							'price' => $result[0]->retail,
-							'purchase' => $result[0]->purchase,
-							'qty' => 1,
-							'tax' => $tax_amount,
-							'agentid' => $user_name['id'],
-							'source' => 'pos'
-						);
-						// DEFINES CALL THE FUNCTION OF insert_data FORM Crud_model CLASS
-						$result = $this->Crud_model->insert_data('mp_temp_barcoder_invoice', $args);
-					}
-				}
-			}
-			//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-			$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
-			// echo json_encode(array('error' => false, 'data' => $id));
-			$this->load->view('invoice_template.php', $data);
-		}
-	}
-
-	//invoice/search_result_manual
-	//USED TO SEARCH MANUAL ITEMS
-	function search_result_manual($search_result)
-	{
-		if ($search_result != NULL) {
-			// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
-			$this->load->model('Crud_model');
-
-			$result = $this->Crud_model->search_items_stock($search_result);
-			//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-			$data['search_result'] = $result;
-			$this->load->view('search_list.php', $data);
-		}
-	}
 
 	// invoice/manage
 	public function manage()
@@ -319,42 +155,12 @@ class Invoice extends CI_Controller
 		// $this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
 
 		$result_invoices = $this->InvoiceModel->getAllInvoice($filter);
-		// echo json_encode($result_invoices);
-		// die();
-
-		// if ($result_invoices != NULL) {
-		$count = 0;
-		// print "<pre>";
-		// print_r($result_invoices);
-		// foreach ($result_invoices as $obj_result_invoices) {
-
-		// 	// FETCH SALES RECORD FROM SALES TABLE
-		// 	$result_sales = $this->Accounts_model->fetch_record_sales('mp_sales', 'order_id', $obj_result_invoices->id);
-		// 	if ($result_sales != NULL) {
-		// 		$collection[$count] = $result_sales;
-		// 		$count++;
-		// 	}
-		// }
-		// // print "<pre>";
-		// print_r($collection);
-		// ASSIGNED THE FETCHED RECORD TO DATA ARRAY TO VIEW
-		// $data['Sales_Record'] = $collection;
 		$data['Model_Title'] = "Edit invoice";
 		$data['Model_Button_Title'] = "Update invoices";
 		$data['invoices_Record'] = $result_invoices;
 
 		$data['main_view'] = 'sales_invoices_v2';
 		$this->load->view('main/index.php', $data);
-		// } else {
-		// 	// DEFINES WHICH PAGE TO RENDER
-		// 	$data['main_view'] = 'main/error_invoices.php';
-		// 	$data['actionresult'] = "invoice/manage";
-		// 	$data['heading1'] = "Tidak ada faktur yang tersedia. ";
-		// 	$data['heading2'] = "Ups! Maaf tidak ada catatan faktur yang tersedia di detail yang diberikan";
-		// 	$data['details'] = "Kami akan segera memperbaikinya. Sementara itu, Anda dapat kembali atau mencoba menggunakan formulir pencarian.";
-		// 	// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
-		// 	$this->load->view('main/index.php', $data);
-		// }
 	}
 
 	public function edit($id)
@@ -1272,10 +1078,14 @@ class Invoice extends CI_Controller
 				$data['main_view'] = 'error-5';
 				$data['message'] = 'Sepertinya data yang anda cari tidak ditemukan atau sudah di hapus.';
 			} else {
-
 				$data['dataContent'] = $result[0];
-				$data['main_view'] = 'invoice_detail';
+				$data['main_view'] = 'invoice/invoice_detail';
+				$data['payment_metode'] = $this->General_model->getAllRefAccount(array('ref_id' => $data['dataContent']['payment_metode']))[0];
+				$data['customer_data'] = $this->General_model->getAllPayee(array('id' => $data['dataContent']['customer_id']));
 			}
+			// echo json_encode($data);
+			// die();
+
 			// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
 			$this->load->view('main/index.php', $data);
 			return;
@@ -1491,281 +1301,8 @@ class Invoice extends CI_Controller
 
 	//invoice/add_auto_invoice
 	//USED TO ADD AUTOMATIC INVOICE
-	function add_auto_invoice()
-	{
 
-		$this->load->model('Transaction_model');
-		$customer_id 	 = html_escape($this->input->post('customer_id'));
-		$discountfield 	 = html_escape($this->input->post('discountfield'));
-		$total_bill 	 = html_escape($this->input->post('total_bill'));
-		$bill_paid 	 	 = html_escape($this->input->post('bill_paid'));
-		$date 			 = date('Y-m-d');
-		$status 		 = 0;
-		$user_name 	     = $this->session->userdata('user_id');
-		$agent 			 = $user_name['name'];
-
-		$this->load->model('Crud_model');
-		$result = $this->Crud_model->fetch_attr_record_by_id('mp_temp_barcoder_invoice', 'agentid', $user_name['id']);
-
-		$customer_previous = $this->return_previous_cus_balance($customer_id);
-
-		if ($result != NULL) {
-			//ASSIGNING DATA TO ARRAY
-			$data1  = array(
-				'discount' => $discountfield,
-				'date' => $date,
-				'status' => $status,
-				'agentname' => $agent,
-				'cus_id' => $customer_id,
-				'total_bill' => $total_bill,
-				'bill_paid' => $bill_paid,
-				'cus_previous' => ''
-			);
-
-			//USED TO CREATE A TRANSACTION FOR SALE AND ACCOUNTS
-			$data = $this->Transaction_model->single_pos_transaction($data1);
-
-			if ($data != NULL) {
-				//CUSTOMER NAME
-				$result = $this->Crud_model->fetch_record_by_id('mp_payee', $customer_id);
-				$cus_name = $result[0]->customer_name;
-
-				//COMPANY NAME
-				$result = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1);
-				$company_name = $result[0]->companyname;
-
-				//PRINTER NAME
-				$result = $this->Crud_model->fetch_attr_record_by_id('mp_printer', 'set_default', 1);
-				if ($result != NULL) {
-					$printer_name = $result[0]->printer_name;
-				} else {
-					$printer_name = '';
-				}
-
-				//ADDRESS 
-				$result = $this->Crud_model->fetch_record_by_id('mp_contactabout', 1);
-				$address = $result[0]->address;
-
-
-				/* Hapus Tanda ini jika aplikasi sudah terkoneksi dengan printer Thermal
-				if($printer_name != '')
-				{
-					//BUSINESS AND OTHER INFO THAT MENTIONED ON THE TOP
-					$general_info = array(
-					'name' => $company_name ,
-					'address' => $address,
-					'receipt' => $data['invoice_id'],
-					'date' => date('Y-m-d'),
-					'customer' => $cus_name,
-					'customer_id' => $customer_id,
-					'served' => $agent,
-					'thanks' => 'Terima kasih telah mengunjungi kami.',
-					'about' => 'Developed by Rumah IT',
-					'contact' => ' Kontak 083814305092',
-					'printer_name' => $printer_name,
-					'text_size' => 1,
-					'discount' => $discountfield
-					);
-
-					//UN COMMENT THE BELOW LINE WHEN CONNETED RO PRINTER 
-				    $this->load->library('printer');
-				    $printer_result =  $this->printer->generate_print($general_info,$data);
-				}
-
-				if($printer_result != 'success')
-				{
-					$array_msg = array(
-					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Faktur berhasil tetapi tidak ada printer yang ditemukan',
-					'alert' => 'info'
-					);
-				}
-				else
-				{
-					$array_msg = array(
-					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created successfully',
-					'alert' => 'info'
-					);
-				}
-				*/
-
-
-				$array_msg = array(
-					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created successfully',
-					'alert' => 'info'
-				);
-
-				$this->session->set_flashdata('status', $array_msg);
-			} else {
-				$array_msg = array(
-					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error cannot be added',
-					'alert' => 'danger'
-				);
-				$this->session->set_flashdata('status', $array_msg);
-			}
-		} else {
-			$array_msg = array(
-				'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Sorry no items selected',
-				'alert' => 'danger'
-			);
-			$this->session->set_flashdata('status', $array_msg);
-		}
-
-		redirect('invoice');
-	}
-
-	//USED TO SEARCH CUSTOMERS PRIVIOUS BALANCE 
-	//Invoice/search_previous_cus_balance
-	function search_previous_cus_balance($cus_id)
-	{
-		$this->load->model('Accounts_model');
-		$result = $this->Accounts_model->previous_balance($cus_id);
-		echo $result;
-	}
-
-	//USED TO SEARCH CUSTOMERS PRIVIOUS BALANCE 
-	//Invoice/search_previous_cus_balance
-	function return_previous_cus_balance($cus_id)
-	{
-		$this->load->model('Accounts_model');
-		return $this->Accounts_model->previous_balance($cus_id);
-	}
-
-	//USED TO UPDATE QUANTITY 
-	//Invoice/update_qty
-	function update_qty($val = '', $id = '', $customprice = null)
-	{
-
-		$this->load->model('Crud_model');
-		$this->load->model('Pos_transaction_model');
-		$user_name = $this->session->userdata('user_id');
-		$val = intval($val);
-
-		if ($val != '' and $id != '' and  $val > -1) {
-
-			$result = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_invoice', 'id', $id, $user_name['id'], 'pos');
-
-			$result_stk = $this->Crud_model->fetch_record_by_id('mp_productslist', $result['0']->product_id);
-
-			$bal = 0;
-			$new_qty = 0;
-
-			if ($result[0]->qty > $val) {
-
-				$bal = $result[0]->qty - $val;
-				$new_qty = $result_stk[0]->quantity + $bal;
-			} else if ($result[0]->qty < $val) {
-				$bal = $val - $result[0]->qty;
-				$new_qty = $result_stk[0]->quantity - $bal;
-			}
-
-			if ($result[0]->qty != $val and $new_qty >= 0) {
-				$new_args = array(
-					'table_name' => 'mp_productslist',
-					'id' => $result['0']->product_id
-				);
-
-				$new_data = array(
-					'quantity' => $new_qty
-				);
-
-				$temp_args = array(
-					'table_name' => 'mp_temp_barcoder_invoice',
-					'id' => $id
-				);
-
-
-				$temp_data = array(
-					'qty' => $val
-				);
-
-
-
-				$this->Pos_transaction_model->general_pos_transaction($new_args, $new_data, $temp_args, $temp_data);
-			}
-		}
-		//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
-
-		$this->load->view('invoice_template.php', $data);
-	}
-
-	//USED TO UPDATE QUANTITY 
-	//Invoice/update_qty
-	function update_price($val = '', $id = '')
-	{
-
-		$this->load->model('Crud_model');
-		$this->load->model('Pos_transaction_model');
-		$user_name = $this->session->userdata('user_id');
-		$val = intval($val);
-
-		if ($val != '' and $id != '' and  $val > -1) {
-
-			$result = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_invoice', 'id', $id, $user_name['id'], 'pos');
-
-			$result_stk = $this->Crud_model->fetch_record_by_id('mp_productslist', $result['0']->product_id);
-
-			$bal = 0;
-			$new_qty = 0;
-
-			if ($result[0]->qty > $val) {
-
-				$bal = $result[0]->qty - $val;
-				$new_qty = $result_stk[0]->quantity + $bal;
-			} else if ($result[0]->qty < $val) {
-				$bal = $val - $result[0]->qty;
-				$new_qty = $result_stk[0]->quantity - $bal;
-			}
-
-			if ($result[0]->qty != $val and $new_qty >= 0) {
-				$new_args = array(
-					'table_name' => 'mp_productslist',
-					'id' => $result['0']->product_id
-				);
-
-				$new_data = array(
-					'quantity' => $new_qty
-				);
-
-				$temp_args = array(
-					'table_name' => 'mp_temp_barcoder_invoice',
-					'id' => $id
-				);
-
-				$temp_data = array(
-					'price' => $val
-				);
-
-
-				$this->Pos_transaction_model->general_pos_transaction($new_args, $new_data, $temp_args, $temp_data);
-			}
-		}
-		//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
-
-		$this->load->view('invoice_template.php', $data);
-	}
-
-
-
-	//USED TO SHOW THE DETAIL OF  RETURN INVOICE 
-	//Invoice/single_invoice/ID
-	function single_invoice($return_id)
-	{
-		// DEFINES PAGE TITLE
-		$data['title'] = 'Invoice';
-
-		$this->load->model('Accounts_model');
-		$data['invoice_data'] = $this->Accounts_model->fetch_single_invoice_items($return_id);
-
-		// DEFINES WHICH PAGE TO RENDER
-		$data['main_view'] = 'single_invoice';
-
-		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
-		$this->load->view('main/index.php', $data);
-	}
-
-	function create_invoice()
+	function create_invoiceold()
 	{
 		$status = FALSE;
 		$data = $this->input->post();
@@ -1834,6 +1371,106 @@ class Invoice extends CI_Controller
 			// redirect('statements/journal_voucher');
 		}
 		redirect('invoice');
+	}
+
+	function create_invoice()
+	{
+		try {
+			$status = FALSE;
+			$data = $this->input->post();
+			// echo json_encode($data);
+			// die();
+			if (empty($data['manual_math'])) {
+				$data['manual_math'] = 'off';
+			}
+			if ($data['manual_math'] == 'on') {
+				$data['manual_math'] = 1;
+			} else {
+				$data['manual_math'] = 0;
+			}
+			$res = $this->Invoice_model->check_no_invoice($data['no_invoice']);
+			if ($res != 0) {
+				throw new UserException('Nomor Invoice sudah ada!!');
+			}
+
+			$count_rows = count($data['amount']);
+			// if()
+			if (empty($data['ppn_pph'])) {
+				$data['ppn_pph'] = '0';
+			} else {
+				$data['ppn_pph'] = '1';
+			}
+			$data['sub_total'] = substr(preg_replace("/[^0-9]/", "", $data['sub_total']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['sub_total']), -2);
+			if ($data['ppn_pph'] == '1') $data['ppn_pph_count'] = substr(preg_replace("/[^0-9]/", "", $data['ppn_pph_count']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['ppn_pph_count']), -2);
+			$data['total_final'] = substr(preg_replace("/[^0-9]/", "", $data['total_final']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['total_final']), -2);
+
+			if (empty($data['date'])) {
+				$data['date'] = date('Y-m-d');
+			}
+
+			for ($i = 0; $i < $count_rows; $i++) {
+				if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
+					$status = TRUE;
+				$data['amount'][$i] = preg_replace("/[^0-9]/", "", $data['amount'][$i]);
+			}
+
+			if ($status) {
+				$this->load->model('Transaction_model');
+				$this->load->model('Crud_model');
+				$data['generalentry'] = array(
+					'date' => $data['date'],
+					'naration' => 'Invoice ' . $data['no_invoice'],
+					'customer_id' => $data['customer_id'],
+					'generated_source' => 'nvoice'
+				);
+				$data['generalentry']['no_jurnal'] = $this->General_model->gen_numberABC($data['date'], 'AM', 'INVOICE');
+				$i = 0;
+				$jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['jenis_invoice']))[$data['jenis_invoice']];
+				// $sisa_pembayaran = $data['sub_total_2'] - $data['payed'];
+				// if ($sisa_pembayaran > 0) {
+				$data['status'] = 'unpaid';
+				// } else {
+				// $data['status'] = 'paid';
+				// }
+
+				$uang_muka_pph = number_format(($data['sub_total'] * 0.02), 2, '.', '');
+				$ref = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_metode']))[$data['payment_metode']];
+				$data['sub_entry'][$i] = array(
+					'accounthead' => $ref['ref_account'],
+					'type' => 0,
+					'sub_keterangan' => 'kas ' . $data['description'],
+					'amount' => $data['sub_total'],
+				);
+				$i++;
+				$ref = $this->General_model->getAllRefAccount(array('ref_type' => 'um_pph_23'))[0];
+				$data['sub_entry'][$i] = array(
+					'accounthead' => $ref['ref_account'],
+					'type' => 1,
+					'sub_keterangan' => 'uang muka ' . $data['description'],
+					'amount' => $uang_muka_pph
+				);
+				$i++;
+				$data['sub_entry'][$i] = array(
+					'accounthead' => $jp['ac_unpaid'],
+					'type' => 1,
+					'sub_keterangan' => "piutang " . $data['description'],
+					'amount' => $data['sub_total'] - $uang_muka_pph
+				);
+				$i++;
+
+				// echo json_encode($data);
+				// die();
+
+				// $data['old_data'] = $this->Payment_model->getAllPembayaran(array('id' => $data['id'], 'by_id' => true))[$data['id']];
+				$result = $this->Invoice_model->invoice_entry($data);
+			} else {
+				throw new UserException('Please check data!');
+			}
+			echo json_encode(array('error' => true, 'data' => $data['id']));
+		} catch (Exception $e) {
+			ExceptionHandler::handle($e);
+		}
+		// redirect('pembayaran');
 	}
 
 	function edit_process_invoice()
@@ -1927,5 +1564,182 @@ class Invoice extends CI_Controller
 		$params['size'] = 10;
 		$params['savename'] = FCPATH . $config['imagedir'] . $image_name; //simpan image QR CODE ke folder assets/images/
 		$this->ciqrcode->generate($params); // fungsi untuk generate QR CODE
+	}
+
+	public function jenis_invoice()
+	{
+		try {
+			// $crud = $this->SecurityModel->Aksessbility_VCRUD('pembayaran', 'jenis_pembayaran', 'view');
+			$data['accounts'] = $this->General_model->getAllBaganAkun(array('by_DataStructure' => true));
+			$data['title'] = 'List Jenis Invoice';
+			$data['main_view'] = 'invoice/jenis_invoice';
+			// $data['vcrud'] = $crud;
+			$data['vcrud'] = array('parent_id' => 32, 'id_menulist' => 89);
+			$this->load->view('main/index2.php', $data);
+		} catch (Exception $e) {
+			ExceptionHandler::handle($e);
+		}
+	}
+
+	function addPelunasan()
+	{
+		try {
+			$status = FALSE;
+			$data = $this->input->post();
+			// echo json_encode($data);
+			$data['nominal'] = substr(preg_replace("/[^0-9]/", "", $data['nominal']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['nominal']), -2);
+
+			if (empty($data['date_pembayaran'])) {
+				$data['date_pembayaran'] = date('Y-m-d');
+			}
+
+			$data['old_data'] = $this->Invoice_model->getAllInvoice(array('id' => $data['parent_id'], 'by_id' => true))[$data['parent_id']];
+			$data['data_pelunasan'] = $this->General_model->getAllPelunasanInvoice(array('parent_id' => $data['parent_id']));
+			$total_bayar = 0;
+			foreach ($data['data_pelunasan'] as $p) {
+				$total_bayar = $total_bayar + $p['nominal'];
+			}
+			$data['total_bayar'] = $total_bayar;
+			if ($total_bayar >= $data['old_data']['sub_total']) {
+				throw new UserException('Data ini sudah lunas!');
+			}
+			if ($data['total_bayar'] + $data['nominal'] >= $data['old_data']['sub_total']) {
+				$data['status'] = 'paid';
+			} else {
+				$data['status'] = 'unpaid';
+			}
+			$jp = $this->General_model->getAllJenisPembayaran(array('by_id' => true, 'id' => $data['old_data']['jenis_invoice']))[$data['old_data']['jenis_invoice']];
+			$data['gen_old'] = $this->Statement_model->getSingelJurnal(array('id' => $data['old_data']['general_id']))['parent'];
+			$data['generalentry'] = array(
+				'date' => $data['date_pembayaran'],
+				// 'naration' => $data['old_data']['description'],
+				'naration' => $data['old_data']['description'] . ' (' . $data['gen_old']->no_jurnal . ')',
+				'customer_id' => $data['old_data']['customer_id'],
+				'generated_source' => 'Pelunasan Invoice'
+			);
+
+			$data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date_pembayaran'], 'JMB');
+
+			$data['sub_entry'][0] = array(
+				'accounthead' => $jp['ac_paid'],
+				'type' => 1,
+				'amount' => $data['nominal'],
+				'sub_keterangan' => "Htg " . $data['old_data']['description'],
+			);
+			$data['sub_entry'][1] = array(
+				'accounthead' => $jp['ac_unpaid'],
+				'type' => 0,
+				'amount' => $data['nominal'],
+				'sub_keterangan' => "Htg " . $data['old_data']['description'],
+			);
+			// echo json_encode($data);
+			// die();
+
+			$result = $this->Invoice_model->add_pelunasan($data);
+			echo json_encode(array('error' => false, 'data' => $data));
+		} catch (Exception $e) {
+			ExceptionHandler::handle($e);
+		}
+	}
+
+
+	function editPelunasan()
+	{
+		try {
+			$status = FALSE;
+			$data = $this->input->post();
+			// echo json_encode($data);
+			$data['nominal'] = substr(preg_replace("/[^0-9]/", "", $data['nominal']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['nominal']), -2);
+
+			if (empty($data['date_pembayaran'])) {
+				$data['date_pembayaran'] = date('Y-m-d');
+			}
+
+
+			$data['old_data'] = $this->Invoice_model->getAllInvoice(array('id' => $data['parent_id'], 'by_id' => true))[$data['parent_id']];
+			$data['data_pelunasan'] = $this->General_model->getAllPelunasanInvoice(array('parent_id' => $data['parent_id']));
+
+			$total_bayar = 0;
+			foreach ($data['data_pelunasan'] as $p) {
+				if ($p['id'] != $data['id']) $total_bayar = $total_bayar + $p['nominal'];
+				else {
+					$old_pelunasan = $p;
+				}
+			}
+			$data['total_bayar'] = $total_bayar;
+			if ($total_bayar >= $data['old_data']['sub_total']) {
+				throw new UserException('Data ini sudah lunas!');
+			}
+			if ($data['total_bayar'] + $data['nominal'] >= $data['old_data']['sub_total']) {
+				$data['status'] = 'paid';
+			} else {
+				$data['status'] = 'unpaid';
+			}
+			$jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['old_data']['jenis_pembayaran']))[$data['old_data']['jenis_pembayaran']];
+			$data['gen_old'] = $this->Statement_model->getSingelJurnal(array('id' => $data['old_data']['general_id']))['parent'];
+			$data['generalentry'] = array(
+				'id' => $old_pelunasan['general_id'],
+				'date' => $data['date_pembayaran'],
+				// 'naration' => $data['old_data']['description'],
+				'naration' => $data['old_data']['description'] . ' (' . $data['gen_old']->no_jurnal . ')',
+				'customer_id' => $data['old_data']['customer_id'],
+				'generated_source' => 'Pelunasan Invoice'
+			);
+
+			// $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date_pembayaran'], 'JMB');
+			$data['sub_entry'][0] = array(
+				'accounthead' => $jp['ac_paid'],
+				'type' => 1,
+				'amount' => $data['nominal'],
+				'sub_keterangan' => "Ptg " . $data['old_data']['description'],
+			);
+			$data['sub_entry'][1] = array(
+				'accounthead' => $jp['ac_unpaid'],
+				'type' => 0,
+				'amount' => $data['nominal'],
+				'sub_keterangan' => "Ptg " . $data['old_data']['description'],
+			);
+			$result = $this->Invoice_model->edit_pelunasan($data);
+			echo json_encode(array('error' => false, 'data' => $data));
+		} catch (Exception $e) {
+			ExceptionHandler::handle($e);
+		}
+	}
+
+
+	function deletePelunasan()
+	{
+		try {
+			$status = FALSE;
+			$data = $this->input->post();
+			// echo json_encode($data);
+
+			$data['self_data'] = $this->Invoice_model->getAllPelunasan(array('id' => $data['id']))[0];
+			$data['data_pelunasan'] = $this->Invoice_model->getAllPelunasan(array('parent_id' => $data['self_data']['parent_id']));
+			$data['old_data'] = $this->Invoice_model->getAllInvoice(array('id' => $data['self_data']['parent_id'], 'by_id' => true))[$data['self_data']['parent_id']];
+			$total_bayar = 0;
+			foreach ($data['data_pelunasan'] as $p) {
+				if ($p['id'] != $data['id']) $total_bayar = $total_bayar + $p['nominal'];
+				else {
+					$old_pelunasan = $p;
+				}
+			}
+			$data['total_bayar'] = $total_bayar;
+			if ($total_bayar >= $data['old_data']['sub_total']) {
+				// throw new UserException('Data ini sudah lunas!');
+			}
+			if ($data['total_bayar'] >= $data['old_data']['sub_total']) {
+				$data['status'] = 'paid';
+			} else {
+				$data['status'] = 'unpaid';
+			}
+			// echo json_encode($data);
+			// die();
+
+			$result = $this->Invoice_model->delete_pelunasan($data);
+			echo json_encode(array('error' => false, 'data' => $data));
+		} catch (Exception $e) {
+			ExceptionHandler::handle($e);
+		}
 	}
 }
