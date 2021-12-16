@@ -195,6 +195,7 @@ class Invoice extends CI_Controller
 
 		if ($id != NULL) {
 			$dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
+			$dataContent['id'] = '';
 			$item = count($dataContent['item']);
 			for ($i = 0; $i < $item; $i++) {
 				// if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
@@ -1429,7 +1430,7 @@ class Invoice extends CI_Controller
 			} else {
 				throw new UserException('Please check data!');
 			}
-			echo json_encode(array('error' => false, 'data' => $data['id']));
+			echo json_encode(array('error' => false, 'data' => $result));
 		} catch (Exception $e) {
 			ExceptionHandler::handle($e);
 		}

@@ -336,7 +336,7 @@ class Invoice_model extends CI_Model
         } else {
             $this->db->trans_commit();
         }
-        return array('order_id' => $order_id, 'parent2_id' => $gen_id);
+        return $order_id;
     }
 
     function invoice_edit($data)

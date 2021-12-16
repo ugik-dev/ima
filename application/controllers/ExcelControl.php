@@ -174,7 +174,7 @@ class ExcelControl extends CI_Controller
 
         $writer = new Xlsx($spreadsheet);
 
-        $filename = 'Jurnal Umum ' . $filter['from'] . '_sd_' . $filter['to'];
+        $filename = 'Neraca Saldo ' . $filter['from'] . '_sd_' . $filter['to'];
 
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');

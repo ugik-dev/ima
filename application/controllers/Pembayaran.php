@@ -303,6 +303,7 @@ class Pembayaran extends CI_Controller
 
         if ($id != NULL) {
             $dataContent = $this->InvoiceModel->getAllPembayaran(array('id' =>  $id))[0];
+            $dataContent['id'] = '';
             $item = count($dataContent['item']);
             for ($i = 0; $i < $item; $i++) {
                 // if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
