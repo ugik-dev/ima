@@ -123,7 +123,7 @@ class Invoice extends CI_Controller
 		$data['Model_Button_Title'] = "Update invoices";
 		$data['invoices_Record'] = $result_invoices;
 
-		$data['main_view'] = 'sales_invoices_v2';
+		$data['main_view'] = 'invoice/list_invoice';
 		$this->load->view('main/index.php', $data);
 	}
 

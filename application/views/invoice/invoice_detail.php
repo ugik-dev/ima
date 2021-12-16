@@ -80,6 +80,7 @@
                         <?php } ?>
                         <a type="button" href="<?php echo base_url() . 'invoice/edit/' . $dataContent['id'] ?>" class="dropdown-item"><i class="fas fa-pencil-alt mr-2"></i> Edit</a>
                         <a type="button" href="<?php echo base_url() . 'invoice/copy/' . $dataContent['id'] ?>" class="dropdown-item"><i class="fas fa-copy mr-2"> </i> Copy</a>
+                        <a type="button" class="dropdown-item" href="<?= base_url() . 'invoice/delete/' . $dataContent['id']   ?>"><i class="fa fa-trash mr-2"></i> Delete </a>
                     </div>
                 </div>
                 <!-- <a type="button" href="<?= base_url('invoice') ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-reply mr-3 my-1"> </i>Create New Invoice</a> -->

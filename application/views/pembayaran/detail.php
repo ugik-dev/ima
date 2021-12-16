@@ -82,6 +82,7 @@
                     <div class="dropdown-menu">
                         <a type="button" href="<?php echo base_url() . 'Pembayaran/edit/' . $transaction['id'] ?>" class="btn mr-3 my-1"><i class="fas fa-pencil-alt mr-3 my-1"></i> Edit</a>
                         <a type="button" href="<?php echo base_url() . 'Pembayaran/copy/' . $transaction['id'] ?>" class="btn mr-3 my-1"><i class="fas fa-copy mr-3 my-1"> </i> Copy</a>
+                        <a type="button" class="dropdown-item" href="<?= base_url() . 'pembayaran/delete/' . $transaction['id']   ?>"><i class="fa fa-trash mr-2"></i> Delete </a>
                         <a type="button" href="<?= base_url('pembayaran') ?>" class="btn mr-3 my-1">Buat Pembayaran Baru</a>
                     </div>
                 </div>

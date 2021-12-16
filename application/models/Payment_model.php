@@ -770,7 +770,32 @@ class Payment_model extends CI_Model
         // return array('order_id' => $data['parent_id'], 'parent2_id' => $data['parent_id']);
     }
 
+    public function delete($id, $data)
+    {
+        $this->db->where('id', $id);
+        $this->db->delete('mp_pembayaran');
 
+
+        $this->db->where('parent_id', $id);
+        $this->db->delete('mp_sub_pembayaran');
+
+        $this->db->where('parent_id', $data['id']);
+        $this->db->delete('dt_pelunasan_mitra');
+
+
+        if (!empty($data['general_id'])) {
+            $this->db->where('id', $data['general_id']);
+            $this->db->delete('mp_generalentry');
+        }
+        if (!empty($data['data_pelunasan'])) {
+            foreach ($data['data_pelunasan'] as $dp) {
+
+                $this->db->where('id', $dp['general_id']);
+                $this->db->delete('mp_generalentry');
+            }
+        }
+        $this->record_activity(array('jenis' => 6, 'sub_id' => $id, 'desk' => 'Delete Invoice'));
+    }
 
 
     function record_activity($data)
