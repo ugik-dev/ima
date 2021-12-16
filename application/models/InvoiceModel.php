@@ -141,11 +141,23 @@ class InvoiceModel extends CI_Model
 
         $this->db->where('parent_id', $id);
         $this->db->delete('mp_sub_invoice');
+        $this->db->where('parent_id', $data['id']);
+        $this->db->delete('dt_pelunasan_invoice');
+
 
         if (!empty($data['general_id'])) {
             $this->db->where('id', $data['general_id']);
             $this->db->delete('mp_generalentry');
         }
+        if (!empty($data['data_pelunasan'])) {
+            foreach ($data['data_pelunasan'] as $dp) {
+
+                $this->db->where('id', $dp['general_id']);
+                $this->db->delete('mp_generalentry');
+            }
+        }
+
+
 
 
 
