@@ -238,7 +238,7 @@
     var invoice_html_row = `                <tr class="row_item[]">
                                             <td>
                                                 <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / BN 9999 QV" />
-                                                <input type="text" name="id_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / BN 9999 QV" />
+                                                <input type="hidden" name="id_item[]" value="" />
                                             </td>
                                             <td>
                                                 <input type="text" name="date_item[]" value="" placeholder="eg. 3 Mar sd 27 Feb" class="form-control input-lg" />
@@ -404,7 +404,7 @@
             date_item[<?= $i ?>].value = '<?= $data_return['date_item'][$i] ?>';
             keterangan_item[<?= $i ?>].value = '<?= $data_return['keterangan_item'][$i] ?>';
             satuan[<?= $i ?>].value = '<?= $data_return['satuan'][$i] ?>';
-            id_item[<?= $i ?>].value = '<?= $data_return['id_item'][$i] ? $data_return['id_item'][$i] : '' ?>';
+            id_item[<?= $i ?>].value = '<?= !empty($data_return['id_item'][$i]) ? $data_return['id_item'][$i] : '' ?>';
     <?php
         }
     }  ?>
