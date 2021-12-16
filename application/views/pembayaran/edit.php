@@ -566,11 +566,11 @@
             if (result.isConfirmed == false) {
                 return;
             }
-            // swal.fire({
-            //     title: 'Loading Payment...',
-            //     allowOutsideClick: false
-            // });
-            // swal.showLoading();
+            swal.fire({
+                title: 'Loading Payment...',
+                allowOutsideClick: false
+            });
+            swal.showLoading();
             $.ajax({
                 url: url,
                 'type': 'POST',
