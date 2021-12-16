@@ -280,7 +280,15 @@ class Invoice extends CI_Controller
 			echo 'ERROR';
 			return;
 		}
-		// echo json_encode($dataContent);
+		// $data['transaction'] = $this->Invoice_model->getAllInvoiceDetail(array('id' => $id))[$id];
+		$template = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $dataContent['jenis_invoice']))[$dataContent['jenis_invoice']];
+		if (!empty($template['paragraph_1']))
+			$paragraph_1 = $this->find_char($template['paragraph_1'], $dataContent);
+		else
+			$paragraph_1 = 'Bersamaan dengan ini kami sampaikan tagihan sebagai berikut :';
+
+
+		// echo json_encode($paragraph_1);
 		// die();
 		$date_item = false;
 		$total = 0;
@@ -366,14 +374,16 @@ class Invoice extends CI_Controller
 		// $section->addTextBreak();
 
 		$section->addText("Dengan hormat,", 'paragraph', array('spaceAfter' => 100));
+
+		$section->addText($paragraph_1, 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
 		// $section->addTextBreak();
-		if ($format == 3) {
-			$section->addText("Bersama ini kami sampaikan permohonan pembayara " . $dataContent['description'] . " berdasarkan Addendum Nomor 001/ADD/IA-A000/2019-S3 tanggal 23 Januari 2019 dengan perincian sebagai berikut: ", 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
-		} else if ($format == 2) {
-			$section->addText("Menurut Surat Perjanjian Nomor 0122.E/Tbk/SP-2000/21-S11.4 tanggal 01 April 2021 antara PT Timah Tbk dengan PT Indometal Asia tentang Kerjasama Kegiatan Eksplorasi Timah di Wilayah Izin Usaha Pertambangan PT Timah Tbk, dengan ini kami sampaikan tagihan atas perjanjian tersebut dengan rincian : ", 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
-		} else {
-			$section->addText("Bersama ini kami sampaikan tagihan " . $dataContent['description'] . ' sebagai berikut :', 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
-		}
+		// if ($format == 3) {
+		// 	$section->addText("Bersama ini kami sampaikan permohonan pembayara " . $dataContent['description'] . " berdasarkan Addendum Nomor 001/ADD/IA-A000/2019-S3 tanggal 23 Januari 2019 dengan perincian sebagai berikut: ", 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
+		// } else if ($format == 2) {
+		// 	$section->addText("Menurut Surat Perjanjian Nomor 0122.E/Tbk/SP-2000/21-S11.4 tanggal 01 April 2021 antara PT Timah Tbk dengan PT Indometal Asia tentang Kerjasama Kegiatan Eksplorasi Timah di Wilayah Izin Usaha Pertambangan PT Timah Tbk, dengan ini kami sampaikan tagihan atas perjanjian tersebut dengan rincian : ", 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
+		// } else {
+		// 	$section->addText("Bersama ini kami sampaikan tagihan " . $dataContent['description'] . ' sebagai berikut :', 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
+		// }
 		$section->addTextBreak();
 		$fancyTableStyle = array('borderSize' => 1, 'borderColor' => '000000', 'height' => 100, 'cellMarginButtom' => -100, 'cellMarginTop' => 100, 'cellMarginLeft' => 100, 'cellMarginRight' => 100, 'spaceAfter' => -100);
 		$cellVCentered = array('valign' => 'center', 'align' => 'center', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
@@ -1873,5 +1883,59 @@ class Invoice extends CI_Controller
 		$data['terbilang'] = $this->terbilang((int)$data['nominal']) . ' Rupiah';
 		$data['nominal'] = number_format((int)$data['nominal'], 0, ',', '.');
 		$this->load->view('pembayaran/print_kwitansi.php', $data);
+	}
+
+	function find_char($string, $data)
+	{
+		$pos = strpos($string, '{', 2);
+		if (!empty($pos)) {
+			$pos2 = strpos($string, '}');
+			$tx1 = substr($string, 0, $pos);
+			$fx = $tx1 . $this->susunchar(substr($string, $pos + 1, $pos2 - $pos - 1), $data) . substr($string, $pos2 + 1);
+			$fx = $this->find_char($fx, $data);
+			return $fx;
+			// echo json_encode($fx);
+			// die();
+		} else {
+			return $string;
+		}
+	}
+
+	function susunchar($type, $data)
+
+	{
+		if ($type == 'description') {
+			return $data['description'];
+		} else if ($type == 'patner_name') {
+			return $data['customer_name'];
+		} else
+			return '';
+	}
+
+	public function print($id)
+	{
+		// $data = $this->input->get();
+		$data['transaction'] = $this->Invoice_model->getAllInvoiceDetail(array('id' => $id))[$id];
+		$data['template'] = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['transaction']['jenis_invoice']))[$data['transaction']['jenis_invoice']];
+
+		// $pos = strpos($data['template']['paragraph_1'], '{', 2);
+		if (!empty($data['template']['paragraph_1']))
+			$data['p1'] = $this->find_char($data['template']['paragraph_1'], $data['transaction']);
+		else
+			$data['p1'] = 'Bersamaan dengan ini kami sampaikan tagihan sebagai berikut :';
+		// if (!empty($pos)) {
+		// 	$pos2 = strpos($data['template']['paragraph_1'], '}');
+		// 	$tx1 = substr($data['template']['paragraph_1'], $pos + 1, $pos2 - $pos - 1);
+		// 	$data['aa'] = substr($data['template']['paragraph_1'], $pos + 1, $pos2 - $pos - 1);
+		// }
+
+		echo json_encode($data['p1']);
+		die();
+		if (empty($data['transaction']['date'])) $data['transaction']['date'] = date('Y-m-d');
+		$data['transaction']['date'] = 'Pangkalpinang, ' . $this->tanggal_indonesia($data['transaction']['date']);
+
+		$data['terbilang'] = $this->terbilang((int)$data['transaction']['sub_total']) . ' Rupiah';
+		$data['nominal'] = number_format((int)$data['transaction']['sub_total'], 0, ',', '.');
+		$this->load->view('invoice/print_template.php', $data);
 	}
 }

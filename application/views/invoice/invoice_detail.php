@@ -66,6 +66,7 @@
                     <button type="button" class="btn btn-primary dropdown-toggle py-3 mr-3 mr-sm-14 my-1 font-weight-bolder" style="width : 200px" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">File</button>
                     <div class="dropdown-menu">
                         <a type="button" id="btn_print_kwitansi" class="dropdown-item"> <i class="fa fa-print mr-2" aria-hidden="true"></i> Print Kwitansi</a>
+                        <a type="button" id="btn_print_dokumen" class="dropdown-item"> <i class="fa fa-print mr-2" aria-hidden="true"></i> Print Dokumen</a>
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> To KA Akuntansi</a>
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>/2" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> To Divisi Eksplorasi</a>
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>/3" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> Sewa Tangki BBM</a>
@@ -358,6 +359,8 @@
     $(document).ready(function() {
         var add_pelunasan = $('#add_pelunasan');
         var btn_print_kwitansi = $('#btn_print_kwitansi');
+        var btn_print_dokumen = $('#btn_print_dokumen');
+
         var dataPayments = [];
         var PelunasanModal = {
             'self': $('#pelunasan_modal'),
@@ -536,6 +539,11 @@
                         echo '&item[]=PPN 10&price[]=' . $tmp1;
                     } ?>';
             print_kwitansi(<?= $dataContent['sub_total'] ?>, '<?= $dataContent['date'] ?>', item);
+        })
+
+        btn_print_dokumen.on('click', () => {
+            url = "<?= base_url('invoice/print/' . $dataContent['id']) ?>";
+            window.open(url, "_blank");
         })
 
         PelunasanModal.form.submit(function(event) {
