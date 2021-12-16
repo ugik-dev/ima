@@ -14,6 +14,40 @@ class General_model extends CI_Model
     //     return $query->result_array()[0]['gen_lock'];
     // }
 
+    public function getJurnalUmum($filter)
+    {
+        $this->db->select('gen.* ,sub.id as sub_id, sub.type,sub.amount,accounthead,sub_keterangan, head.name as head_name');
+        $this->db->from('mp_generalentry gen');
+        $this->db->join('mp_sub_entry sub', 'gen.id = sub.parent_id', 'LEFT');
+        $this->db->join('mp_head head', 'sub.accounthead = head.id', 'LEFT');
+
+        // if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
+        if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
+        if (!empty($filter['from'])) $this->db->where('gen.date >=', $filter['from']);
+        if (!empty($filter['to'])) $this->db->where('gen.date <=', $filter['to']);
+
+        // $this->db->limit(20);
+        // $this->db->order_by('gen.status, gen.id,  sub.id_item ', 'DESC');
+        $res = $this->db->get();
+        $res = DataStructure::groupByRecursive2(
+            $res->result_array(),
+            ['id'],
+            ['sub_id'],
+            [
+                [
+                    'id', 'no_jurnal', 'id', 'customer_id', 'date', 'naration', 'generated_source'
+                ],
+                ["sub_id", "type", "amount", "accounthead", 'sub_keterangan', 'head_name']
+            ],
+            ['children'],
+            false
+        );
+        // $res = $res->result_array();
+        // echo json_encode($res);
+        // die();
+        return $res;
+    }
+
     function getAllPelunasanInvoice($filter = [])
     {
         $this->db->select('mpp.* , us.agentname , gen.no_jurnal');
@@ -32,6 +66,26 @@ class General_model extends CI_Model
         $res = $res->result_array();
         return $res;
     }
+
+    function getAllGeneralentry($filter = [])
+    {
+        // $this->db->select('mpp.* , us.agentname , gen.no_jurnal');
+        $this->db->from('mp_generalentry mpp');
+        // $this->db->join('mp_users us', 'mpp.agen_id = us.id', 'LEFT');
+        // $this->db->join('mp_generalentry gen', 'gen.id = mpp.general_id', 'LEFT');
+        if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
+        // if (!empty($filter['parent_id'])) $this->db->where('mpp.parent_id', $filter['parent_id']);
+        // if (!empty($filter['ex_id'])) $this->db->where('mpp.id <> ' . $filter['ex_id']);
+        // if (!empty($filter['id_parent1'])) $this->db->where('gen.id', $filter['id']);
+        // $this->db->order_by('gen.status, gen.id,  sub.id_item ', 'DESC');
+        $res = $this->db->get();
+        if (!empty($filter['by_id'])) {
+            return DataStructure::keyValue($res->result_array(), 'id');
+        }
+        $res = $res->result_array();
+        return $res;
+    }
+
 
     public function getAllBaganAkun($filter = [])
     {
@@ -52,17 +106,10 @@ class General_model extends CI_Model
         // echo json_encode($query->result_array());
         // die();
         if (!empty($filter['by_DataStructure'])) {
-            return DataStructure::TreeAccountsIMA(
-                $query->result_array(),
-                ['id'],
-                ['page_id'],
-                [
-                    ['parent_id', 'name', 'link', 'icon'],
-                    ['page_id', 'sub_name', 'sub_link']
-                ],
-                ['children'],
-                false
-            );
+            return DataStructure::TreeAccountsIMA($query->result_array());
+        }
+        if (!empty($filter['by_DataStructure2'])) {
+            return DataStructure::TreeAccountsIMA2($query->result_array());
         }
         $res = $query->result_array();
         return $res;
@@ -320,6 +367,73 @@ class General_model extends CI_Model
             return $this->gen_number($date, $type) . 'A';
         }
     }
+
+    public function neraca_saldo($data, $filter)
+    {
+        // echo json_encode($data);
+        // die();
+        foreach ($data as $key1 => $lv1) {
+            $res = $this->sum_debit_and_credit($lv1['head_number'], $filter);
+            if ($res['debit'] > 0 or $res['kredit'] > 0) {
+                $data[$key1]['datas'] = $res;
+                $data[$key1]['open'] = true;
+
+                if (!empty($lv1['children']))
+                    foreach ($lv1['children'] as $key2 => $lv2) {
+                        if (empty($lv2['head_number'])) {
+                            echo json_encode($lv2);
+                            die();
+                        }
+                        $res = $this->sum_debit_and_credit($lv2['head_number'], $filter);
+                        if ($res['debit'] > 0 or $res['kredit'] > 0) {
+                            $data[$key1]['children'][$key2]['datas'] = $res;
+                            $data[$key1]['children'][$key2]['open'] = true;
+
+                            if (!empty($lv2['children']))
+                                foreach ($lv2['children'] as $key3 => $lv3) {
+                                    if (empty($lv3['head_number'])) {
+                                        echo json_encode($lv3);
+                                        die();
+                                    }
+                                    $res = $this->sum_debit_and_credit($lv3['head_number'], $filter);
+
+                                    if ($res['debit'] > 0 or $res['kredit'] > 0) {
+                                        $data[$key1]['children'][$key2]['children'][$key3]['datas'] = $res;
+                                        $data[$key1]['children'][$key2]['children'][$key3]['open'] = true;
+
+                                        if (!empty($lv3['children']))
+                                            foreach ($lv3['children'] as $key4 => $lv4) {
+                                                $res = $this->sum_debit_and_credit($lv4['head_number'], $filter);
+                                                if ($res['debit'] > 0 or $res['kredit'] > 0) {
+                                                    $data[$key1]['children'][$key2]['children'][$key3]['children'][$key4]['datas'] = $res;
+                                                    $data[$key1]['children'][$key2]['children'][$key3]['children'][$key4]['open'] = true;
+                                                }
+                                            }
+                                    }
+                                }
+                        }
+                    }
+            }
+        }
+        return $data;
+    }
+
+    function sum_debit_and_credit($head_id, $filter)
+    {
+        $count_total_amt = 0;
+        $this->db->select("COALESCE(sum(if(mp_sub_entry.type=0,amount,0)),0) as debit, COALESCE(sum(if(mp_sub_entry.type=1,amount,0)),0) as kredit");
+        $this->db->from('mp_sub_entry');
+        $this->db->join('mp_generalentry', 'mp_generalentry.id = mp_sub_entry.parent_id');
+        $this->db->join('mp_head', 'mp_head.id = mp_sub_entry.accounthead');
+        $this->db->where('mp_head.name like "[' . $head_id . '%"');
+        $this->db->where('mp_generalentry.date >=', $filter['from']);
+        $this->db->where('mp_generalentry.date <=', $filter['to']);
+
+        $res = $this->db->get();
+        // $res
+        return $res->result_array()[0];
+    }
+
 
     function getRomawi($bln)
     {

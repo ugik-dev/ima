@@ -91,7 +91,7 @@
                                             <!-- <th class="">Keterangan</th> -->
                                         </tr>
                                     </thead>
-                                    <tbody id="transaction_table_body">
+                                    <tbody id="transaction_table_body_pembayaran_mitra">
                                     </tbody>
                                     <tfoot>
                                         <tr>
@@ -350,7 +350,7 @@
     var amount = document.getElementsByName('amount[]');
     var nopol = document.getElementsByName('nopol[]');
     var satuan = document.getElementsByName('satuan[]');
-    var transaction_table_body = $('#transaction_table_body');
+    var transaction_table_body = $('#transaction_table_body_pembayaran_mitra');
     var addline = $('#addline');
     var new_row_html = `                                   <tr class="row_item[]">
                                         <td>

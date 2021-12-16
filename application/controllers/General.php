@@ -13,6 +13,18 @@ class General extends CI_Controller
         $this->db->db_debug = TRUE;
     }
 
+
+    function getAllBaganAkun()
+    {
+        try {
+            $filter = $this->input->get();
+            $data = $this->General_model->getAllBaganAkun($filter);
+            echo json_encode(array('error' => false, 'data' => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
     function getAllPelunasanInvoice()
     {
         try {

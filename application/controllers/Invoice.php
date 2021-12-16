@@ -56,56 +56,22 @@ class Invoice extends CI_Controller
 		$data['title'] = 'Entry Invoice';
 		$data['data_return'] = $data_return;
 		$this->load->model('Statement_model');
-		$data['accounts_records'] = $this->Statement_model->chart_list();
+		// $data['accounts_records'] = $this->Statement_model->chart_list();
 		$data['patner_record'] = $this->Statement_model->patners_cars_list();
 		$data['jenis_invoice'] = $this->General_model->getAllJenisInvoice();
-		// var_dump($data['jenis_invoice']);
-		// die();
 		$data['satuan'] = $this->General_model->getAllUnit();
 		$data['ref_account'] = $this->General_model->getAllRefAccount(array('ref_type' => 'payment_method'));
 		$data['form_url'] = 'create_invoice';
 
+		// var_dump($data['satuan']);
+		// die();
 		// DEFINES WHICH PAGE TO RENDER
 		$data['main_view'] = 'invoice/form_invoice';
 
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
 		$this->load->view('main/index.php', $data);
 	}
-	function delete_item_temporary($item_id)
-	{
-		// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
-		$this->load->model('Crud_model');
 
-		//FETCH THE ITEM FROM DATABSE TABLE TO ADD AGAIN TO STOCK
-		$result = $this->Crud_model->fetch_record_by_id('mp_temp_barcoder_invoice', $item_id);
-
-		//FETCH THE ITEM FROM STOCK TABLE 
-		$result_stock = $this->Crud_model->fetch_record_by_id('mp_productslist', $result[0]->product_id);
-
-		// TABLENAME AND ID FOR DATABASE Actions
-		$args = array(
-			'table_name' => 'mp_productslist',
-			'id' => $result[0]->product_id
-		);
-
-		$data = array(
-			'quantity' => $result_stock[0]->quantity + $result[0]->qty
-		);
-
-		// CALL THE METHOD FROM Crud_model CLASS FIRST ARG CONTAINES TABLENAME AND OTHER CONTAINS DATA
-		$this->Crud_model->edit_record_id($args, $data);
-
-		// DEFINES TO DELETE THE ROW FROM TABLE AGAINST ID
-		$this->Crud_model->delete_record('mp_temp_barcoder_invoice', $item_id);
-
-		//USER ID
-		$user_name = $this->session->userdata('user_id');
-
-		//LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-		$data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_invoice', 'pos', $user_name['id']);
-
-		$this->load->view('invoice_template.php', $data);
-	}
 
 	public function delete($id)
 	{
@@ -125,10 +91,6 @@ class Invoice extends CI_Controller
 		// return;
 		redirect('invoice/manage');
 	}
-
-
-
-	// invoice/manage
 	public function manage()
 	{
 
@@ -207,11 +169,15 @@ class Invoice extends CI_Controller
 			$data['title'] = 'Edit Jurnal';
 			$data['data_return'] = $dataContent;
 			$this->load->model('Statement_model');
-			$data['accounts_records'] = $this->Statement_model->chart_list();
+			// $data['accounts_records'] = $this->Statement_model->chart_list();
 			$data['patner_record'] = $this->Statement_model->patners_cars_list();
+			$data['jenis_invoice'] = $this->General_model->getAllJenisInvoice();
+			$data['satuan'] = $this->General_model->getAllUnit();
+			$data['ref_account'] = $this->General_model->getAllRefAccount(array('ref_type' => 'payment_method'));
 
+			$data['form_url'] = 'edit_process_invoice';
 			// DEFINES WHICH PAGE TO RENDER
-			$data['main_view'] = 'invoice_v2_edit';
+			$data['main_view'] = 'invoice/form_invoice';
 
 			// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
 			$this->load->view('main/index.php', $data);
@@ -1425,14 +1391,9 @@ class Invoice extends CI_Controller
 				);
 				$data['generalentry']['no_jurnal'] = $this->General_model->gen_numberABC($data['date'], 'AM', 'INVOICE');
 				$i = 0;
-				$jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['jenis_invoice']))[$data['jenis_invoice']];
-				// $sisa_pembayaran = $data['sub_total_2'] - $data['payed'];
-				// if ($sisa_pembayaran > 0) {
-				$data['status'] = 'unpaid';
-				// } else {
-				// $data['status'] = 'paid';
-				// }
 
+				$jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['jenis_invoice']))[$data['jenis_invoice']];
+				$data['status'] = 'unpaid';
 				$uang_muka_pph = number_format(($data['sub_total'] * 0.02), 2, '.', '');
 				$ref = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_metode']))[$data['payment_metode']];
 				$data['sub_entry'][$i] = array(
@@ -1466,81 +1427,185 @@ class Invoice extends CI_Controller
 			} else {
 				throw new UserException('Please check data!');
 			}
-			echo json_encode(array('error' => true, 'data' => $data['id']));
+			echo json_encode(array('error' => false, 'data' => $data['id']));
 		} catch (Exception $e) {
 			ExceptionHandler::handle($e);
 		}
-		// redirect('pembayaran');
 	}
 
 	function edit_process_invoice()
 	{
-		$status = FALSE;
-		$data = $this->input->post();
-		// echo json_encode($data);
-		// die();
-		$count_rows = count($data['amount']);
-		// if()
-		if (empty($data['ppn_pph'])) {
-			$data['ppn_pph'] = '0';
-		} else {
-			$data['ppn_pph'] = '1';
-		}
-		if (empty($data['date'])) {
-			$data['date'] = date('Y-m-d');
-		}
-		for ($i = 0; $i < $count_rows; $i++) {
-			if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
-				$status = TRUE;
-			$data['amount'][$i] = preg_replace("/[^0-9]/", "", $data['amount'][$i]);
+		try {
+			$status = FALSE;
+			$data = $this->input->post();
+			// echo json_encode($data);
+			// die();
+			if (empty($data['manual_math'])) {
+				$data['manual_math'] = 'off';
+			}
+			if ($data['manual_math'] == 'on') {
+				$data['manual_math'] = 1;
+			} else {
+				$data['manual_math'] = 0;
+			}
+			$res = $this->Invoice_model->check_no_invoice($data['no_invoice']);
+			// if ($res != 0) {
+			// 	throw new UserException('Nomor Invoice sudah ada!!');
+			// }
+
+			$count_rows = count($data['amount']);
+			// if()
+			if (empty($data['ppn_pph'])) {
+				$data['ppn_pph'] = '0';
+			} else {
+				$data['ppn_pph'] = '1';
+			}
+			$data['sub_total'] = substr(preg_replace("/[^0-9]/", "", $data['sub_total']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['sub_total']), -2);
+			if ($data['ppn_pph'] == '1') $data['ppn_pph_count'] = substr(preg_replace("/[^0-9]/", "", $data['ppn_pph_count']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['ppn_pph_count']), -2);
+			$data['total_final'] = substr(preg_replace("/[^0-9]/", "", $data['total_final']), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['total_final']), -2);
+
+			if (empty($data['date'])) {
+				$data['date'] = date('Y-m-d');
+			}
+
+			for ($i = 0; $i < $count_rows; $i++) {
+				if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
+					$status = TRUE;
+				$data['amount'][$i] = preg_replace("/[^0-9]/", "", $data['amount'][$i]);
+			}
+			$data['old_data'] = $this->Invoice_model->getAllInvoice(array('id' => $data['id'], 'by_id' => true))[$data['id']];
+			$data['generalentry_old'] = $this->General_model->getAllGeneralentry(array('id' => $data['old_data']['general_id'], 'by_id' => true))[$data['old_data']['general_id']];
+			$data['data_pelunasan'] = $this->General_model->getAllPelunasanInvoice(array('parent_id' => $data['id']));
+			if ($status) {
+				$this->load->model('Transaction_model');
+				$this->load->model('Crud_model');
+				$data['generalentry'] = array(
+					'id' => $data['generalentry_old']['id'],
+					'date' => $data['date'],
+					'naration' => 'Invoice ' . $data['no_invoice'],
+					'customer_id' => $data['customer_id'],
+					'generated_source' => 'invoice'
+				);
+				$pelunasan = 0;
+				foreach ($data['data_pelunasan'] as $dp) {
+					$pelunasan = $pelunasan + $dp['amount'];
+				}
+				if ($data['sub_total'] <= $pelunasan) {
+					$data['status'] = 'paid';
+				} else {
+					$data['status'] = 'unpaid';
+				}
+				// echo json_encode($data);
+				// die();
+				// $data['generalentry']['no_jurnal'] = $this->General_model->gen_numberABC($data['date'], 'AM', 'INVOICE');
+				$i = 0;
+
+				$jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['jenis_invoice']))[$data['jenis_invoice']];
+				// $data['status'] = 'unpaid';
+				$uang_muka_pph = number_format(($data['sub_total'] * 0.02), 2, '.', '');
+				$ref = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_metode']))[$data['payment_metode']];
+				$data['sub_entry'][$i] = array(
+					'accounthead' => $ref['ref_account'],
+					'type' => 0,
+					'sub_keterangan' => 'kas ' . $data['description'],
+					'amount' => $data['sub_total'],
+				);
+				$i++;
+				$ref = $this->General_model->getAllRefAccount(array('ref_type' => 'um_pph_23'))[0];
+				$data['sub_entry'][$i] = array(
+					'accounthead' => $ref['ref_account'],
+					'type' => 1,
+					'sub_keterangan' => 'uang muka ' . $data['description'],
+					'amount' => $uang_muka_pph
+				);
+				$i++;
+				$data['sub_entry'][$i] = array(
+					'accounthead' => $jp['ac_unpaid'],
+					'type' => 1,
+					'sub_keterangan' => "piutang " . $data['description'],
+					'amount' => $data['sub_total'] - $uang_muka_pph
+				);
+				$i++;
+
+				// echo json_encode($data);
+				// die();
+
+				// $data['old_data'] = $this->Payment_model->getAllPembayaran(array('id' => $data['id'], 'by_id' => true))[$data['id']];
+				$result = $this->Invoice_model->invoice_edit($data);
+			} else {
+				throw new UserException('Please check data!');
+			}
+			echo json_encode(array('error' => false, 'data' => $data['id']));
+		} catch (Exception $e) {
+			ExceptionHandler::handle($e);
 		}
 
-		if ($status) {
-			$this->load->model('Transaction_model');
-			// if (!empty($data['no_jurnal'])) {
-			$res = $this->Transaction_model->check_no_invoice($data['no_invoice'], $data['id']);
-			// die();
-			if ($res != 0) {
-				$array_msg = array(
-					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Invoice Sudah Ada',
-					'alert' => 'danger'
-				);
-				$this->session->set_flashdata('status', $array_msg);
-				$this->index($data);
-				return;
-				// redirect('statements/journal_voucher');
-			}
-			// }
-			$result = $this->Transaction_model->invoice_edit($data);
-			// die();
-			if ($result != NULL) {
-				// $this->Transaction_model->activity_edit($result, $acc);
-				$array_msg = array(
-					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',
-					'alert' => 'info'
-				);
-				$this->session->set_flashdata('status', $array_msg);
-				redirect('invoice/show/' . $result);
-			} else {
-				$array_msg = array(
-					'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
-					'alert' => 'danger'
-				);
-				$this->session->set_flashdata('status', $array_msg);
-				$this->index($data);
-				return;
-			}
-		} else {
-			$array_msg = array(
-				'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
-				'alert' => 'danger'
-			);
-			$this->session->set_flashdata('status', $array_msg);
-			$this->index($data);
-			return;
-			// redirect('statements/journal_voucher');
-		}
-		redirect('invoice');
+		// $status = FALSE;
+		// $data = $this->input->post();
+		// // echo json_encode($data);
+		// // die();
+		// $count_rows = count($data['amount']);
+		// // if()
+		// if (empty($data['ppn_pph'])) {
+		// 	$data['ppn_pph'] = '0';
+		// } else {
+		// 	$data['ppn_pph'] = '1';
+		// }
+		// if (empty($data['date'])) {
+		// 	$data['date'] = date('Y-m-d');
+		// }
+		// for ($i = 0; $i < $count_rows; $i++) {
+		// 	if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
+		// 		$status = TRUE;
+		// 	$data['amount'][$i] = preg_replace("/[^0-9]/", "", $data['amount'][$i]);
+		// }
+
+		// if ($status) {
+		// 	$this->load->model('Transaction_model');
+		// 	// if (!empty($data['no_jurnal'])) {
+		// 	$res = $this->Transaction_model->check_no_invoice($data['no_invoice'], $data['id']);
+		// 	// die();
+		// 	if ($res != 0) {
+		// 		$array_msg = array(
+		// 			'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Nomor Invoice Sudah Ada',
+		// 			'alert' => 'danger'
+		// 		);
+		// 		$this->session->set_flashdata('status', $array_msg);
+		// 		$this->index($data);
+		// 		return;
+		// 		// redirect('statements/journal_voucher');
+		// 	}
+		// 	// }
+		// 	$result = $this->Transaction_model->invoice_edit($data);
+		// 	// die();
+		// 	if ($result != NULL) {
+		// 		// $this->Transaction_model->activity_edit($result, $acc);
+		// 		$array_msg = array(
+		// 			'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',
+		// 			'alert' => 'info'
+		// 		);
+		// 		$this->session->set_flashdata('status', $array_msg);
+		// 		redirect('invoice/show/' . $result);
+		// 	} else {
+		// 		$array_msg = array(
+		// 			'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
+		// 			'alert' => 'danger'
+		// 		);
+		// 		$this->session->set_flashdata('status', $array_msg);
+		// 		$this->index($data);
+		// 		return;
+		// 	}
+		// } else {
+		// 	$array_msg = array(
+		// 		'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
+		// 		'alert' => 'danger'
+		// 	);
+		// 	$this->session->set_flashdata('status', $array_msg);
+		// 	$this->index($data);
+		// 	return;
+		// 	// redirect('statements/journal_voucher');
+		// }
+		// redirect('invoice');
 	}
 
 	public function addQRCode($url, $id, $token)
@@ -1741,5 +1806,18 @@ class Invoice extends CI_Controller
 		} catch (Exception $e) {
 			ExceptionHandler::handle($e);
 		}
+	}
+
+	public function kwitansi_print()
+	{
+		$data = $this->input->get();
+		// echo json_encode($data);
+		// die();
+		if (empty($data['date'])) $data['date'] = date('Y-m-d');
+		$data['date'] = 'Pangkalpinang, ' . $this->tanggal_indonesia($data['date']);
+
+		$data['terbilang'] = $this->terbilang((int)$data['nominal']) . ' Rupiah';
+		$data['nominal'] = number_format((int)$data['nominal'], 0, ',', '.');
+		$this->load->view('pembayaran/print_kwitansi.php', $data);
 	}
 }

@@ -51,7 +51,7 @@
                             </div>
                         ';
                 } else {
-                    echo '<div class="alert alert-custom alert-outline-2x alert-outline-danger fade show mr-3" style="padding:  5px; margin: 2px" role="alert">
+                    echo '<div class="alert alert-custom alert-outline-2x alert-outline-danger fade show mr-3" style="padding-bottom:  0px;padding-top:  0px; margin: 2px" role="alert">
                                 <div class="alert-icon"><i class="flaticon2-exclamation"></i></div>
                                 <div class="alert-text mr-2">Belum dibayar</div>
                             </div>
@@ -63,20 +63,26 @@
                 </button>
                 <!-- <button type="button" class="btn btn-primary font-weight-bolder py-4 mr-3 mr-sm-14 my-1" onclick="printDiv('print-section')">Print Invoice</button> -->
                 <div class="btn-group">
-                    <button type="button" class="btn btn-primary dropdown-toggle py-3 mr-3 mr-sm-14 my-1 font-weight-bolder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Download File</button>
+                    <button type="button" class="btn btn-primary dropdown-toggle py-3 mr-3 mr-sm-14 my-1 font-weight-bolder" style="width : 200px" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">File</button>
                     <div class="dropdown-menu">
-                        <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>" class="btn mr-3 my-1">To KA Akuntansi</a>
-                        <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>/2" class="btn mr-3 my-1">To Divisi Eksplorasi</a>
-                        <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>/3" class="btn mr-3 my-1">Sewa Tangki BBM</a>
+                        <a type="button" id="btn_print_kwitansi" class="dropdown-item"> <i class="fa fa-print mr-2" aria-hidden="true"></i> Print Kwitansi</a>
+                        <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> To KA Akuntansi</a>
+                        <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>/2" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> To Divisi Eksplorasi</a>
+                        <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>/3" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> Sewa Tangki BBM</a>
                         <a type="button" href="<?= base_url('invoice/download/') . $dataContent['id'] ?>" class="btn">Invoice PDF</a>
                     </div>
                 </div>
-                <?php if ($acc_role) { ?>
-                    <a type="button" href="<?= base_url('statements/invoice_to_jurnal/') . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"> Buat Jurnal Umum</a>
-                <?php } ?>
-                <a type="button" href="<?php echo base_url() . 'invoice/edit/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-pencil-alt mr-3 my-1"></i> Edit</a>
-                <a type="button" href="<?php echo base_url() . 'invoice/copy/' . $dataContent['id'] ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-copy mr-3 my-1"> </i> Copy</a>
-                <a type="button" href="<?= base_url('invoice') ?>" class="btn btn-warning font-weight-bolder ml-sm-auto my-1">Create New Invoice</a>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle py-3 mr-3 mr-sm-14 my-1 font-weight-bolder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Aksi</button>
+                    <div class="dropdown-menu">
+                        <?php if ($acc_role) { ?>
+                            <a type="button" href="<?= base_url('statements/invoice_to_jurnal/') . $dataContent['id'] ?>" class="dropdown-item"><i class="fas fa-book mr-2"></i> Buat Jurnal Umum</a>
+                        <?php } ?>
+                        <a type="button" href="<?php echo base_url() . 'invoice/edit/' . $dataContent['id'] ?>" class="dropdown-item"><i class="fas fa-pencil-alt mr-2"></i> Edit</a>
+                        <a type="button" href="<?php echo base_url() . 'invoice/copy/' . $dataContent['id'] ?>" class="dropdown-item"><i class="fas fa-copy mr-2"> </i> Copy</a>
+                    </div>
+                </div>
+                <!-- <a type="button" href="<?= base_url('invoice') ?>" class="btn btn-light-primary font-weight-bolder mr-3 my-1"><i class="fas fa-reply mr-3 my-1"> </i>Create New Invoice</a> -->
             </div>
         </div>
     </div>
@@ -508,18 +514,27 @@
 
         FDataTable.on('click', '.print', function() {
             var currentData = dataPayments[$(this).data('id')];
-            print_kwitansi(currentData['nominal'], currentData['date_pembayaran'])
+            print_kwitansi(currentData['nominal'], currentData['date_pembayaran'], '')
         })
 
 
-        function print_kwitansi(nominal, date) {
-            getss = `from=PT INDOMETAL ASIA&to=<?= !empty($customer_data[0]['customer_name']) ? $customer_data[0]['customer_name']  : '' ?>&date=${date}&nominal=${nominal}&description=<?= $dataContent['description'] ?>`;
+        function print_kwitansi(nominal, date, item) {
+            getss = `from=PT INDOMETAL ASIA&to=<?= !empty($customer_data[0]['customer_name']) ? $customer_data[0]['customer_name']  : '' ?>&date=${date}&nominal=${nominal}&description=<?= $dataContent['description'] ?>${item}`;
             url = "<?= base_url('invoice/kwitansi_print') ?>?" + getss;
             window.open(url, "_blank");
         }
 
         btn_print_kwitansi.on('click', () => {
-            print_kwitansi(<?= $total ?>, '<?= $dataContent['date'] ?>');
+            item = '<?php if ($dataContent['item']  != NULL) {
+                        foreach ($dataContent['item'] as $item) {
+                            echo '&item[]=' . $item->keterangan_item . '&price[]=' . $item->amount;
+                        }
+                    }
+                    if ($tmp1 > 0) {
+                        // $tmp1 = floor($total * 0.10);
+                        echo '&item[]=PPN 10&price[]=' . $tmp1;
+                    } ?>';
+            print_kwitansi(<?= $dataContent['sub_total'] ?>, '<?= $dataContent['date'] ?>', item);
         })
 
         PelunasanModal.form.submit(function(event) {

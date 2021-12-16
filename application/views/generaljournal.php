@@ -3,7 +3,7 @@
     <div class="container">
         <div class="alert alert-custom alert-white alert-shadow gutter-b" role="alert">
             <?php
-            $attributes = array('id' => 'general_journal', 'method' => 'post', 'class' => 'form col-lg-12');
+            $attributes = array('id' => 'toolbar_form', 'method' => 'post', 'class' => 'form col-lg-12');
             ?>
             <?php echo form_open_multipart('statements', $attributes); ?>
             <div class="col-lg-12">
@@ -187,6 +187,16 @@
     $('#menu_id_24').addClass('menu-item-active menu-item-open menu-item-here"')
     $('#submenu_id_59').addClass('menu-item-active')
 
+    var toolbar = {
+        'form': $('#toolbar_form'),
+        'no_jurnal': $('#toolbar_form').find('#no_jurnal'),
+        'search': $('#toolbar_form').find('#search'),
+        'from': $('#toolbar_form').find('#from'),
+        'to': $('#toolbar_form').find('#to'),
+        'nominal': $('#toolbar_form').find('#nominal'),
+        'saveEditBtn': $('#toolbar_form').find('#save_edit_btn'),
+    }
+
     function formatRupiah(angka, prefix) {
         var number_string = angka.toString(),
             split = number_string.split("."),
@@ -213,7 +223,7 @@
         console.log('s')
         from = $('#from').val()
         to = $('#to').val()
-        url = `<?= base_url('statements/export_excel?from=') ?>` + from + '&to=' + to;
+        url = `<?= base_url('ExcelControl/jurnal_umum?from=') ?>` + from + '&to=' + to;
         location.href = url;
     })
 </script>

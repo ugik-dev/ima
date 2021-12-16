@@ -15,6 +15,7 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
+                                            <input type="" id="id_transaction" name="id">
                                             <?php echo form_label('Patner'); ?>
                                             <select name="customer_id" id="customer_id" class="form-control select2 input-lg">
                                                 <option value="0"> ------- </option>
@@ -102,92 +103,13 @@
                                             <!-- <th class="">Keterangan</th> -->
                                         </tr>
                                     </thead>
-                                    <tbody id="transaction_table_body">
-                                        <tr>
-                                            <td>
-                                                <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / BN 9999 QV" />
-                                            </td>
-                                            <td>
-                                                <input type="text" name="date_item[]" value="" placeholder="eg. 3 Mar sd 27 Feb" class="form-control input-lg" />
-                                            </td>
-                                            <td>
-                                                <select name="satuan[]" id="satuan" class="form-control">
-                                                    <option value="thn"> thn </option>
-                                                    <option value="bln"> bln </option>
-                                                    <option value="hari"> hari </option>
-                                                    <option value="trip"> trip </option>
-                                                    <option value="unit"> unit </option>
-                                                    <option value="pcs"> pcs </option>
-                                                    <option value="pkt"> pkt </option>
-                                                </select>
-                                            </td>
-                                            <td>
-                                                <?php
-                                                $data = array('class' => 'form-control input-lg', 'name' => 'qyt[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_total()');
-                                                echo form_input($data);
-                                                ?>
-                                            </td>
-                                            <td>
-                                                <?php
-                                                $data = array('class' => 'form-control input-lg mask',  'name' => 'amount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_total()');
-                                                echo form_input($data);
-                                                ?>
-                                            </td>
-                                            <td>
-                                                <?php
-                                                $data = array('name' => 'qyt_amount[]', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
-                                                echo form_input($data);
-                                                ?>
-
-                                            </td>
-                                        </tr>
-
-                                        <?php if ($data_return != NULL) {
-                                            $count_rows = count($data_return['amount']);
-                                            for ($i = 0; $i < $count_rows - 1; $i++) {
-                                        ?>
-                                                <tr>
-                                                    <td>
-                                                        <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / BN 9999 QV" />
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" name="date_item[]" value="" placeholder="eg. 3 Mar sd 27 Feb" class="form-control input-lg" />
-                                                    </td>
-                                                    <td>
-                                                        <select name="satuan[]" id="satuan" class="form-control">
-                                                            <option value="bln"> bln </option>
-                                                            <option value="hari"> hari </option>
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <?php
-                                                        $data = array('class' => 'form-control input-lg', 'name' => 'qyt[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_total()');
-                                                        echo form_input($data);
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php
-                                                        $data = array('class' => 'form-control input-lg mask',  'name' => 'amount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_total()');
-                                                        echo form_input($data);
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php
-                                                        $data = array('name' => 'qyt_amount[]', 'value' => '0', 'disabled' => 'disabled', 'class' => 'accounts_total_amount', 'reqiured' => '');
-                                                        echo form_input($data);
-                                                        ?>
-
-                                                    </td>
-                                                </tr>
-
-                                        <?php }
-                                        }  ?>
-                                    </tbody>
+                                    <tbody id="transaction_table_body"> </tbody>
                                     <tfoot>
 
                                         <tr>
                                             <td colspan="1">
-                                                <button type="button" class="btn btn-primary" name="addline" onclick="add_new_row('<?php echo base_url() . 'invoice/popup/new_row'; ?>')"> <i class="fa fa-plus-circle"></i> Tambah Baris </button>
+                                                <a class="btn btn-primary" id="btn_add_row"> <i class="fa fa-plus-circle"></i> Tambah Baris </a>
+                                                <!-- <button type="button" class="btn btn-primary" name="addline" onclick="add_new_row('<?php echo base_url() . 'invoice/popup/new_row'; ?>')"> <i class="fa fa-plus-circle"></i> Tambah Baris </button> -->
                                             </td>
                                             <td id="row_loading_status"></td>
                                         </tr>
@@ -313,6 +235,42 @@
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
+    var invoice_html_row = `                <tr class="row_item[]">
+                                            <td>
+                                                <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / BN 9999 QV" />
+                                                <input type="text" name="id_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / BN 9999 QV" />
+                                            </td>
+                                            <td>
+                                                <input type="text" name="date_item[]" value="" placeholder="eg. 3 Mar sd 27 Feb" class="form-control input-lg" />
+                                            </td>
+                                            <td>
+                                                <select name="satuan[]" id="satuan" class="form-control">   
+                                                <option value=""> -- </option>
+                                                <?php
+                                                foreach ($satuan as $sat) {
+                                                    echo '<option value="' . $sat['name_unit'] . '">' . $sat['name_unit'] . '</option>';
+                                                }
+                                                ?>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                 <input class="form-control input-lg" name='qyt[]' value='' required onkeyup="count_total()" />
+                                             </td>
+                                            <td>
+                                                <input class="form-control input-lg mask" name='amount[]' value='' required onkeyup="count_total()" />
+                                            </td>
+                                            <td>
+                                                <input class="form-control input-lg accounts_total_amount" name='qyt_amount[]' value='' disabled onkeyup="count_total()" />
+                                                  <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="" data-row="1" name="delete_row[]" id="delete_row[]" onchange="delete_row(this)">
+                                                    <label class="form-check-label" for="delete_row[]">
+                                                        Delete
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>`;
+
+
     $('#menu_id_6').addClass('menu-item-active menu-item-open menu-item-here"')
     $('#submenu_id_36').addClass('menu-item-active')
     no_invoice = $('#no_invoice');
@@ -322,13 +280,29 @@
     acc_1 = $('#acc_1');
     acc_2 = $('#acc_2');
     acc_3 = $('#acc_3');
+
+    var btn_add_row = $('#btn_add_row');
+    var id_transaction = $('#id_transaction');
+    var transaction_table_body = $('#transaction_table_body');
     var keterangan_item = document.getElementsByName('keterangan_item[]');
     var date_item = document.getElementsByName('date_item[]');
     var qyt = document.getElementsByName('qyt[]');
     var amount = document.getElementsByName('amount[]');
     var satuan = document.getElementsByName('satuan[]');
+    var id_item = document.getElementsByName('id_item[]');
 
 
+    btn_add_row.on('click', () => {
+        add_new_row();
+    })
+
+    function add_new_row() {
+        transaction_table_body.append(invoice_html_row);
+        $('.mask').mask('000.000.000.000.000,00', {
+            reverse: true
+        });
+    };
+    add_new_row()
     id_custmer = $('#customer_id');
     id_cars = $('#id_cars');
     layer_cars = $('#layer_cars');
@@ -360,13 +334,61 @@
         add_cars()
     })
 
+    function delete_row(row) {
+        // idx = row.index(this);
+        // console.log(idx)
+        keterangan_item = document.getElementsByName('keterangan_item[]');
+        date_item = document.getElementsByName('date_item[]');
+        qyt = document.getElementsByName('qyt[]');
+        amount = document.getElementsByName('amount[]');
+        satuan = document.getElementsByName('satuan[]');
+        row_item = document.getElementsByClassName('row_item[]');
+        i = 0;
+        $('input[name="delete_row[]"]').each(function(index) {
+            // alert(index);
+            // $('input[name="amount[]"]').val('123123')
+            if ($(this).prop("checked") == true) {
+                console.log('this true = ' + index)
+                keterangan_item[index].value = '';
+                date_item[index].value = '';
+                qyt[index].value = 0;
+                amount[index].value = 0;
+                satuan[index].value = '';
+                row_item[index].style.display = 'none';
+
+            }
+        });
+
+        $('input[name="amount[]"]').each(function() {
+            if (row == i) {
+                if ($('input[name="delete_row[' + row + ']"]').prop("checked") == true) {
+                    $(this).val("");
+                    $(this).prop("readonly", true);
+                } else if (
+                    $('input[name="delete_row[' + row + ']"]').prop("checked") == false
+                ) {
+                    $(this).prop("readonly", false);
+                }
+            }
+            i++;
+        });
+
+        count_total(true);
+    }
+
     function add_cars() {
         layer_cars.append(`<select name="id_cars[]" id="id_cars" class="form-control select2 input-lg">                                          
                                  <option value="0"> ------- </option>` + data_cars + `</select>`)
         $('.select2').select2();
     }
 
-    <?php if ($data_return != NULL) {    ?>
+    <?php if ($data_return != NULL) {
+        $count_rows = count($data_return['amount']);
+        for ($i = 1; $i < $count_rows; $i++) {
+            echo 'add_new_row();';
+        }
+    ?>
+        id_transaction.val('<?= $data_return['id'] ?>');
         no_invoice.val('<?= $data_return['no_invoice'] ?>');
         id_custmer.val('<?= $data_return['customer_id'] ?>');
         date_jurnal.val('<?= $data_return['date'] ?>');
@@ -375,7 +397,6 @@
         acc_2.val('<?= $data_return['acc_2'] ?>');
         acc_3.val('<?= $data_return['acc_3'] ?>');
         <?php
-        $count_rows = count($data_return['amount']);
 
         for ($i = 0; $i < $count_rows; $i++) { ?>
             amount[<?= $i ?>].value = '<?= $data_return['amount'][$i] ?>';
@@ -383,7 +404,7 @@
             date_item[<?= $i ?>].value = '<?= $data_return['date_item'][$i] ?>';
             keterangan_item[<?= $i ?>].value = '<?= $data_return['keterangan_item'][$i] ?>';
             satuan[<?= $i ?>].value = '<?= $data_return['satuan'][$i] ?>';
-
+            id_item[<?= $i ?>].value = '<?= $data_return['id_item'][$i] ?>';
     <?php
         }
     }  ?>
@@ -422,11 +443,11 @@
             if (result.isConfirmed == false) {
                 return;
             }
-            // swal.fire({
-            //     title: 'Loading Payment...',
-            //     allowOutsideClick: false
-            // });
-            // swal.showLoading();
+            swal.fire({
+                title: 'Loading Payment...',
+                allowOutsideClick: false
+            });
+            swal.showLoading();
             $.ajax({
                 url: url,
                 'type': 'POST',
@@ -450,4 +471,6 @@
         });
     });
 </script>
-<?php $this->load->view('bootstrap_model.php'); ?>
+<?php
+// $this->load->view('bootstrap_model.php'); 
+?>

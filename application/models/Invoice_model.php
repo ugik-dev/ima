@@ -341,98 +341,94 @@ class Invoice_model extends CI_Model
 
     function invoice_edit($data)
     {
+        $this->db->trans_start();
+
+        $generateRandomString = $this->generateRandomString(32);
 
         $trans_data = array(
             'date' => $data['date'],
             'description' => $data['description'],
             'customer_id' => $data['customer_id'],
-            'payment_metode' => $data['payment_method'],
+            'no_invoice' => $data['no_invoice'],
+            'payment_metode' => $data['payment_metode'],
             'ppn_pph' => $data['ppn_pph'],
-            'percent_jasa' => $data['percent_jasa'],
-            'percent_pph' => $data['percent_pph'],
-            'manual_math' => $data['manual_math'],
-            'am_jasa' => $data['am_jasa'],
-            'am_pph' => $data['am_pph'],
-            'lebih_bayar_am' => $data['lebih_bayar_am'],
-            'kurang_bayar_am' => $data['kurang_bayar_am'],
-            'lebih_bayar_ket' => $data['lebih_bayar_ket'],
-            'kurang_bayar_ket' => $data['kurang_bayar_ket'],
+            'inv_key' => $generateRandomString,
+            'status' => $data['status'],
             'jenis_invoice' => $data['jenis_invoice'],
             'sub_total' => $data['sub_total'],
-            'sub_total_2' => $data['sub_total_2'],
-            'pembulatan' => $data['pembulatan'],
-            'status_invoice' => $data['status_invoice'],
-            'lebih_bayar_ac' => $data['lebih_bayar_ac'],
-            'kurang_bayar_ac' => $data['kurang_bayar_ac'],
-            'payed' => $data['payed'],
+            'total_final' => $data['total_final'],
+            'acc_1' => $data['acc_1'],
+            'acc_2' => $data['acc_2'],
+            'acc_3' => $data['acc_3'],
             'acc_0' => $this->session->userdata('user_id')['name'],
             'agen_id' => $this->session->userdata('user_id')['id'],
         );
 
-        $this->db->trans_start();
         $this->db->where('id', $data['id']);
-        $this->db->update('mp_invoice', $trans_data);
+        $this->db->update('mp_invoice_v2', $trans_data);
+        // $order_id = $this->db->insert_id();
+        // $order_id = $this->db->insert_id();
         $total_heads = count($data['amount']);
 
         for ($i = 0; $i < $total_heads; $i++) {
             if (!empty($data['id_item'][$i])) {
                 if (!empty($data['amount'][$i] && !empty($data['qyt'][$i]))) {
                     $trans_data  = array(
+                        'parent_id'   => $data['id'],
                         'qyt' => $data['qyt'][$i],
                         'satuan' => $data['satuan'][$i],
                         'date_item' => $data['date_item'][$i],
-                        'nopol' => $data['nopol'][$i],
                         'keterangan_item' => $data['keterangan_item'][$i],
                         'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
                     );
-                    $this->db->where(
-                        'mp_sub_invoice.id',
-                        $data['id_item'][$i]
-                    );
-                    $this->db->where('mp_sub_invoice.parent_id', $data['id']);
+                    $this->db->where('id', $data['id_item'][$i]);
                     $this->db->update('mp_sub_invoice', $trans_data);
                 } else {
-                    $this->db->where(
-                        'mp_sub_invoice.id',
-                        $data['id_item'][$i]
-                    );
-                    // $this->db->where('mp_sub_invoice.parent_id', $data['id']);
+                    $this->db->where('id', $data['id_item'][$i]);
                     $this->db->delete('mp_sub_invoice');
                 }
-            } else if (!empty($data['amount'][$i] && !empty($data['qyt'][$i]))) {
-                $trans_data  = array(
-                    'parent_id'   => $data['id'],
-                    'satuan' => $data['satuan'][$i],
-                    'qyt' => $data['qyt'][$i],
-                    'date_item' => $data['date_item'][$i],
-                    'keterangan_item' => $data['keterangan_item'][$i],
-                    'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
-                );
-                $this->db->insert('mp_sub_invoice', $trans_data);
+            } else {
+                if (!empty($data['amount'][$i] && !empty($data['qyt'][$i]))) {
+                    $trans_data  = array(
+                        'parent_id'   => $data['id'],
+                        'qyt' => $data['qyt'][$i],
+                        'satuan' => $data['satuan'][$i],
+                        'date_item' => $data['date_item'][$i],
+                        'keterangan_item' => $data['keterangan_item'][$i],
+                        'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
+                    );
+                    $this->db->insert('mp_sub_invoice', $trans_data);
+                }
             }
         }
 
-        // UPDATE GENERAL ENTRY 
-        $this->db->where('id', $data['old_data']['general_id']);
+        // $data['generalentry']['url'] = 'invoice/show/' . $order_id;
+        $this->db->where('id', $data['generalentry']['id']);
         $this->db->update('mp_generalentry', $data['generalentry']);
 
-        $this->db->where('parent_id', $data['old_data']['general_id']);
+        $this->db->where('parent_id', $data['generalentry']['id']);
         $this->db->delete('mp_sub_entry');
 
         foreach ($data['sub_entry'] as $sub) {
-            $sub['parent_id'] = $data['old_data']['general_id'];
+            $sub['parent_id'] = $data['generalentry']['id'];
             $this->db->insert('mp_sub_entry', $sub);
         }
 
-
+        // $this->db->set('general_id', $gen_id);
+        // $this->db->where('id', $order_id);
+        // $this->db->update('mp_invoice_v2');
+        // 'acc_1' => $data['acc_1'],
+        //             'acc_2' => $data['acc_2'],
+        //             'acc_3' => $data['acc_3'],
         $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
         $this->db->set("date_acc_0", date('Y-m-d'));
-        $this->db->where("id_transaction", $data['old_data']['general_id']);
+        $this->db->set("acc_1", $data['acc_1']);
+        $this->db->set("acc_2", $data['acc_2']);
+        $this->db->set("acc_3", $data['acc_3']);
+        $this->db->where("id_transaction", $data['generalentry']['id']);
         $this->db->update('mp_approv');
 
         $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'invoice/show/' . $data['id'], 'sub_id' => $data['id'], 'desk' => 'Edit Invoice'));
-
-
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
@@ -440,11 +436,116 @@ class Invoice_model extends CI_Model
             return NULL;
         } else {
             $this->db->trans_commit();
-            $this->record_activity(array('jenis' => 8, 'sub_id' => $data['id'], 'desk' => 'Edit Invoice'));
         }
-
-        return $data['id'];
+        // return array('order_id' => $order_id, 'parent2_id' => $gen_id);
     }
+
+    // function invoice_edit($data)
+    // {
+
+    //     $trans_data = array(
+    //         'date' => $data['date'],
+    //         'description' => $data['description'],
+    //         'customer_id' => $data['customer_id'],
+    //         'payment_metode' => $data['payment_method'],
+    //         'ppn_pph' => $data['ppn_pph'],
+    //         'percent_jasa' => $data['percent_jasa'],
+    //         'percent_pph' => $data['percent_pph'],
+    //         'manual_math' => $data['manual_math'],
+    //         'am_jasa' => $data['am_jasa'],
+    //         'am_pph' => $data['am_pph'],
+    //         'lebih_bayar_am' => $data['lebih_bayar_am'],
+    //         'kurang_bayar_am' => $data['kurang_bayar_am'],
+    //         'lebih_bayar_ket' => $data['lebih_bayar_ket'],
+    //         'kurang_bayar_ket' => $data['kurang_bayar_ket'],
+    //         'jenis_invoice' => $data['jenis_invoice'],
+    //         'sub_total' => $data['sub_total'],
+    //         'sub_total_2' => $data['sub_total_2'],
+    //         'pembulatan' => $data['pembulatan'],
+    //         'status_invoice' => $data['status_invoice'],
+    //         'lebih_bayar_ac' => $data['lebih_bayar_ac'],
+    //         'kurang_bayar_ac' => $data['kurang_bayar_ac'],
+    //         'payed' => $data['payed'],
+    //         'acc_0' => $this->session->userdata('user_id')['name'],
+    //         'agen_id' => $this->session->userdata('user_id')['id'],
+    //     );
+
+    //     $this->db->trans_start();
+    //     $this->db->where('id', $data['id']);
+    //     $this->db->update('mp_invoice', $trans_data);
+    //     $total_heads = count($data['amount']);
+
+    //     for ($i = 0; $i < $total_heads; $i++) {
+    //         if (!empty($data['id_item'][$i])) {
+    //             if (!empty($data['amount'][$i] && !empty($data['qyt'][$i]))) {
+    //                 $trans_data  = array(
+    //                     'qyt' => $data['qyt'][$i],
+    //                     'satuan' => $data['satuan'][$i],
+    //                     'date_item' => $data['date_item'][$i],
+    //                     'nopol' => $data['nopol'][$i],
+    //                     'keterangan_item' => $data['keterangan_item'][$i],
+    //                     'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
+    //                 );
+    //                 $this->db->where(
+    //                     'mp_sub_invoice.id',
+    //                     $data['id_item'][$i]
+    //                 );
+    //                 $this->db->where('mp_sub_invoice.parent_id', $data['id']);
+    //                 $this->db->update('mp_sub_invoice', $trans_data);
+    //             } else {
+    //                 $this->db->where(
+    //                     'mp_sub_invoice.id',
+    //                     $data['id_item'][$i]
+    //                 );
+    //                 // $this->db->where('mp_sub_invoice.parent_id', $data['id']);
+    //                 $this->db->delete('mp_sub_invoice');
+    //             }
+    //         } else if (!empty($data['amount'][$i] && !empty($data['qyt'][$i]))) {
+    //             $trans_data  = array(
+    //                 'parent_id'   => $data['id'],
+    //                 'satuan' => $data['satuan'][$i],
+    //                 'qyt' => $data['qyt'][$i],
+    //                 'date_item' => $data['date_item'][$i],
+    //                 'keterangan_item' => $data['keterangan_item'][$i],
+    //                 'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
+    //             );
+    //             $this->db->insert('mp_sub_invoice', $trans_data);
+    //         }
+    //     }
+
+    //     // UPDATE GENERAL ENTRY 
+    //     $this->db->where('id', $data['old_data']['general_id']);
+    //     $this->db->update('mp_generalentry', $data['generalentry']);
+
+    //     $this->db->where('parent_id', $data['old_data']['general_id']);
+    //     $this->db->delete('mp_sub_entry');
+
+    //     foreach ($data['sub_entry'] as $sub) {
+    //         $sub['parent_id'] = $data['old_data']['general_id'];
+    //         $this->db->insert('mp_sub_entry', $sub);
+    //     }
+
+
+    //     $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
+    //     $this->db->set("date_acc_0", date('Y-m-d'));
+    //     $this->db->where("id_transaction", $data['old_data']['general_id']);
+    //     $this->db->update('mp_approv');
+
+    //     $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'invoice/show/' . $data['id'], 'sub_id' => $data['id'], 'desk' => 'Edit Invoice'));
+
+
+    //     $this->db->trans_complete();
+    //     if ($this->db->trans_status() === FALSE) {
+    //         $this->db->trans_rollback();
+    //         $data = NULL;
+    //         return NULL;
+    //     } else {
+    //         $this->db->trans_commit();
+    //         $this->record_activity(array('jenis' => 8, 'sub_id' => $data['id'], 'desk' => 'Edit Invoice'));
+    //     }
+
+    //     return $data['id'];
+    // }
 
     function add_pelunasan($data)
     {

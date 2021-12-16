@@ -669,18 +669,26 @@
 
         FDataTable.on('click', '.print', function() {
             var currentData = dataPayments[$(this).data('id')];
-            print_kwitansi(currentData['nominal'], currentData['date_pembayaran'])
+            print_kwitansi(currentData['nominal'], currentData['date_pembayaran'], '')
         })
 
 
-        function print_kwitansi(nominal, date) {
+        function print_kwitansi(nominal, date, item) {
             getss = `from=PT INDOMETAL ASIA&to=<?= !empty($customer_data[0]['customer_name']) ? $customer_data[0]['customer_name']  : '' ?>&date=${date}&nominal=${nominal}&description=<?= $transaction['description'] ?>`;
             url = "<?= base_url('pembayaran/kwitansi_print') ?>?" + getss;
             window.open(url, "_blank");
         }
 
         btn_print_kwitansi.on('click', () => {
-            print_kwitansi(<?= $total ?>, '<?= $transaction['date'] ?>');
+            item = '<?php if ($transaction['items']  != NULL) {
+                        foreach ($transaction['items'] as $item) {
+                            $total = $total + ($item['amount'] * $item['qyt']);
+                            $total_qyt =  $total_qyt + ($item['qyt']);
+                            echo '&item[]=' . $item['keterangan_item'] . '&price[]=' . $total;
+                        }
+                    } ?>';
+            print_kwitansi(<?= $total ?>, '<?= $transaction['date'] ?>', item);
+            // print_kwitansi(<?= $total ?>, '<?= $transaction['date'] ?>');
         })
 
         PelunasanModal.form.submit(function(event) {

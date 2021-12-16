@@ -3,7 +3,7 @@
 class DataStructure
 {
 
-  public static function TreeAccountsIMA($arr, $columns, $childKeys, $parentFields, $childNames, $assoc = TRUE)
+  public static function TreeAccountsIMA($arr)
   {
     $res = array();
     foreach ($arr as $k) {
@@ -20,6 +20,29 @@ class DataStructure
         $res[substr($k['name'], 1, 1)]['children'][substr($k['name'], 3, 2)]['children'][substr($k['name'], 6, 3)] =  array('head_number' =>  substr($k['name'], 6, 3), 'name' => substr($k['name'], 15), 'id_head' => $k['id']);
       } else {
         $res[substr($k['name'], 1, 1)]['children'][substr($k['name'], 3, 2)]['children'][substr($k['name'], 6, 3)]['children'][substr($k['name'], 10, 3)] =  array('head_number' =>  substr($k['name'], 10, 3), 'name' => substr($k['name'], 15), 'id_head' => $k['id']);
+      }
+    }
+    // echo json_encode($res);
+    // die();
+    return $res;
+  }
+
+  public static function TreeAccountsIMA2($arr)
+  {
+    $res = array();
+    foreach ($arr as $k) {
+      // echo substr($k['name'], 10, 3);
+      // die();
+      if (substr($k['name'], 3, 10) == '00.000.000') {
+        $res[substr($k['name'], 1, 1)] = array('head_number' => substr($k['name'], 1, 1), 'name' => substr($k['name'], 15));
+        $res[substr($k['name'], 1, 1)]['children'] = array();
+      } else
+      if (substr($k['name'], 6, 7) == '000.000') {
+        $res[substr($k['name'], 1, 1)]['children'][substr($k['name'], 3, 2)] =  array('head_number' => substr($k['name'], 1, 4), 'name' => substr($k['name'], 15), 'children' => array());
+      } else if (substr($k['name'], 10, 3) == '000') {
+        $res[substr($k['name'], 1, 1)]['children'][substr($k['name'], 3, 2)]['children'][substr($k['name'], 6, 3)] =  array('head_number' =>  substr($k['name'], 1, 8), 'name' => substr($k['name'], 15), 'id_head' => $k['id']);
+      } else {
+        $res[substr($k['name'], 1, 1)]['children'][substr($k['name'], 3, 2)]['children'][substr($k['name'], 6, 3)]['children'][substr($k['name'], 10, 3)] =  array('head_number' =>  substr($k['name'], 1, 12), 'name' => substr($k['name'], 15), 'id_head' => $k['id']);
       }
     }
     // echo json_encode($res);

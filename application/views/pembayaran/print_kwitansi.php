@@ -126,9 +126,11 @@
                                     ?>
                                         <tr>
                                             <td class="" class="value" style="margin-right: 4px;"><?= $item[$i] ?></td>
-                                            <td width='200px' class="value" style="text-align: right;"><?= number_format($price[$i], 0, ',', '.') ?></td>
+                                            <td width='200px' class="value" style="text-align: right;"><?= number_format((int)$price[$i], 0, ',', '.') ?></td>
                                         </tr>
-                                    <?php } ?>
+                                    <?php
+                                        $i++;
+                                    } ?>
                                     <tr style="height:1px !important">
                                         <td style="height:1px !important"> </td>
                                         <td style="height:1px !important">

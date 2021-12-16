@@ -7,8 +7,8 @@
                     <!-- <div class="col-lg-3"> -->
                     <div style="float: right" class="form-group" style="margin-top: 16px;">
                         <?php
-                        // $data = array('class' => 'btn btn-default btn-outline-primary  mr-2', 'type' => 'button', 'id' => 'btn_export_excel', 'value' => 'true', 'content' => '<i class="fa fa-download" aria-hidden="true"></i> Export Excel');
-                        // echo form_button($data);
+                        $data = array('class' => 'btn btn-default btn-outline-primary  mr-2', 'type' => 'button', 'id' => 'btn_export_excel', 'value' => 'true', 'content' => '<i class="fa fa-download" aria-hidden="true"></i> Export Excel');
+                        echo form_button($data);
                         ?>
                     </div>
                     <!-- </div> -->
@@ -137,5 +137,16 @@
     for (var i = 0; i < elements.length; i++) {
         elements[i].innerHTML = formatRupiah(elements[i].innerHTML);
     }
+
+    $('#btn_export_excel').on('click', function() {
+        console.log('s')
+        year = $('#year').val()
+        from = year + '-01-01'
+        to = year + '-12-31'
+        // from = $('#from').val()
+        // to = $('#to').val()
+        url = `<?= base_url('ExcelControl/neraca_saldo?from=') ?>` + from + '&to=' + to;
+        location.href = url;
+    })
 </script>
 <?php $this->load->view('bootstrap_model.php'); ?>
