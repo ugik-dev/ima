@@ -81,7 +81,7 @@ class Invoice extends CI_Controller
 		if ($dataContent['agen_id'] != $this->session->userdata('user_id')['id'])
 			throw new UserException('Sorry, Yang dapat mengahapus dan edit hanya agen yang bersangkutan', UNAUTHORIZED_CODE);
 
-		$this->InvoiceModel->delete($id);
+		$this->InvoiceModel->delete($id, $dataContent);
 		$array_msg = array(
 			'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Delete Successfully',
 			'alert' => 'info'
@@ -1387,7 +1387,7 @@ class Invoice extends CI_Controller
 					'date' => $data['date'],
 					'naration' => 'Invoice ' . $data['no_invoice'],
 					'customer_id' => $data['customer_id'],
-					'generated_source' => 'nvoice'
+					'generated_source' => 'invoice'
 				);
 				$data['generalentry']['no_jurnal'] = $this->General_model->gen_numberABC($data['date'], 'AM', 'INVOICE');
 				$i = 0;
@@ -1673,7 +1673,7 @@ class Invoice extends CI_Controller
 			} else {
 				$data['status'] = 'unpaid';
 			}
-			$jp = $this->General_model->getAllJenisPembayaran(array('by_id' => true, 'id' => $data['old_data']['jenis_invoice']))[$data['old_data']['jenis_invoice']];
+			$jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['old_data']['jenis_invoice']))[$data['old_data']['jenis_invoice']];
 			$data['gen_old'] = $this->Statement_model->getSingelJurnal(array('id' => $data['old_data']['general_id']))['parent'];
 			$data['generalentry'] = array(
 				'date' => $data['date_pembayaran'],

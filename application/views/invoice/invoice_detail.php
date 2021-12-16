@@ -445,7 +445,7 @@
             var i = 0;
 
             var renderData = [];
-            link = '<a href="<?= base_url() ?>statements/show/<?= $dataContent['general_id'] ?>"> <?= $dataContent['no_invoice'] ?> </a>'
+            link = '<a href="<?= base_url() ?>statements/show/<?= $dataContent['general_id'] ?>"> <?= $dataContent['no_jurnal'] ?> </a>'
             renderData.push(['<?= $dataContent['date'] ?>', '<?= number_format(0, 2, ',', '.') ?>', '<?= $dataContent['acc_0'] ?>', link, '']);
             total = 0;
             Object.values(data).forEach((d) => {
