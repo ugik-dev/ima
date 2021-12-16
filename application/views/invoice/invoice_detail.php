@@ -520,7 +520,7 @@
 
 
         function print_kwitansi(nominal, date, item) {
-            getss = `from=PT INDOMETAL ASIA&to=<?= !empty($customer_data[0]['customer_name']) ? $customer_data[0]['customer_name']  : '' ?>&date=${date}&nominal=${nominal}&description=<?= $dataContent['description'] ?>${item}`;
+            getss = `to=<?= !empty($dataContent['name_acc_1']) ? $dataContent['name_acc_1'] : 'PT Indometal Asia' ?>&from=<?= !empty($customer_data[0]['customer_name']) ? $customer_data[0]['customer_name']  : '' ?>&date=${date}&nominal=${nominal}&description=<?= $dataContent['description'] ?>${item}`;
             url = "<?= base_url('invoice/kwitansi_print') ?>?" + getss;
             window.open(url, "_blank");
         }

@@ -6,18 +6,18 @@
         .lead {
             font-family: "Verdana";
             /* font-weight: bold; */
-            margin-right: 50px;
+            margin-right: 25px;
         }
 
         .terbilang {
             font-family: "Verdana";
             font-style: italic;
-            margin-right: 50px;
+            margin-right: 25px;
         }
 
         .value {
             font-family: "Verdana";
-            margin-left: 50px;
+            margin-left: 25px;
         }
 
         .value-bold {
@@ -112,21 +112,21 @@
                         <td colspan="3">&nbsp;</td>
                     </tr>
                 </table>
-                <table width="100%">
+                <table border="0" width="100%">
                     <?php if (!empty($item)) {
                     ?>
                         <tr>
                             <td style="text-align: center; margin-right: 100px"></td>
-                            <td width="50%">
+                            <td width="60%">
 
-                                <table style="margin-left : 100px">
+                                <table border="0" style="margin-left : 50px" width="400">
                                     <?php
                                     $i = 0;
                                     foreach ($item as $it) {
                                     ?>
                                         <tr>
-                                            <td class="" class="value" style="margin-right: 4px;"><?= $item[$i] ?></td>
-                                            <td width='200px' class="value" style="text-align: right;"><?= number_format((int)$price[$i], 0, ',', '.') ?></td>
+                                            <td width="200px" class="value" style="margin-right: 2px;"><?= $item[$i] ?></td>
+                                            <td width='' class="value" style="text-align: right; margin-right: 0"><?= number_format((int)$price[$i], 0, ',', '.') ?></td>
                                         </tr>
                                     <?php
                                         $i++;
@@ -138,8 +138,8 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td class="" style="margin-right: 4px;"></td>
-                                        <td width='200px' class="value-bold" style="text-align: right"> <?= $nominal ?></td>
+                                        <td class="" style="margin-right: 2px;"></td>
+                                        <td width='' class="value-bold" style="text-align: right"> <?= $nominal ?></td>
                                     </tr>
                                 </table>
                             </td>
