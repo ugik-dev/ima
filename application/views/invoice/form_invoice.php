@@ -15,7 +15,7 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <input type="" id="id_transaction" name="id">
+                                            <input type="hidden" id="id_transaction" name="id">
                                             <?php echo form_label('Patner'); ?>
                                             <select name="customer_id" id="customer_id" class="form-control select2 input-lg">
                                                 <option value="0"> ------- </option>
