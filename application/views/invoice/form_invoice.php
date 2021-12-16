@@ -404,7 +404,7 @@
             date_item[<?= $i ?>].value = '<?= $data_return['date_item'][$i] ?>';
             keterangan_item[<?= $i ?>].value = '<?= $data_return['keterangan_item'][$i] ?>';
             satuan[<?= $i ?>].value = '<?= $data_return['satuan'][$i] ?>';
-            id_item[<?= $i ?>].value = '<?= $data_return['id_item'][$i] ?>';
+            id_item[<?= $i ?>].value = '<?= $data_return['id_item'][$i] ? $data_return['id_item'][$i] : '' ?>';
     <?php
         }
     }  ?>
