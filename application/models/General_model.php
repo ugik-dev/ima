@@ -226,7 +226,7 @@ class General_model extends CI_Model
     public function getAllJenisInvoice($filter = [])
     {
 
-        $this->db->select('ref.*, head_paid.name as name_paid, head_unpaid.name as name_unpaid ,head_piutang.name as name_piutang');
+        $this->db->select('ref.*,head_ppn.name as name_ppn ,head_paid.name as name_paid, head_unpaid.name as name_unpaid ,head_piutang.name as name_piutang');
         $this->db->from('ref_jenis_invoice as ref');
         $this->db->join(
             'mp_head as head_paid',
@@ -235,6 +235,7 @@ class General_model extends CI_Model
         );
         $this->db->join('mp_head as head_unpaid', 'head_unpaid.id = ref.ac_unpaid', 'LEFT');
         $this->db->join('mp_head as head_piutang', 'head_piutang.id = ref.ac_piutang', 'LEFT');
+        $this->db->join('mp_head as head_ppn', 'head_ppn.id = ref.ac_ppn', 'LEFT');
         // echo 'sds';
         if (!empty($filter['id'])) $this->db->where('ref.id', $filter['id']);
 

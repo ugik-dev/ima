@@ -31,6 +31,20 @@ class Invoice extends CI_Controller
 		}
 	}
 
+	public function addJenisInvoice()
+	{
+		try {
+			$this->load->model(array('SecurityModel', 'InvoiceModel'));
+			$this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
+			$data = $this->input->post();
+			$id = $this->Invoice_model->addJenisInvoice($data);
+			$data = $this->General_model->getAllJenisInvoice(array('id' =>  $id, 'by_id' => true))[$id];
+			echo json_encode(array("error" => false, "data" => $data));
+		} catch (Exception $e) {
+			ExceptionHandler::handle($e);
+		}
+	}
+
 
 
 	function index($data_return = NULL)
@@ -1358,9 +1372,9 @@ class Invoice extends CI_Controller
 				$data['manual_math'] = 0;
 			}
 			$res = $this->Invoice_model->check_no_invoice($data['no_invoice']);
-			if ($res != 0) {
-				throw new UserException('Nomor Invoice sudah ada!!');
-			}
+			// if ($res != 0) {
+			// 	throw new UserException('Nomor Invoice sudah ada!!');
+			// }
 
 			$count_rows = count($data['amount']);
 			// if()
@@ -1386,41 +1400,78 @@ class Invoice extends CI_Controller
 			if ($status) {
 				$this->load->model('Transaction_model');
 				$this->load->model('Crud_model');
+				$jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['jenis_invoice']))[$data['jenis_invoice']];
 				$data['generalentry'] = array(
 					'date' => $data['date'],
-					'naration' => 'Invoice ' . $data['no_invoice'],
+					'naration' => 'INV(' . $data['no_invoice'] . ') ' . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['description'],
 					'customer_id' => $data['customer_id'],
 					'generated_source' => 'invoice'
 				);
-				$data['generalentry']['no_jurnal'] = $this->General_model->gen_numberABC($data['date'], 'AM', 'INVOICE');
+				$data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date'], $jp['ref_nojur']);
 				$i = 0;
-
-				$jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['jenis_invoice']))[$data['jenis_invoice']];
 				$data['status'] = 'unpaid';
-				$uang_muka_pph = number_format(($data['sub_total'] * 0.02), 2, '.', '');
-				$ref = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_metode']))[$data['payment_metode']];
+				// NEW CODE
+				// echo json_encode($jp);
+				// die();
 				$data['sub_entry'][$i] = array(
-					'accounthead' => $ref['ref_account'],
+					'accounthead' => $jp['ac_unpaid'],
 					'type' => 0,
-					'sub_keterangan' => 'kas ' . $data['description'],
+					'sub_keterangan' => 'Piut ' . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['description'],
 					'amount' => $data['sub_total'],
 				);
 				$i++;
-				$ref = $this->General_model->getAllRefAccount(array('ref_type' => 'um_pph_23'))[0];
 				$data['sub_entry'][$i] = array(
-					'accounthead' => $ref['ref_account'],
+					'accounthead' => $jp['ac_paid'],
 					'type' => 1,
-					'sub_keterangan' => 'uang muka ' . $data['description'],
-					'amount' => $uang_muka_pph
+					'sub_keterangan' => 'Pdpt ' . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['description'],
+					'amount' => $data['sub_total'],
 				);
 				$i++;
-				$data['sub_entry'][$i] = array(
-					'accounthead' => $jp['ac_unpaid'],
-					'type' => 1,
-					'sub_keterangan' => "piutang " . $data['description'],
-					'amount' => $data['sub_total'] - $uang_muka_pph
-				);
-				$i++;
+				// if ($data['ppn_pph'] == '1') {
+				// $data['ppn_pph_count'] = $data['ppn_pph_count'] * 0.1;
+				// $data['sub_entry'][$i] = array(
+				// 	'accounthead' => $jp['ac_unpaid'],
+				// 	'type' => 0,
+				// 	'sub_keterangan' => 'PPN ' . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['description'],
+				// 	'amount' => $data['ppn_pph_count'],
+				// );
+				// $i++;
+				// $data['sub_entry'][$i] = array(
+				// 	'accounthead' => $jp['ac_ppn'],
+				// 	'type' => 1,
+				// 	'sub_keterangan' => 'Pdpt ' . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['description'],
+				// 	'amount' => $data['ppn_pph_count'],
+				// );
+				// $i++;
+				// }
+
+				// dari sini untuk saat pelunasan
+				// $uang_muka_pph = number_format(($data['sub_total'] * 0.02), 2, '.', '');
+				// $ref = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_metode']))[$data['payment_metode']];
+				// $data['sub_entry'][$i] = array(
+				// 	'accounthead' => $ref['ref_account'],
+				// 	'type' => 0,
+				// 	'sub_keterangan' => 'kas ' . $data['description'],
+				// 	'amount' => $data['sub_total'],
+				// );
+				// $i++;
+				// $ref = $this->General_model->getAllRefAccount(array('ref_type' => 'um_pph_23'))[0];
+				// $data['sub_entry'][$i] = array(
+				// 	'accounthead' => $ref['ref_account'],
+				// 	'type' => 1,
+				// 	'sub_keterangan' => 'uang muka ' . $data['description'],
+				// 	'amount' => $uang_muka_pph
+				// );
+				// $i++;
+				// $data['sub_entry'][$i] = array(
+				// 	'accounthead' => $jp['ac_unpaid'],
+				// 	'type' => 1,
+				// 	'sub_keterangan' => "piutang " . $data['description'],
+				// 	'amount' => $data['sub_total'] - $uang_muka_pph
+				// );
+				// $i++;
+
+				// end saat pelunasan
 
 				// echo json_encode($data);
 				// die();

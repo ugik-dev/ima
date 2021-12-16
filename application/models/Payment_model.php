@@ -592,22 +592,22 @@ class Payment_model extends CI_Model
         }
 
         // UPDATE GENERAL ENTRY 
-        $this->db->where('id', $data['old_data']['general_id']);
-        $this->db->update('mp_generalentry', $data['generalentry']);
 
-        $this->db->where('parent_id', $data['old_data']['general_id']);
-        $this->db->delete('mp_sub_entry');
+        // $this->db->where('id', $data['old_data']['general_id']);
+        // $this->db->update('mp_generalentry', $data['generalentry']);
 
-        foreach ($data['sub_entry'] as $sub) {
-            $sub['parent_id'] = $data['old_data']['general_id'];
-            $this->db->insert('mp_sub_entry', $sub);
-        }
+        // $this->db->where('parent_id', $data['old_data']['general_id']);
+        // $this->db->delete('mp_sub_entry');
 
+        // foreach ($data['sub_entry'] as $sub) {
+        //     $sub['parent_id'] = $data['old_data']['general_id'];
+        //     $this->db->insert('mp_sub_entry', $sub);
+        // }
 
-        $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
-        $this->db->set("date_acc_0", date('Y-m-d'));
-        $this->db->where("id_transaction", $data['old_data']['general_id']);
-        $this->db->update('mp_approv');
+        // $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
+        // $this->db->set("date_acc_0", date('Y-m-d'));
+        // $this->db->where("id_transaction", $data['old_data']['general_id']);
+        // $this->db->update('mp_approv');
 
         $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'pembayaran/show/' . $data['id'], 'sub_id' => $data['id'], 'desk' => 'Edit Pembayaran'));
 
@@ -688,29 +688,22 @@ class Payment_model extends CI_Model
         $this->db->update('dt_pelunasan_mitra', $trans_data);
         // $order_id = $this->db->insert_id();
 
-        // $data['generalentry']['url'] = 'pembayaran/show/' . $data['parent_id'];
-        $this->db->where('id', $data['generalentry']['id']);
-        $this->db->update('mp_generalentry', $data['generalentry']);
+        // UPDATE GENERALENTRY
+        // $this->db->where('id', $data['generalentry']['id']);
+        // $this->db->update('mp_generalentry', $data['generalentry']);
 
-        // $gen_id = $this->db->insert_id();
-        $this->db->where('parent_id', $data['generalentry']['id']);
-        $this->db->delete('mp_sub_entry');
+        // $this->db->where('parent_id', $data['generalentry']['id']);
+        // $this->db->delete('mp_sub_entry');
 
-        foreach ($data['sub_entry'] as $sub) {
-            $sub['parent_id'] = $data['generalentry']['id'];
-            $this->db->insert('mp_sub_entry', $sub);
-        }
+        // foreach ($data['sub_entry'] as $sub) {
+        //     $sub['parent_id'] = $data['generalentry']['id'];
+        //     $this->db->insert('mp_sub_entry', $sub);
+        // }
 
-
-        // $this->db->set('general_id', $gen_id);
-        // $this->db->where('id', $order_id);
-        // $this->db->update('dt_pelunasan_mitra');
-
-
-        $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
-        $this->db->set("date_acc_0", date('Y-m-d'));
-        $this->db->where("id_transaction", $data['generalentry']['id']);
-        $this->db->update('mp_approv');
+        // $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
+        // $this->db->set("date_acc_0", date('Y-m-d'));
+        // $this->db->where("id_transaction", $data['generalentry']['id']);
+        // $this->db->update('mp_approv');
 
         $this->db->set("status_pembayaran", $data['status_pembayaran']);
         $this->db->where("id", $data['parent_id']);

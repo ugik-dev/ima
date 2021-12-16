@@ -5,9 +5,9 @@
              <div class="pull pull-right">
 
                  <!-- Button trigger modal-->
-                 <!-- <button type="button" class="btn btn-primary" id="add_new_data_btn" data-toggle="modal" data-target="#exampleModalLong">
-                     <i class="fa fa-plus-square" aria-hidden="true"></i> Buat Akun
-                 </button> -->
+                 <button type="button" class="btn btn-primary" id="add_new_data_btn" data-toggle="modal" data-target="#exampleModalLong">
+                     <i class="fa fa-plus-square" aria-hidden="true"></i> Tambah Jenis Pembayaran
+                 </button>
 
                  <!-- Modal-->
 
@@ -30,9 +30,9 @@
                                  <tr>
                                      <th>ID</th>
                                      <th>Nama Invoice</th>
-                                     <th>Akun saat Lunas</th>
-                                     <th>Akun saat Hutang</th>
-                                     <th>Akun saat Lebih Bayar</th>
+                                     <th>Akun Pendapatan</th>
+                                     <th>Akun Piutang</th>
+                                     <th>Akun PPN</th>
                                      <th>Aksi</th>
                                  </tr>
                              </thead>
@@ -58,166 +58,170 @@
                  </div>
                  <div class="modal-body">
                      <!-- <div class="row"> -->
-                     <div class="form-group col-lg-6">
-                         <input name="id" id="id" type="hidden" />
-                         <?php
-                            echo form_label('Nama Jenis Invoice :');
-                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'jenis_invoice', 'id' => 'jenis_invoice', 'placeholder' => 'e.g Timah', 'reqiured' => '');
-                            echo form_input($data);
-                            ?>
-                     </div>
-
-
                      <div class="row">
-                         <div class="col-sm-12">
-                             <h4>Case Lunas</h4>
-                         </div>
-                         <div class="form-group col-sm-3">
-                             <label>Posisi</label>
-                             <select name="ac_paid_type" id='ac_paid_type' class="form-control input-lg">
-                                 <option value="0">Debit</option>
-                                 <option value="1">Kredit</option>
-                             </select>
-
-                         </div>
-                         <div class="form-group col-sm-9">
-                             <label> Akun Lunas </label>
-                             <select name="ac_paid" id='ac_paid' class="form-control select2 input-lg">
-                                 <?php
-                                    foreach ($accounts as $lv1) {
-                                        // echo '<optgroup label="[' . $lv1['head_number'] . '] ' . $lv1['name'] . '">';
-                                        foreach ($lv1['children'] as $lv2) {
-                                            echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
-                                            foreach ($lv2['children'] as $lv3) {
-                                                if (empty($lv3['children'])) {
-                                                    echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
-                                                    echo '</option>';
-                                                } else {
-                                                    echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
-                                                    foreach ($lv3['children'] as $lv4) {
-                                                        echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
-                                                        echo '</option>';
-                                                    }
-                                                    echo '</optgroup>';
-                                                }
-                                            }
-                                            echo '</optgroup>';
-                                        }
-                                        // echo '</optgroup>';
-                                    }
-                                    ?>
-                             </select>
-                         </div>
-                         <div class="col-sm-12">
-                             <hr>
-                         </div>
-                     </div>
-
-                     <div class="row">
-                         <div class="col-sm-12">
-                             <h4>Case Hutang</h4>
-                         </div>
-                         <div class="form-group col-sm-3">
-                             <label>Posisi</label>
-                             <select name="ac_unpaid_type" id='ac_unpaid_type' class="form-control input-lg">
-                                 <option value="0">Debit</option>
-                                 <option value="1">Kredit</option>
-                             </select>
-
-                         </div>
-
-                         <div class="form-group col-sm-9">
-                             <label> Akun Hutang </label>
-                             <select name="ac_unpaid" id='ac_unpaid' class="form-control select2 input-lg">
-                                 <?php
-                                    foreach ($accounts as $lv1) {
-                                        // echo '<optgroup label="[' . $lv1['head_number'] . '] ' . $lv1['name'] . '">';
-                                        foreach ($lv1['children'] as $lv2) {
-                                            echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
-                                            foreach ($lv2['children'] as $lv3) {
-                                                if (empty($lv3['children'])) {
-                                                    echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
-                                                    echo '</option>';
-                                                } else {
-                                                    echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
-                                                    foreach ($lv3['children'] as $lv4) {
-                                                        echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
-                                                        echo '</option>';
-                                                    }
-                                                    echo '</optgroup>';
-                                                }
-                                            }
-                                            echo '</optgroup>';
-                                        }
-                                        // echo '</optgroup>';
-                                    }
-                                    ?>
-                             </select>
-                         </div>
-                         <div class="col-sm-12">
-                             <hr>
-                         </div>
-                     </div>
-
-                     <div class="row" hidden>
-                         <div class="col-sm-12">
-                             <h4>Case Piutang</h4>
-                         </div>
-                         <div class="form-group col-sm-3">
-                             <label>Posisi</label>
-                             <input name="ac_piutang_type" value="0" />
-                             <input name="ac_piutang" value="0" />
-                             <!-- <select name="ac_piutang_type" id='ac_piutang_type' class="form-control input-lg">
-                                 <option value="0">Debit</option>
-                                 <option value="1">Kredit</option>
-                             </select> -->
-
-                         </div>
-
-                         <div class="form-group col-sm-9">
-                             <label> Akun Piutang </label>
-                             <!-- <select name="ac_piutang" id='ac_piutang' class="form-control select2 input-lg"> -->
+                         <div class="form-group col-sm-6">
+                             <input name="id" id="id" type="hidden" />
                              <?php
-                                // foreach ($accounts as $lv1) {
-                                //     foreach ($lv1['children'] as $lv2) {
-                                //         echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
-                                //         foreach ($lv2['children'] as $lv3) {
-                                //             if (empty($lv3['children'])) {
-                                //                 echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
-                                //                 echo '</option>';
-                                //             } else {
-                                //                 echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
-                                //                 foreach ($lv3['children'] as $lv4) {
-                                //                     echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
-                                //                     echo '</option>';
-                                //                 }
-                                //                 echo '</optgroup>';
-                                //             }
-                                //         }
-                                //         echo '</optgroup>';
-                                //     }
-                                // }
+                                echo form_label('Nama Jenis Invoice :');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'jenis_invoice', 'id' => 'jenis_invoice', 'placeholder' => 'e.g Timah', 'reqiured' => '');
+                                echo form_input($data);
                                 ?>
-                             <!-- </select> -->
                          </div>
-                         <div class="col-sm-12">
-                             <hr>
+                         <div class="form-group col-sm-6">
+                             <label>Text tambahan untuk jurnal :</label>
+                             <input class="form-control" type="text" name="text_jurnal" id="text_jurnal" />
+                         </div>
+                         <div class="form-group col-sm-6">
+                             <label>Tujuan Divisi</label>
+                             <input class="form-control" type="text" name="to_divisi" id="to_divisi" />
+                         </div>
+
+                         <div class="form-group col-sm-6">
+                             <label>Nomor Jurnal</label>
+                             <input class="form-control" type="text" name="ref_nojur" id="ref_nojur" />
                          </div>
                      </div>
-                     <div class="form-group col-lg-6">
-                         <label>Tujuan Divisi</label>
-                         <input class="form-control" type="text" name="to_divisi" id="to_divisi" />
-                     </div>
-                     <div class="form-group col-lg-6">
+                     <div class="form-group col-lg-12">
                          <label>Text Paragraph 1</label>
                          <textarea class="form-control" id="paragraph_1" name="paragraph_1" rows=3></textarea>
                      </div>
+
+                     <!-- <div class="row"> -->
+                     <!-- <div class="col-sm-12">
+                         <h4>Akun Pendapatan</h4>
+                     </div> -->
+                     <div class="form-group col-sm-3" hidden>
+                         <label>Posisi</label>
+                         <select name="ac_paid_type" id='ac_paid_type' class="form-control input-lg">
+                             <option value="0">Debit</option>
+                             <option value="1">Kredit</option>
+                         </select>
+
+                     </div>
+                     <div class="form-group col-sm-12">
+                         <label> Akun Pendapatan</label>
+                         <select name="ac_paid" id='ac_paid' class="form-control select2 input-lg">
+                             <?php
+                                foreach ($accounts as $lv1) {
+                                    // echo '<optgroup label="[' . $lv1['head_number'] . '] ' . $lv1['name'] . '">';
+                                    foreach ($lv1['children'] as $lv2) {
+                                        echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
+                                        foreach ($lv2['children'] as $lv3) {
+                                            if (empty($lv3['children'])) {
+                                                echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
+                                                echo '</option>';
+                                            } else {
+                                                echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
+                                                foreach ($lv3['children'] as $lv4) {
+                                                    echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
+                                                    echo '</option>';
+                                                }
+                                                echo '</optgroup>';
+                                            }
+                                        }
+                                        echo '</optgroup>';
+                                    }
+                                }
+                                ?>
+                         </select>
+                     </div>
+                     <div class="col-sm-12">
+                         <hr>
+                     </div>
+                     <div class="form-group col-sm-3" hidden>
+                         <label>Posisi</label>
+                         <select name="ac_unpaid_type" id='ac_unpaid_type' class="form-control input-lg">
+                             <option value="0">Debit</option>
+                             <option value="1">Kredit</option>
+                         </select>
+
+                     </div>
+
+                     <div class="form-group col-sm-12">
+                         <label> Akun Piutang </label>
+                         <select name="ac_unpaid" id='ac_unpaid' class="form-control select2 input-lg">
+                             <?php
+                                foreach ($accounts as $lv1) {
+                                    // echo '<optgroup label="[' . $lv1['head_number'] . '] ' . $lv1['name'] . '">';
+                                    foreach ($lv1['children'] as $lv2) {
+                                        echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
+                                        foreach ($lv2['children'] as $lv3) {
+                                            if (empty($lv3['children'])) {
+                                                echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
+                                                echo '</option>';
+                                            } else {
+                                                echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
+                                                foreach ($lv3['children'] as $lv4) {
+                                                    echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
+                                                    echo '</option>';
+                                                }
+                                                echo '</optgroup>';
+                                            }
+                                        }
+                                        echo '</optgroup>';
+                                    }
+                                    // echo '</optgroup>';
+                                }
+                                ?>
+                         </select>
+                     </div>
+                     <div class="col-sm-12">
+                         <hr>
+                     </div>
+                     <!-- </div> -->
+
+                     <!-- <div class="row" hidden> -->
+                     <!-- <div class="col-sm-12">
+                         <h4>Case Piutang</h4>
+                     </div> -->
+                     <div class="form-group col-sm-3" hidden>
+                         <label>Posisi</label>
+                         <input name="ac_ppn_type" value="0" />
+                         <input name="ac_ppn" value="0" />
+                         <select name="ac_ppn_type" id='ac_ppn_type' class="form-control">
+                             <option value="0">Debit</option>
+                             <option value="1">Kredit</option>
+                         </select>
+
+                     </div>
+
+                     <div class="form-group col-sm-12">
+                         <label> Akun PPN </label>
+                         <select name="ac_ppn" id='ac_ppn' class="form-control select2">
+                             <?php
+                                foreach ($accounts as $lv1) {
+                                    foreach ($lv1['children'] as $lv2) {
+                                        echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
+                                        foreach ($lv2['children'] as $lv3) {
+                                            if (empty($lv3['children'])) {
+                                                echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
+                                                echo '</option>';
+                                            } else {
+                                                echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
+                                                foreach ($lv3['children'] as $lv4) {
+                                                    echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
+                                                    echo '</option>';
+                                                }
+                                                echo '</optgroup>';
+                                            }
+                                        }
+                                        echo '</optgroup>';
+                                    }
+                                }
+                                ?>
+                         </select>
+                     </div>
+                     <div class="col-sm-12">
+                         <hr>
+                     </div>
+                     <!-- </div> -->
+
                      <!-- </div> -->
                  </div>
                  <div class="modal-footer">
                      <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
-                     <button class="btn btn-success my-1 mr-sm-2" type="submit" id="add_btn" data-loading-text="Loading..."><strong>Add Data</strong></button>
-                     <button class="btn btn-success my-1 mr-sm-2" type="submit" id="save_edit_btn" data-loading-text="Loading..."><strong>Save Change</strong></button>
+                     <button class="btn btn-success my-1 mr-sm-2" type="submit" id="add_btn" data-loading-text="Loading..."><strong>Tambah Data</strong></button>
+                     <button class="btn btn-success my-1 mr-sm-2" type="submit" id="save_edit_btn" data-loading-text="Loading..."><strong>Simpan Perubahan</strong></button>
                  </div>
              </form>
          </div>
@@ -243,10 +247,12 @@
              'ac_unpaid_type': $('#accounts_modal').find('#ac_unpaid_type'),
              'ac_paid_type': $('#accounts_modal').find('#ac_paid_type'),
              'ac_paid': $('#accounts_modal').find('#ac_paid'),
-             //  'ac_piutang_type': $('#accounts_modal').find('#ac_piutang_type'),
-             //  'ac_piutang': $('#accounts_modal').find('#ac_piutang'),
+             'ac_ppn_type': $('#accounts_modal').find('#ac_ppn_type'),
+             'ac_ppn': $('#accounts_modal').find('#ac_ppn'),
              'to_divisi': $('#accounts_modal').find('#to_divisi'),
              'paragraph_1': $('#accounts_modal').find('#paragraph_1'),
+             'ref_nojur': $('#accounts_modal').find('#ref_nojur'),
+             'text_jurnal': $('#accounts_modal').find('#text_jurnal'),
          }
 
 
@@ -370,7 +376,7 @@
                  var button = `    ${ editButton + deleteButton} `;
 
 
-                 renderData.push([d['id'], d['jenis_invoice'], d['name_paid'], d['name_unpaid'], d['name_piutang'], button]);
+                 renderData.push([d['id'], d['jenis_invoice'], d['name_paid'], d['name_unpaid'], d['name_ppn'], button]);
              });
              FDataTable.clear().rows.add(renderData).draw('full-hold');
          }
@@ -384,13 +390,16 @@
              PaymentModal.id.val(currentData['id']);
              PaymentModal.to_divisi.val(currentData['to_divisi']);
              PaymentModal.paragraph_1.val(currentData['paragraph_1']);
+             PaymentModal.ref_nojur.val(currentData['ref_nojur']);
+             PaymentModal.text_jurnal.val(currentData['text_jurnal']);
+
              PaymentModal.jenis_invoice.val(currentData['jenis_invoice']);
              PaymentModal.ac_unpaid_type.val(currentData['ac_unpaid_type']).change();
              PaymentModal.ac_paid_type.val(currentData['ac_paid_type']).change();
              PaymentModal.ac_unpaid.val(currentData['ac_unpaid']).change();
              PaymentModal.ac_paid.val(currentData['ac_paid']).change();
-             //  PaymentModal.ac_piutang_type.val(currentData['ac_piutang_type']).change();
-             //  PaymentModal.ac_piutang.val(currentData['ac_piutang']).change();
+             PaymentModal.ac_ppn_type.val(currentData['ac_ppn_type']).change();
+             PaymentModal.ac_ppn.val(currentData['ac_ppn']).change();
          })
 
 
@@ -430,7 +439,7 @@
              event.preventDefault();
              var isAdd = PaymentModal.addBtn.is(':visible');
              var url = "<?= site_url('invoice/') ?>";
-             url += isAdd ? "addPayment" : "editJenisInvoice";
+             url += isAdd ? "addJenisInvoice" : "editJenisInvoice";
              var button = isAdd ? PaymentModal.addBtn : PaymentModal.saveEditBtn;
 
              Swal.fire(swalSaveConfigure).then((result) => {
