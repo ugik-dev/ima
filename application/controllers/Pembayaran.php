@@ -637,8 +637,8 @@ class Pembayaran extends CI_Controller
             // $current_pph = ($dataContent['percent_pph'] / 100 * ($current_data - $current_jasa));
             $current_total = $current_data - $current_jasa;
             $kw_total = $kw_total + $current_total;
-            var_dump($item);
-            die();
+            // var_dump($item);
+            // die();
             if ($i == $count_row) {
                 // $current_total = 0;
                 $freame7->addCell(3000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
