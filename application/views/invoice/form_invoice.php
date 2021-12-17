@@ -443,11 +443,11 @@
             if (result.isConfirmed == false) {
                 return;
             }
-            // swal.fire({
-            //     title: 'Loading...',
-            //     allowOutsideClick: false
-            // });
-            // swal.showLoading();
+            swal.fire({
+                title: 'Loading...',
+                allowOutsideClick: false
+            });
+            swal.showLoading();
             $.ajax({
                 url: url,
                 'type': 'POST',
@@ -463,8 +463,8 @@
                     //  return;
                     var d = json['data']
 
-                    // swal.fire(swalSuccessConfigure);
-                    // window.location = '<?= base_url() ?>invoice/show/' + d;
+                    swal.fire(swalSuccessConfigure);
+                    window.location = '<?= base_url() ?>invoice/show/' + d;
                 },
                 error: function(e) {}
             });
