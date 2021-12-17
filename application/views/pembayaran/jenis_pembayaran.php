@@ -58,14 +58,30 @@
                  </div>
                  <div class="modal-body">
                      <!-- <div class="row"> -->
-                     <div class="form-group col-lg-6">
-                         <input name="id" id="id" type="hidden" />
-                         <?php
-                            echo form_label('Nama Jenis Pembayaran :');
-                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'jenis_pembayaran', 'id' => 'jenis_pembayaran', 'placeholder' => 'e.g Timah', 'reqiured' => '');
-                            echo form_input($data);
-                            ?>
+                     <div class="row">
+
+                         <div class="form-group col-lg-6">
+                             <input name="id" id="id" type="hidden" />
+                             <?php
+                                echo form_label('Nama Jenis Pembayaran :');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'jenis_pembayaran', 'id' => 'jenis_pembayaran', 'placeholder' => 'e.g Timah', 'reqiured' => '');
+                                echo form_input($data);
+                                ?>
+                         </div>
+                         <div class="form-group col-lg-6">
+                             <label>Tujuan Divisi</label>
+                             <input class="form-control" name="to_divisi" id="to_divisi" placeholder="e.g Keuangan" />
+                         </div>
+                         <div class="form-group col-lg-6">
+                             <label>Text tambahan untuk Jurnal</label>
+                             <input class="form-control" name="text_jurnal" id="text_jurnal" placeholder="e.g BY RM" />
+                         </div>
+                         <div class="form-group col-lg-6">
+                             <label>Referensi No Jurnal</label>
+                             <input class="form-control" name="ref_nojur" id="ref_nojur" placeholder="e.g JMJ" />
+                         </div>
                      </div>
+
 
 
                      <div class="row">

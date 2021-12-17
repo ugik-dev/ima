@@ -1411,6 +1411,29 @@ class Invoice extends CI_Controller
 				$this->load->model('Transaction_model');
 				$this->load->model('Crud_model');
 				$jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['jenis_invoice']))[$data['jenis_invoice']];
+
+				if ($data['ppn_pph'] == 1) {
+					$data['generalentry_ppn'] = array(
+						'date' => $data['date'],
+						'naration' => 'PPN INV(' . $data['no_invoice'] . ') ' . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['description'],
+						'customer_id' => $data['customer_id'],
+						'generated_source' => 'invoice_ppn'
+					);
+					$data['generalentry_ppn']['no_jurnal'] = $this->General_model->gen_number($data['date'], 'JU');
+					$data['sub_entry_ppn'][0] = array(
+						'accounthead' => $jp['ac_ppn_piut'],
+						'type' => 0,
+						'sub_keterangan' => 'Piut PPN ' . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['description'],
+						'amount' => $data['ppn_pph_count'],
+					);
+					$data['sub_entry_ppn'][1] = array(
+						'accounthead' => $jp['ac_ppn'],
+						'type' => 1,
+						'sub_keterangan' => 'PPN ' . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['description'],
+						'amount' => $data['ppn_pph_count'],
+					);
+				}
+
 				$data['generalentry'] = array(
 					'date' => $data['date'],
 					'naration' => 'INV(' . $data['no_invoice'] . ') ' . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['description'],
@@ -1421,7 +1444,7 @@ class Invoice extends CI_Controller
 				$i = 0;
 				$data['status'] = 'unpaid';
 				// NEW CODE
-				// echo json_encode($jp);
+				// echo json_encode($data);
 				// die();
 				$data['sub_entry'][$i] = array(
 					'accounthead' => $jp['ac_unpaid'],
@@ -1917,25 +1940,26 @@ class Invoice extends CI_Controller
 		// $data = $this->input->get();
 		$data['transaction'] = $this->Invoice_model->getAllInvoiceDetail(array('id' => $id))[$id];
 		$data['template'] = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['transaction']['jenis_invoice']))[$data['transaction']['jenis_invoice']];
+		$data['payment'] = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['transaction']['payment_metode']))[$data['transaction']['payment_metode']];
 
 		// $pos = strpos($data['template']['paragraph_1'], '{', 2);
 		if (!empty($data['template']['paragraph_1']))
 			$data['p1'] = $this->find_char($data['template']['paragraph_1'], $data['transaction']);
 		else
-			$data['p1'] = 'Bersamaan dengan ini kami sampaikan tagihan sebagai berikut :';
+			$data['p1'] = 'Bersamaan dengan ini kami sampaikan tagihan ' . $data['transaction']['description'] . ' sebagai berikut :';
 		// if (!empty($pos)) {
 		// 	$pos2 = strpos($data['template']['paragraph_1'], '}');
 		// 	$tx1 = substr($data['template']['paragraph_1'], $pos + 1, $pos2 - $pos - 1);
 		// 	$data['aa'] = substr($data['template']['paragraph_1'], $pos + 1, $pos2 - $pos - 1);
 		// }
 
-		echo json_encode($data['p1']);
-		die();
+		// echo json_encode($data);
+		// die();
 		if (empty($data['transaction']['date'])) $data['transaction']['date'] = date('Y-m-d');
-		$data['transaction']['date'] = 'Pangkalpinang, ' . $this->tanggal_indonesia($data['transaction']['date']);
+		$data['transaction']['date'] = $this->tanggal_indonesia($data['transaction']['date']);
 
-		$data['terbilang'] = $this->terbilang((int)$data['transaction']['sub_total']) . ' Rupiah';
-		$data['nominal'] = number_format((int)$data['transaction']['sub_total'], 0, ',', '.');
+		$data['terbilang'] = $this->terbilang((int)$data['transaction']['total_final']) . ' Rupiah';
+		$data['nominal'] = number_format((int)$data['transaction']['total_final'], 0, ',', '.');
 		$this->load->view('invoice/print_template.php', $data);
 	}
 }

@@ -33,6 +33,7 @@
                                      <th>Akun Pendapatan</th>
                                      <th>Akun Piutang</th>
                                      <th>Akun PPN</th>
+                                     <th>Akun Piutang PPN</th>
                                      <th>Aksi</th>
                                  </tr>
                              </thead>
@@ -72,10 +73,13 @@
                              <input class="form-control" type="text" name="text_jurnal" id="text_jurnal" />
                          </div>
                          <div class="form-group col-sm-6">
-                             <label>Tujuan Divisi</label>
-                             <input class="form-control" type="text" name="to_divisi" id="to_divisi" />
+                             <label>Kepada Yth. </label>
+                             <input class="form-control" type="text" name="to_jabatan" id="to_jabatan" placeholder="e.g. Kepala Divisi Eksplorasi" />
                          </div>
-
+                         <div class="form-group col-sm-6">
+                             <label>Sub Tujuan</label>
+                             <input class="form-control" type="text" name="to_divisi" id="to_divisi" placeholder="e.g. u.p Ka Akuntansi Utang/Pajak" />
+                         </div>
                          <div class="form-group col-sm-6">
                              <label>Nomor Jurnal</label>
                              <input class="form-control" type="text" name="ref_nojur" id="ref_nojur" />
@@ -184,32 +188,59 @@
                          </select>
 
                      </div>
-
-                     <div class="form-group col-sm-12">
-                         <label> Akun PPN </label>
-                         <select name="ac_ppn" id='ac_ppn' class="form-control select2">
-                             <?php
-                                foreach ($accounts as $lv1) {
-                                    foreach ($lv1['children'] as $lv2) {
-                                        echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
-                                        foreach ($lv2['children'] as $lv3) {
-                                            if (empty($lv3['children'])) {
-                                                echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
-                                                echo '</option>';
-                                            } else {
-                                                echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
-                                                foreach ($lv3['children'] as $lv4) {
-                                                    echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
+                     <div class="row">
+                         <div class="form-group col-sm-6">
+                             <label> Akun PPN Piutang</label>
+                             <select name="ac_ppn_piut" id='ac_ppn_piut' class="form-control select2">
+                                 <?php
+                                    foreach ($accounts as $lv1) {
+                                        foreach ($lv1['children'] as $lv2) {
+                                            echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
+                                            foreach ($lv2['children'] as $lv3) {
+                                                if (empty($lv3['children'])) {
+                                                    echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
                                                     echo '</option>';
+                                                } else {
+                                                    echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
+                                                    foreach ($lv3['children'] as $lv4) {
+                                                        echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
+                                                        echo '</option>';
+                                                    }
+                                                    echo '</optgroup>';
                                                 }
-                                                echo '</optgroup>';
                                             }
+                                            echo '</optgroup>';
                                         }
-                                        echo '</optgroup>';
                                     }
-                                }
-                                ?>
-                         </select>
+                                    ?>
+                             </select>
+                         </div>
+                         <div class="form-group col-sm-6">
+                             <label> Akun PPN </label>
+                             <select name="ac_ppn" id='ac_ppn' class="form-control select2">
+                                 <?php
+                                    foreach ($accounts as $lv1) {
+                                        foreach ($lv1['children'] as $lv2) {
+                                            echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
+                                            foreach ($lv2['children'] as $lv3) {
+                                                if (empty($lv3['children'])) {
+                                                    echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
+                                                    echo '</option>';
+                                                } else {
+                                                    echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
+                                                    foreach ($lv3['children'] as $lv4) {
+                                                        echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
+                                                        echo '</option>';
+                                                    }
+                                                    echo '</optgroup>';
+                                                }
+                                            }
+                                            echo '</optgroup>';
+                                        }
+                                    }
+                                    ?>
+                             </select>
+                         </div>
                      </div>
                      <div class="col-sm-12">
                          <hr>
@@ -249,7 +280,9 @@
              'ac_paid': $('#accounts_modal').find('#ac_paid'),
              'ac_ppn_type': $('#accounts_modal').find('#ac_ppn_type'),
              'ac_ppn': $('#accounts_modal').find('#ac_ppn'),
+             'ac_ppn_piut': $('#accounts_modal').find('#ac_ppn_piut'),
              'to_divisi': $('#accounts_modal').find('#to_divisi'),
+             'to_jabatan': $('#accounts_modal').find('#to_jabatan'),
              'paragraph_1': $('#accounts_modal').find('#paragraph_1'),
              'ref_nojur': $('#accounts_modal').find('#ref_nojur'),
              'text_jurnal': $('#accounts_modal').find('#text_jurnal'),
@@ -376,7 +409,7 @@
                  var button = `    ${ editButton + deleteButton} `;
 
 
-                 renderData.push([d['id'], d['jenis_invoice'], d['name_paid'], d['name_unpaid'], d['name_ppn'], button]);
+                 renderData.push([d['id'], d['jenis_invoice'], d['name_paid'], d['name_unpaid'], d['name_ppn'], d['name_ppn_piut'], button]);
              });
              FDataTable.clear().rows.add(renderData).draw('full-hold');
          }
@@ -389,6 +422,8 @@
              var currentData = dataPayments[$(this).data('id')];
              PaymentModal.id.val(currentData['id']);
              PaymentModal.to_divisi.val(currentData['to_divisi']);
+             PaymentModal.to_jabatan.val(currentData['to_jabatan']);
+
              PaymentModal.paragraph_1.val(currentData['paragraph_1']);
              PaymentModal.ref_nojur.val(currentData['ref_nojur']);
              PaymentModal.text_jurnal.val(currentData['text_jurnal']);
@@ -400,6 +435,7 @@
              PaymentModal.ac_paid.val(currentData['ac_paid']).change();
              PaymentModal.ac_ppn_type.val(currentData['ac_ppn_type']).change();
              PaymentModal.ac_ppn.val(currentData['ac_ppn']).change();
+             PaymentModal.ac_ppn_piut.val(currentData['ac_ppn_piut']).change();
          })
 
 

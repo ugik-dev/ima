@@ -603,6 +603,11 @@
             var i = 0;
 
             var renderData = [];
+            <?php if (!empty($transaction['general_id_ppn'])) { ?>
+                link = '<a href="<?= base_url() ?>statements/show/<?= $transaction['general_id_ppn'] ?>"> <?= $transaction['no_jurnal_ppn'] ?> </a>'
+                renderData.push(['<?= $transaction['date'] ?>', '<?= number_format($transaction['payed'], 2, ',', '.') ?>', '<?= $transaction['acc_0'] ?>', link, '']);
+
+            <?php   } ?>
             link = '<a href="<?= base_url() ?>statements/show/<?= $transaction['general_id'] ?>"> <?= $transaction['no_jurnal'] ?> </a>'
             renderData.push(['<?= $transaction['date'] ?>', '<?= number_format($transaction['payed'], 2, ',', '.') ?>', '<?= $transaction['acc_0'] ?>', link, '']);
             total = <?= $transaction['payed'] ?>;

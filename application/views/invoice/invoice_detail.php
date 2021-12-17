@@ -449,6 +449,10 @@
             var i = 0;
 
             var renderData = [];
+            <?php if (!empty($dataContent['general_id_ppn'])) { ?>
+                link = '<a href="<?= base_url() ?>statements/show/<?= $dataContent['general_id_ppn'] ?>"> PPN <?= $dataContent['no_jurnal_ppn'] ?> </a>'
+                renderData.push(['<?= $dataContent['date'] ?>', '<?= number_format(0, 2, ',', '.') ?>', '<?= $dataContent['acc_0'] ?>', link, '']);
+            <?php   } ?>
             link = '<a href="<?= base_url() ?>statements/show/<?= $dataContent['general_id'] ?>"> <?= $dataContent['no_jurnal'] ?> </a>'
             renderData.push(['<?= $dataContent['date'] ?>', '<?= number_format(0, 2, ',', '.') ?>', '<?= $dataContent['acc_0'] ?>', link, '']);
             total = 0;
@@ -531,14 +535,14 @@
         btn_print_kwitansi.on('click', () => {
             item = '<?php if ($dataContent['item']  != NULL) {
                         foreach ($dataContent['item'] as $item) {
-                            echo '&item[]=' . $item->keterangan_item . '&price[]=' . $item->amount;
+                            echo '&item[]=' . $item->keterangan_item . '&price[]=' . $item->amount * $item->qyt;
                         }
                     }
                     if ($tmp1 > 0) {
                         // $tmp1 = floor($total * 0.10);
                         echo '&item[]=PPN 10&price[]=' . $tmp1;
                     } ?>';
-            print_kwitansi(<?= $dataContent['sub_total'] ?>, '<?= $dataContent['date'] ?>', item);
+            print_kwitansi(<?= $dataContent['total_final'] ?>, '<?= $dataContent['date'] ?>', item);
         })
 
         btn_print_dokumen.on('click', () => {
