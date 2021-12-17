@@ -637,7 +637,8 @@ class Pembayaran extends CI_Controller
             // $current_pph = ($dataContent['percent_pph'] / 100 * ($current_data - $current_jasa));
             $current_total = $current_data - $current_jasa;
             $kw_total = $kw_total + $current_total;
-
+            var_dump($item);
+            die();
             if ($i == $count_row) {
                 // $current_total = 0;
                 $freame7->addCell(3000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
@@ -652,7 +653,7 @@ class Pembayaran extends CI_Controller
             } else {
                 $freame7->addCell(3000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
                 $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
-                $freame7->addCell(3400, $cellVCentered)->addText($item->nopol ? $item->nopol : $item->description, 'paragraph', array('spaceAfter' => 0));
+                $freame7->addCell(3400, $cellVCentered)->addText($item->nopol ? $item->nopol : '', 'paragraph', array('spaceAfter' => 0));
                 $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph', array('spaceAfter' => 0));
                 $freame7->addCell(1600, $cellVCentered)->addText(number_format($current_total, '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
                 $freame7->addCell(60, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
