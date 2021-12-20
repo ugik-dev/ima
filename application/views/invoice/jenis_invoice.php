@@ -446,7 +446,7 @@
                      return;
                  }
                  $.ajax({
-                     url: "<?= base_url('payment/deletePayment') ?>",
+                     url: "<?= base_url('invoice/deleteJenisPembayaran') ?>",
                      'type': 'get',
                      data: {
                          'id': currentData

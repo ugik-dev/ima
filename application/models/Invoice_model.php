@@ -184,6 +184,9 @@ class Invoice_model extends CI_Model
         return $data['id'];
     }
 
+
+
+
     public function addJenisInvoice($data)
     {
         // $this->db->where('id', $data['id']);
@@ -669,6 +672,13 @@ class Invoice_model extends CI_Model
             $this->db->trans_commit();
         }
         return array('order_id' => $data['parent_id'], 'parent2_id' => $data['parent_id']);
+    }
+
+    function deleteJenisInvoice($data)
+    {
+        $this->db->where('id', $data['id']);
+        $this->db->delete('ref_jenis_invoice');
+        ExceptionHandler::handleDBError($this->db->error(), "Delete", "Jenis Invoice");
     }
 
     function delete_pelunasan($data)
