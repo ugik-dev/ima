@@ -1429,7 +1429,7 @@ class Invoice extends CI_Controller
                     $data['sub_entry_ppn'][0] = array(
                         'accounthead' => $jp['ac_ppn_piut'],
                         'type' => 0,
-                        'sub_keterangan' => 'Piut PPN ' . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['description'],
+                        'sub_keterangan' => 'Piut WAPU PPN ' . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['description'],
                         'amount' => $data['ppn_pph_count'],
                     );
                     $data['sub_entry_ppn'][1] = array(
