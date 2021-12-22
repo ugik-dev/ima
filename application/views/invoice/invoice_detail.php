@@ -673,7 +673,7 @@
                         }
                         swal.fire("Simpan Berhasil", "", "success");
 
-                        locatsion.reload();
+                        location.reload();
                         //  return;
                         // var d = json['data']
                         // dataPayments[d['id']] = d;
