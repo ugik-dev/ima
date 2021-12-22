@@ -11,7 +11,7 @@ class Invoice extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model(array('General_model', 'Invoice_model', 'Statement_model'));
+        $this->load->model(array('General_model', 'InvoiceModel', 'Statement_model', 'Invoice_model'));
         // $this->load->helper(array('DataStructure'));
         $this->db->db_debug = TRUE;
     }
@@ -159,7 +159,7 @@ class Invoice extends CI_Controller
                     // if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
                     // 	$status = TRUE;
                     $dataContent['id_item'][$i] =  $dataContent['item'][$i]->id;
-                    $dataContent['amount'][$i] = preg_replace("/[^0-9]/", "", $dataContent['item'][$i]->amount);
+                    $dataContent['amount'][$i] =  $dataContent['item'][$i]->amount;
                     $dataContent['date_item'][$i] =  $dataContent['item'][$i]->date_item;
                     $dataContent['satuan'][$i] =  $dataContent['item'][$i]->satuan;
 
@@ -1081,6 +1081,8 @@ class Invoice extends CI_Controller
                 $data['main_view'] = 'invoice/invoice_detail';
                 $data['payment_metode'] = $this->General_model->getAllRefAccount(array('ref_id' => $data['dataContent']['payment_metode']))[0];
                 $data['customer_data'] = $this->General_model->getAllPayee(array('id' => $data['dataContent']['customer_id']));
+                $data['ref_account'] = $this->General_model->getAllRefAccount(array('ref_type' => 'payment_method'));
+                $data['accounts'] = $this->General_model->getAllBaganAkun(array('by_DataStructure' => true));
             }
             // echo json_encode($data);
             // die();
@@ -1388,9 +1390,9 @@ class Invoice extends CI_Controller
                 $data['manual_math'] = 0;
             }
             $res = $this->Invoice_model->check_no_invoice($data['no_invoice']);
-            // if ($res != 0) {
-            // 	throw new UserException('Nomor Invoice sudah ada!!');
-            // }
+            if ($res != 0) {
+                throw new UserException('Nomor Invoice sudah ada!!');
+            }
 
             $count_rows = count($data['amount']);
             // if()
@@ -1406,6 +1408,9 @@ class Invoice extends CI_Controller
             if (empty($data['date'])) {
                 $data['date'] = date('Y-m-d');
             }
+            if (empty($data['date2'])) {
+                $data['date2'] = $data['date'];
+            }
 
             for ($i = 0; $i < $count_rows; $i++) {
                 if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
@@ -1420,12 +1425,13 @@ class Invoice extends CI_Controller
 
                 if ($data['ppn_pph'] == 1) {
                     $data['generalentry_ppn'] = array(
-                        'date' => $data['date'],
+                        'date' => $data['date2'],
                         'naration' => 'PPN INV(' . $data['no_invoice'] . ') ' . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['description'],
                         'customer_id' => $data['customer_id'],
                         'generated_source' => 'invoice_ppn'
                     );
-                    $data['generalentry_ppn']['no_jurnal'] = $this->General_model->gen_number($data['date'], 'JU');
+                    $data['generalentry_ppn']['no_jurnal'] = $this->General_model->gen_number($data['date2'], 'JU');
+
                     $data['sub_entry_ppn'][0] = array(
                         'accounthead' => $jp['ac_ppn_piut'],
                         'type' => 0,
@@ -1580,8 +1586,10 @@ class Invoice extends CI_Controller
                     'generated_source' => 'invoice'
                 );
                 $pelunasan = 0;
+                // echo json_encode($data['data_pelunasan']);
+                // die();
                 foreach ($data['data_pelunasan'] as $dp) {
-                    $pelunasan = $pelunasan + $dp['amount'];
+                    $pelunasan = $pelunasan + $dp['sum_child'];
                 }
                 if ($data['sub_total'] <= $pelunasan) {
                     $data['status'] = 'paid';
@@ -1755,41 +1763,76 @@ class Invoice extends CI_Controller
             $data['data_pelunasan'] = $this->General_model->getAllPelunasanInvoice(array('parent_id' => $data['parent_id']));
             $total_bayar = 0;
             foreach ($data['data_pelunasan'] as $p) {
-                $total_bayar = $total_bayar + $p['nominal'];
+                $total_bayar = $total_bayar + $p['sum_child'];
             }
             $data['total_bayar'] = $total_bayar;
-            if ($total_bayar >= $data['old_data']['sub_total']) {
+            if ($total_bayar >= $data['old_data']['total_final']) {
                 throw new UserException('Data ini sudah lunas!');
             }
-            if ($data['total_bayar'] + $data['nominal'] >= $data['old_data']['sub_total']) {
+            if ($data['total_bayar'] + $data['nominal'] >= $data['old_data']['total_final']) {
                 $data['status'] = 'paid';
             } else {
                 $data['status'] = 'unpaid';
             }
+            // $jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['old_data']['jenis_invoice']))[$data['old_data']['jenis_invoice']];
             $jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['old_data']['jenis_invoice']))[$data['old_data']['jenis_invoice']];
+            // $data['status'] = 'unpaid';
+            // $uang_muka_pph = number_format(($data['sub_total'] * 0.02), 2, '.', '');
+            $ref = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_metode']))[$data['payment_metode']];
+
             $data['gen_old'] = $this->Statement_model->getSingelJurnal(array('id' => $data['old_data']['general_id']))['parent'];
             $data['generalentry'] = array(
                 'date' => $data['date_pembayaran'],
+                'no_jurnal' => $this->General_model->gen_number($data['date_pembayaran'], $jp['ref_nojur_pel']),
                 // 'naration' => $data['old_data']['description'],
                 'naration' => $data['old_data']['description'] . ' (' . $data['gen_old']->no_jurnal . ')',
                 'customer_id' => $data['old_data']['customer_id'],
                 'generated_source' => 'Pelunasan Invoice'
             );
+            $i = 0;
+            $total = 0;
+            if (!empty($data['nominal'])) {
+                if ($data['nominal'] > 0) {
+                    $data['sub_entry'][$i] = array(
+                        'accounthead' => $ref['relation_head'],
+                        'type' => 0,
+                        'amount' => $data['nominal'],
+                        'sub_keterangan' => "Piut " . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['old_data']['description'],
+                    );
+                    $i++;
+                    $total = $total + $data['nominal'];
+                }
+            }
+            if (!empty($data['ac_potongan'])) $potongan = count($data['ac_potongan']);
+            else $potongan = 0;
 
-            $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date_pembayaran'], 'JMB');
-
-            $data['sub_entry'][0] = array(
-                'accounthead' => $jp['ac_paid'],
-                'type' => 1,
-                'amount' => $data['nominal'],
-                'sub_keterangan' => "Htg " . $data['old_data']['description'],
-            );
-            $data['sub_entry'][1] = array(
+            $k = 0;
+            for ($j = 0; $j < $potongan; $j++) {
+                if (!empty($data['ac_potongan'][$j]) && !empty($data['ac_nominal'][$j])) {
+                    $data['ac_nominal'][$j] = substr(preg_replace("/[^0-9]/", "", $data['ac_nominal'][$j]), 0, -2) . '.' . substr(preg_replace("/[^0-9]/", "", $data['ac_nominal'][$j]), -2);
+                    $data['sub_entry'][$i] = array(
+                        'accounthead' => $data['ac_potongan'][$j],
+                        'type' => 0,
+                        'amount' => $data['ac_nominal'][$j],
+                        'sub_keterangan' => $data['ac_desk'][$j],
+                    );
+                    $i++;
+                    $total = $total + $data['ac_nominal'][$j];
+                    $data['child_pembayaran'][$k] = array(
+                        'ac_potongan' => $data['ac_potongan'][$j],
+                        'ac_nominal' => $data['ac_nominal'][$j],
+                        'ac_desk' => $data['ac_desk'][$j],
+                        'no_bukti' => $data['no_bukti'][$j],
+                    );
+                }
+            }
+            $data['sub_entry'][$i] = array(
                 'accounthead' => $jp['ac_unpaid'],
-                'type' => 0,
-                'amount' => $data['nominal'],
-                'sub_keterangan' => "Htg " . $data['old_data']['description'],
+                'type' => 1,
+                'amount' => $total,
+                'sub_keterangan' => 'Piut ' . (!empty($jp['text_jurnal']) ? $jp['text_jurnal'] . ' ' : '') . $data['old_data']['description'],
             );
+            $i++;
             // echo json_encode($data);
             // die();
 
@@ -1844,7 +1887,7 @@ class Invoice extends CI_Controller
                 'generated_source' => 'Pelunasan Invoice'
             );
 
-            // $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date_pembayaran'], 'JMB');
+            $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date'], $jp['ref_nojur_pel']);
             $data['sub_entry'][0] = array(
                 'accounthead' => $jp['ac_paid'],
                 'type' => 1,
@@ -1901,17 +1944,27 @@ class Invoice extends CI_Controller
         }
     }
 
-    public function kwitansi_print()
+    public function kwitansi_print($id)
     {
-        $data = $this->input->get();
-        // echo json_encode($data);
-        // die();
+        // $data = $this->input->get();
+        // $data['company'] = Company_Profile();
+        $data['transaction'] = $this->Invoice_model->getAllInvoiceDetail(array('id' => $id))[$id];
+        $data['template'] = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['transaction']['jenis_invoice']))[$data['transaction']['jenis_invoice']];
+
+        if (!empty($data['template']['text_kwitansi']))
+            $data['text_kwitansi'] = $this->find_char($data['template']['text_kwitansi'], $data['transaction']);
+        else
+            $data['text_kwitansi'] =  $data['transaction']['description'];
+
+
         if (empty($data['date'])) $data['date'] = date('Y-m-d');
         $data['date'] = 'Pangkalpinang, ' . $this->tanggal_indonesia($data['date']);
+        // echo json_encode($data);
+        // die();
 
-        $data['terbilang'] = $this->terbilang((int)$data['nominal']) . ' Rupiah';
-        $data['nominal'] = number_format((int)$data['nominal'], 0, ',', '.');
-        $this->load->view('pembayaran/print_kwitansi.php', $data);
+        $data['terbilang'] = $this->terbilang((int)$data['transaction']['total_final']) . ' Rupiah';
+        $data['nominal'] = number_format((int)$data['transaction']['total_final'], 0, ',', '.');
+        $this->load->view('invoice/print_kwitansi.php', $data);
     }
 
     function find_char($string, $data)

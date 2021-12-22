@@ -13,6 +13,7 @@
                             </h4>
                             <div class="col-lg-12">
                                 <div class="row">
+
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <input type="hidden" id="id_transaction" name="id">
@@ -23,7 +24,9 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-3">
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <?php echo form_label('No Invoice'); ?>
                                             <?php
@@ -31,6 +34,26 @@
                                             echo form_input($data);
                                             ?>
                                         </div>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <div class="form-group">
+                                            <?php echo form_label('Tanggal Invoice'); ?>
+                                            <?php
+                                            $data = array('class' => 'form-control input-lg', 'type' => 'date', 'name' => 'date', 'id' => 'date', 'reqiured' => '', 'value' => Date('Y-m-d'));
+                                            echo form_input($data);
+                                            ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <div class="form-group">
+                                            <?php echo form_label('Tanggal Kegiatan'); ?>
+                                            <?php
+                                            $data = array('class' => 'form-control input-lg', 'type' => 'date', 'name' => 'date2', 'id' => 'date2', 'reqiured' => '', 'value' => Date('Y-m-d'));
+                                            echo form_input($data);
+                                            ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
                                         <div class="form-group">
                                             <label>Jenis Invoice</label>
                                             <select name="jenis_invoice" id="jenis_invoice" class="form-control">
@@ -40,39 +63,8 @@
                                                 } ?>
                                             </select>
                                         </div>
-                                        <div class="form-group" id='label_kendaraan' style="display: none">
-                                            <label>Kendaraan</label>
-                                            <div class="row">
-                                                <div class="col-lg-10" id='layer_cars'>
-                                                </div>
-                                                <div class="col-lg-2">
-                                                    <button type="button" style="display:none" class="btn btn-primary" id="addcars"> <i class="fa fa-plus-circle"></i> </button>
-                                                </div>
-                                            </div>
+                                    </div>
 
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3">
-                                        <div class="form-group">
-                                            <?php echo form_label('Tanggal'); ?>
-                                            <?php
-                                            $data = array('class' => 'form-control input-lg', 'type' => 'date', 'name' => 'date', 'id' => 'date', 'reqiured' => '', 'value' => Date('d/m/Y'));
-                                            echo form_input($data);
-                                            ?>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-lg-6">
-
-                                        <div class="form-group">
-                                            <?php echo form_label('Rincian Transaksi'); ?>
-                                            <?php
-                                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'description', 'id' => 'description', 'reqiured' => '');
-                                            echo form_input($data);
-                                            ?>
-                                        </div>
-                                    </div>
                                     <div class="col-lg-6">
 
                                         <div class="form-group">
@@ -84,6 +76,18 @@
                                                 } ?>
                                                 <!-- <option value="2" selected> Transfer Mandiri A (112-0098146017) </option> -->
                                             </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12*">
+
+                                        <div class="form-group">
+                                            <?php echo form_label('Rincian Transaksi'); ?>
+                                            <?php
+                                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'description', 'id' => 'description', 'reqiured' => '');
+                                            echo form_input($data);
+                                            ?>
                                         </div>
                                     </div>
                                 </div>
@@ -276,6 +280,7 @@
     no_invoice = $('#no_invoice');
     description = $('#description');
     date_jurnal = $('#date');
+    date2 = $('#date2');
     invoice_form = $('#invoice_form');
     acc_1 = $('#acc_1');
     acc_2 = $('#acc_2');
@@ -392,6 +397,7 @@
         no_invoice.val('<?= $data_return['no_invoice'] ?>');
         id_custmer.val('<?= $data_return['customer_id'] ?>');
         date_jurnal.val('<?= $data_return['date'] ?>');
+        date2.val('<?= $data_return['date2'] ?>');
         description.val('<?= $data_return['description'] ?>');
         acc_1.val('<?= $data_return['acc_1'] ?>');
         acc_2.val('<?= $data_return['acc_2'] ?>');
@@ -399,7 +405,7 @@
         <?php
 
         for ($i = 0; $i < $count_rows; $i++) { ?>
-            amount[<?= $i ?>].value = '<?= $data_return['amount'][$i] ?>';
+            amount[<?= $i ?>].value = '<?= number_format($data_return['amount'][$i], 2, ',', '.') ?>';
             qyt[<?= $i ?>].value = '<?= $data_return['qyt'][$i] ?>';
             date_item[<?= $i ?>].value = '<?= $data_return['date_item'][$i] ?>';
             keterangan_item[<?= $i ?>].value = '<?= $data_return['keterangan_item'][$i] ?>';

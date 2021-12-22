@@ -86,10 +86,13 @@
                          </div>
                      </div>
                      <div class="form-group col-lg-12">
-                         <label>Text Paragraph 1</label>
+                         <label>FORMAT Paragraph 1 pada Surat</label>
                          <textarea class="form-control" id="paragraph_1" name="paragraph_1" rows=3></textarea>
                      </div>
-
+                     <div class="form-group col-lg-12">
+                         <label>FORMAT Untuk Pembayaran pada Kwitansi </label>
+                         <textarea class="form-control" id="text_kwitansi" name="text_kwitansi" rows=3></textarea>
+                     </div>
                      <!-- <div class="row"> -->
                      <!-- <div class="col-sm-12">
                          <h4>Akun Pendapatan</h4>
@@ -284,6 +287,7 @@
              'to_divisi': $('#accounts_modal').find('#to_divisi'),
              'to_jabatan': $('#accounts_modal').find('#to_jabatan'),
              'paragraph_1': $('#accounts_modal').find('#paragraph_1'),
+             'text_kwitansi': $('#accounts_modal').find('#text_kwitansi'),
              'ref_nojur': $('#accounts_modal').find('#ref_nojur'),
              'text_jurnal': $('#accounts_modal').find('#text_jurnal'),
          }
@@ -425,6 +429,8 @@
              PaymentModal.to_jabatan.val(currentData['to_jabatan']);
 
              PaymentModal.paragraph_1.val(currentData['paragraph_1']);
+             PaymentModal.text_kwitansi.val(currentData['text_kwitansi']);
+
              PaymentModal.ref_nojur.val(currentData['ref_nojur']);
              PaymentModal.text_jurnal.val(currentData['text_jurnal']);
 

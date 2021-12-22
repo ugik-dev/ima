@@ -282,6 +282,7 @@ class Invoice_model extends CI_Model
 
         $trans_data = array(
             'date' => $data['date'],
+            'date2' => $data['date2'],
             'description' => $data['description'],
             'customer_id' => $data['customer_id'],
             'no_invoice' => $data['no_invoice'],
@@ -378,16 +379,17 @@ class Invoice_model extends CI_Model
     {
         $this->db->trans_start();
 
-        $generateRandomString = $this->generateRandomString(32);
+        // $generateRandomString = $this->generateRandomString(32);
 
         $trans_data = array(
+            'date2' => $data['date2'],
             'date' => $data['date'],
             'description' => $data['description'],
             'customer_id' => $data['customer_id'],
             'no_invoice' => $data['no_invoice'],
             'payment_metode' => $data['payment_metode'],
             'ppn_pph' => $data['ppn_pph'],
-            'inv_key' => $generateRandomString,
+            // 'inv_key' => $generateRandomString,
             'status' => $data['status'],
             'jenis_invoice' => $data['jenis_invoice'],
             'sub_total' => $data['sub_total'],
@@ -586,8 +588,14 @@ class Invoice_model extends CI_Model
             'agen_id' => $this->session->userdata('user_id')['id'],
         );
 
+
         $this->db->insert('dt_pelunasan_invoice', $trans_data);
         $order_id = $this->db->insert_id();
+        if (!empty($data['child_pembayaran']))
+            foreach ($data['child_pembayaran'] as $sub) {
+                $sub['id_pelunasan'] = $order_id;
+                $this->db->insert('dt_pel_inv_potongan', $sub);
+            }
 
         $data['generalentry']['url'] = 'invoice/show/' . $data['parent_id'];
         $this->db->insert('mp_generalentry', $data['generalentry']);
@@ -613,7 +621,7 @@ class Invoice_model extends CI_Model
         $this->db->set("id_transaction", $gen_id);
         $this->db->insert('mp_approv');
 
-        $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'invoice/show/' . $data['parent_id'], 'sub_id' => $order_id, 'desk' => 'Entry Invoice'));
+        $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'invoice/show/' . $data['parent_id'], 'sub_id' => $order_id, 'desk' => 'Entry Pembayaran Invoice'));
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();

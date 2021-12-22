@@ -50,8 +50,9 @@ class General_model extends CI_Model
 
     function getAllPelunasanInvoice($filter = [])
     {
-        $this->db->select('mpp.* , us.agentname , gen.no_jurnal');
+        $this->db->select('mpp.* , us.agentname , gen.no_jurnal ,nominal+COALESCE(sum(ac_nominal),0) as sum_child');
         $this->db->from('dt_pelunasan_invoice mpp');
+        $this->db->join('dt_pel_inv_potongan as potongan', 'mpp.id = potongan.id_pelunasan', 'LEFT');
         $this->db->join('mp_users us', 'mpp.agen_id = us.id', 'LEFT');
         $this->db->join('mp_generalentry gen', 'gen.id = mpp.general_id', 'LEFT');
         if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
@@ -59,6 +60,21 @@ class General_model extends CI_Model
         if (!empty($filter['ex_id'])) $this->db->where('mpp.id <> ' . $filter['ex_id']);
         // if (!empty($filter['id_parent1'])) $this->db->where('gen.id', $filter['id']);
         // $this->db->order_by('gen.status, gen.id,  sub.id_item ', 'DESC');
+        $this->db->group_by('mpp.id');
+        $res = $this->db->get();
+        if (!empty($filter['by_id'])) {
+            return DataStructure::keyValue($res->result_array(), 'id');
+        }
+
+        $res = $res->result_array();
+        return $res;
+    }
+
+    function getChildrenPelunasan($filter = [])
+    {
+        $this->db->select('*');
+        $this->db->from('dt_pel_inv_potongan mpp');
+        if (!empty($filter['id_pelunasan'])) $this->db->where('mpp.id_pelunasan', $filter['id_pelunasan']);
         $res = $this->db->get();
         if (!empty($filter['by_id'])) {
             return DataStructure::keyValue($res->result_array(), 'id');
@@ -69,15 +85,8 @@ class General_model extends CI_Model
 
     function getAllGeneralentry($filter = [])
     {
-        // $this->db->select('mpp.* , us.agentname , gen.no_jurnal');
         $this->db->from('mp_generalentry mpp');
-        // $this->db->join('mp_users us', 'mpp.agen_id = us.id', 'LEFT');
-        // $this->db->join('mp_generalentry gen', 'gen.id = mpp.general_id', 'LEFT');
         if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
-        // if (!empty($filter['parent_id'])) $this->db->where('mpp.parent_id', $filter['parent_id']);
-        // if (!empty($filter['ex_id'])) $this->db->where('mpp.id <> ' . $filter['ex_id']);
-        // if (!empty($filter['id_parent1'])) $this->db->where('gen.id', $filter['id']);
-        // $this->db->order_by('gen.status, gen.id,  sub.id_item ', 'DESC');
         $res = $this->db->get();
         if (!empty($filter['by_id'])) {
             return DataStructure::keyValue($res->result_array(), 'id');

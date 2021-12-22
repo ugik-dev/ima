@@ -295,7 +295,7 @@
         <div class="col-xs-12">
             <div class="box" id="print-section">
                 <div class="box-header">
-                    <h3 class="box-title"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tambah Payment </h3>
+                    <h3 class="box-title"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Data Jurnal </h3>
                 </div>
                 <div class="box-body">
                     <div class="table-responsive col-md-12">
@@ -321,7 +321,7 @@
 </div>
 
 <div class="modal fade" id="pelunasan_modal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <form opd="form" id="pelunasan_form" onsubmit="return false;" type="multipart" autocomplete="off">
                 <div class="modal-header">
@@ -338,9 +338,33 @@
                         <label>Tanggal</label>
                         <input type="date" class="form-control" name="date_pembayaran" id="date_pembayaran" required />
                     </div>
-                    <div class="form-group">
-                        <label>Nominal</label>
-                        <input type="text" class="form-control mask" name="nominal" id="nominal" required />
+                    <div class="row">
+                        <div class="col-lg-6">
+
+                            <label>Metode</label>
+                            <div class="form-group">
+                                <select name="payment_metode" id="payment_metode" class="form-control input-lg">
+                                    <?php
+                                    foreach ($ref_account as $ji) {
+                                        echo '<option value="' . $ji['ref_id'] . '">' . $ji['ref_text'] . '</option>';
+                                    } ?>
+                                    <!-- <option value="2" selected> Transfer Mandiri A (112-0098146017) </option> -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+
+                            <div class="form-group">
+                                <label>Nominal</label>
+                                <input type="text" class="form-control mask" name="nominal" id="nominal" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12" id="">
+                        <a class="btn btn-light my-1 mr-sm-2" id="btn_add_potongan"><strong>Tambahkan Potongan</strong></a>
+                    </div>
+                    <div class="col-lg-12" id="freame_potongan">
+
                     </div>
                     <!-- </div> -->
                 </div>
@@ -354,13 +378,83 @@
     </div>
 </div>
 <script>
-    $('#menu_id_6').addClass('menu-item-active menu-item-open menu-item-here"')
-    $('#submenu_id_13').addClass('menu-item-active')
+    $('#menu_id_6').addClass('menu-item-active menu-item-open menu-item-here"');
+    $('#submenu_id_13').addClass('menu-item-active');
     $(document).ready(function() {
         var add_pelunasan = $('#add_pelunasan');
         var btn_print_kwitansi = $('#btn_print_kwitansi');
         var btn_print_dokumen = $('#btn_print_dokumen');
+        var freame_potongan = $('#freame_potongan');
+        var btn_add_potongan = $('#btn_add_potongan');
 
+        var row_num = 1;
+
+        function add_row(dat = false) {
+
+
+            var layout_potongan = `
+                            <hr>
+                            <h2>Potongan ke ${row_num}</h2>
+                            <div class="row" id="row_pelunasan_${row_num}">
+                            <div class="form-group col-lg-6">
+                             <label> Akun Potongan </label>
+                             <select name="ac_potongan[]" id="ac_potongan_${row_num}" ${dat ? 'value="'+dat['ac_potongan']+'"' : ''} class="form-control select2">
+                                 <?php
+                                    foreach ($accounts as $lv1) {
+                                        foreach ($lv1['children'] as $lv2) {
+                                            echo '<optgroup label="&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '] ' . $lv2['name'] . '">';
+                                            foreach ($lv2['children'] as $lv3) {
+                                                if (empty($lv3['children'])) {
+                                                    echo '<option value="' . $lv3['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '';
+                                                    echo '</option>';
+                                                } else {
+                                                    echo '<optgroup label="&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '] ' . $lv3['name'] . '">';
+                                                    foreach ($lv3['children'] as $lv4) {
+                                                        echo '<option value="' . $lv4['id_head'] . '">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp [' . $lv1['head_number'] . '.' . $lv2['head_number'] . '.' . $lv3['head_number'] . '.' . $lv4['head_number']  . '] ' . $lv4['name'] . '';
+                                                        echo '</option>';
+                                                    }
+                                                    echo '</optgroup>';
+                                                }
+                                            }
+                                            echo '</optgroup>';
+                                        }
+                                    }
+                                    ?>
+                             </select>
+                         </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                <label>Nominal Potongan</label>
+                                <input type="text" class="form-control mask" name="ac_nominal[]" id="ac_nominal_${row_num}" ${dat ? 'value="'+dat['ac_nominal']+'"' : ''}  />
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                            <label>Keterangn Potongan</label>
+                            <input type="text" class="form-control" name="ac_desk[]" id="ac_desk_${row_num}"  ${dat ? 'value="'+dat['ac_desk']+'"' : ''} />
+                        </div>
+                        </div>
+                         <div class="col-lg-6">
+                            <div class="form-group">
+                            <label>Nomor Bukti Potongan</label>
+                            <input type="text" class="form-control" name="no_bukti[]" id="no_bukti_${row_num}" ${dat ? 'value="'+dat['no_bukti']+'"' : ''}  />
+                        </div>
+                        </div>
+                     </div>
+                </div>
+                    `;
+            freame_potongan.append(layout_potongan);
+            // freame_potongan.select2();
+            $('#ac_potongan_' + row_num).select2()
+            $('.mask').mask('000.000.000.000.000,00', {
+                reverse: true
+            });
+            row_num++;
+        }
+        btn_add_potongan.on('click', () => {
+            console.log('adds')
+            add_row()
+        })
         var dataPayments = [];
         var PelunasanModal = {
             'self': $('#pelunasan_modal'),
@@ -409,6 +503,7 @@
         });
 
         function form_reset() {
+            freame_potongan.html('');
             PelunasanModal.id.val('');
             PelunasanModal.nominal.val('');
             PelunasanModal.date_pembayaran.val('<?= date('Y-m-d') ?>');
@@ -426,7 +521,8 @@
                 'type': 'GET',
                 data: {
                     'parent_id': '<?= $dataContent['id'] ?>',
-                    'by_id': true
+                    'by_id': true,
+                    'get_potongan': true
                 },
                 success: function(data) {
                     swal.close();
@@ -473,9 +569,9 @@
                 // <button type="button" class="btn btn-outline-secondary btn-icon"><i class="la la-paperclip"></i></button>
 
                 var button = `   <div class="btn-group mr-2" role="group" aria-label="...">  ${ printButton+ editButton + deleteButton  }    </div> `;
-                renderData.push([d['date_pembayaran'], formatRupiah2(d['nominal']), d['agentname'], link, button]);
-                total = parseFloat(total) + parseFloat(d['nominal']);
-                console.log(d['nominal'])
+                renderData.push([d['date_pembayaran'], formatRupiah2(d['sum_child']), d['agentname'], link, button]);
+                total = parseFloat(total) + parseFloat(d['sum_child']);
+                // console.log(d['nominal'])
             });
             renderData.push(['<b>Total Dibayarkan</b>', '<b> Rp. ' + formatRupiah2(total) + '</b>', '', '', '']);
             FDataTable.clear().rows.add(renderData).draw('full-hold');
@@ -508,6 +604,7 @@
 
 
         FDataTable.on('click', '.edit', function() {
+            form_reset();
             PelunasanModal.form.trigger('reset');
             PelunasanModal.self.modal('show');
             PelunasanModal.addBtn.hide();
@@ -518,6 +615,10 @@
             PelunasanModal.id.val(currentData['id']);
             PelunasanModal.date_pembayaran.val(currentData['date_pembayaran']);
             PelunasanModal.nominal.val(formatRupiah2(currentData['nominal']));
+            currentData['data_potongan'].forEach((child) => {
+                console.log(child)
+                add_row(child);
+            })
         })
 
         FDataTable.on('click', '.print', function() {
@@ -527,28 +628,20 @@
 
 
         function print_kwitansi(nominal, date, item) {
-            getss = `to=<?= !empty($dataContent['name_acc_1']) ? $dataContent['name_acc_1'] : 'PT Indometal Asia' ?>&from=<?= !empty($customer_data[0]['customer_name']) ? $customer_data[0]['customer_name']  : '' ?>&date=${date}&nominal=${nominal}&description=<?= $dataContent['description'] ?>${item}`;
-            url = "<?= base_url('invoice/kwitansi_print') ?>?" + getss;
-            window.open(url, "_blank");
-        }
+            // getss = `to=<?= !empty($dataContent['name_acc_1']) ? $dataContent['name_acc_1'] : 'PT Indometal Asia' ?>&from=<?= !empty($customer_data[0]['customer_name']) ? $customer_data[0]['customer_name']  : '' ?>&date=${date}&nominal=${nominal}&description=<?= $dataContent['description'] ?>${item}`;
+            // url = "<?= base_url('invoice/kwitansi_print/' . $dataContent['id']) ?>?" + getss;
+            // window.open(url, "_blank");
+        };
 
         btn_print_kwitansi.on('click', () => {
-            item = '<?php if ($dataContent['item']  != NULL) {
-                        foreach ($dataContent['item'] as $item) {
-                            echo '&item[]=' . $item->keterangan_item . '&price[]=' . $item->amount * $item->qyt;
-                        }
-                    }
-                    if ($tmp1 > 0) {
-                        // $tmp1 = floor($total * 0.10);
-                        echo '&item[]=PPN 10&price[]=' . $tmp1;
-                    } ?>';
-            print_kwitansi(<?= $dataContent['total_final'] ?>, '<?= $dataContent['date'] ?>', item);
-        })
+            url = "<?= base_url('invoice/kwitansi_print/' . $dataContent['id']) ?>?";
+            window.open(url, "_blank");
+        });
 
         btn_print_dokumen.on('click', () => {
             url = "<?= base_url('invoice/print/' . $dataContent['id']) ?>";
             window.open(url, "_blank");
-        })
+        });
 
         PelunasanModal.form.submit(function(event) {
             event.preventDefault();
@@ -580,7 +673,7 @@
                         }
                         swal.fire("Simpan Berhasil", "", "success");
 
-                        location.reload();
+                        locatsion.reload();
                         //  return;
                         // var d = json['data']
                         // dataPayments[d['id']] = d;
@@ -627,8 +720,5 @@
         $('.mask').mask('000.000.000.000.000,00', {
             reverse: true
         });
-    })
-</script>
-<script>
-
+    });
 </script>
