@@ -11,6 +11,7 @@ class InvoiceModel extends CI_Model
         $this->db->from('mp_invoice_v2');
         // if (!empty($filter['id']))
         if (!empty($filter['id'])) $this->db->where('mp_invoice_v2.id', $filter['id']);
+        if (!empty($filter['status'])) $this->db->where('mp_invoice_v2.status', $filter['status']);
         if (!empty($filter['no_invoice'])) {
             $this->db->where('no_invoice like "%' . $filter['no_invoice'] . '%"');
         } else {

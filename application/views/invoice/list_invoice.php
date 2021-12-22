@@ -47,6 +47,16 @@
                     ?>
                 </div>
             </div>
+            <div class="col-lg-3">
+                <div class="form-group margin ">
+                    <?php echo form_label('Status:'); ?>
+                    <select class="form-control" name="status" value="<?= $filter['status'] ?>">
+                        <option value="">Semua Status</option>
+                        <option <?= $filter['status'] == 'paid' ? 'selected' : '' ?> value="paid">Lunas</option>
+                        <option <?= $filter['status'] == 'unpaid' ? 'selected' : '' ?> value="unpaid">Belum Lunas</option>
+                    </select>
+                </div>
+            </div>
             <div class="col-lg-2" style="margin-top:27px;">
                 <?php
                 $data = array('class' => 'btn btn-info btn-outline-secondary margin  pull-right input-lg', 'type' => 'submit', 'name' => 'searchecord', 'value' => 'true', 'content' => '<i class="fa fa-search" aria-hidden="true"></i> Cari');
@@ -71,6 +81,17 @@
 </div> -->
 <?php
 $cur_user = $this->session->userdata('user_id')['id'];
+
+$st_paid = '<div class="btn btn-success font-weight-bold col-lg-9">
+    <i class="flaticon2-checkmark"></i> <b>Lunas</b>
+</div>
+                        ';
+
+$st_unpaid = '<div class="btn btn-danger font-weight-bold col-lg-9">
+    <i class="flaticon2-exclamation"></i> <b>Belum Lunas</b>
+</div>
+                        ';
+
 for ($i = 0; $i < count($invoices_Record); $i++) {
 ?>
     <hr>
@@ -80,14 +101,14 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
             <div class="row col-lg-12">
                 <div class=" col-lg-7"></div>
                 <div class="col-lg-5">
-                    <div class="btn-group">
+                    <!-- <div class="btn-group">
                         <button type="button" class="btn btn-primary dropdown-toggle mr-1 mr-sm-14 my-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Download File</button>
                         <div class="dropdown-menu">
                             <a type="button" href="<?= base_url('invoice/download_word/') . $invoices_Record[$i]['id'] ?>" class="btn mr-3 my-1">To KA Akuntansi</a>
                             <a type="button" href="<?= base_url('invoice/download_word/') . $invoices_Record[$i]['id'] ?>/2" class="btn mr-3 my-1">To Divisi Eksplorasi</a>
                             <a type="button" href="<?= base_url('invoice/download/') . $invoices_Record[$i]['id'] ?>" class="btn">Invoice PDF</a>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="btn-group">
                         <button type="button" class="btn btn-primary dropdown-toggle mr-1 mr-sm-14 my-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
                         <div class="dropdown-menu">
@@ -97,7 +118,6 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
                                 
                                 ') : '';
                             ?>
-
                             <a class="btn" href="<?php echo base_url() . 'invoice/copy/' . $invoices_Record[$i]['id'] ?>"><i class="fa fa-copy pull-left"></i>
                                 Copy</a>
                         </div>
@@ -146,9 +166,11 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
             </div>
             <div class="col-lg-3 col-sm-3 col-xs-12  ">
                 <div class="col-lg-12 col-sm-12 col-xs-12 ">
+                    <?= $invoices_Record[$i]['status'] == 'paid' ? $st_paid : $st_unpaid ?>
+                </div>
+                <div class="col-lg-12 col-sm-12 col-xs-12 ">
                     <b> Agen : </b><?= $invoices_Record[$i]['acc_0'] ?>
                 </div>
-
             </div>
         </div>
         <div class="row table-responsive container-fluid">

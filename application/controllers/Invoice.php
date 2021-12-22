@@ -120,6 +120,7 @@ class Invoice extends CI_Controller
         $filter['first_date'] = html_escape($this->input->post('date1'));
         $filter['second_date'] = html_escape($this->input->post('date2'));
         $filter['no_invoice'] = html_escape($this->input->post('invoice_no'));
+        $filter['status'] = html_escape($this->input->post('status'));
 
         if ($filter['first_date'] == NULL && $filter['second_date'] == NULL) {
             $filter['first_date'] = date('Y-m-01');
