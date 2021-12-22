@@ -336,10 +336,6 @@ class General_model extends CI_Model
         // $this->db->from('limit', 1);
         $this->db->limit(1);
         $this->db->order_by("no_jurnal", 'DESC');
-
-        // if (!empty($filter['account_head'])) $this->db->where('dt_head.id', $filter['account_head']);
-        // if (!empty($filter['id'])) $this->db->where('dt_head.id', $filter['id']);
-        // SUBSTRING_INDEX(SUBSTRING_INDEX(mp_head.name, '.', -2), ']', 1)
         $this->db->where(
             "SUBSTRING_INDEX(SUBSTRING_INDEX(no_jurnal, '/', 2),'/',-1) = '" . $type . "'"
         );
@@ -348,8 +344,9 @@ class General_model extends CI_Model
             "generated_source",
             $sources
         );
-        $this->db->where('MONTH(DATE)', explode('-', $date)[1]);
-        $this->db->where('YEAR(DATE)', explode('-', $date)[0]);
+        $this->db->where('date', $date);
+        // $this->db->where('MONTH(DATE)', explode('-', $date)[1]);
+        // $this->db->where('YEAR(DATE)', explode('-', $date)[0]);
         $query = $this->db->get();
         $res =  $query->result_array();
 
@@ -369,10 +366,13 @@ class General_model extends CI_Model
                     $x = substr($res[0]['no_jurnal'], 0, -1) . 'AA';
                 }
             }
-            return $x;
+            //  $x;
         } else {
-            return $this->gen_number($date, $type) . 'A';
+            $x = $this->gen_number($date, $type) . 'A';
         }
+        return $x;
+        // echo json_encode($x);
+        // die();
     }
 
     public function neraca_saldo($data, $filter)
