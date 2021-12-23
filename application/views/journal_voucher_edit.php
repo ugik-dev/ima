@@ -243,7 +243,7 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/journal_voucher.js?v=0.2"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/journal_voucher.js?v=1.3"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>

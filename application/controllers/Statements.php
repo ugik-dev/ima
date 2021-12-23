@@ -15,7 +15,7 @@ class Statements extends CI_Controller
 		$this->load->model(array('SecurityModel', 'Statement_model', 'Transaction_model', 'General_model'));
 		$this->SecurityModel->MultiplerolesGuard('Statement');
 		$this->load->helper(array('DataStructure'));
-		$this->db->db_debug = TRUE;
+		$this->db->db_debug = false;
 	}
 
 	public function index()
