@@ -10,6 +10,8 @@ class SecurityModel extends CI_Model
     $this->db->join('mp_menu', 'mp_menu.id = mp_multipleroles.menu_Id');
     $this->db->where('mp_multipleroles.user_id', $this->session->userdata('user_id')['id']);
     $this->db->where('mp_menu.name', $rolename);
+    $this->db->where('mp_menu.active', 1);
+
     $res = $this->db->get();
     $res = $res->result_array();
     if (empty($res)) {
@@ -23,6 +25,8 @@ class SecurityModel extends CI_Model
     $this->db->select('mp_multipleroles.id');
     $this->db->from('mp_multipleroles');
     $this->db->join('mp_menu', 'mp_menu.id = mp_multipleroles.menu_Id');
+    $this->db->where('mp_menu.active', 1);
+
     $this->db->where('mp_multipleroles.user_id', $this->session->userdata('user_id')['id']);
     if (is_array($rolename)) {
       $this->db->where_in('mp_menu.name', $rolename);
@@ -50,6 +54,8 @@ class SecurityModel extends CI_Model
     $this->db->join('mp_menu', 'mp_menu.id = mp_multipleroles.menu_Id');
     $this->db->where('mp_multipleroles.user_id', $this->session->userdata('user_id')['id']);
     $this->db->where('mp_menu.name in (' . $rolename . ')');
+    $this->db->where('mp_menu.active', 1);
+
     $res = $this->db->get();
     $res = $res->result_array();
     if (!empty($res)) {

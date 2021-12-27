@@ -102,6 +102,22 @@ class Crud_model extends CI_Model
         }
     }
 
+    public function fetch_record_where($tablename, $args)
+    {
+        if ($args != NULL) {
+            $this->db->where($args);
+            $query = $this->db->get($tablename);
+        } else {
+            $query = $this->db->get($tablename);
+        }
+
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return NULL;
+        }
+    }
+
 
     public function fetch_record_v2($tablename, $id)
     {
@@ -772,7 +788,9 @@ class Crud_model extends CI_Model
     {
         $this->db->select("mp_users.id as user_id , mp_users.user_name , mp_users.user_email , mp_users.user_description");
         $this->db->from('mp_users');
+
         if (!empty($filter['user_id'])) $this->db->where('mp_users.id', $filter['user_id']);
+        // $this->db->where('mp_menu.active', 1);
         // $this->db->from('mp_multipleroles');
         // $this->db->join('mp_menu', "mp_users.id = mp_multipleroles.user_id and mp_multipleroles.menu_Id = mp_menu.id ");
         $query = $this->db->get();
@@ -791,6 +809,7 @@ class Crud_model extends CI_Model
         // $this->db->from('mp_multipleroles');
         $this->db->join('mp_menu', '1=1');
         $this->db->join('mp_multipleroles', "u.id = mp_multipleroles.user_id AND mp_menu.id = mp_multipleroles.menu_id", 'LEFT');
+        $this->db->where('mp_menu.active', 1);
         if (!empty($filter['user_id'])) $this->db->where('u.id', $filter['user_id']);
         $this->db->order_by('menu_id');
         $query = $this->db->get();

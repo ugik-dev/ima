@@ -26,6 +26,8 @@ class UserModel extends CI_Model
         $this->db->from('mp_multipleroles');
         $this->db->join('mp_menu', 'mp_menu.id = mp_multipleroles.menu_Id');
         $this->db->where('mp_multipleroles.user_id', $this->session->userdata('user_id')['id']);
+        $this->db->where('mp_menu.active', 1);
+
         if (is_array($rolename)) {
             $this->db->where_in('mp_menu.name', $rolename);
         } else {
@@ -52,6 +54,8 @@ class UserModel extends CI_Model
         $this->db->join('mp_menu', 'mp_menu.id = mp_multipleroles.menu_Id');
         $this->db->where('mp_multipleroles.user_id', $this->session->userdata('user_id')['id']);
         $this->db->where('mp_menu.name in (' . $rolename . ')');
+        $this->db->where('mp_menu.active', 1);
+
         $res = $this->db->get();
         $res = $res->result_array();
         if (!empty($res)) {

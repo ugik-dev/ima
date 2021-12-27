@@ -1005,6 +1005,7 @@ class Statements extends CI_Controller
 		$data['main_view'] = 'trail_balance';
 
 		$this->load->model('Statement_model');
+		// die();
 		$data['trail_records'] = $this->Statement_model->trail_balance($year);
 
 

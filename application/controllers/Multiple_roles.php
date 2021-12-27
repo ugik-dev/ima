@@ -175,7 +175,7 @@ class Multiple_roles extends CI_Controller
 		$this->load->model('Crud_model');
 
 		if ($page_name  == 'add_multipleroles_model') {
-			$result_roles = $this->Crud_model->fetch_record('mp_menu', NULL);
+			$result_roles = $this->Crud_model->fetch_record_where('mp_menu', array('active' => 1));
 			$data['result_roles'] = $result_roles;
 			$data['user_list'] =  $this->Crud_model->fetch_record('mp_users', 'status');
 			//model name available in admin models folder

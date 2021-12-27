@@ -9,6 +9,8 @@ if (!function_exists('Fetch_Users_Access_Control_Menu')) {
 		$CI->db->from('mp_menu');
 		$CI->db->join('mp_multipleroles', "mp_menu.id = mp_multipleroles.menu_Id and mp_multipleroles.user_id = '$para_user_id'");
 		$CI->db->order_by('mp_menu.order_number');
+		$CI->db->where('mp_menu.active', 1);
+
 		$query = $CI->db->get();
 		if ($query->num_rows() > 0) {
 			return $query->result();
@@ -27,6 +29,7 @@ if (!function_exists('Fetch_Users_Access_Control_Sub_Menu')) {
 		$CI->db->select("*");
 		$CI->db->from('mp_menulist');
 		$CI->db->where(['menu_id' => $para_menu_id]);
+		// $CI->db->where('active', 1);
 		$query = $CI->db->get();
 		if ($query->num_rows() > 0) {
 			return $query->result();

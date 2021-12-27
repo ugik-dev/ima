@@ -633,6 +633,10 @@ class Statement_model extends CI_Model
             if ($query->num_rows() > 0) {
                 $heads_record =  $query->result();
                 foreach ($heads_record as $single_head) {
+                    // if ($single_head->id == 1169) {
+                    // echo 'count';
+                    // die();
+                    // }
                     $data_leadger = $this->get_ledger_transactions($single_head->id, $filter);
                     if ($data_leadger != NULL) {
                         if ($data_leadger['saldo_awal'] == 0) {
@@ -784,6 +788,36 @@ class Statement_model extends CI_Model
         return $count_total_amt;
     }
 
+    public function count_laba_rugi(
+        $year
+    ) {
+
+        $count_total_amt = 0;
+        $this->db->select("
+        ( coalesce(sum(
+            if(mp_head.nature = 'Revenue',
+              if(mp_sub_entry.type = 1,amount,-amount
+            ),0)
+        ),0) - coalesce(sum(
+            if(mp_head.nature = 'Expense',
+              if(mp_sub_entry.type = 0,amount,-amount
+            ),0)
+        ),0))
+         as laba_rugi");
+        $this->db->from('mp_sub_entry');
+        $this->db->join('mp_generalentry', 'mp_generalentry.id = mp_sub_entry.parent_id');
+        $this->db->join('mp_head', 'mp_head.id = mp_sub_entry.accounthead');
+        $this->db->where_in('mp_head.nature', ['Expense', 'Revenue']);
+        $this->db->where('YEAR(mp_generalentry.date)', $year);
+        // $this->db->where('mp_generalentry.date <=', $date2);
+
+        // echo $year;
+        $res = $this->db->get();
+        $res =  $res->result_array();
+        // echo $this->db->last_query();
+        return $res[0]['laba_rugi'];
+    }
+
     //USED TO GENERATE TRAIL BALANCE 
     public function trail_balance($current_date)
     {
@@ -808,7 +842,9 @@ class Statement_model extends CI_Model
                     $debitamt  = 0;
                     $creditamt = 0;
                     $amount =  $this->count_head_amount($single_head->id, $date1, $date2);
-
+                    // if ($single_head->id == '229') {
+                    //     $amount = $this->count_laba_rugi(explode('-', $date2)[0] - 1);
+                    // }
                     if ($amount != NULL) {
                         if ($amount > 0) {
                             $debitamt    = $amount;
@@ -1708,6 +1744,15 @@ class Statement_model extends CI_Model
         $res = $res->result();
         $i = 0;
         foreach ($res as $re) {
+            $saldo_laba_rugi = 0;
+            if ($re->title == "Equity") {
+                // $re->saldo_sebelum  = $this->count_laba_rugi($filter['tahun'] - 1);
+                // $re->mutasi  = $this->count_laba_rugi($filter['tahun']);
+                // $re->saldo_sebelum  = $this->count_laba_rugi($filter['tahun'] - 1);
+                // $re->mutasi  = $this->count_laba_rugi($filter['tahun']);
+            }
+
+            // die();
             $tmp[$i] = array(
                 'id' => $re->id,
                 'text' =>  $re->title,
@@ -1718,14 +1763,10 @@ class Statement_model extends CI_Model
                 ],
                 'state' => ['opened' => true]
             );
+
             if ($re->saldo_sebelum != 0 or $re->mutasi != 0) {
                 if ($filter['periode'] == 'tahunan') {
                     $res2 =  $this->query_count_tahunan($filter, $re->pars, $re->id, 5, -2, '000.000');
-                    // if (!empty($res2)) {
-                    // }
-                    // print_r($this->db->last_query());
-                    // // echo json_encode($re);
-                    // die();
                 } else if ($filter['bulan'] != 1) {
                     $res2 =  $this->query_count_more_1($filter, $re->pars, $re->id, 5, -2, '000.000');
                 } else {
@@ -1770,19 +1811,22 @@ class Statement_model extends CI_Model
                                 // echo "s";
                                 // echo json_encode($res);
                                 $res_of_laba_rugi = $this->akumulasi_laba_rugi($filter);
-                                $tmp[$i]['children'][$k]['children'][$l] = array(
-                                    'id' => $re3->id . '-3',
-                                    'text' => $re3->name,
-                                    'data' => [
-                                        'saldo_s' => $res_of_laba_rugi['saldo_sebelum'] >= 0 ? number_format($res_of_laba_rugi['saldo_sebelum'], 2) : '(' . number_format(-$res_of_laba_rugi['saldo_sebelum'], 2) . ')',
-                                        'mutasi' => $res_of_laba_rugi['mutasi'] >= 0 ? number_format($res_of_laba_rugi['mutasi'], 2) :   '(' . number_format(-$res_of_laba_rugi['mutasi'], 2) . ')',
-                                        'saldo' => ($res_of_laba_rugi['saldo_sebelum'] + $res_of_laba_rugi['mutasi']) >= 0 ? number_format(($res_of_laba_rugi['saldo_sebelum'] + $res_of_laba_rugi['mutasi']), 2) :  '(' . number_format(- ($res_of_laba_rugi['saldo_sebelum'] + $res_of_laba_rugi['mutasi']), 2) . ')',
-                                        // 'ins' => '<a onclick="inspect_buku_besar(' . $re3->id . ')"><i class="fa fa-search text-warning mr-5"></i></a>'
-                                    ],
-                                    'state' => ['opened' => true]
-                                );
+                                $re3->saldo_sebelum =  $res_of_laba_rugi['saldo_sebelum'];
+                                $re3->mutasi =  $res_of_laba_rugi['mutasi'];
+                                // $tmp[$i]['children'][$k]['children'][$l] = array(
+                                //     'id' => $re3->id . '-3',
+                                //     'text' => $re3->name,
+                                //     'data' => [
+                                //         'saldo_s' => $res_of_laba_rugi['saldo_sebelum'] >= 0 ? number_format($res_of_laba_rugi['saldo_sebelum'], 2) : '(' . number_format(-$res_of_laba_rugi['saldo_sebelum'], 2) . ')',
+                                //         'mutasi' => $res_of_laba_rugi['mutasi'] >= 0 ? number_format($res_of_laba_rugi['mutasi'], 2) :   '(' . number_format(-$res_of_laba_rugi['mutasi'], 2) . ')',
+                                //         'saldo' => ($res_of_laba_rugi['saldo_sebelum'] + $res_of_laba_rugi['mutasi']) >= 0 ? number_format(($res_of_laba_rugi['saldo_sebelum'] + $res_of_laba_rugi['mutasi']), 2) :  '(' . number_format(- ($res_of_laba_rugi['saldo_sebelum'] + $res_of_laba_rugi['mutasi']), 2) . ')',
+                                //         // 'ins' => '<a onclick="inspect_buku_besar(' . $re3->id . ')"><i class="fa fa-search text-warning mr-5"></i></a>'
+                                //     ],
+                                //     'state' => ['opened' => true]
+                                // );
                                 // die();
-                            } else
+                            } else     if ($re3->id == '99999999999999999') {
+                            }
                             if ($re3->saldo_sebelum != 0 or $re3->mutasi != 0) {
                                 $tmp[$i]['children'][$k]['children'][$l] = array(
                                     'id' => $re3->id . '-3',
