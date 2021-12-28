@@ -376,6 +376,7 @@
              'paragraph_1': $('#accounts_modal').find('#paragraph_1'),
              'text_kwitansi': $('#accounts_modal').find('#text_kwitansi'),
              'ref_nojur': $('#accounts_modal').find('#ref_nojur'),
+             'ref_nojur_pel': $('#accounts_modal').find('#ref_nojur_pel'),
              'ref_nojur_pembayaran': $('#accounts_modal').find('#ref_nojur_pembayaran'),
              'ref_nojur_pel_pembayaran': $('#accounts_modal').find('#ref_nojur_pel_pembayaran'),
              'text_jurnal': $('#accounts_modal').find('#text_jurnal'),
@@ -521,6 +522,7 @@
              PaymentModal.text_kwitansi.val(currentData['text_kwitansi']);
 
              PaymentModal.ref_nojur.val(currentData['ref_nojur']);
+             PaymentModal.ref_nojur_pel.val(currentData['ref_nojur_pel']);
              PaymentModal.ref_nojur_pembayaran.val(currentData['ref_nojur_pembayaran']);
              PaymentModal.ref_nojur_pel_pembayaran.val(currentData['ref_nojur_pel_pembayaran']);
              PaymentModal.text_jurnal.val(currentData['text_jurnal']);
