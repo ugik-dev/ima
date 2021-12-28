@@ -370,10 +370,28 @@ class General_model extends CI_Model
         } else {
             $x = $this->gen_number($date, $type) . 'A';
         }
-        return $x;
-        // echo json_encode($x);
+        $avaliable = $this->check_gen_number($x);
+        if ($avaliable)
+            return $x;
+        else
+            return $this->gen_number($date, $type) . 'A';
+
+        // echo json_encode($res);
         // die();
     }
+
+    function check_gen_number($x)
+    {
+        $this->db->from('mp_generalentry mpp');
+        $this->db->where('mpp.no_jurnal', $x);
+        $res = $this->db->get();
+        $res = $res->result_array();
+        if (!empty($res)) {
+            return FALSE;
+        } else
+            return TRUE;
+    }
+
 
     public function neraca_saldo($data, $filter)
     {

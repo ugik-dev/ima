@@ -452,7 +452,7 @@
         <div class="col-xs-12">
             <div class="box" id="print-section">
                 <div class="box-header">
-                    <h3 class="box-title"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tambah Payment </h3>
+                    <h3 class="box-title"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Data Jurnal </h3>
                 </div>
                 <div class="box-body">
                     <div class="table-responsive col-md-12">
@@ -503,8 +503,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
-                    <button class="btn btn-success my-1 mr-sm-2" type="submit" id="add_btn" data-loading-text="Loading..."><strong>Add Data</strong></button>
-                    <button class="btn btn-success my-1 mr-sm-2" type="submit" id="save_edit_btn" data-loading-text="Loading..."><strong>Save Change</strong></button>
+                    <button class="btn btn-success my-1 mr-sm-2" type="submit" id="add_btn" data-loading-text="Loading..."><strong>Simpan Data</strong></button>
+                    <button class="btn btn-success my-1 mr-sm-2" type="submit" id="save_edit_btn" data-loading-text="Loading..."><strong>Simpan Data</strong></button>
                 </div>
             </form>
         </div>
@@ -687,13 +687,19 @@
 
         btn_print_kwitansi.on('click', () => {
             item = '<?php if ($transaction['items']  != NULL) {
+                        $tot_item = 0;
                         foreach ($transaction['items'] as $item) {
-                            $total = $total + ($item['amount'] * $item['qyt']);
+                            $curtotal = ($item['amount'] * $item['qyt']);
+                            $tot_item = $tot_item + $curtotal;
                             $total_qyt =  $total_qyt + ($item['qyt']);
-                            echo '&item[]=' . $item['keterangan_item'] . '&price[]=' . $total;
+                            echo '&item[]=' . $item['keterangan_item'] . '&price[]=' . $curtotal;
                         }
+                    }
+                    if (!empty($transaction['am_jasa'])) {
+                        echo '&item[]= - Biaya Jasa&price[]=' . $transaction['am_jasa'];
                     } ?>';
             print_kwitansi(<?= $total ?>, '<?= $transaction['date'] ?>', item);
+            // print_kwitansi(<?= $total ?>, '<?= $transaction['date'] ?>', item);
             // print_kwitansi(<?= $total ?>, '<?= $transaction['date'] ?>');
         })
 

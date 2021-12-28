@@ -347,7 +347,7 @@
      </div>
  </div>
  <script>
-     $('#menu_id_6').addClass('menu-item-active menu-item-open menu-item-here"')
+     $('#menu_id_33').addClass('menu-item-active menu-item-open menu-item-here"')
      $('#submenu_id_91').addClass('menu-item-active')
      $(document).ready(function() {
          var dataPayments = [];

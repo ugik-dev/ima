@@ -21,14 +21,14 @@
          <div class="col-xs-12">
              <div class="box" id="print-section">
                  <div class="box-header">
-                     <h3 class="box-title"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tambah Payment </h3>
+                     <h3 class="box-title"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Data Referensi </h3>
                  </div>
                  <div class="box-body">
                      <div class="table-responsive col-md-12">
                          <table class="table table-bordered table-hover table-checkable mt-10" id="FDataTable">
                              <thead>
                                  <tr>
-                                     <th>Nama Payment</th>
+                                     <th>Nama Referensi</th>
                                      <th>Harga Default</th>
                                      <th>Pajak</th>
                                      <th>Akun Pendapatan</th>
@@ -49,7 +49,7 @@
          <div class="modal-content">
              <form opd="form" id="accounts_form" onsubmit="return false;" type="multipart" autocomplete="off">
                  <div class="modal-header">
-                     <h5 class="modal-title" id="exampleModalLabel">Form Payment / Jasa</h5>
+                     <h5 class="modal-title" id="exampleModalLabel">Form Referensi</h5>
                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                          <i aria-hidden="true" class="ki ki-close"></i>
                      </button>
@@ -115,10 +115,6 @@
                          <input name="order_number" id='order_number' class="form-control input-lg" type="number" />
 
                      </div>
-
-                     <!-- </div> -->
-
-                     <!-- </div> -->
                  </div>
                  <div class="modal-footer">
                      <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
@@ -130,8 +126,8 @@
      </div>
  </div>
  <script>
-     //  $('#menu_id_<?= $vcrud['parent_id'] ?>').addClass('menu-item-active menu-item-open menu-item-here"')
-     //  $('#submenu_id_<?= $vcrud['id_menulist'] ?>').addClass('menu-item-active')
+     $('#menu_id_3').addClass('menu-item-active menu-item-open menu-item-here"')
+     $('#submenu_id_89').addClass('menu-item-active')
      $(document).ready(function() {
          var dataRefAccount = [];
          //  var vcrud = <?= json_encode($vcrud) ?>;
@@ -299,7 +295,7 @@
                      return;
                  }
                  $.ajax({
-                     url: "<?= base_url('Pembayaran/deleteRefAcounts') ?>",
+                     url: "<?= base_url('referensi/deleteRefAcounts') ?>",
                      'type': 'get',
                      data: {
                          'id': currentData
@@ -327,8 +323,8 @@
          PaymentModal.form.submit(function(event) {
              event.preventDefault();
              var isAdd = PaymentModal.addBtn.is(':visible');
-             var url = "<?= site_url('pembayaran/') ?>";
-             url += isAdd ? "addPayment" : "editRefAccount";
+             var url = "<?= site_url('referensi/') ?>";
+             url += isAdd ? "addRefAccount" : "editRefAccount";
              var button = isAdd ? PaymentModal.addBtn : PaymentModal.saveEditBtn;
 
              Swal.fire(swalSaveConfigure).then((result) => {

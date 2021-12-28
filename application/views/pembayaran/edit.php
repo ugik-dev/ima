@@ -566,10 +566,10 @@
             if (result.isConfirmed == false) {
                 return;
             }
-            // swal.fire({
-            //     title: 'Loading Payment...',
-            //     allowOutsideClick: false
-            // });
+            swal.fire({
+                title: 'Loading Payment...',
+                allowOutsideClick: false
+            });
             swal.showLoading();
             $.ajax({
                 url: url,
@@ -586,8 +586,8 @@
                     //  return;
                     var d = json['data']
 
-                    // swal.fire(swalSuccessConfigure);
-                    // window.location = '<?= base_url() ?>pembayaran/show/' + d;
+                    swal.fire(swalSuccessConfigure);
+                    window.location = '<?= base_url() ?>pembayaran/show/' + d;
                 },
                 error: function(e) {}
             });

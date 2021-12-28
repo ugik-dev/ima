@@ -13,7 +13,7 @@ class Pembayaran extends CI_Controller
         parent::__construct();
         $this->load->model(array('General_model', 'Payment_model', 'Statement_model'));
         // $this->load->helper(array('DataStructure'));
-        $this->db->db_debug = TRUE;
+        $this->db->db_debug = FALSE;
     }
 
     function getAllPelunasan()
@@ -82,35 +82,6 @@ class Pembayaran extends CI_Controller
     }
 
 
-    public function ref_accounts()
-    {
-        try {
-            // $crud = $this->SecurityModel->Aksessbility_VCRUD('pembayaran', 'jenis_pembayaran', 'view');
-            $data['accounts'] = $this->General_model->getAllBaganAkun(array('by_DataStructure' => true));
-            $data['payment_method'] = $this->General_model->getAllRefAccount(array('ref_type' => 'payment_method'));
-            $data['title'] = 'List Ref Accounts';
-            $data['main_view'] = 'pembayaran/ref_accounts';
-            // $data['vcrud'] = $crud;
-            $data['vcrud'] = array('parent_id' => 32, 'id_menulist' => 89);
-            $this->load->view('main/index2.php', $data);
-        } catch (Exception $e) {
-            ExceptionHandler::handle($e);
-        }
-    }
-
-
-    public function editRefAccount()
-    {
-        try {
-            // $this->SecurityModel->Aksessbility_VCRUD('production', 'product_list', 'update', true);
-            $data = $this->input->post();
-            $accounts = $this->Payment_model->editRefAccount($data);
-            $data = $this->General_model->getAllRefAccount(array('id' => $accounts, 'by_id' => true))[$accounts];
-            echo json_encode(array('error' => false, 'data' => $data));
-        } catch (Exception $e) {
-            ExceptionHandler::handle($e);
-        }
-    }
 
     function create2($data_return = NULL)
     {
@@ -281,7 +252,7 @@ class Pembayaran extends CI_Controller
             $data['accounts_records'] = $this->Statement_model->chart_list();
             $data['patner_record'] = $this->Statement_model->patners_cars_list();
             $data['satuan'] = $this->General_model->getAllUnit();
-            $data['jenis_pembayaran'] = $this->General_model->getAllJenisPembayaran();
+            $data['jenis_pembayaran'] = $this->General_model->getAllJenisInvoice();
             $data['form_url'] = 'edit_process_pembayaran';
             $data['ref_account'] = $this->General_model->getAllRefAccount(array('ref_type' => 'payment_method'));
             $data['accounts'] = $this->General_model->getAllBaganAkun(array('by_DataStructure' => true));
@@ -2111,10 +2082,10 @@ class Pembayaran extends CI_Controller
                 $result = $this->Payment_model->pembayaran_entry($data);
                 // echo json_encode($data);
                 // die();
-                $this->Crud_model->insert_data('notification', array('notification_url' => 'pembayaran/show/' . $result['order_id'], 'parent_id' => $result['order_id'], 'parent2_id' => $result['parent2_id'], 'to_role' => '23', 'status' => 1, 'deskripsi' => 'Pembayaran Mitra', 'agent_name' => $this->session->userdata('user_id')['name']));
 
                 // die();
                 if ($result != NULL) {
+                    // $this->Crud_model->insert_data('notification', array('notification_url' => 'pembayaran/show/' . $result['order_id'], 'parent_id' => $result['order_id'], 'parent2_id' => $result['parent2_id'], 'to_role' => '23', 'status' => 1, 'deskripsi' => 'Pembayaran Mitra', 'agent_name' => $this->session->userdata('user_id')['name']));
                 } else {
                     throw new UserException('Please check data!');
                 }

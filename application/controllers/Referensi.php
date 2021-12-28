@@ -62,4 +62,35 @@ class Referensi extends CI_Controller
             ExceptionHandler::handle($e);
         }
     }
+
+
+    public function ref_accounts()
+    {
+        try {
+            // $crud = $this->SecurityModel->Aksessbility_VCRUD('pembayaran', 'jenis_pembayaran', 'view');
+            $data['accounts'] = $this->General_model->getAllBaganAkun(array('by_DataStructure' => true));
+            $data['payment_method'] = $this->General_model->getAllRefAccount(array('ref_type' => 'payment_method'));
+            $data['title'] = 'List Ref Accounts';
+            $data['main_view'] = 'refensi/ref_accounts';
+            // $data['vcrud'] = $crud;
+            $data['vcrud'] = array('parent_id' => 32, 'id_menulist' => 89);
+            $this->load->view('main/index2.php', $data);
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
+
+    public function editRefAccount()
+    {
+        try {
+            // $this->SecurityModel->Aksessbility_VCRUD('production', 'product_list', 'update', true);
+            $data = $this->input->post();
+            $accounts = $this->Payment_model->editRefAccount($data);
+            $data = $this->General_model->getAllRefAccount(array('id' => $accounts, 'by_id' => true))[$accounts];
+            echo json_encode(array('error' => false, 'data' => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
 }
