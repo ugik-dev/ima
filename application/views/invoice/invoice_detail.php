@@ -59,7 +59,7 @@
                 } ?>
 
                 <button <?= (($dataContent['status'] == 'unpaid') ? '' : 'hidden') ?> type="button" class="btn btn-warning  py-3 mr-2  my-1 font-weight-bolde" id="add_pelunasan" data-toggle="modal" data-target="#exampleModalLong">
-                    <i class="fa fa-plus-square" aria-hidden="true"></i> Buat Pelunasan
+                    <i class="fa fa-plus-square" aria-hidden="true"></i> Buat Pembayaran
                 </button>
                 <!-- <button type="button" class="btn btn-primary font-weight-bolder py-4 mr-3 mr-sm-14 my-1" onclick="printDiv('print-section')">Print Invoice</button> -->
                 <div class="btn-group">
@@ -67,6 +67,7 @@
                     <div class="dropdown-menu">
                         <a type="button" id="btn_print_kwitansi" class="dropdown-item"> <i class="fa fa-print mr-2" aria-hidden="true"></i> Print Kwitansi</a>
                         <a type="button" id="btn_print_dokumen" class="dropdown-item"> <i class="fa fa-print mr-2" aria-hidden="true"></i> Print Dokumen</a>
+                        <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> Download Microsoft Word</a>
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> To KA Akuntansi</a>
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>/2" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> To Divisi Eksplorasi</a>
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>/3" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> Sewa Tangki BBM</a>
@@ -561,7 +562,7 @@
                 <button  type="button" class="delete btn btn-danger btn-icon" data-id='${d['id']}' title="Delete"><i class='la la-trash'></i></button>
                 `;
                 var printButton = `
-                <button  type="button" class="print btn btn-light btn-icon" data-id='${d['id']}'   title="Print"><i class='la la-print'></i></button>
+                <a  type="button" class="print btn btn-light btn-icon" target="_blank" href='<?= base_url() ?>invoice/print_kwitansi_pembayaran/<?= $dataContent['id'] ?>/${d['id']}'   title="Print"><i class='la la-print'></i></a>
                 `;
 
                 // <button type="button" class="btn btn-outline-secondary btn-icon"><i class="la la-file-text-o"></i></button>
@@ -621,10 +622,10 @@
             })
         })
 
-        FDataTable.on('click', '.print', function() {
-            var currentData = dataPayments[$(this).data('id')];
-            print_kwitansi(currentData['nominal'], currentData['date_pembayaran'], '')
-        })
+        // FDataTable.on('click', '.print', function() {
+        //     var currentData = dataPayments[$(this).data('id')];
+        //     print_kwitansi(currentData['nominal'], currentData['date_pembayaran'], '')
+        // })
 
 
         function print_kwitansi(nominal, date, item) {

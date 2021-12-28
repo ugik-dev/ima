@@ -79,18 +79,18 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-lg-12*">
+                                <!-- <div class="row"> -->
+                                <div class="col-lg-12*">
 
-                                        <div class="form-group">
-                                            <?php echo form_label('Rincian Transaksi'); ?>
-                                            <?php
-                                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'description', 'id' => 'description', 'reqiured' => '');
-                                            echo form_input($data);
-                                            ?>
-                                        </div>
+                                    <div class="form-group">
+                                        <?php echo form_label('Rincian Transaksi'); ?>
+                                        <?php
+                                        $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'description', 'id' => 'description', 'reqiured' => '');
+                                        echo form_input($data);
+                                        ?>
                                     </div>
                                 </div>
+                                <!-- </div> -->
                             </div>
                         </div>
                         <div class="row invoice">

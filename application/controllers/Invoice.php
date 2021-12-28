@@ -1738,6 +1738,8 @@ class Invoice extends CI_Controller
         try {
             // $crud = $this->SecurityModel->Aksessbility_VCRUD('pembayaran', 'jenis_pembayaran', 'view');
             $data['accounts'] = $this->General_model->getAllBaganAkun(array('by_DataStructure' => true));
+            // echo json_encode($data['accounts'][5]);
+            // die();
             $data['title'] = 'List Jenis Invoice';
             $data['main_view'] = 'invoice/jenis_invoice';
             // $data['vcrud'] = $crud;
@@ -1770,7 +1772,7 @@ class Invoice extends CI_Controller
             if ($total_bayar >= $data['old_data']['total_final']) {
                 throw new UserException('Data ini sudah lunas!');
             }
-            if ($data['total_bayar'] + $data['nominal'] >= $data['old_data']['total_final']) {
+            if ($data['total_bayar'] + (float)$data['nominal'] >= $data['old_data']['total_final']) {
                 $data['status'] = 'paid';
             } else {
                 $data['status'] = 'unpaid';
@@ -1958,13 +1960,35 @@ class Invoice extends CI_Controller
             $data['text_kwitansi'] =  $data['transaction']['description'];
 
 
-        if (empty($data['date'])) $data['date'] = date('Y-m-d');
-        $data['date'] = 'Pangkalpinang, ' . $this->tanggal_indonesia($data['date']);
+        if (empty($data['transaction']['date'])) $data['transaction']['date'] = date('Y-m-d');
+        $data['date'] = 'Pangkalpinang, ' . $this->tanggal_indonesia($data['transaction']['date']);
         // echo json_encode($data);
         // die();
 
         $data['terbilang'] = $this->terbilang((int)$data['transaction']['total_final']) . ' Rupiah';
         $data['nominal'] = number_format((int)$data['transaction']['total_final'], 0, ',', '.');
+        $this->load->view('invoice/print_kwitansi.php', $data);
+    }
+
+    public function print_kwitansi_pembayaran($id, $pel_id)
+    {
+        // $data = $this->input->get();
+        // $data['company'] = Company_Profile();
+        $data['transaction'] = $this->Invoice_model->getAllInvoiceDetail(array('id' => $id))[$id];
+        $data['self_data'] = $this->General_model->getAllPelunasanInvoice(array('id' => $pel_id))[0];
+
+        $data['template'] = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['transaction']['jenis_invoice']))[$data['transaction']['jenis_invoice']];
+
+        if (!empty($data['template']['text_kwitansi']))
+            $data['text_kwitansi'] = 'Pembayaran ' . $this->find_char($data['template']['text_kwitansi'], $data['transaction']);
+        else
+            $data['text_kwitansi'] =  'Pembayaran ' . $data['transaction']['description'];
+        if (empty($data['self_data']['date_pembayaran'])) $data['self_data']['date_pembayaran'] = date('Y-m-d');
+        $data['date'] = 'Pangkalpinang, ' . $this->tanggal_indonesia($data['self_data']['date_pembayaran']);
+
+        unset($data['transaction']['items']);
+        $data['terbilang'] = $this->terbilang((int)$data['self_data']['sum_child']) . ' Rupiah';
+        $data['nominal'] = number_format((int)$data['self_data']['sum_child'], 0, ',', '.');
         $this->load->view('invoice/print_kwitansi.php', $data);
     }
 

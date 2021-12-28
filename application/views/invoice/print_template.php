@@ -155,7 +155,7 @@
                     </tr>
                     <tr cellpadding="4">
                         <td colspan=4 cellpadding="4" style="text-align: justify">
-                            <p>Dengan hormat <?= logo ?>,</p>
+                            <p>Dengan hormat,</p>
                             <p><?= $p1 ?></p>
                         </td>
                     </tr>

@@ -205,11 +205,11 @@ class Login extends CI_Controller
 	}
 
 	//USED FOR ADMINPANEL
-	function get_password_recover()
+	function get_password_recover($code)
 	{
 		// DEFINES PAGE TITLE
 		$data['title'] = 'Recover Password';
-
+		$data['code'] = $code;
 		// DEFINES WHICH PAGE TO RENDER
 		$this->load->view('forget_password', $data);
 	}
@@ -281,15 +281,15 @@ class Login extends CI_Controller
 				);
 				$this->session->set_flashdata('status', $array_msg);
 
-				redirect('login/get_password_recover');
+				redirect('login/get_password_recover/' . $user_code);
 			}
 		} else {
 			$array_msg = array(
-				'msg' => '<i style="color:#fff" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Confirm password not matched',
+				'msg' => '<i style="color:#fff" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Data not matched',
 				'alert' => 'danger'
 			);
 			$this->session->set_flashdata('status', $array_msg);
-			redirect('login/get_password_recover');
+			redirect('login/get_password_recover/' . $user_code);
 		}
 	}
 }

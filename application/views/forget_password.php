@@ -51,7 +51,7 @@
             <div class="form-group has-feedback">
                 <?php
 
-                $data = array('class' => 'form-control input-lg', 'id' => 'user_code', 'type' => 'password', 'name' => 'user_code', 'value' => '', 'placeholder' => 'e.g Paste your email code', 'reqiured' => '', 'AUTOCOMPLETE' => 'OFF');
+                $data = array('class' => 'form-control input-lg', 'id' => 'user_code', 'value' => $code, 'name' => 'user_code',  'placeholder' => 'e.g Paste your email code', 'reqiured' => '', 'AUTOCOMPLETE' => 'OFF');
                 echo form_input($data);
 
                 ?>

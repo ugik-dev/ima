@@ -192,28 +192,28 @@
     <script src="<?php echo base_url(); ?>assets/plugins/jQuery/jquery-3.6.0.min.js"></script>
 
     <script type="text/javascript">
-        // $(document).ready(function() {
-        //     window.print();
-        //     var beforePrint = function() {};
-        //     var afterPrint = function() {
-        //         window.close();
-        //         console.log('re')
-        //     };
+        $(document).ready(function() {
+            window.print();
+            var beforePrint = function() {};
+            var afterPrint = function() {
+                window.close();
+                console.log('re')
+            };
 
-        //     if (window.matchMedia) {
-        //         var mediaQueryList = window.matchMedia('print');
-        //         mediaQueryList.addListener(function(mql) {
-        //             if (mql.matches) {
-        //                 beforePrint();
-        //             } else {
-        //                 afterPrint();
-        //             }
-        //         });
-        //     }
+            if (window.matchMedia) {
+                var mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        beforePrint();
+                    } else {
+                        afterPrint();
+                    }
+                });
+            }
 
-        //     window.onbeforeprint = beforePrint;
-        //     window.onafterprint = afterPrint;
-        // });
+            window.onbeforeprint = beforePrint;
+            window.onafterprint = afterPrint;
+        });
     </script>
 
 </body>

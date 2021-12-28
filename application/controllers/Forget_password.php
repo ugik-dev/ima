@@ -91,7 +91,7 @@ class Forget_password extends CI_Controller
 			$fetch_record = $this->Crud_model->recover_password('mp_users', $user_email, 'user_email');
 			if (!empty($fetch_record)) {
 
-				$email_desc = 'Klik disini untuk konfirmasi kata sandi ' . base_url('login/get_password_recover') . ' Kode email anda adalah : ' . $fetch_record[0]->user_password;
+				$email_desc = 'Klik disini untuk konfirmasi kata sandi ' . base_url('login/get_password_recover/' . $fetch_record[0]->user_password) . ' Kode email anda adalah : ' . $fetch_record[0]->user_password;
 
 				$cname = $this->db->get_where('mp_langingpage', array(
 					'id' => 1

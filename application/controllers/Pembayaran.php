@@ -34,7 +34,7 @@ class Pembayaran extends CI_Controller
         $this->load->model('Crud_model');
         $this->load->model('General_model');
         $data['satuan'] = $this->General_model->getAllUnit();
-        $data['jenis_pembayaran'] = $this->General_model->getAllJenisPembayaran();
+        $data['jenis_pembayaran'] = $this->General_model->getAllJenisInvoice();
         $data['ref_account'] = $this->General_model->getAllRefAccount(array('ref_type' => 'payment_method'));
         $data['form_url'] = 'create_pembayaran';
         $data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
@@ -1934,281 +1934,6 @@ class Pembayaran extends CI_Controller
         redirect('pembayaran/manage/');
     }
 
-    //pembayaran/add_auto_pembayaran
-    //USED TO ADD AUTOMATIC INVOICE
-    function add_auto_pembayaran()
-    {
-
-        $this->load->model('Transaction_model');
-        $customer_id      = html_escape($this->input->post('customer_id'));
-        $discountfield      = html_escape($this->input->post('discountfield'));
-        $total_bill      = html_escape($this->input->post('total_bill'));
-        $bill_paid           = html_escape($this->input->post('bill_paid'));
-        $date              = date('Y-m-d');
-        $status          = 0;
-        $user_name          = $this->session->userdata('user_id');
-        $agent              = $user_name['name'];
-
-        $this->load->model('Crud_model');
-        $result = $this->Crud_model->fetch_attr_record_by_id('mp_temp_barcoder_pembayaran', 'agentid', $user_name['id']);
-
-        $customer_previous = $this->return_previous_cus_balance($customer_id);
-
-        if ($result != NULL) {
-            //ASSIGNING DATA TO ARRAY
-            $data1  = array(
-                'discount' => $discountfield,
-                'date' => $date,
-                'status' => $status,
-                'agentname' => $agent,
-                'cus_id' => $customer_id,
-                'total_bill' => $total_bill,
-                'bill_paid' => $bill_paid,
-                'cus_previous' => ''
-            );
-
-            //USED TO CREATE A TRANSACTION FOR SALE AND ACCOUNTS
-            $data = $this->Transaction_model->single_pos_transaction($data1);
-
-            if ($data != NULL) {
-                //CUSTOMER NAME
-                $result = $this->Crud_model->fetch_record_by_id('mp_payee', $customer_id);
-                $cus_name = $result[0]->customer_name;
-
-                //COMPANY NAME
-                $result = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1);
-                $company_name = $result[0]->companyname;
-
-                //PRINTER NAME
-                $result = $this->Crud_model->fetch_attr_record_by_id('mp_printer', 'set_default', 1);
-                if ($result != NULL) {
-                    $printer_name = $result[0]->printer_name;
-                } else {
-                    $printer_name = '';
-                }
-
-                //ADDRESS 
-                $result = $this->Crud_model->fetch_record_by_id('mp_contactabout', 1);
-                $address = $result[0]->address;
-
-
-                /* Hapus Tanda ini jika aplikasi sudah terkoneksi dengan printer Thermal
-				if($printer_name != '')
-				{
-					//BUSINESS AND OTHER INFO THAT MENTIONED ON THE TOP
-					$general_info = array(
-					'name' => $company_name ,
-					'address' => $address,
-					'receipt' => $data['pembayaran_id'],
-					'date' => date('Y-m-d'),
-					'customer' => $cus_name,
-					'customer_id' => $customer_id,
-					'served' => $agent,
-					'thanks' => 'Terima kasih telah mengunjungi kami.',
-					'about' => 'Developed by Rumah IT',
-					'contact' => ' Kontak 083814305092',
-					'printer_name' => $printer_name,
-					'text_size' => 1,
-					'discount' => $discountfield
-					);
-
-					//UN COMMENT THE BELOW LINE WHEN CONNETED RO PRINTER 
-				    $this->load->library('printer');
-				    $printer_result =  $this->printer->generate_print($general_info,$data);
-				}
-
-				if($printer_result != 'success')
-				{
-					$array_msg = array(
-					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Faktur berhasil tetapi tidak ada printer yang ditemukan',
-					'alert' => 'info'
-					);
-				}
-				else
-				{
-					$array_msg = array(
-					'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created successfully',
-					'alert' => 'info'
-					);
-				}
-				*/
-
-
-                $array_msg = array(
-                    'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created successfully',
-                    'alert' => 'info'
-                );
-
-                $this->session->set_flashdata('status', $array_msg);
-            } else {
-                $array_msg = array(
-                    'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Error cannot be added',
-                    'alert' => 'danger'
-                );
-                $this->session->set_flashdata('status', $array_msg);
-            }
-        } else {
-            $array_msg = array(
-                'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Sorry no items selected',
-                'alert' => 'danger'
-            );
-            $this->session->set_flashdata('status', $array_msg);
-        }
-
-        redirect('pembayaran');
-    }
-
-    //USED TO SEARCH CUSTOMERS PRIVIOUS BALANCE 
-    //Invoice/search_previous_cus_balance
-    function search_previous_cus_balance($cus_id)
-    {
-        $this->load->model('Accounts_model');
-        $result = $this->Accounts_model->previous_balance($cus_id);
-        echo $result;
-    }
-
-    //USED TO SEARCH CUSTOMERS PRIVIOUS BALANCE 
-    //Invoice/search_previous_cus_balance
-    function return_previous_cus_balance($cus_id)
-    {
-        $this->load->model('Accounts_model');
-        return $this->Accounts_model->previous_balance($cus_id);
-    }
-
-    //USED TO UPDATE QUANTITY 
-    //Invoice/update_qty
-    function update_qty($val = '', $id = '', $customprice = null)
-    {
-
-        $this->load->model('Crud_model');
-        $this->load->model('Pos_transaction_model');
-        $user_name = $this->session->userdata('user_id');
-        $val = intval($val);
-
-        if ($val != '' and $id != '' and  $val > -1) {
-
-            $result = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_pembayaran', 'id', $id, $user_name['id'], 'pos');
-
-            $result_stk = $this->Crud_model->fetch_record_by_id('mp_productslist', $result['0']->product_id);
-
-            $bal = 0;
-            $new_qty = 0;
-
-            if ($result[0]->qty > $val) {
-
-                $bal = $result[0]->qty - $val;
-                $new_qty = $result_stk[0]->quantity + $bal;
-            } else if ($result[0]->qty < $val) {
-                $bal = $val - $result[0]->qty;
-                $new_qty = $result_stk[0]->quantity - $bal;
-            }
-
-            if ($result[0]->qty != $val and $new_qty >= 0) {
-                $new_args = array(
-                    'table_name' => 'mp_productslist',
-                    'id' => $result['0']->product_id
-                );
-
-                $new_data = array(
-                    'quantity' => $new_qty
-                );
-
-                $temp_args = array(
-                    'table_name' => 'mp_temp_barcoder_pembayaran',
-                    'id' => $id
-                );
-
-
-                $temp_data = array(
-                    'qty' => $val
-                );
-
-
-
-                $this->Pos_transaction_model->general_pos_transaction($new_args, $new_data, $temp_args, $temp_data);
-            }
-        }
-        //LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-        $data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_pembayaran', 'pos', $user_name['id']);
-
-        $this->load->view('pembayaran_template.php', $data);
-    }
-
-    //USED TO UPDATE QUANTITY 
-    //Invoice/update_qty
-    function update_price($val = '', $id = '')
-    {
-
-        $this->load->model('Crud_model');
-        $this->load->model('Pos_transaction_model');
-        $user_name = $this->session->userdata('user_id');
-        $val = intval($val);
-
-        if ($val != '' and $id != '' and  $val > -1) {
-
-            $result = $this->Crud_model->fetch_attr_record_by_userid_source('mp_temp_barcoder_pembayaran', 'id', $id, $user_name['id'], 'pos');
-
-            $result_stk = $this->Crud_model->fetch_record_by_id('mp_productslist', $result['0']->product_id);
-
-            $bal = 0;
-            $new_qty = 0;
-
-            if ($result[0]->qty > $val) {
-
-                $bal = $result[0]->qty - $val;
-                $new_qty = $result_stk[0]->quantity + $bal;
-            } else if ($result[0]->qty < $val) {
-                $bal = $val - $result[0]->qty;
-                $new_qty = $result_stk[0]->quantity - $bal;
-            }
-
-            if ($result[0]->qty != $val and $new_qty >= 0) {
-                $new_args = array(
-                    'table_name' => 'mp_productslist',
-                    'id' => $result['0']->product_id
-                );
-
-                $new_data = array(
-                    'quantity' => $new_qty
-                );
-
-                $temp_args = array(
-                    'table_name' => 'mp_temp_barcoder_pembayaran',
-                    'id' => $id
-                );
-
-                $temp_data = array(
-                    'price' => $val
-                );
-
-
-                $this->Pos_transaction_model->general_pos_transaction($new_args, $new_data, $temp_args, $temp_data);
-            }
-        }
-        //LOAD FRESH CONTENT AVAILABLE IN TEMP TABLE
-        $data['temp_data'] = $this->Crud_model->fetch_userid_source('mp_temp_barcoder_pembayaran', 'pos', $user_name['id']);
-
-        $this->load->view('pembayaran_template.php', $data);
-    }
-
-
-
-    //USED TO SHOW THE DETAIL OF  RETURN INVOICE 
-    //Invoice/single_pembayaran/ID
-    function single_pembayaran($return_id)
-    {
-        // DEFINES PAGE TITLE
-        $data['title'] = 'Invoice';
-
-        $this->load->model('Accounts_model');
-        $data['pembayaran_data'] = $this->Accounts_model->fetch_single_pembayaran_items($return_id);
-
-        // DEFINES WHICH PAGE TO RENDER
-        $data['main_view'] = 'single_pembayaran';
-
-        // DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
-        $this->load->view('main/index.php', $data);
-    }
 
     function create_pembayaran()
     {
@@ -2257,16 +1982,20 @@ class Pembayaran extends CI_Controller
             if ($status) {
                 $this->load->model('Transaction_model');
                 $this->load->model('Crud_model');
+                $jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['jenis_pembayaran']))[$data['jenis_pembayaran']];
+                $data['data_jenis_pembayaran'] = $jp;
+                $jp = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_method']))[$data['payment_method']];
+                $data['data_payment'] = $jp;
                 $data['generalentry'] = array(
                     'date' => $data['date'],
-                    'naration' => $data['description'],
+                    'naration' => $data['data_jenis_pembayaran']['ref_nojur_pembayaran'] . ' ' . $data['description'],
                     'customer_id' => $data['customer_id'],
-                    'no_jurnal' => $this->General_model->gen_numberABC($data['date'], 'AK', 'PEMBAYARAN'),
+                    'no_jurnal' => $this->General_model->gen_numberABC($data['date'], $data['data_jenis_pembayaran']['ref_nojur_pembayaran'], 'PEMBAYARAN'),
                     'generated_source' => 'Pembayaran'
                 );
 
                 $i = 0;
-                $jp = $this->General_model->getAllJenisPembayaran(array('by_id' => true, 'id' => $data['jenis_pembayaran']))[$data['jenis_pembayaran']];
+
                 $sisa_pembayaran = $data['sub_total_2'] - $data['payed'];
                 // $sisa_pembayaran = $data['sub_total_2'] - $data['payed'];
                 if ($sisa_pembayaran > 0) {
@@ -2276,10 +2005,10 @@ class Pembayaran extends CI_Controller
                 }
                 if ($data['payed'] == $data['sub_total_2']) {
                     $data['sub_entry'][$i] = array(
-                        'accounthead' => $jp['ac_paid'],
-                        'type' => $jp['ac_paid_type'],
+                        'accounthead' =>   $data['data_jenis_pembayaran']['ac_expense'],
+                        'type' => 0,
                         'amount' => $data['payed'],
-                        'sub_keterangan' => "Htg " . $data['description'],
+                        'sub_keterangan' => "Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
                     );
                     $i++;
                 }
@@ -2287,37 +2016,37 @@ class Pembayaran extends CI_Controller
                 if ($data['payed'] > $data['sub_total_2']) {
                     $data['total_final'] = $data['total_final'] + $data['payed'] - $data['sub_total_2'];
                     $data['sub_entry'][$i] = array(
-                        'accounthead' => $jp['ac_piutang'],
-                        'type' => $jp['ac_piutang_type'],
+                        'accounthead' => $data['data_jenis_pembayaran']['ac_piutang'],
+                        'type' => 0,
                         'amount' => $data['payed'] - $data['sub_total_2'],
-                        'sub_keterangan' => "Piut Htg " . $data['description'],
+                        'sub_keterangan' => "Piut Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
                     );
                     $i++;
-                    if ($data['payed'] > 0) {
-                        $data['sub_entry'][$i] = array(
-                            'accounthead' => $jp['ac_paid'],
-                            'type' => $jp['ac_paid_type'],
-                            'amount' => $data['sub_total_2'],
-                            'sub_keterangan' => "Htg " . $data['description'],
-                        );
-                        $i++;
-                    }
+                    // if ($data['payed'] > 0) {
+                    $data['sub_entry'][$i] = array(
+                        'accounthead' => $$data['data_jenis_pembayaran']['ac_expense'],
+                        'type' => 0,
+                        'amount' => $data['sub_total_2'],
+                        'sub_keterangan' => "Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
+                    );
+                    $i++;
+                    // }
                 }
 
                 if ($data['payed'] < $data['sub_total_2']) {
                     $data['sub_entry'][$i] = array(
-                        'accounthead' => $jp['ac_unpaid'],
-                        'type' => $jp['ac_unpaid_type'],
+                        'accounthead' => $data['data_jenis_pembayaran']['ac_hutang'],
+                        'type' => 0,
                         'amount' => $data['sub_total_2'] - $data['payed'],
-                        'sub_keterangan' => "Htg " . $data['description'],
+                        'sub_keterangan' => "Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
                     );
                     $i++;
                     if ($data['payed'] > 0) {
                         $data['sub_entry'][$i] = array(
-                            'accounthead' => $jp['ac_paid'],
-                            'type' => $jp['ac_paid_type'],
+                            'accounthead' => $data['data_jenis_pembayaran']['ac_expense'],
+                            'type' => 0,
                             'amount' => $data['payed'],
-                            'sub_keterangan' => "Htg " . $data['description'],
+                            'sub_keterangan' => "Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
                         );
                         $i++;
                     }
@@ -2328,7 +2057,7 @@ class Pembayaran extends CI_Controller
                     $data['sub_entry'][$i] = array(
                         'accounthead' => $jp['ref_account'],
                         'type' => 1,
-                        'sub_keterangan' => 'Ptg ' . $data['description'],
+                        'sub_keterangan' => 'Ptg PPh 23' . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
                         'amount' => $data['am_pph']
                     );
                     $i++;
@@ -2370,16 +2099,17 @@ class Pembayaran extends CI_Controller
                 } else {
                     $data['kurang_bayar_ac'] = '';
                 }
-                $jp = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_method']))[$data['payment_method']];
+
                 $data['sub_entry'][$i] = array(
-                    'accounthead' => $jp['ref_account'],
+                    'accounthead' => $data['data_payment']['ref_account'] . ' ',
                     'type' => 1,
-                    'sub_keterangan' => 'Htg ' . $data['description'],
+                    'sub_keterangan' => 'Htg ' . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
                     'amount' => $data['total_final']
                 );
                 $i++;
 
                 $result = $this->Payment_model->pembayaran_entry($data);
+                // echo json_encode($data);
                 // die();
                 $this->Crud_model->insert_data('notification', array('notification_url' => 'pembayaran/show/' . $result['order_id'], 'parent_id' => $result['order_id'], 'parent2_id' => $result['parent2_id'], 'to_role' => '23', 'status' => 1, 'deskripsi' => 'Pembayaran Mitra', 'agent_name' => $this->session->userdata('user_id')['name']));
 
@@ -2687,7 +2417,7 @@ class Pembayaran extends CI_Controller
             } else {
                 $data['status_pembayaran'] = 'unpaid';
             }
-            $jp = $this->General_model->getAllJenisPembayaran(array('by_id' => true, 'id' => $data['old_data']['jenis_pembayaran']))[$data['old_data']['jenis_pembayaran']];
+            $jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['old_data']['jenis_pembayaran']))[$data['old_data']['jenis_pembayaran']];
             $data['gen_old'] = $this->Statement_model->getSingelJurnal(array('id' => $data['old_data']['general_id']))['parent'];
             $data['generalentry'] = array(
                 'date' => $data['date_pembayaran'],
@@ -2697,21 +2427,21 @@ class Pembayaran extends CI_Controller
                 'generated_source' => 'Pelunasan Pembayaran'
             );
 
-            $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date_pembayaran'], 'JMB');
+            $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date_pembayaran'], $jp['ref_nojur_pel_pembayaran']);
 
             $data['sub_entry'][0] = array(
-                'accounthead' => $jp['ac_paid'],
-                'type' => $jp['ac_paid_type'],
+                'accounthead' => $jp['ac_expense'],
+                'type' => 0,
                 'amount' => $data['nominal'],
-                'sub_keterangan' => "Htg " . $data['old_data']['description'],
+                'sub_keterangan' => "Htg " . (empty($jp['text_jurnal']) ?  '' : $jp['text_jurnal'] . ' ') . $data['old_data']['description'],
+            );
+            $data['sub_entry'][1] = array(
+                'accounthead' => $jp['ac_hutang'],
+                'type' => 1,
+                'amount' => $data['nominal'],
+                'sub_keterangan' => "Htg " . (empty($jp['text_jurnal']) ?  '' : $jp['text_jurnal'] . ' ') . $data['old_data']['description'],
             );
 
-            $data['sub_entry'][1] = array(
-                'accounthead' => $jp['ac_unpaid'],
-                'type' => ($jp['ac_unpaid_type'] == 0 ? 1 : 0),
-                'amount' => $data['nominal'],
-                'sub_keterangan' => "Htg " . $data['old_data']['description'],
-            );
 
             $result = $this->Payment_model->add_pelunasan($data);
             echo json_encode(array('error' => false, 'data' => $data));

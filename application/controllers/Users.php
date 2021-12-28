@@ -21,7 +21,7 @@ class Users extends CI_Controller
 
 		try {
 
-			$this->SecurityModel->MultiplerolesGuard('Users', true);
+			// $this->SecurityModel->MultiplerolesGuard('Users', true);
 			// DEFINES PAGE TITLE
 			$data['title'] = 'Daftar Pengguna';
 
