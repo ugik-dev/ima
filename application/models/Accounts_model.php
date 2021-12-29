@@ -579,25 +579,25 @@ class Accounts_model extends CI_Model
     //USED TO COUNT AMOUNT OF EXPENSE 
     function expense_amount()
     {
-        $date1 = date('Y-m-') . '1';
-        $date2 = date('Y-m-') . '31';
-        $amount = 0;
+        // $date1 = date('Y-m-') . '1';
+        // $date2 = date('Y-m-') . '31';
+        // $amount = 0;
 
-        $this->db->select('mp_expense.total_bill');
-        $this->db->from('mp_expense');
-        $this->db->where('date >=', $date1);
-        $this->db->where('date <=', $date2);
-        $query = $this->db->get();
+        // $this->db->select('mp_expense.total_bill');
+        // $this->db->from('mp_expense');
+        // $this->db->where('date >=', $date1);
+        // $this->db->where('date <=', $date2);
+        // $query = $this->db->get();
 
-        if ($query->num_rows() > 0) {
-            $result =  $query->result();
-            if ($result != NULL) {
-                foreach ($result as $single_item) {
-                    $amount = $amount  + $single_item->total_bill;
-                }
-            }
-        }
-        return $amount;
+        // if ($query->num_rows() > 0) {
+        //     $result =  $query->result();
+        //     if ($result != NULL) {
+        //         foreach ($result as $single_item) {
+        //             $amount = $amount  + $single_item->total_bill;
+        //         }
+        //     }
+        // }
+        // return $amount;
     }
 
     //USED TO COUNT AMOUNT OF PURCHASE 

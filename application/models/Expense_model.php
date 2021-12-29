@@ -7,9 +7,10 @@ class Expense_model extends CI_Model
 
     public function getAllExpense($filter = [])
     {
-        $this->db->select('bt.*, pa.customer_name, hd.name as head_name, re.ref_text  as payment_name');
+        $this->db->select('bt.*, pa.customer_name, hd.name as head_name, re.ref_text  as payment_name, approv.*');
         $this->db->from('mp_expense as bt');
         $this->db->join('ref_account as re', 're.ref_id = bt.method', 'LEFT');
+        $this->db->join('mp_approv as approv', 'approv.id_transaction = bt.transaction_id', 'LEFT');
         $this->db->join('mp_payee as pa', 'pa.id = bt.payee_id', 'LEFT');
         $this->db->join('mp_head as hd', 'hd.id = bt.head_id', 'LEFT');
         if (!empty($filter['id'])) $this->db->where('bt.id', $filter['id']);
@@ -56,6 +57,21 @@ class Expense_model extends CI_Model
         $this->db->where('id', $gen_id);
         $this->db->update('mp_generalentry');
 
+        $data_acc = array(
+            'date_acc_0' => $data['date'],
+            'acc_1' => $data['acc_1'],
+            'acc_2' => $data['acc_2'],
+            'acc_3' => $data['acc_3'],
+            'acc_0' => $this->session->userdata('user_id')['name'],
+            'id_transaction' => $gen_id
+        );
+
+        // $data_acc['id_transaction'] =
+        //     $data['old']['transaction_id'];
+        // $this->db->where('id_transaction', $data['old']['transaction_id']);
+        $this->db->insert('mp_approv', $data_acc);
+
+
         // return $id_ins;
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
@@ -95,6 +111,19 @@ class Expense_model extends CI_Model
 
         $this->db->where('id', $data['id']);
         $this->db->update('mp_expense', $trans);
+
+        $data_acc = array(
+            'date_acc_0' => $data['date'],
+            'acc_1' => $data['acc_1'],
+            'acc_2' => $data['acc_2'],
+            'acc_3' => $data['acc_3'],
+            'acc_0' => $this->session->userdata('user_id')['name'],
+        );
+
+        // $data_acc['id_transaction'] =
+        // $data['old']['transaction_id'];
+        $this->db->where('id_transaction', $data['old']['transaction_id']);
+        $this->db->update('mp_approv', $data_acc);
 
 
         // return $id_ins;

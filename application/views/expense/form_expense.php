@@ -86,8 +86,48 @@
                     echo form_input($data);
                     ?>
                 </div>
-
             </div>
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="form-group">
+                            <label>Disetujui</label>
+                            <select name="acc_1" id="acc_1" class="form-control select2 input-lg">
+                                <option value="0"> ----- </option>
+                                <option value="7"> SETIAWAN R </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group" id='label_kendaraan'>
+                            <label>Diverifikasi</label>
+                            <select name="acc_2" id="acc_2" class="form-control select2 input-lg">
+                                <option value="0"> ----- </option>
+                                <option value="8"> PURWADI </option>
+                                <option value="10"> RAHMAT </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group" id='label_kendaraan'>
+                            <label>Dibuat</label>
+                            <select name="acc_3" id="acc_3" class="form-control select2 input-lg">
+                                <option value="0"> ----- </option>
+                                <option value="9"> A SISWANTO </option>
+                                <option value="12"> DEFRYANTO </option>
+                                <option value="11"> NURHASANAH </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group" id='label_kendaraan'>
+                            <label>Dibukukan</label>
+                            <input type="text" disabled id="dibukukan" class="form-control input-lg">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- </div> -->
 
         </div>
@@ -115,6 +155,10 @@
             'description': $('#accounts_form').find('#description'),
             'ref_no': $('#accounts_form').find('#ref_no'),
             'date': $('#accounts_form').find('#date'),
+            'acc_1': $('#accounts_form').find('#acc_1'),
+            'acc_2': $('#accounts_form').find('#acc_2'),
+            'acc_3': $('#accounts_form').find('#acc_3'),
+            'dibukukan': $('#accounts_form').find('#dibukukan'),
         }
         var swalSaveConfigure = {
             title: "Konfirmasi simpan",
@@ -185,6 +229,10 @@
             FormModal.description.val('<?= $return['description'] ?>');
             FormModal.date.val('<?= $return['date'] ?>');
             FormModal.ref_no.val('<?= $return['ref_no'] ?>');
+            FormModal.acc_1.val('<?= $return['acc_1'] ?>');
+            FormModal.acc_2.val('<?= $return['acc_2'] ?>');
+            FormModal.acc_3.val('<?= $return['acc_3'] ?>');
+            FormModal.dibukukan.val('<?= $return['acc_0'] ?>');
 
 
         <?php } ?>
