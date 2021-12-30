@@ -991,9 +991,9 @@ class Statements extends CI_Controller
 	{
 		$year = html_escape($this->input->post('year'));
 		if ($year == NULL) {
-			$year = date('Y') . '-12-31';
+			$year = date('Y');
 		} else {
-			$year = $year . '-12-31';
+			// $year = $year;
 		}
 
 		$data['year'] = $year;

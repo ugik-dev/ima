@@ -822,9 +822,9 @@ class Statement_model extends CI_Model
     public function trail_balance($current_date)
     {
         //ACCOUNTING START DATE
-        $date1 = '2020-01-01';
+        $date1 = $current_date . '-01-01';
 
-        $date2 = $current_date;
+        $date2 = $current_date . '-12-31';
 
         $total_debit  = 0;
         $total_credit = 0;
@@ -850,15 +850,15 @@ class Statement_model extends CI_Model
                             $debitamt    = $amount;
                             $total_debit = $total_debit + $amount;
                         } else {
-                            $creditamt    = ($amount == 0 ? $amount : -$amount);
+                            $creditamt    =  -$amount;
                             $total_credit = $total_credit + $creditamt;
                         }
 
-                        $from_creator .= '<tr><td style=text-align:left;><h4>' . $single_head->name . '</h4></td><td><h4 class="currency">' . $debitamt . '</h4></td><td><h4  class="currency">' . $creditamt . '</h4></td></tr>';
+                        $from_creator .= '<tr><td style=text-align:left;><h4>' . $single_head->name . '</h4></td><td><h4 class="text-right">' .  ($debitamt > 0 ? number_format($debitamt, '2', ',', '.') : '')  . '</h4></td><td><h4  class="text-right">' . ($creditamt > 0 ? number_format($creditamt, '2', ',', '.') : '') . '</h4></td></tr>';
                     }
                 }
 
-                $from_creator .= '<tr class="balancesheet-row"><td></td><td><h4  class="currency">' . $total_debit . '</h4></td><td><h4  class="currency">' . $total_credit . '</h4></td></tr>';
+                $from_creator .= '<tr class="balancesheet-row"><td class="text-left"><h4><b>TOTAL</b></h4></td><td><h4  class="text-right"><b>' . number_format($total_debit, '2', ',', '.') . '</b></h4></td><td><h4  class="text-right"><b>' . number_format($total_credit, '2', ',', '.') . '</b></h4></td></tr>';
             }
         }
 
@@ -1863,9 +1863,7 @@ class Statement_model extends CI_Model
         $QUERY = "SELECT  
             COALESCE( SUM( IF( mp_head.nature = 'Expense', IF( mp_sub_entry.type = 0, amount, - amount ), 0 ) ), 0 ) AS beban,
             COALESCE( SUM( IF( mp_head.nature = 'Revenue', IF( mp_sub_entry.type = 1, amount, - amount ), 0 ) ), 0 ) AS pendapatan
-             
-
-                FROM
+                             FROM
                     mp_sub_entry
                 JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                 JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead

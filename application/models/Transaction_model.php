@@ -275,10 +275,10 @@ class Transaction_model extends CI_Model
 
     public function close_book($data)
     {
-        $this->db->set('gen_lock', 'Y');
-        $this->db->where('date like "' . $data['tahun'] . '%"');
-        $this->db->where('gen_lock', 'N');
-        $this->db->update('mp_generalentry');
+        // $this->db->set('gen_lock', 'Y');
+        // $this->db->where('date like "' . $data['tahun'] . '%"');
+        // $this->db->where('gen_lock', 'N');
+        // $this->db->update('mp_generalentry');
     }
 
 
@@ -311,9 +311,69 @@ class Transaction_model extends CI_Model
                                     WHERE
                                     mp_head.nature in ("Assets","Liability","Equity") AND
                                    mp_generalentry.date >= "' . $filter['tahun'] . '-1-1" AND mp_generalentry.date <= "' . $filter['tahun'] . '-12-31"
+                                   AND mp_head.id not in (230,229)
                                     GROUP by 
                                     mp_head.name';
+        // echo $QUERY;
+        // die();
+        $this->db->query($QUERY);
+
+        $th_lalu = $this->akumulasi_laba_rugi_tahunan($filter['tahun']);
+        if ($th_lalu != 0) {
+            if ($th_lalu > 0)
+                $type = 1;
+            else
+                $type = 0;
+
+            $query2 = '
+            INSERT INTO mp_sub_entry (parent_id, accounthead, amount, type,sub_keterangan,pos_lock) VALUES ("' . - ((int)$filter['tahun'] + 1) . '",
+             "229",
+            "' . abs($th_lalu) . '",
+             "' . $type . '", 
+              "Openning Balance ' . - ((int)$filter['tahun'] + 1) . '", "Y"
+             )
+            ';
+        }
+        $this->db->query($query2);
+        // echo $query2;
+
+        // echo json_encode($res->result_array());
+        // die();
+    }
+
+    public function akumulasi_laba_rugi_tahunan($year)
+    {
+        // $month = 0
+        $QUERY = "SELECT  
+            COALESCE( SUM( IF( mp_sub_entry.type = 1, amount, - amount ) ), 0 )  as val
+                             FROM
+                    mp_sub_entry
+                JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                WHERE
+                    YEAR(date) = " . $year . " AND MONTH(date)  AND mp_head.id = 229";
         $res = $this->db->query($QUERY);
+        $lb_lalu  = $res->result_array()[0];
+
+        $QUERY = "SELECT  
+            COALESCE( SUM( IF( mp_head.nature = 'Revenue', IF( mp_sub_entry.type = 1, amount, - amount ), 0 ) ), 0 )  -
+            COALESCE( SUM( IF( mp_head.nature = 'Expense', IF( mp_sub_entry.type = 0, amount, - amount ), 0 ) ), 0 ) as laba_rugi
+                             FROM
+                    mp_sub_entry
+                JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                WHERE
+                    YEAR(date) = " . $year . " AND MONTH(date)  AND mp_head.nature IN('Expense', 'Revenue')";
+        $res = $this->db->query($QUERY);
+        $lb  = $res->result_array()[0];
+
+        $data = $lb_lalu['val'] + $lb['laba_rugi'];
+
+        // // $data['saldo_sebelum']['pendapatan']  = 0;
+        // // $data['saldo_sebelum']['beban']  = 0;
+        return $data;
+        // echo json_encode($data);
+        // die();
     }
 
     //USED TO ADD EXPENSES TRANSACTIONS 

@@ -67,7 +67,12 @@ class Download extends CI_Controller
 
         $spreadsheet->getDefaultStyle()
             ->applyFromArray($styleArray);
-
+        $spreadsheet->getActiveSheet()->getPageSetup()->setFitToWidth(0.25);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setFitToHeight(0);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setTop(0.2);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setRight(0.25);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setLeft(0.25);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setBottom(1);
         $spreadsheet->getActiveSheet()->setPrintGridlines(false);
         // $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
         $sheet = $spreadsheet->getActiveSheet();
@@ -105,8 +110,12 @@ class Download extends CI_Controller
         $sheet->setCellValue('A1', 'PT INDOMETAL ASIA');
         $sheet->setCellValue('A2', 'Jalan Sanggul Dewa No.6, Kota Pangkalpinang, Bangka Belitung');
         if (!empty($filter['laba_rugi'])) {
+            $sheet->getHeaderFooter()->setOddFooter(
+                '&LPT INDOMETAL ASIA - LAPORAN LABA RUGI $R &P of &N'
+            );
             $sheet->setCellValue('A3', 'Laporan Laba Rugi');
         } else {
+            $sheet->getHeaderFooter()->setOddFooter('&LPT INDOMETAL ASIA - NERACA SALDO &R &P of &N');
             $sheet->setCellValue('A3', 'Neraca Saldo');
         }
 
@@ -191,11 +200,11 @@ class Download extends CI_Controller
         $sheet->setCellValue('A2', 'Jalan Sanggul Dewa No.6, Kota Pangkalpinang, Bangka Belitung');
         if (!empty($filter['laba_rugi'])) {
             $sheet->getHeaderFooter()->setOddFooter(
-                '&LPT INDOMETAL ASIA - LAPORAN LABA RUGI &P of &N'
+                '&LPT INDOMETAL ASIA - LAPORAN LABA RUGI $R &P of &N'
             );
             $sheet->setCellValue('A3', 'Laporan Laba Rugi');
         } else {
-            $sheet->getHeaderFooter()->setOddFooter('&LPT INDOMETAL ASIA - NERACA SALDO &P of &N');
+            $sheet->getHeaderFooter()->setOddFooter('&LPT INDOMETAL ASIA - NERACA SALDO &R &P of &N');
             $sheet->setCellValue('A3', 'Neraca Saldo');
         }
 
