@@ -91,6 +91,7 @@ class Download extends CI_Controller
         // $spreadsheet->getActiveSheet()->getStyle('A6:H6')->getFont()->setSize(13)->setBold(true);
         // $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->setSize(13)->setBold(true);
         $spreadsheet->getActiveSheet()->getStyle('A1:A5')->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setRowsToRepeatAtTopByStartAndEnd(1, 7);
 
         $sheet->getStyle('F:H')->getNumberFormat()->setFormatCode("_(* #,##0.00_);_(* \(#,##0.00\);_(* \"-\"??_);_(@_)");
         // $sheet->getStyle('F:H')->getNumberFormat()->setFormatCode(PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
@@ -132,6 +133,9 @@ class Download extends CI_Controller
         }
         $sheet->getStyle('A6:H6')->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE);
         $sheet->getStyle('A6:H6')->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE);
+
+        // $sheet->getHeaderFooter()->setOddHeader('A1:H7');
+
         $data['accounts_records'] = $this->Statement_model->xls_neraca_saldo($filter, $sheet);
         $writer = new Xlsx($spreadsheet);
 
@@ -162,6 +166,7 @@ class Download extends CI_Controller
         $sheet->getColumnDimension('K')->setWidth(20);
         $sheet->getRowDimension('7')->setRowHeight(5);
         $spreadsheet->getActiveSheet()->getStyle('A1:K8')->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setRowsToRepeatAtTopByStartAndEnd(1, 9);
         // $spreadsheet->getActiveSheet()->getStyle('A6:H6')->getFont()->setSize(13)->setBold(true);
         // $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->setSize(13)->setBold(true);
         // $spreadsheet->getActiveSheet()->getStyle('A1:K5')->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
@@ -185,8 +190,12 @@ class Download extends CI_Controller
         $sheet->setCellValue('A1', 'PT INDOMETAL ASIA');
         $sheet->setCellValue('A2', 'Jalan Sanggul Dewa No.6, Kota Pangkalpinang, Bangka Belitung');
         if (!empty($filter['laba_rugi'])) {
+            $sheet->getHeaderFooter()->setOddFooter(
+                '&LPT INDOMETAL ASIA - LAPORAN LABA RUGI &P of &N'
+            );
             $sheet->setCellValue('A3', 'Laporan Laba Rugi');
         } else {
+            $sheet->getHeaderFooter()->setOddFooter('&LPT INDOMETAL ASIA - NERACA SALDO &P of &N');
             $sheet->setCellValue('A3', 'Neraca Saldo');
         }
 
@@ -221,7 +230,6 @@ class Download extends CI_Controller
         $writer = new Xlsx($spreadsheet);
 
         // $filename = 'NERACA_SALDO_' . $filter['from'] . '_sd_' . $filter['to'];
-
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
         header('Cache-Control: max-age=0');
