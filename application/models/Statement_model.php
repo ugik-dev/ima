@@ -2838,7 +2838,7 @@ class Statement_model extends CI_Model
         $res = $res->result();
 
         $i = 0;
-        $sheetrow = 7;
+        $sheetrow = 8;
         // echo json_encode($res);
         // die();
 
@@ -2980,7 +2980,8 @@ class Statement_model extends CI_Model
                 // $sheetrow++;
             }
         }
-        if (!empty($filter['laba_rugi']))
+        if (!empty($filter['laba_rugi'])) {
+
             if ($filter['laba_rugi']) {
                 $sheet->mergeCells("B" . $sheetrow . ":E" . $sheetrow)->setCellValue('B' . $sheetrow, 'TOTAL LABA / (RUGI)');
                 $sheet->setCellValue('F' . $sheetrow,  $res_of_laba_rugi['saldo_sebelum']['laba_rugi']);
@@ -2989,6 +2990,22 @@ class Statement_model extends CI_Model
                 $sheetrow++;
                 $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
             }
+        } else {
+            $sheetrow++;
+            $sheet->mergeCells("B" . $sheetrow . ":E" . $sheetrow)->setCellValue('B' . $sheetrow, 'TOTAL ASSET');
+            $sheet->setCellValue('F' . $sheetrow,  $res[0]->saldo_sebelum);
+            $sheet->setCellValue('G' . $sheetrow,  $res[0]->mutasi);
+            $sheet->setCellValue('H' . $sheetrow, ($res[0]->saldo_sebelum + $res[0]->mutasi));
+            $sheetrow++;
+            $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
+            $sheetrow++;
+            $sheet->mergeCells("B" . $sheetrow . ":E" . $sheetrow)->setCellValue('B' . $sheetrow, 'TOTAL LIABILITY + EQUITY');
+            $sheet->setCellValue('F' . $sheetrow,  $res[1]->saldo_sebelum + $res[2]->mutasi);
+            $sheet->setCellValue('G' . $sheetrow,  $res[1]->mutasi + $res[2]->mutasi);
+            $sheet->setCellValue('H' . $sheetrow, ($res[1]->saldo_sebelum + $res[1]->mutasi + $res[2]->saldo_sebelum + $res[2]->mutasi));
+            $sheetrow++;
+            $sheet->mergeCells("A" . $sheetrow . ":H" . $sheetrow);
+        }
         // echo json_encode($res);
         // die();
         // return $tmp;
