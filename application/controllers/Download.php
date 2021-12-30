@@ -69,7 +69,7 @@ class Download extends CI_Controller
             ->applyFromArray($styleArray);
 
         $spreadsheet->getActiveSheet()->setPrintGridlines(false);
-        $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
+        // $spreadsheet->getActiveSheet()->getProtection()->setSheet(true);
         $sheet = $spreadsheet->getActiveSheet();
         if (!empty($filter['template'])) {
             if ($filter['template'] == '2') {
