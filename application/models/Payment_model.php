@@ -18,6 +18,7 @@ class Payment_model extends CI_Model
             return NULL;
         }
     }
+
     public function getAllPembayaran($filter = [])
     {
         $this->db->select('mpp.* , gen.no_jurnal');

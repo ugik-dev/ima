@@ -52,17 +52,13 @@ class Pembayaran extends CI_Controller
         $this->load->model('Accounts_model');
 
         $data['banks'] = $this->Accounts_model->getAllBank();
-        // DEFINES PAGE TITLE
         $data['title'] = 'Entry Pembayaran';
         $data['data_return'] = $data_return;
         $this->load->model('Statement_model');
         $data['accounts_records'] = $this->Statement_model->chart_list();
         $data['patner_record'] = $this->Statement_model->patners_cars_list();
 
-        // DEFINES WHICH PAGE TO RENDER
         $data['main_view'] = 'pembayaran/edit';
-
-        // DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
         $this->load->view('main/index.php', $data);
     }
 
@@ -531,7 +527,7 @@ class Pembayaran extends CI_Controller
         $freame2 = $freame->addCell(12000, array('valign' => 'top', 'borderBottomColor' => 'ffffff', 'borderBottomSize' => '6', 'height' => 200, 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)));
 
         $freame2->addImage(
-            base_url('assets/img/ima-transparent2.png'),
+            base_url('assets/img/ima.jpg'),
             array(
                 'height'           => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(1.3)),
                 'positioning'      => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
