@@ -1,5 +1,5 @@
 var timmer;
-function count_debits(edit = false) {
+function count_debit_credit(edit = false) {
   clearTimeout(timmer);
 
   timmer = setTimeout(function callback() {
@@ -18,18 +18,7 @@ function count_debits(edit = false) {
 
     $('input[name="total_debit_amount"]').val(formatRupiah(total_debit));
     //USED TO CHECK THE VALIDITY OF THIS TRANSACTION
-    if (edit) {
-      count_credits();
-    } else {
-      check_validity();
-    }
-  }, 800);
-}
 
-function count_credits() {
-  clearTimeout(timmer);
-
-  timmer = setTimeout(function callback() {
     var total_credits = 0;
     $('input[name="creditamount[]"]').each(function () {
       if ($(this).val() != "") {
@@ -44,10 +33,32 @@ function count_credits() {
 
     $('input[name="total_credit_amount"]').val(formatRupiah(total_credits));
 
-    //USED TO CHECK THE VALIDITY OF THIS TRANSACTION
     check_validity();
   }, 800);
 }
+
+// function count_credits() {
+//   clearTimeout(timmer);
+
+//   timmer = setTimeout(function callback() {
+//     var total_credits = 0;
+//     $('input[name="creditamount[]"]').each(function () {
+//       if ($(this).val() != "") {
+//         curency = parseFloat(
+//           $(this)
+//             .val()
+//             .replace(/[^0-9]/g, "")
+//         );
+//         total_credits = total_credits + curency;
+//       }
+//     });
+
+//     $('input[name="total_credit_amount"]').val(formatRupiah(total_credits));
+
+//     //USED TO CHECK THE VALIDITY OF THIS TRANSACTION
+//     check_validity();
+//   }, 800);
+// }
 function check_validity() {
   console.log("r");
 

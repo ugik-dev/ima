@@ -10,13 +10,13 @@
     </td>
     <td>
         <?php
-        $data = array('class' => 'form-control input-lg mask', 'name' => 'debitamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_debits()');
+        $data = array('class' => 'form-control input-lg mask', 'name' => 'debitamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_debit_credit()');
         echo form_input($data);
         ?>
     </td>
     <td>
         <?php
-        $data = array('class' => 'form-control input-lg mask', 'name' => 'creditamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_credits()');
+        $data = array('class' => 'form-control input-lg mask', 'name' => 'creditamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_debit_credit()');
         echo form_input($data);
         ?>
     </td>

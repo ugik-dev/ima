@@ -84,13 +84,13 @@
                                         </td> -->
                                         <td>
                                             <?php
-                                            $data = array('class' => 'form-control input-lg mask', 'name' => 'debitamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_debits()');
+                                            $data = array('class' => 'form-control input-lg mask', 'name' => 'debitamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_debit_credit()');
                                             echo form_input($data);
                                             ?>
                                         </td>
                                         <td>
                                             <?php
-                                            $data = array('class' => 'form-control input-lg mask',  'name' => 'creditamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_credits()');
+                                            $data = array('class' => 'form-control input-lg mask',  'name' => 'creditamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_debit_credit()');
                                             echo form_input($data);
                                             ?>
                                         </td>
@@ -119,13 +119,13 @@
                                         </td> -->
                                                 <td>
                                                     <?php
-                                                    $data = array('class' => 'form-control input-lg mask', 'name' => 'debitamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_debits()');
+                                                    $data = array('class' => 'form-control input-lg mask', 'name' => 'debitamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_debit_credit()');
                                                     echo form_input($data);
                                                     ?>
                                                 </td>
                                                 <td>
                                                     <?php
-                                                    $data = array('class' => 'form-control input-lg mask',  'name' => 'creditamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_credits()');
+                                                    $data = array('class' => 'form-control input-lg mask',  'name' => 'creditamount[]', 'value' => '', 'reqiured' => '', 'onkeyup' => 'count_debit_credit()');
                                                     echo form_input($data);
                                                     ?>
                                                 </td>
@@ -234,7 +234,7 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/journal_voucher.js?v=0.2"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/journal_voucher.js?v=2.4"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
@@ -394,6 +394,6 @@
         reverse: true
     });
 
-    count_debits(true);
+    count_debit_credit(true);
 </script>
 <?php $this->load->view('bootstrap_model.php'); ?>

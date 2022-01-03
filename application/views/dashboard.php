@@ -278,7 +278,7 @@
                      </div>
                  </div>
 
-                 <div class="col-xxl-8 order-2 order-xxl-1">
+                 <div class="col-xxl-12 order-2 order-xxl-1">
                      <!--begin::Advance Table Widget 2-->
                      <div class="card card-custom card-stretch gutter-b">
                          <!--begin::Header-->

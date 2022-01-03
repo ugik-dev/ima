@@ -110,13 +110,13 @@
                                         </td>
                                         <td>
                                             <?php
-                                            $data = array('class' => 'debit_val form-control input-lg mask', 'name' => 'debitamount[]', 'reqiured' => '', 'onkeyup' => 'count_debits()');
+                                            $data = array('class' => 'debit_val form-control input-lg mask', 'name' => 'debitamount[]', 'reqiured' => '', 'onkeyup' => 'count_debit_credit()');
                                             echo form_input($data);
                                             ?>
                                         </td>
                                         <td>
                                             <?php
-                                            $data = array('class' => 'kredit_val form-control input-lg mask',  'name' => 'creditamount[]', 'reqiured' => '', 'onkeyup' => 'count_credits()');
+                                            $data = array('class' => 'kredit_val form-control input-lg mask',  'name' => 'creditamount[]', 'reqiured' => '', 'onkeyup' => 'count_debit_credit()');
                                             echo form_input($data);
                                             ?>
                                         </td>
@@ -243,7 +243,7 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/journal_voucher.js?v=1.3"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/journal_voucher.js?v=2.4"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
@@ -488,7 +488,7 @@
     });
 
     // kredit_val[0].trigger('change');
-    count_debits(true);
+    count_debit_credit(true);
 
     <?php if (!empty($acc)) {
     ?>
