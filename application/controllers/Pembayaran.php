@@ -136,21 +136,6 @@ class Pembayaran extends CI_Controller
         }
     }
 
-    public function editJenisPembayaran()
-    {
-        try {
-            $this->load->model(array('SecurityModel', 'InvoiceModel'));
-            $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
-            $data = $this->input->post();
-            $this->Payment_model->editJenisPembayaran($data);
-            $data = $this->General_model->getAllJenisPembayaran(array('id' =>  $data['id'], 'by_id' => true))[$data['id']];
-            echo json_encode(array("error" => false, "data" => $data));
-        } catch (Exception $e) {
-            ExceptionHandler::handle($e);
-        }
-    }
-
-
 
 
     // pembayaran/manage
@@ -242,7 +227,7 @@ class Pembayaran extends CI_Controller
 
             $data['banks'] = $this->Accounts_model->getAllBank();
             // DEFINES PAGE TITLE
-            $data['title'] = 'Edit Jurnal';
+            $data['title'] = 'Edit Pembayaran';
             $data['data_return'] = $dataContent;
             $this->load->model('Statement_model');
             $data['accounts_records'] = $this->Statement_model->chart_list();
@@ -1711,7 +1696,7 @@ class Pembayaran extends CI_Controller
             // $data['accounts_records'] = $this->Statement_model->chart_list();
             $this->load->model('General_model');
             $data['satuan'] = $this->General_model->getAllUnit();
-            $data['jenis_pembayaran'] = $this->General_model->getAllJenisPembayaran();
+            $data['jenis_pembayaran'] = $this->General_model->getAllJenisInvoice();
 
             $this->load->view('admin_models/accounts/new_row_pembayaran.php', $data);
         } else		if ($page_name  == 'add_patner_model') {
@@ -2151,7 +2136,7 @@ class Pembayaran extends CI_Controller
                 );
 
                 $i = 0;
-                $jp = $this->General_model->getAllJenisPembayaran(array('by_id' => true, 'id' => $data['jenis_pembayaran']))[$data['jenis_pembayaran']];
+                $jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['jenis_pembayaran']))[$data['jenis_pembayaran']];
                 $sisa_pembayaran = $data['sub_total_2'] - $data['payed'];
                 if ($sisa_pembayaran > 0) {
                     $data['status_pembayaran'] = 'unpaid';
@@ -2448,7 +2433,7 @@ class Pembayaran extends CI_Controller
             } else {
                 $data['status_pembayaran'] = 'unpaid';
             }
-            $jp = $this->General_model->getAllJenisPembayaran(array('by_id' => true, 'id' => $data['old_data']['jenis_pembayaran']))[$data['old_data']['jenis_pembayaran']];
+            $jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['old_data']['jenis_pembayaran']))[$data['old_data']['jenis_pembayaran']];
             $data['gen_old'] = $this->Statement_model->getSingelJurnal(array('id' => $data['old_data']['general_id']))['parent'];
             $data['generalentry'] = array(
                 'id' => $old_pelunasan['general_id'],

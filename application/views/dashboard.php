@@ -256,8 +256,9 @@
                      <div class="card card-custom card-stretch gutter-b">
                          <div class="card-header border-0 pt-5">
                              <h3 class="card-title align-items-start flex-column">
-                                 <i class="fa fa-money" aria-hidden="true"></i> Total Revenue & Modal Tahun Ini <?php echo $currency; ?>
-
+                                 <form class="form-inline">
+                                     <i class="fa fa-money" aria-hidden="true"></i> Total Revenue & Modal Tahun <select class="form-control mr-2 ml-2" id="year_data"></select>
+                                 </form>
                                  <!-- <span class="card-label font-weight-bolder text-dark">Tasks Overview</span> -->
                              </h3>
                              <div class="box-tools pull-right">
@@ -429,3 +430,44 @@
      <?php
         $this->load->view('script/dashboard_script.php');
         ?>
+
+     <script>
+         $(document).ready(function() {
+             year_data = $('#year_data');
+
+             getYearData()
+
+
+             function getYearData() {
+                 swal.fire({
+                     title: 'Loading...',
+                     allowOutsideClick: false
+                 });
+                 swal.showLoading();
+                 return $.ajax({
+                     url: `<?php echo base_url('General/getYearData') ?>`,
+                     'type': 'GET',
+                     data: {},
+                     success: function(data) {
+                         swal.close();
+                         var json = JSON.parse(data);
+                         if (json['error']) {
+                             return;
+                         }
+                         year = json['data'];
+                         console.log(year)
+                         Object.values(year).forEach((d) => {
+                             year_data.append(`<option>${d['year']}</option>`)
+                         });
+                         year_data.val(<?= $filter['year'] ?>)
+                         //  renderUsers(dataUsers);
+                         //  getLabaRugi()
+                     },
+                     error: function(e) {}
+                 });
+             }
+             year_data.on('change', function() {
+                 window.location = "<?= base_url() ?>dashboard?year=" + year_data.val();
+             })
+         });
+     </script>

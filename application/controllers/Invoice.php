@@ -1772,11 +1772,7 @@ class Invoice extends CI_Controller
             if ($total_bayar >= $data['old_data']['total_final']) {
                 throw new UserException('Data ini sudah lunas!');
             }
-            if ($data['total_bayar'] + (float)$data['nominal'] >= $data['old_data']['total_final']) {
-                $data['status'] = 'paid';
-            } else {
-                $data['status'] = 'unpaid';
-            }
+
             // $jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['old_data']['jenis_invoice']))[$data['old_data']['jenis_invoice']];
             $jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['old_data']['jenis_invoice']))[$data['old_data']['jenis_invoice']];
             // $data['status'] = 'unpaid';
@@ -1838,6 +1834,11 @@ class Invoice extends CI_Controller
             $i++;
             // echo json_encode($data);
             // die();
+            if ($data['total_bayar'] + $total >= $data['old_data']['total_final']) {
+                $data['status'] = 'paid';
+            } else {
+                $data['status'] = 'unpaid';
+            }
 
             $result = $this->Invoice_model->add_pelunasan($data);
             echo json_encode(array('error' => false, 'data' => $data));

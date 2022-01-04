@@ -50,6 +50,33 @@ class General extends CI_Controller
         }
     }
 
+    public function getYearData()
+    {
+        try {
+            $filter = $this->input->get();
+            $data = $this->General_model->getYearData($filter);
+            echo json_encode(array('error' => false, 'data' => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
+    public function getLabaRugi()
+    {
+        try {
+            $filter = $this->input->get();
+            if (empty($filter['year'])) $filter['year'] = date('Y');
+
+            // $data = $this->General_model->getYearData($filter);
+            $data['result_pendapatan'] = $this->General_model->count_akumulasi(array('acc_number' => '4.00.000.000', 'tahun' =>  $filter['year']), 2);
+            $data['result_beban'] = $this->General_model->count_akumulasi(array('acc_number' => '5.00.000.000', 'tahun' =>  $filter['year']), 2);
+
+            echo json_encode(array('error' => false, 'data' => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
     public function getAllPaymentMethod()
     {
         try {

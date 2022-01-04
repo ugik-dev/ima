@@ -407,6 +407,7 @@ class Statements extends CI_Controller
 		$sheet->setCellValue('A1', 'PT INDOMETAL ASIA');
 		$sheet->setCellValue('A2', 'Buku Besar');
 		$sheet->setCellValue('A3', 'Periode : ' . $filter['from'] . ' s.d. ' . $filter['to']);
+		$spreadsheet->getActiveSheet()->getPageSetup()->setRowsToRepeatAtTopByStartAndEnd(1, 6);
 
 		$sheet->setCellValue('A5', 'TANGGAL');
 		$sheet->setCellValue('B5', 'NO JURNAL');
@@ -416,6 +417,7 @@ class Statements extends CI_Controller
 		$sheet->setCellValue('E5', 'KREDIT');
 		$sheet->setCellValue('F5', 'SALDO');
 
+		$sheet->getHeaderFooter()->setOddFooter('&LPT INDOMETAL ASIA - BUKU BESAR &R &P of &N');
 
 		$writer = new Xlsx($spreadsheet);
 

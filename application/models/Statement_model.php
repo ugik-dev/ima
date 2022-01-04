@@ -440,7 +440,7 @@ class Statement_model extends CI_Model
 
     public function export_excel_ledger($filter, $sheet, $spreadsheet)
     {
-        $sheetrow = 6;
+        $sheetrow = 7;
         $accounts_types = array('Assets', 'Liability', 'Equity', 'Revenue', 'Expense');
         for ($i = 0; $i  < count($accounts_types); $i++) {
             $k = 0;

@@ -8,6 +8,9 @@ class Dashboard extends CI_Controller
 	// Homepage
 	public function index()
 	{
+		$filter = $this->input->get();
+		if (empty($filter['year'])) $filter['year'] = date('Y');
+
 		// DEFINES TO LOAD THE CATEGORY RECORD FROM DATABSE TABLE mp_Categoty
 		$this->load->model('Crud_model');
 		$this->load->model('Statement_model');
@@ -115,14 +118,15 @@ class Dashboard extends CI_Controller
 
 		// FETCHING THE EXPENSE AND REVENUE FOR GRAPH
 		$result_sales_this_year_and_total_profit = $this->Accounts_model->statistics_sales_this_year();
-		$data['result_sales_arr'] = $this->Statement_model->statistics_sales_this_year(array('acc_number' => '4.00.000.000'), 2);
-		$data['result_expense_this_year'] = $this->Statement_model->statistics_sales_this_year(array('acc_number' => '5.00.000.000'), 2, true);
+		$data['result_sales_arr'] = $this->Statement_model->statistics_sales_this_year(array('acc_number' => '4.00.000.000', 'tahun' => $filter['year'], 'bulan' => 12), 2);
+		$data['result_expense_this_year'] = $this->Statement_model->statistics_sales_this_year(array('acc_number' => '5.00.000.000', 'tahun' => $filter['year'], 'bulan' => 12), 2, true);
 
 		$data['result_profit_this_year'] = json_encode($result_sales_this_year_and_total_profit[1]);
 
-		// echo json_encode($data);
+		// echo json_encode($data['result_profit_this_year']);
 		// die();
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+		$data['filter']  = $filter;
 		$this->load->view('main/index.php', $data);
 	}
 

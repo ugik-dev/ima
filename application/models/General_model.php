@@ -5,6 +5,19 @@
 class General_model extends CI_Model
 {
 
+    public function getYearData($filter = [])
+    {
+        $this->db->select("YEAR(date) as year, gen_lock");
+        $this->db->from('mp_generalentry');
+        $this->db->where('id > 0');
+        $this->db->group_by('YEAR(date)');
+        $this->db->order_by('YEAR(date)', 'DESC');
+        // if (!empty($filter['user_id'])) $this->db->where('mp_users.id', $filter['user_id']);
+        $query = $this->db->get();
+        // return
+        return $query->result_array();
+    }
+
     // function getAllGeneralenral($id)
     // {
     //     $this->db->select("gen_lock as gen_lock");
@@ -500,5 +513,51 @@ class General_model extends CI_Model
                 return "XII";
                 break;
         }
+    }
+
+    public function count_akumulasi($filter, $cut = 5)
+    {
+
+        // var_dump($filter);
+        // die();
+        $filter['bulan'] = 12;
+        $c_saldo = 0;
+        $mutasi = 0;
+        $debit = 0;
+        $kredit = 0;
+        for ($i = 1; $i <= $filter['bulan']; $i++) {
+            $QUERY = 'SELECT
+                                    @names := SUBSTR(mp_head.name, 1, ' . $cut . ') as pars,SUBSTR(mp_head.name, 2, 5) as title,
+                                    COALESCE((
+                                    SELECT
+                                        ROUND(SUM(IF(mp_sub_entry.type = 1,mp_sub_entry.amount,-mp_sub_entry.amount)),2) 
+                                    FROM
+                                        mp_sub_entry
+                                    JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
+                                    JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
+                                    WHERE
+                                    mp_generalentry.id > 0 AND
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' .  $i . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $i . '-31"
+                                    ),0) mutasi,
+                                mp_head.id,
+                                mp_head.name
+                                FROM
+                                    `mp_head`
+                                WHERE
+                                
+                                      mp_head.name like "[' . $filter['acc_number'] . '%"
+                                
+                        ORDER BY mp_head.name
+                        ';
+            $res = $this->db->query($QUERY);
+            $res = $res->result();
+            if (!empty($res[0])) {
+                // if ($min)
+                //     $tmp[$i - 1] = -$res[0]->mutasi;
+                // else
+                $tmp[$i - 1] = $res[0]->mutasi;
+            }
+        }
+        return $tmp;
     }
 }

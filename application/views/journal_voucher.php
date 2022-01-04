@@ -36,17 +36,29 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <?php echo form_label('No Jurnal');
-                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_jurnal', 'id' => 'no_jurnal');
-                                echo form_input($data);
-                                $data = array('class' => 'hidden', 'type' => 'hidden', 'name' => 'url', 'id' => 'url', 'value' => '');
-                                echo form_input($data);
-                                // if (!empty($data_return['notif_id'])) {
-                                //     $data = array('class' => 'hidden', 'type' => 'hidden', 'name' => 'notif_id', 'id' => 'notif_id', 'value' => $data_return['notif_id']);
-                                //     echo form_input($data);
-                                // }
-                                ?>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <?php echo form_label('No Jurnal');
+                                        $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_jurnal', 'id' => 'no_jurnal');
+                                        echo form_input($data);
+                                        $data = array('class' => 'hidden', 'type' => 'hidden', 'name' => 'url', 'id' => 'url', 'value' => '');
+                                        echo form_input($data);
+                                        // if (!empty($data_return['notif_id'])) {
+                                        //     $data = array('class' => 'hidden', 'type' => 'hidden', 'name' => 'notif_id', 'id' => 'notif_id', 'value' => $data_return['notif_id']);
+                                        //     echo form_input($data);
+                                        // }
+                                        ?>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <?php echo form_label('Tanggal');
+                                        $data = array('class' => 'form-control input-lg', 'type' => 'date', 'name' => 'date', 'id' => 'date', 'reqiured' => '', 'value' => Date('Y-m-d'));
+                                        echo form_input($data);
+                                        ?>
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <?php echo form_label('Rincian Transaksi');
@@ -54,12 +66,7 @@
                                 echo form_input($data);
                                 ?>
                             </div>
-                            <div class="form-group">
-                                <?php echo form_label('Tanggal');
-                                $data = array('class' => 'form-control input-lg', 'type' => 'date', 'name' => 'date', 'id' => 'date', 'reqiured' => '', 'value' => Date('Y-m-d'));
-                                echo form_input($data);
-                                ?>
-                            </div>
+
                         </div>
                     </div>
                     <div class="row invoice">

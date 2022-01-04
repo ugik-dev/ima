@@ -86,7 +86,7 @@
                 </div>
                 <div class="form-group">
                     <?php
-                    $data = array('class' => 'btn btn-info btn-outline-primary', 'type' => 'submit', 'content' => '<i class="fa fa-floppy-o" aria-hidden="true"></i> Simpan Akun ');
+                    $data = array('class' => 'btn btn-info btn-outline-primary', 'type' => 'submit', 'content' => '<i class="fa fa-floppy-o" aria-hidden="true"></i> Simpan Note ');
 
                     echo form_button($data);
                     ?>

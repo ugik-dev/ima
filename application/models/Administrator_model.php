@@ -27,7 +27,7 @@ class Administrator_model extends CI_Model
         return DataStructure::keyValue($query->result_array(), 'id');
     }
 
-    public function getKunciData($filter = [])
+    public function getYearData($filter = [])
     {
         $this->db->select("YEAR(date) as year, gen_lock");
         $this->db->from('mp_generalentry');

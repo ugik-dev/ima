@@ -51,24 +51,38 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-lg-6">
 
-                        <div class="form-group">
-                            <?php echo form_label('No Jurnal'); ?>
-                            <?php
-                            $data = array('class' => 'form-control input-lg', 'type' => 'hidden', 'name' => 'id', 'value' => $parent->transaction_id);
-                            echo form_input($data);
+                                <div class="form-group">
+                                    <?php echo form_label('No Jurnal'); ?>
+                                    <?php
+                                    $data = array('class' => 'form-control input-lg', 'type' => 'hidden', 'name' => 'id', 'value' => $parent->transaction_id);
+                                    echo form_input($data);
 
-                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_jurnal', 'value' => $parent->no_jurnal);
-                            echo form_input($data);
+                                    $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_jurnal', 'value' => $parent->no_jurnal);
+                                    echo form_input($data);
 
-                            $data = array('class' => 'hidden', 'type' => 'hidden', 'name' => 'url', 'id' => 'url', 'value' => $parent->url);
-                            echo form_input($data);
-                            if (!empty($parent->notif_id)) {
-                                $data = array('class' => 'hidden', 'type' => 'hidden', 'name' => 'notif_id', 'id' => 'notif_id', 'value' => $parent->notif_id);
-                                echo form_input($data);
-                            }
+                                    $data = array('class' => 'hidden', 'type' => 'hidden', 'name' => 'url', 'id' => 'url', 'value' => $parent->url);
+                                    echo form_input($data);
+                                    if (!empty($parent->notif_id)) {
+                                        $data = array('class' => 'hidden', 'type' => 'hidden', 'name' => 'notif_id', 'id' => 'notif_id', 'value' => $parent->notif_id);
+                                        echo form_input($data);
+                                    }
 
-                            ?>
+                                    ?>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+
+                                <div class="form-group">
+                                    <?php echo form_label('Tanggal'); ?>
+                                    <?php
+                                    $data = array('class' => 'form-control input-lg', 'type' => 'date', 'name' => 'date', 'reqiured' => '', 'value' => $parent->date);
+                                    echo form_input($data);
+                                    ?>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <?php echo form_label('Rincian Transaksi'); ?>
@@ -77,13 +91,7 @@
                             echo form_input($data);
                             ?>
                         </div>
-                        <div class="form-group">
-                            <?php echo form_label('Tanggal'); ?>
-                            <?php
-                            $data = array('class' => 'form-control input-lg', 'type' => 'date', 'name' => 'date', 'reqiured' => '', 'value' => $parent->date);
-                            echo form_input($data);
-                            ?>
-                        </div>
+
 
                     </div>
                 </div>
