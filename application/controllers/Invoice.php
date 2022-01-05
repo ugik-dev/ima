@@ -1433,7 +1433,7 @@ class Invoice extends CI_Controller
                         'customer_id' => $data['customer_id'],
                         'generated_source' => 'invoice_ppn'
                     );
-                    $data['generalentry_ppn']['no_jurnal'] = $this->General_model->gen_number($data['date2'], 'JU');
+                    $data['generalentry_ppn']['no_jurnal'] = $this->General_model->gen_number($data['date'], 'JU');
 
                     $data['sub_entry_ppn'][0] = array(
                         'accounthead' => $jp['ac_ppn_piut'],
@@ -1455,7 +1455,7 @@ class Invoice extends CI_Controller
                     'customer_id' => $data['customer_id'],
                     'generated_source' => 'invoice'
                 );
-                $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date'], $jp['ref_nojur']);
+                $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date2'], $jp['ref_nojur']);
                 $i = 0;
                 $data['status'] = 'unpaid';
                 // NEW CODE
