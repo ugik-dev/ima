@@ -517,7 +517,7 @@ class Invoice extends CI_Controller
         $freame2->addImage(
             base_url('assets/img/ima.jpg'),
             array(
-                'height'           => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(1.2)),
+                'height'           => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(1)),
                 'positioning'      => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
                 'posHorizontal' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
                 'posVertical' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
