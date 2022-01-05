@@ -294,9 +294,6 @@ class Invoice extends CI_Controller
             $text_kwitansi = $dataContent['description'];
 
 
-
-        // echo json_encode($paragraph_1);
-        // die();
         $date_item = false;
         $total = 0;
         $total_qyt = 0;
@@ -621,6 +618,10 @@ class Invoice extends CI_Controller
         // if ($dataContent['id'] == 57) {
         // 	echo json_encode($dataContent);
         // } else {
+
+
+        echo json_encode($dataContent);
+        die();
         $writer = new Word2007($phpWord);
         $filename = 'SPB_KW_' . $dataContent['no_invoice'];
         header('Content-Type: application/msword');
