@@ -33,7 +33,7 @@
                                      <th>Akun Pendapatan</th>
                                      <th>Akun Piutang</th>
                                      <th>Akun PPN</th>
-                                     <th>Akun Piutang PPN</th>
+                                     <th>No Jurnal</th>
                                      <th>Aksi</th>
                                  </tr>
                              </thead>
