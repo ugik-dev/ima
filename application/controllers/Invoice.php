@@ -468,6 +468,7 @@ class Invoice extends CI_Controller
 
         $section->addText("Demikian disampaikan, atas perhatian dan kerjasamanya kami ucapkan terimakasih.", 'paragraph', array('spaceAfter' => 0));
         $section->addTextBreak();
+        $section->addTextBreak();
 
         $section = $phpWord->addSection($pageStyle);
 
