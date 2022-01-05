@@ -1379,7 +1379,7 @@ class Statements extends CI_Controller
 		try {
 
 			$data = $this->input->post();
-			$this->Transaction_model->close_book($data);
+			// $this->Transaction_model->close_book($data);
 			$this->Transaction_model->periode_neraca_saldo($data);
 			echo json_encode(array('error' => false));
 		} catch (Exception $e) {

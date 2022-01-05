@@ -418,6 +418,7 @@
          add_new_data_btn.on('click', (e) => {
              PaymentModal.form.trigger('reset');
              PaymentModal.self.modal('show');
+             PaymentModal.id.val('');
              PaymentModal.addBtn.show();
              PaymentModal.saveEditBtn.hide();
          });
