@@ -515,9 +515,9 @@ class Invoice extends CI_Controller
         $freame2 = $freame->addCell(12000, array('valign' => 'top', 'borderBottomColor' => 'ffffff', 'borderBottomSize' => '6', 'height' => 200, 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)));
 
         $freame2->addImage(
-            base_url('assets/img/ima-transparent2.png'),
+            base_url('assets/img/ima.jpg'),
             array(
-                'height'           => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(1.3)),
+                'height'           => round(\PhpOffice\PhpWord\Shared\Converter::cmToPixel(1.2)),
                 'positioning'      => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
                 'posHorizontal' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
                 'posVertical' => \PhpOffice\PhpWord\Style\Image::POSITION_ABSOLUTE,
