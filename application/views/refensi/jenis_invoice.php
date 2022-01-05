@@ -507,7 +507,7 @@
                  var button = `    ${ copyButton+ editButton + deleteButton} `;
 
 
-                 renderData.push([d['id'], d['jenis_invoice'], d['name_paid'], d['name_unpaid'], d['name_ppn'], d['name_ppn_piut'], button]);
+                 renderData.push([d['id'], d['jenis_invoice'], d['name_paid'], d['name_unpaid'], d['name_ppn'] + '<br>' + d['name_ppn_piut'], d['ref_nojur'] + ', ' + d['ref_nojur_pel'] + ', ' + d['ref_nojur_pembayaran'] + ', ' + d['ref_nojur_pel_pembayaran'], button]);
              });
              FDataTable.clear().rows.add(renderData).draw('full-hold');
          }
