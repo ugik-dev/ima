@@ -60,11 +60,11 @@
                     <button type="button" class="btn btn-primary dropdown-toggle py-3 mr-2 my-1 font-weight-bolder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Files</button>
                     <div class="dropdown-menu">
                         <a type="button" id="btn_print_kwitansi" class="dropdown-item"> <i class="fa fa-print mr-2" aria-hidden="true"></i> Print Kwitansi</a>
+                        <a type="button" href="<?= base_url('Pembayaran/download_word/') . $transaction['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i>Doc Pembayaran Mitra</a>
+                        <a type="button" href="<?= base_url('Pembayaran/download_word2/') . $transaction['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> Daftar Kendaraan Insidentil</a>
+                        <a type="button" href="<?= base_url('Pembayaran/download_word_reklamasi/') . $transaction['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i>Doc Pembayaran Reklamasi</a>
                         <?php if ($transaction['jenis_pembayaran'] == 1) { ?>
-                            <a type="button" href="<?= base_url('Pembayaran/download_word/') . $transaction['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i>Doc Pembayaran Mitra</a>
-                            <a type="button" href="<?= base_url('Pembayaran/download_word2/') . $transaction['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> Daftar Kendaraan Insidentil</a>
                         <?php    } else  if ($transaction['jenis_pembayaran'] == 2) { ?>
-                            <a type="button" href="<?= base_url('Pembayaran/download_word_reklamasi/') . $transaction['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i>Doc Pembayaran Reklamasi</a>
                         <?php } ?>
                     </div>
                 </div>
