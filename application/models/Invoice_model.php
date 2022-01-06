@@ -439,25 +439,76 @@ class Invoice_model extends CI_Model
             }
         }
 
-        // update generalentry
-        // $this->db->where('id', $data['generalentry']['id']);
-        // $this->db->update('mp_generalentry', $data['generalentry']);
+        $data_acc = array(
+            'date_acc_0' => $data['date'],
+            'acc_1' => $data['acc_1'],
+            'acc_2' => $data['acc_2'],
+            'acc_3' => $data['acc_3'],
+            'acc_0' => $this->session->userdata('user_id')['name'],
+        );
 
-        // $this->db->where('parent_id', $data['generalentry']['id']);
-        // $this->db->delete('mp_sub_entry');
+        // $data_acc['id_transaction'] = $gen_id;
+        // $this->db->insert('mp_approv', $data_acc);
 
-        // foreach ($data['sub_entry'] as $sub) {
-        //     $sub['parent_id'] = $data['generalentry']['id'];
-        //     $this->db->insert('mp_sub_entry', $sub);
+        // if (!empty($data['generalentry_ppn'])) {
+        //     $data_acc['id_transaction'] = $general_id_ppn;
+        //     $this->db->insert('mp_approv', $data_acc);
         // }
+        $this->db->where("id_transaction", $data['old_data']['general_id']);
+        $this->db->update('mp_approv', $data_acc);
 
-        // $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
-        // $this->db->set("date_acc_0", date('Y-m-d'));
-        // $this->db->set("acc_1", $data['acc_1']);
-        // $this->db->set("acc_2", $data['acc_2']);
-        // $this->db->set("acc_3", $data['acc_3']);
-        // $this->db->where("id_transaction", $data['generalentry']['id']);
-        // $this->db->update('mp_approv');
+
+        // update generalentry
+        $this->db->where('id', $data['old_data']['general_id']);
+        $this->db->update('mp_generalentry', $data['generalentry']);
+
+        $this->db->where('parent_id', $data['old_data']['general_id']);
+        $this->db->delete('mp_sub_entry');
+
+        foreach ($data['sub_entry'] as $sub) {
+            $sub['parent_id'] = $data['old_data']['general_id'];
+            $this->db->insert('mp_sub_entry', $sub);
+        }
+
+        if (empty($data['old_data']['general_id_ppn'])) {
+            if (!empty($data['generalentry_ppn'])) {
+                $data['generalentry_ppn']['url'] = 'invoice/show/' . $data['id'];
+                $this->db->insert('mp_generalentry', $data['generalentry_ppn']);
+                $general_id_ppn = $this->db->insert_id();
+                foreach ($data['sub_entry_ppn'] as $sub) {
+                    $sub['parent_id'] = $general_id_ppn;
+                    $this->db->insert('mp_sub_entry', $sub);
+                }
+                $data_acc['id_transaction'] = $general_id_ppn;
+                // $this->db->where("id_transaction", $data['old_data']['general_id']);
+                $this->db->insert('mp_approv', $data_acc);
+            }
+        } else {
+            if (!empty($data['generalentry_ppn'])) {
+                $this->db->where('id', $data['old_data']['general_id_ppn']);
+                $this->db->update('mp_generalentry', $data['generalentry_ppn']);
+
+                $this->db->where('parent_id', $data['old_data']['general_id_ppn']);
+                $this->db->delete('mp_sub_entry');
+
+                foreach ($data['sub_entry_ppn'] as $sub) {
+                    $sub['parent_id'] = $data['old_data']['general_id_ppn'];
+                    $this->db->insert('mp_sub_entry', $sub);
+                }
+
+                $this->db->where("id_transaction", $data['old_data']['general_id_ppn']);
+                $this->db->update('mp_approv', $data_acc);
+            } else {
+                $this->db->where('id', $data['old_data']['general_id_ppn']);
+                $this->db->delete('mp_generalentry');
+
+                $this->db->where('parent_id', $data['old_data']['generalentry_ppn']);
+                $this->db->delete('mp_sub_entry');
+
+                $this->db->where("id_transaction", $data['old_data']['general_id_ppn']);
+                $this->db->delete('mp_approv');
+            }
+        }
 
         $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'invoice/show/' . $data['id'], 'sub_id' => $data['id'], 'desk' => 'Edit Invoice'));
         $this->db->trans_complete();
@@ -616,10 +667,16 @@ class Invoice_model extends CI_Model
         $this->db->where("id", $data['parent_id']);
         $this->db->update('mp_invoice_v2');
 
-        $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
-        $this->db->set("date_acc_0", date('Y-m-d'));
-        $this->db->set("id_transaction", $gen_id);
-        $this->db->insert('mp_approv');
+        $data_acc = array(
+            'date_acc_0' => $data['date_pembayaran'],
+            'acc_1' => $data['acc_1'],
+            'acc_2' => $data['acc_2'],
+            'acc_3' => $data['acc_3'],
+            'acc_0' => $this->session->userdata('user_id')['name'],
+        );
+
+        $data_acc['id_transaction'] = $gen_id;
+        $this->db->insert('mp_approv', $data_acc);
 
         $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'invoice/show/' . $data['parent_id'], 'sub_id' => $order_id, 'desk' => 'Entry Pembayaran Invoice'));
         $this->db->trans_complete();
@@ -649,26 +706,33 @@ class Invoice_model extends CI_Model
 
 
         //   UPDATE GENERALENTRY
-        // $this->db->where('id', $data['generalentry']['id']);
-        // $this->db->update('mp_generalentry', $data['generalentry']);
+        $this->db->where('id', $data['old_pelunasan']['general_id']);
+        $this->db->update('mp_generalentry', $data['generalentry']);
 
-        // $this->db->where('parent_id', $data['generalentry']['id']);
-        // $this->db->delete('mp_sub_entry');
+        $this->db->where('parent_id', $data['old_pelunasan']['general_id']);
+        $this->db->delete('mp_sub_entry');
 
-        // foreach ($data['sub_entry'] as $sub) {
-        //     $sub['parent_id'] = $data['generalentry']['id'];
-        //     $this->db->insert('mp_sub_entry', $sub);
-        // }
+        foreach ($data['sub_entry'] as $sub) {
+            $sub['parent_id'] = $data['old_pelunasan']['general_id'];
+            $this->db->insert('mp_sub_entry', $sub);
+        }
 
-        // $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
-        // $this->db->set("date_acc_0", date('Y-m-d'));
-        // $this->db->where("id_transaction", $data['generalentry']['id']);
-        // $this->db->update('mp_approv');
+
 
         $this->db->set("status", $data['status']);
         $this->db->where("id", $data['parent_id']);
-        $this->db->update('mp_invoice');
+        $this->db->update('mp_invoice_v2');
 
+
+        $data_acc = array(
+            'date_acc_0' => $data['date_pembayaran'],
+            'acc_1' => $data['acc_1'],
+            'acc_2' => $data['acc_2'],
+            'acc_3' => $data['acc_3'],
+            'acc_0' => $this->session->userdata('user_id')['name'],
+        );
+        $this->db->where('id_transaction', $data['old_pelunasan']['general_id']);
+        $this->db->update('mp_approv', $data_acc);
 
         $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'invoice/show/' . $data['parent_id'], 'sub_id' => $data['parent_id'], 'desk' => 'Edit Invoice'));
         $this->db->trans_complete();

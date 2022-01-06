@@ -51,6 +51,7 @@ class AccountModel extends CI_Model
                 }
             }
         }
+        // die();
     }
 
     function query_find_account($pars, $id, $leng, $var1, $var2)

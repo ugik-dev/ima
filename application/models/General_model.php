@@ -63,11 +63,13 @@ class General_model extends CI_Model
 
     function getAllPelunasanInvoice($filter = [])
     {
-        $this->db->select('mpp.* , us.agentname , gen.no_jurnal ,nominal+COALESCE(sum(ac_nominal),0) as sum_child');
+        $this->db->select('mpp.* , us.agentname , gen.no_jurnal ,nominal+COALESCE(sum(ac_nominal),0) as sum_child,aprv.acc_1,acc_2,acc_3,acc_0');
         $this->db->from('dt_pelunasan_invoice mpp');
         $this->db->join('dt_pel_inv_potongan as potongan', 'mpp.id = potongan.id_pelunasan', 'LEFT');
         $this->db->join('mp_users us', 'mpp.agen_id = us.id', 'LEFT');
         $this->db->join('mp_generalentry gen', 'gen.id = mpp.general_id', 'LEFT');
+        $this->db->join('mp_approv aprv', 'gen.id = aprv.id_transaction', 'LEFT');
+
         if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
         if (!empty($filter['parent_id'])) $this->db->where('mpp.parent_id', $filter['parent_id']);
         if (!empty($filter['ex_id'])) $this->db->where('mpp.id <> ' . $filter['ex_id']);

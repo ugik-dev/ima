@@ -367,6 +367,47 @@
                     <div class="col-lg-12" id="freame_potongan">
 
                     </div>
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label>Disetujui</label>
+                                    <select name="acc_1" id="acc_1" class="form-control">
+                                        <option value="0"> ----- </option>
+                                        <option value="7"> SETIAWAN R </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group" id='label_kendaraan'>
+                                    <label>Diverifikasi</label>
+                                    <select name="acc_2" id="acc_2" class="form-control">
+                                        <option value="0"> ----- </option>
+                                        <option value="8"> PURWADI </option>
+                                        <option value="10"> RAHMAT </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group" id='label_kendaraan'>
+                                    <label>Dibuat</label>
+                                    <select name="acc_3" id="acc_3" class="form-control">
+                                        <option value="0"> ----- </option>
+                                        <option value="9"> A SISWANTO </option>
+                                        <option value="12"> DEFRYANTO </option>
+                                        <option value="11"> NURHASANAH </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group" id='label_kendaraan'>
+                                    <label>Dibukukan</label>
+                                    <input type="text" disabled id="acc_0" class="form-control input-lg">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- </div> -->
                 </div>
                 <div class="modal-footer">
@@ -447,6 +488,7 @@
             freame_potongan.append(layout_potongan);
             // freame_potongan.select2();
             $('#ac_potongan_' + row_num).select2()
+            if (dat) $('#ac_potongan_' + row_num).val(dat['ac_potongan']).change();
             $('.mask').mask('000.000.000.000.000,00', {
                 reverse: true
             });
@@ -467,6 +509,10 @@
             'parent_id': $('#pelunasan_modal').find('#parent_id'),
             'date_pembayaran': $('#pelunasan_modal').find('#date_pembayaran'),
             'nominal': $('#pelunasan_modal').find('#nominal'),
+            'acc_1': $('#pelunasan_modal').find('#acc_1'),
+            'acc_2': $('#pelunasan_modal').find('#acc_2'),
+            'acc_3': $('#pelunasan_modal').find('#acc_3'),
+            'acc_0': $('#pelunasan_modal').find('#acc_0'),
         }
 
         var FDataTable = $('#FDataTable').DataTable({
@@ -548,10 +594,10 @@
             var renderData = [];
             <?php if (!empty($dataContent['general_id_ppn'])) { ?>
                 link = '<a href="<?= base_url() ?>statements/show/<?= $dataContent['general_id_ppn'] ?>"> PPN <?= $dataContent['no_jurnal_ppn'] ?> </a>'
-                renderData.push(['<?= $dataContent['date'] ?>', '<?= number_format(0, 2, ',', '.') ?>', '<?= $dataContent['acc_0'] ?>', link, '']);
+                renderData.push(['<?= $dataContent['gen_ppn_date'] ?>', '<?= number_format(0, 2, ',', '.') ?>', '<?= $dataContent['acc_0'] ?>', link, '']);
             <?php   } ?>
             link = '<a href="<?= base_url() ?>statements/show/<?= $dataContent['general_id'] ?>"> <?= $dataContent['no_jurnal'] ?> </a>'
-            renderData.push(['<?= $dataContent['date'] ?>', '<?= number_format(0, 2, ',', '.') ?>', '<?= $dataContent['acc_0'] ?>', link, '']);
+            renderData.push(['<?= $dataContent['gen_date'] ?>', '<?= number_format(0, 2, ',', '.') ?>', '<?= $dataContent['acc_0'] ?>', link, '']);
             total = 0;
             Object.values(data).forEach((d) => {
                 link = `<a href="<?= base_url() ?>statements/show/${d['general_id']}"> ${d['no_jurnal']}</a>`;
@@ -614,6 +660,10 @@
             console.log($(this).data('id'))
             console.log(currentData);
             PelunasanModal.id.val(currentData['id']);
+            PelunasanModal.acc_1.val(currentData['acc_1']);
+            PelunasanModal.acc_2.val(currentData['acc_2']);
+            PelunasanModal.acc_3.val(currentData['acc_3']);
+            PelunasanModal.acc_0.val(currentData['acc_0']);
             PelunasanModal.date_pembayaran.val(currentData['date_pembayaran']);
             PelunasanModal.nominal.val(formatRupiah2(currentData['nominal']));
             currentData['data_potongan'].forEach((child) => {

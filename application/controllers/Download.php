@@ -282,8 +282,8 @@ class Download extends CI_Controller
         $sheet->getColumnDimension('C')->setWidth(5);
         $sheet->getColumnDimension('D')->setWidth(5);
         $sheet->getColumnDimension('E')->setWidth(35);
-        $sheet->getColumnDimension('F')->setWidth(20);
-        $sheet->getColumnDimension('G')->setWidth(20);
+        $sheet->getColumnDimension('F')->setWidth(10);
+        $sheet->getColumnDimension('G')->setWidth(13);
         $spreadsheet->getActiveSheet()->getStyle('A6:G6')->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
         // $spreadsheet->getActiveSheet()->getStyle('A6:H6')->getFont()->setSize(13)->setBold(true);
         // $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->setSize(13)->setBold(true);
@@ -296,22 +296,24 @@ class Download extends CI_Controller
         $sheet->mergeCells("A2:G2");
         $sheet->mergeCells("A3:G3");
         $sheet->mergeCells("A4:G4");
-        $sheet->mergeCells("A5:G5");
+        // $sheet->mergeCells("A5:G5");
+        $spreadsheet->getActiveSheet()->getPageSetup()->setRowsToRepeatAtTopByStartAndEnd(1, 6);
+        $sheet->getHeaderFooter()->setOddFooter('&LPT INDOMETAL ASIA - BAGAN AKUN &R &P of &N');
 
         $sheet->setCellValue('A1', 'PT INDOMETAL ASIA');
         $sheet->setCellValue('A2', 'Jalan Sanggul Dewa No.6, Kota Pangkalpinang, Bangka Belitung');
-        $sheet->setCellValue('A3', 'KODE AKUN');
+        $sheet->setCellValue('A3', 'BAGAN AKUN');
 
         $namaBulan = array("Januari", "Februaru", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember");
-        $sheet->setCellValue('A6', 'NO AKUN');
-        $sheet->mergeCells("B6:E6")->setCellValue('B6', 'NAMA AKUN');
-        $sheet->setCellValue('F6', 'KELOMPOK');
-        $sheet->setCellValue('G6', 'TIPE');
+        $sheet->setCellValue('A5', 'NO AKUN');
+        $sheet->mergeCells("B5:E5")->setCellValue('B5', 'NAMA AKUN');
+        $sheet->setCellValue('F5', 'KELOMPOK');
+        $sheet->setCellValue('G5', 'TIPE');
         // $sheet->setCellValue('H6', 'SALDO');
         // $sheet->setCellValue('F5', 'SALDO');
 
-        $sheet->getStyle('A6:G6')->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE);
-        $sheet->getStyle('A6:G6')->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE);
+        $sheet->getStyle('A5:G5')->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE);
+        $sheet->getStyle('A5:G5')->getBorders()->getBottom()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE);
         $this->AccountModel->chart_of_account($sheet);
         $writer = new Xlsx($spreadsheet);
 
