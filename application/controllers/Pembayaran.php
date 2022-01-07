@@ -78,41 +78,6 @@ class Pembayaran extends CI_Controller
     }
 
 
-
-    function create2($data_return = NULL)
-    {
-
-        $this->load->model('Crud_model');
-
-        $data['currency'] = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1)[0]->currency;
-
-        //$ledger
-        $from = html_escape($this->input->post('from'));
-        $to   = html_escape($this->input->post('to'));
-
-        if ($from == NULL or $to == NULL) {
-
-            $from = date('Y-m-') . '1';
-            $to =  date('Y-m-') . '31';
-        }
-        $this->load->model('Accounts_model');
-
-        $data['banks'] = $this->Accounts_model->getAllBank();
-        // DEFINES PAGE TITLE
-        $data['title'] = 'Entry Pembayaran';
-        $data['data_return'] = $data_return;
-        $this->load->model('Statement_model');
-        $data['accounts_records'] = $this->Statement_model->chart_list();
-        $data['patner_record'] = $this->Statement_model->patners_cars_list();
-
-        // DEFINES WHICH PAGE TO RENDER
-        $data['main_view'] = 'pembayaran/create2';
-
-        // DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
-        $this->load->view('main/index.php', $data);
-    }
-
-
     public function delete($id)
     {
         try {
@@ -1723,170 +1688,6 @@ class Pembayaran extends CI_Controller
     }
 
 
-
-    public function edit_pembayaran()
-    {
-
-        // DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
-        $this->load->model('Crud_model');
-        $this->load->model('Transaction_model');
-        $edit_discount       = html_escape($this->input->post('edit_discount'));
-        $edit_pembayaran_id  = html_escape($this->input->post('edit_pembayaran_id'));
-        $edit_description = html_escape($this->input->post('edit_description'));
-        $total_bill = html_escape($this->input->post('total_bill'));
-        $amountpaid  = html_escape($this->input->post('amountpaid'));
-        $user_name = $this->session->userdata('user_id');
-
-        $data = array(
-            'discount' => $edit_discount,
-            'status' => 1,
-            'agentname' =>  $user_name['name'],
-            'description' =>  $edit_description,
-            'total_bill' => $total_bill,
-            'bill_paid' =>  $amountpaid
-        );
-
-        $result = $this->Transaction_model->edit_pembayaran_transaction($data, $edit_pembayaran_id);
-        if ($result != NULL) {
-
-            $product_quantity = html_escape($this->input->post('product_quantity'));
-
-            $edit_product_id = html_escape($this->input->post('edit_product_id'));
-
-            $edit_sales_id = html_escape($this->input->post('edit_sales_id'));
-
-            // DEFINES TO CALCULATE THAT HOW MUCH THE LOOP SHOULD ITERATE
-            $i = 0;
-            while ($i < count($product_quantity)) {
-
-                // GETTING THE VALUES FROM TEXTFIELD .THE ARRAYS OF VALUES WHICH WE CREATED
-                // BY USING DOM
-                // FETCHING THE SALES QTY FROM SALES TBLE THROUGH SALES ID
-                $get_result = $this->Crud_model->fetch_record_by_id('mp_sales', $edit_sales_id[$i]);
-                $get_med_quantity = $get_result[0]->qty;
-
-                //RETURNED STOCK BY CUSTOMER
-                $get_med_quantity = $get_med_quantity - $product_quantity[$i];
-
-                // ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY FOR EVERY ITERATION
-                $args1 = array(
-                    'table_name' => 'mp_sales',
-                    'id' => $edit_sales_id[$i]
-                );
-                $data1 = array(
-                    'qty' => $product_quantity[$i]
-                );
-
-                // DEFINES CALL THE FUNCTION OF insert_data FORM Crud_model CLASS
-                $result = $this->Crud_model->edit_record_given_field('id', $args1, $data1);
-
-                if ($get_med_quantity > 0) {
-
-                    //UPDATING PARTS STOCK
-                    $this->Crud_model->add_return_item_stock($edit_product_id[$i], $get_med_quantity);
-                }
-                $i++;
-            }
-        }
-
-        if ($result != NULL) {
-
-            $get_pembayaran_result = $this->Crud_model->fetch_record_by_id('mp_pembayarans', $edit_pembayaran_id);
-
-            //ASSIGNING DATA TO ARRAY
-            $data  = array(
-                'pembayaran_id' => $edit_pembayaran_id,
-                'discount' => $edit_discount,
-                'description' => $edit_description,
-                'date' => $get_pembayaran_result[0]->date,
-                'status' => $get_pembayaran_result[0]->status,
-                'agentname' => $user_name['name'],
-                'cus_id' => $get_pembayaran_result[0]->cus_id,
-                'total_bill' => $total_bill,
-                'bill_paid' => $amountpaid,
-                'cus_previous' => $this->return_previous_cus_balance($get_pembayaran_result[0]->cus_id)
-            );
-
-            //FETCHING UPDATED SALE TO PRINT
-            $data['item_data']   =  $this->Crud_model->fetch_attr_record_by_id('mp_sales', 'order_id', $edit_pembayaran_id);
-
-            //CUSTOMER NAME
-            $result = $this->Crud_model->fetch_record_by_id('mp_payee', $get_pembayaran_result[0]->cus_id);
-            $cus_name = $result[0]->customer_name;
-
-            //COMPANY NAME
-            $result = $this->Crud_model->fetch_record_by_id('mp_langingpage', 1);
-            $company_name = $result[0]->companyname;
-
-            //PRINTER NAME
-            $result = $this->Crud_model->fetch_attr_record_by_id('mp_printer', 'set_default', 1);
-            if ($result != NULL) {
-                $printer_name = $result[0]->printer_name;
-            } else {
-                $printer_name = '';
-            }
-
-            //ADDRESS 
-            $result = $this->Crud_model->fetch_record_by_id('mp_contactabout', 1);
-            $address = $result[0]->address;
-            /* Hapus Tanda ini jika aplikasi sudah terkoneksi dengan printer Thermal
-			if($printer_name != '')
-			{
-				//BUSINESS AND OTHER INFO THAT MENTIONED ON THE TOP
-				$general_info = array(
-				'name' => $company_name ,
-				'address' => $address,
-				'receipt' => $data['pembayaran_id'],
-				'date' => date('Y-m-d'),
-				'customer' => $cus_name,
-				'customer_id' => $customer_id,
-				'served' => $agent,
-				'thanks' => 'Terima kasih telah mengunjungi kami.',
-				'about' => 'Developed by Rumah IT',
-				'contact' => ' Kontak 083814305092',
-				'printer_name' => $printer_name,
-				'text_size' => 1,
-				'discount' => $discountfield
-				);
-
-
-			    $this->load->library('printer');
-			    $printer_result = $this->printer->generate_print($general_info,$data);
-			}
-		
-			if($printer_result != 'success')
-			{
-				$array_msg = array(
-				'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Faktur yang diedit berhasil tetapi tidak ada printer yang dikurangkan',
-				'alert' => 'info'
-				);
-			}
-			else
-			{
-				$array_msg = array(
-				'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Invoice editted',
-				'alert' => 'info'
-				);
-			}
-			*/
-
-            $array_msg = array(
-                'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Invoice editted',
-                'alert' => 'info'
-            );
-            $this->session->set_flashdata('status', $array_msg);
-        } else {
-            $array_msg = array(
-                'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"/> Error pembayaran cannot be Editted',
-                'alert' => 'danger'
-            );
-            $this->session->set_flashdata('status', $array_msg);
-        }
-
-        redirect('pembayaran/manage/');
-    }
-
-
     function create_pembayaran()
     {
         try {
@@ -1934,19 +1735,10 @@ class Pembayaran extends CI_Controller
             if ($status) {
                 $this->load->model('Transaction_model');
                 $this->load->model('Crud_model');
-                $jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['jenis_pembayaran']))[$data['jenis_pembayaran']];
-                $data['data_jenis_pembayaran'] = $jp;
-                $jp = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_method']))[$data['payment_method']];
-                $data['data_payment'] = $jp;
-                $data['generalentry'] = array(
-                    'date' => $data['date'],
-                    'naration' => $data['data_jenis_pembayaran']['ref_nojur_pembayaran'] . ' ' . $data['description'],
-                    'customer_id' => $data['customer_id'],
-                    'no_jurnal' => $this->General_model->gen_numberABC($data['date'], $data['data_jenis_pembayaran']['ref_nojur_pembayaran'], 'PEMBAYARAN'),
-                    'generated_source' => 'Pembayaran'
-                );
+                $data['data_jenis_pembayaran'] = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['jenis_pembayaran']))[$data['jenis_pembayaran']];
+                $data['data_payment'] = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_method']))[$data['payment_method']];
 
-                $i = 0;
+
 
                 $sisa_pembayaran = $data['sub_total_2'] - $data['payed'];
                 // $sisa_pembayaran = $data['sub_total_2'] - $data['payed'];
@@ -1955,114 +1747,14 @@ class Pembayaran extends CI_Controller
                 } else {
                     $data['status_pembayaran'] = 'paid';
                 }
-                if ($data['payed'] == $data['sub_total_2']) {
-                    $data['sub_entry'][$i] = array(
-                        'accounthead' =>   $data['data_jenis_pembayaran']['ac_expense'],
-                        'type' => 0,
-                        'amount' => $data['payed'],
-                        'sub_keterangan' => "Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
-                    );
-                    $i++;
-                }
+                $journal = $this->make_journal($data);
+                $data['generalentry'] = $journal['generalentry'];
+                $data['generalentry']['no_jurnal'] = $this->General_model->gen_numberABC($data['date'], $data['data_jenis_pembayaran']['ref_nojur_pembayaran'], 'PEMBAYARAN');
 
-                if ($data['payed'] > $data['sub_total_2']) {
-                    $data['total_final'] = $data['total_final'] + $data['payed'] - $data['sub_total_2'];
-                    $data['sub_entry'][$i] = array(
-                        'accounthead' => $data['data_jenis_pembayaran']['ac_piutang'],
-                        'type' => 0,
-                        'amount' => $data['payed'] - $data['sub_total_2'],
-                        'sub_keterangan' => "Piut Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
-                    );
-                    $i++;
-                    // if ($data['payed'] > 0) {
-                    $data['sub_entry'][$i] = array(
-                        'accounthead' => $$data['data_jenis_pembayaran']['ac_expense'],
-                        'type' => 0,
-                        'amount' => $data['sub_total_2'],
-                        'sub_keterangan' => "Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
-                    );
-                    $i++;
-                    // }
-                }
-
-                if ($data['payed'] < $data['sub_total_2']) {
-                    $data['sub_entry'][$i] = array(
-                        'accounthead' => $data['data_jenis_pembayaran']['ac_hutang'],
-                        'type' => 0,
-                        'amount' => $data['sub_total_2'] - $data['payed'],
-                        'sub_keterangan' => "Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
-                    );
-                    $i++;
-                    if ($data['payed'] > 0) {
-                        $data['sub_entry'][$i] = array(
-                            'accounthead' => $data['data_jenis_pembayaran']['ac_expense'],
-                            'type' => 0,
-                            'amount' => $data['payed'],
-                            'sub_keterangan' => "Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
-                        );
-                        $i++;
-                    }
-                }
-
-                if (!empty($data['am_pph'])) {
-                    $jp = $this->General_model->getAllRefAccount(array('ref_type' => 'pph_23'))[0];
-                    $data['sub_entry'][$i] = array(
-                        'accounthead' => $jp['ref_account'],
-                        'type' => 1,
-                        'sub_keterangan' => 'Ptg PPh 23' . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
-                        'amount' => $data['am_pph']
-                    );
-                    $i++;
-                }
-
-                if (!empty($data['lebih_bayar_am'])) {
-                    if ((float)$data['lebih_bayar_am'] > 0) {
-                        if (empty($data['lebih_bayar_ac']))
-                            throw new UserException('Akun Lebih Bayar Harus diisi !!');
-                        else
-                            $data['sub_entry'][$i] = array(
-                                'accounthead' => $data['lebih_bayar_ac'],
-                                'type' => 1,
-                                'sub_keterangan' => (!empty($data['lebih_bayar_ket']) ? $data['lebih_bayar_ket'] . ' ' : '')  . $data['description'],
-                                'amount' => $data['lebih_bayar_am']
-                            );
-                        $i++;
-                    } else {
-                        $data['lebih_bayar_ac'] = '';
-                    }
-                } else {
-                    $data['lebih_bayar_ac'] = '';
-                }
-                if (!empty($data['kurang_bayar_am'])) {
-                    if ((float)$data['kurang_bayar_am'] > 0) {
-                        if (empty($data['kurang_bayar_ac']))
-                            throw new UserException('Akun Kurang Bayar Harus diisi !!');
-                        else
-                            $data['sub_entry'][$i] = array(
-                                'accounthead' => $data['kurang_bayar_ac'],
-                                'type' => 0,
-                                'sub_keterangan' => (!empty($data['kurang_bayar_ket']) ? $data['kurang_bayar_ket'] . ' ' : '')  . $data['description'],
-                                'amount' => $data['kurang_bayar_am']
-                            );
-                        $i++;
-                    } else {
-                        $data['kurang_bayar_ac'] = '';
-                    }
-                } else {
-                    $data['kurang_bayar_ac'] = '';
-                }
-
-                $data['sub_entry'][$i] = array(
-                    'accounthead' => $data['data_payment']['ref_account'] . ' ',
-                    'type' => 1,
-                    'sub_keterangan' => 'Htg ' . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
-                    'amount' => $data['total_final']
-                );
-                $i++;
-
-                $result = $this->Payment_model->pembayaran_entry($data);
+                $data['sub_entry'] = $journal['sub_entry'];
                 // echo json_encode($data);
                 // die();
+                $result = $this->Payment_model->pembayaran_entry($data);
 
                 // die();
                 if ($result != NULL) {
@@ -2078,6 +1770,126 @@ class Pembayaran extends CI_Controller
             ExceptionHandler::handle($e);
         }
         // redirect('pembayaran');
+    }
+
+    function make_journal($data)
+    {
+        $journal['generalentry'] = array(
+            'date' => $data['date'],
+            'naration' => $data['data_jenis_pembayaran']['ref_nojur_pembayaran'] . ' ' . $data['description'],
+            'customer_id' => $data['customer_id'],
+            'generated_source' => 'Pembayaran'
+        );
+
+        $i = 0;
+        if ($data['payed'] == $data['sub_total_2']) {
+            $journal['sub_entry'][$i] = array(
+                'accounthead' =>   $data['data_jenis_pembayaran']['ac_expense'],
+                'type' => 0,
+                'amount' => $data['payed'],
+                'sub_keterangan' => "Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
+            );
+            $i++;
+        }
+
+        if ($data['payed'] > $data['sub_total_2']) {
+            $data['total_final'] = $data['total_final'] + $data['payed'] - $data['sub_total_2'];
+            $journal['sub_entry'][$i] = array(
+                'accounthead' => $data['data_jenis_pembayaran']['ac_piutang'],
+                'type' => 0,
+                'amount' => $data['payed'] - $data['sub_total_2'],
+                'sub_keterangan' => "Piut Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
+            );
+            $i++;
+            // if ($data['payed'] > 0) {
+            $journal['sub_entry'][$i] = array(
+                'accounthead' => $$data['data_jenis_pembayaran']['ac_expense'],
+                'type' => 0,
+                'amount' => $data['sub_total_2'],
+                'sub_keterangan' => "Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
+            );
+            $i++;
+            // }
+        }
+
+        if ($data['payed'] < $data['sub_total_2']) {
+            $journal['sub_entry'][$i] = array(
+                'accounthead' => $data['data_jenis_pembayaran']['ac_hutang'],
+                'type' => 0,
+                'amount' => $data['sub_total_2'] - $data['payed'],
+                'sub_keterangan' => "Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
+            );
+            $i++;
+            if ($data['payed'] > 0) {
+                $journal['sub_entry'][$i] = array(
+                    'accounthead' => $data['data_jenis_pembayaran']['ac_expense'],
+                    'type' => 0,
+                    'amount' => $data['payed'],
+                    'sub_keterangan' => "Htg " . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
+                );
+                $i++;
+            }
+        }
+
+        if (!empty($data['am_pph'])) {
+            $jp = $this->General_model->getAllRefAccount(array('ref_type' => 'pph_23'))[0];
+            // echo json_encode($jp)
+            // die();
+            $journal['sub_entry'][$i] = array(
+                'accounthead' => $jp['ref_account'],
+                'type' => 1,
+                'sub_keterangan' => 'Ptg PPh 23' . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
+                'amount' => $data['am_pph']
+            );
+            $i++;
+        }
+
+        if (!empty($data['lebih_bayar_am'])) {
+            if ((float)$data['lebih_bayar_am'] > 0) {
+                if (empty($data['lebih_bayar_ac']))
+                    throw new UserException('Akun Lebih Bayar Harus diisi !!');
+                else
+                    $journal['sub_entry'][$i] = array(
+                        'accounthead' => $data['lebih_bayar_ac'],
+                        'type' => 1,
+                        'sub_keterangan' => (!empty($data['lebih_bayar_ket']) ? $data['lebih_bayar_ket'] . ' ' : '')  . $data['description'],
+                        'amount' => $data['lebih_bayar_am']
+                    );
+                $i++;
+            } else {
+                $data['lebih_bayar_ac'] = '';
+            }
+        } else {
+            $data['lebih_bayar_ac'] = '';
+        }
+        if (!empty($data['kurang_bayar_am'])) {
+            if ((float)$data['kurang_bayar_am'] > 0) {
+                if (empty($data['kurang_bayar_ac']))
+                    throw new UserException('Akun Kurang Bayar Harus diisi !!');
+                else
+                    $journal['sub_entry'][$i] = array(
+                        'accounthead' => $data['kurang_bayar_ac'],
+                        'type' => 0,
+                        'sub_keterangan' => (!empty($data['kurang_bayar_ket']) ? $data['kurang_bayar_ket'] . ' ' : '')  . $data['description'],
+                        'amount' => $data['kurang_bayar_am']
+                    );
+                $i++;
+            } else {
+                $data['kurang_bayar_ac'] = '';
+            }
+        } else {
+            $data['kurang_bayar_ac'] = '';
+        }
+
+        $journal['sub_entry'][$i] = array(
+            'accounthead' => $data['data_payment']['ref_account'],
+            'type' => 1,
+            'sub_keterangan' => 'Htg ' . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
+            'amount' => $data['total_final']
+        );
+        $i++;
+
+        return $journal;
     }
 
     function edit_process_pembayaran()
@@ -2127,129 +1939,35 @@ class Pembayaran extends CI_Controller
             if ($status) {
                 $this->load->model('Transaction_model');
                 $this->load->model('Crud_model');
-                $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date'], 'AK');
-                $data['generalentry'] = array(
-                    'date' => $data['date'],
-                    'naration' => $data['description'],
-                    'customer_id' => $data['customer_id'],
-                    'generated_source' => 'Pembayaran'
-                );
+                $data['old_data'] = $this->Payment_model->getAllPembayaran(array('id' => $data['id'], 'by_id' => true))[$data['id']];
 
-                $i = 0;
-                $jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['jenis_pembayaran']))[$data['jenis_pembayaran']];
+                $data['data_jenis_pembayaran'] = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['jenis_pembayaran']))[$data['jenis_pembayaran']];
+                $data['data_payment'] = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_method']))[$data['payment_method']];
+
+                $journal = $this->make_journal($data);
+                $data['generalentry'] = $journal['generalentry'];
+                if (substr($data['date'], 0, -3) != substr($data['old_data']['date'], 0, -3))
+                    $data['generalentry']['no_jurnal'] = $this->General_model->gen_numberABC($data['date'], $data['data_jenis_pembayaran']['ref_nojur_pembayaran'], 'PEMBAYARAN');
+
+                $data['sub_entry'] = $journal['sub_entry'];
+
                 $sisa_pembayaran = $data['sub_total_2'] - $data['payed'];
                 if ($sisa_pembayaran > 0) {
-                    $data['status_pembayaran'] = 'unpaid';
+                    $data['data_pelunasan'] = $this->Payment_model->getAllPelunasan(array('parent_id' => $data['id']));
+                    $total_bayar = 0;
+                    foreach ($data['data_pelunasan'] as $p) {
+                        $total_bayar = $total_bayar + $p['nominal'];
+                    }
+                    if ($data['payed'] + $total_bayar < $data['sub_total_2'])
+                        $data['status_pembayaran'] = 'unpaid';
+                    else
+                        $data['status_pembayaran'] = 'paid';
                 } else {
                     $data['status_pembayaran'] = 'paid';
                 }
-                if ($data['payed'] == $data['sub_total_2']) {
-                    $data['sub_entry'][$i] = array(
-                        'accounthead' => $jp['ac_paid'],
-                        'type' => $jp['ac_paid_type'],
-                        'amount' => $data['payed'],
-                        'sub_keterangan' => "Htg " . $data['description'],
-                    );
-                    $i++;
-                }
 
-                if ($data['payed'] > $data['sub_total_2']) {
-                    $data['total_final'] = $data['total_final'] + $data['payed'] - $data['sub_total_2'];
-                    $data['sub_entry'][$i] = array(
-                        'accounthead' => $jp['ac_piutang'],
-                        'type' => $jp['ac_piutang_type'],
-                        'amount' => $data['payed'] - $data['sub_total_2'],
-                        'sub_keterangan' => "Piut Htg " . $data['description'],
-                    );
-                    $i++;
-                    if ($data['payed'] > 0) {
-                        $data['sub_entry'][$i] = array(
-                            'accounthead' => $jp['ac_paid'],
-                            'type' => $jp['ac_paid_type'],
-                            'amount' => $data['sub_total_2'],
-                            'sub_keterangan' => "Htg " . $data['description'],
-                        );
-                        $i++;
-                    }
-                }
-
-                if ($data['payed'] < $data['sub_total_2']) {
-                    $data['sub_entry'][$i] = array(
-                        'accounthead' => $jp['ac_unpaid'],
-                        'type' => $jp['ac_unpaid_type'],
-                        'amount' => $data['sub_total_2'] - $data['payed'],
-                        'sub_keterangan' => "Htg " . $data['description'],
-                    );
-                    $i++;
-                    if ($data['payed'] > 0) {
-                        $data['sub_entry'][$i] = array(
-                            'accounthead' => $jp['ac_paid'],
-                            'type' => $jp['ac_paid_type'],
-                            'amount' => $data['payed'],
-                            'sub_keterangan' => "Htg " . $data['description'],
-                        );
-                        $i++;
-                    }
-                }
-
-                if (!empty($data['am_pph'])) {
-                    $jp = $this->General_model->getAllRefAccount(array('ref_type' => 'pph_23'))[0];
-                    $data['sub_entry'][$i] = array(
-                        'accounthead' => $jp['ref_account'],
-                        'type' => 1,
-                        'sub_keterangan' => 'Ptg ' . $data['description'],
-                        'amount' => $data['am_pph']
-                    );
-                    $i++;
-                }
-
-                if (!empty($data['lebih_bayar_am'])) {
-                    if ((float)$data['lebih_bayar_am'] > 0) {
-                        if (empty($data['lebih_bayar_ac']))
-                            throw new UserException('Akun Lebih Bayar Harus diisi !!');
-                        else
-                            $data['sub_entry'][$i] = array(
-                                'accounthead' => $data['lebih_bayar_ac'],
-                                'type' => 1,
-                                'sub_keterangan' => (!empty($data['lebih_bayar_ket']) ? $data['lebih_bayar_ket'] . ' ' : '')  . $data['description'],
-                                'amount' => $data['lebih_bayar_am']
-                            );
-                        $i++;
-                    } else {
-                        $data['lebih_bayar_ac'] = '';
-                    }
-                } else {
-                    $data['lebih_bayar_ac'] = '';
-                }
-                if (!empty($data['kurang_bayar_am'])) {
-                    if ((float)$data['kurang_bayar_am'] > 0) {
-                        if (empty($data['kurang_bayar_ac']))
-                            throw new UserException('Akun Kurang Bayar Harus diisi !!');
-                        else
-                            $data['sub_entry'][$i] = array(
-                                'accounthead' => $data['kurang_bayar_ac'],
-                                'type' => 0,
-                                'sub_keterangan' => (!empty($data['kurang_bayar_ket']) ? $data['kurang_bayar_ket'] . ' ' : '')  . $data['description'],
-                                'amount' => $data['kurang_bayar_am']
-                            );
-                        $i++;
-                    } else {
-                        $data['kurang_bayar_ac'] = '';
-                    }
-                } else {
-                    $data['kurang_bayar_ac'] = '';
-                }
-                $jp = $this->General_model->getAllRefAccount(array('by_id' => true, 'ref_id' => $data['payment_method']))[$data['payment_method']];
-                $data['sub_entry'][$i] = array(
-                    'accounthead' => $jp['ref_account'],
-                    'type' => 1,
-                    'sub_keterangan' => 'Htg ' . $data['description'],
-                    'amount' => $data['total_final']
-                );
-                $i++;
-
-
-                $data['old_data'] = $this->Payment_model->getAllPembayaran(array('id' => $data['id'], 'by_id' => true))[$data['id']];
+                // echo json_encode($data);
+                // die();
                 $result = $this->Payment_model->pembayaran_edit($data);
             } else {
                 throw new UserException('Please check data!');
@@ -2261,80 +1979,6 @@ class Pembayaran extends CI_Controller
         // redirect('pembayaran');
     }
 
-    function edit_process_pembayaranold()
-    {
-        $status = FALSE;
-        $data = $this->input->post();
-        // echo json_encode($data);
-        // die();
-        if (!empty($data['manual_math']))
-            if ($data['manual_math'] == 'on') {
-                if (empty($data['manual_math'])) {
-                    $data['manual_math'] = 'off';
-                }
-                $data['manual_math'] = 1;
-            } else {
-                $data['manual_math'] = 0;
-            }
-        else
-            $data['manual_math'] = 0;
-
-        $data['am_pph'] = preg_replace("/[^0-9]/", "", $data['am_pph']);
-        $data['am_jasa'] = preg_replace("/[^0-9]/", "", $data['am_jasa']);
-        $data['par_am'] = preg_replace("/[^0-9]/", "", $data['par_am']);
-
-        $data['lebih_bayar_am'] = preg_replace("/[^0-9]/", "", $data['lebih_bayar_am']);
-        $data['kurang_bayar_am'] = preg_replace("/[^0-9]/", "", $data['kurang_bayar_am']);
-
-        $count_rows = count($data['amount']);
-        // if()
-        $data['acc_role'] = $this->SecurityModel->MultiplerolesStatus('Akuntansi');
-        if (empty($data['ppn_pph'])) {
-            $data['ppn_pph'] = '0';
-        } else {
-            $data['ppn_pph'] = '1';
-        }
-        if (empty($data['date'])) {
-            $data['date'] = date('Y-m-d');
-        }
-        for ($i = 0; $i < $count_rows; $i++) {
-            if (!empty($data['amount'][$i]) && !empty($data['qyt'][$i]))
-                $status = TRUE;
-            $data['amount'][$i] = preg_replace("/[^0-9]/", "", $data['amount'][$i]);
-        }
-
-        if ($status) {
-            $this->load->model('Transaction_model');
-            $result = $this->Transaction_model->pembayaran_edit($data);
-            // die();
-            if ($result != NULL) {
-                $array_msg = array(
-                    'msg' => '<i style="color:#fff" class="fa fa-check-circle-o" aria-hidden="true"></i> Created Successfully',
-                    'alert' => 'info'
-                );
-                $this->session->set_flashdata('status', $array_msg);
-                redirect('pembayaran/show/' . $result);
-            } else {
-                $array_msg = array(
-                    'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
-                    'alert' => 'danger'
-                );
-                $this->session->set_flashdata('status', $array_msg);
-                $this->index($data);
-                return;
-            }
-        } else {
-            $array_msg = array(
-                'msg' => '<i style="color:#c00" class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please check data',
-                'alert' => 'danger'
-            );
-            $this->session->set_flashdata('status', $array_msg);
-            $this->index($data);
-            return;
-            // redirect('statements/journal_voucher');
-        }
-        redirect('pembayaran');
-    }
 
 
     function addPelunasan()
@@ -2371,35 +2015,43 @@ class Pembayaran extends CI_Controller
             }
             $jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['old_data']['jenis_pembayaran']))[$data['old_data']['jenis_pembayaran']];
             $data['gen_old'] = $this->Statement_model->getSingelJurnal(array('id' => $data['old_data']['general_id']))['parent'];
-            $data['generalentry'] = array(
-                'date' => $data['date_pembayaran'],
-                // 'naration' => $data['old_data']['description'],
-                'naration' => $data['old_data']['description'] . ' (' . $data['gen_old']->no_jurnal . ')',
-                'customer_id' => $data['old_data']['customer_id'],
-                'generated_source' => 'Pelunasan Pembayaran'
-            );
-
+            $journal = $this->make_journal_pelunasan($data, $jp);
+            $data['generalentry'] = $journal['generalentry'];
+            $data['sub_entry'] = $journal['sub_entry'];
             $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date_pembayaran'], $jp['ref_nojur_pel_pembayaran']);
-
-            $data['sub_entry'][0] = array(
-                'accounthead' => $jp['ac_expense'],
-                'type' => 0,
-                'amount' => $data['nominal'],
-                'sub_keterangan' => "Htg " . (empty($jp['text_jurnal']) ?  '' : $jp['text_jurnal'] . ' ') . $data['old_data']['description'],
-            );
-            $data['sub_entry'][1] = array(
-                'accounthead' => $jp['ac_hutang'],
-                'type' => 1,
-                'amount' => $data['nominal'],
-                'sub_keterangan' => "Htg " . (empty($jp['text_jurnal']) ?  '' : $jp['text_jurnal'] . ' ') . $data['old_data']['description'],
-            );
-
 
             $result = $this->Payment_model->add_pelunasan($data);
             echo json_encode(array('error' => false, 'data' => $data));
         } catch (Exception $e) {
             ExceptionHandler::handle($e);
         }
+    }
+
+    function make_journal_pelunasan($data, $jp)
+    {
+        $journal['generalentry'] = array(
+            'date' => $data['date_pembayaran'],
+            // 'naration' => $data['old_data']['description'],
+            'naration' => $data['old_data']['description'] . ' (' . $data['gen_old']->no_jurnal . ')',
+            'customer_id' => $data['old_data']['customer_id'],
+            'generated_source' => 'Pelunasan Pembayaran'
+        );
+
+
+        $journal['sub_entry'][0] = array(
+            'accounthead' => $jp['ac_expense'],
+            'type' => 0,
+            'amount' => $data['nominal'],
+            'sub_keterangan' => "Htg " . (empty($jp['text_jurnal']) ?  '' : $jp['text_jurnal'] . ' ') . $data['old_data']['description'],
+        );
+        $journal['sub_entry'][1] = array(
+            'accounthead' => $jp['ac_hutang'],
+            'type' => 1,
+            'amount' => $data['nominal'],
+            'sub_keterangan' => "Htg " . (empty($jp['text_jurnal']) ?  '' : $jp['text_jurnal'] . ' ') . $data['old_data']['description'],
+        );
+
+        return $journal;
     }
 
 
@@ -2435,30 +2087,13 @@ class Pembayaran extends CI_Controller
             }
             $jp = $this->General_model->getAllJenisInvoice(array('by_id' => true, 'id' => $data['old_data']['jenis_pembayaran']))[$data['old_data']['jenis_pembayaran']];
             $data['gen_old'] = $this->Statement_model->getSingelJurnal(array('id' => $data['old_data']['general_id']))['parent'];
-            $data['generalentry'] = array(
-                'id' => $old_pelunasan['general_id'],
-                'date' => $data['date_pembayaran'],
-                // 'naration' => $data['old_data']['description'],
-                'naration' => $data['old_data']['description'] . ' (' . $data['gen_old']->no_jurnal . ')',
-                'customer_id' => $data['old_data']['customer_id'],
-                'generated_source' => 'Pelunasan Pembayaran'
-            );
+            $journal = $this->make_journal_pelunasan($data, $jp);
+            $data['generalentry'] = $journal['generalentry'];
+            $data['sub_entry'] = $journal['sub_entry'];
+            if (substr($old_pelunasan['date_pembayaran'], 0, -3) != substr($data['date_pembayaran'], 0, -3))
+                $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date_pembayaran'], $jp['ref_nojur_pel_pembayaran']);
+            $data['generalentry']['id'] = $old_pelunasan['general_id'];
 
-            // $data['generalentry']['no_jurnal'] = $this->General_model->gen_number($data['date_pembayaran'], 'JMB');
-
-            $data['sub_entry'][0] = array(
-                'accounthead' => $jp['ac_paid'],
-                'type' => $jp['ac_paid_type'],
-                'amount' => $data['nominal'],
-                'sub_keterangan' => "Htg " . $data['old_data']['description'],
-            );
-
-            $data['sub_entry'][1] = array(
-                'accounthead' => $jp['ac_unpaid'],
-                'type' => ($jp['ac_unpaid_type'] == 0 ? 1 : 0),
-                'amount' => $data['nominal'],
-                'sub_keterangan' => "Htg " . $data['old_data']['description'],
-            );
 
             $result = $this->Payment_model->edit_pelunasan($data);
             echo json_encode(array('error' => false, 'data' => $data));

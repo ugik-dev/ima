@@ -1279,6 +1279,7 @@ class Statements extends CI_Controller
 			$no_jurnal   = html_escape($this->input->post('no_jurnal'));
 			$url   = html_escape($this->input->post('url'));
 			$sub_keterangan   = html_escape($this->input->post('sub_keterangan'));
+			$no_jurnal = str_replace(' ', '', $no_jurnal);
 
 			$customer_id   = html_escape($this->input->post('customer_id'));
 			$id_cars   = html_escape($this->input->post('id_cars'));
@@ -1402,6 +1403,8 @@ class Statements extends CI_Controller
 			$id   = html_escape($this->input->post('id'));
 			$sub_id   = html_escape($this->input->post('sub_id'));
 			$customer_id   = html_escape($this->input->post('customer_id'));
+			$no_jurnal = str_replace(' ', '', $no_jurnal);
+
 			$id_cars   = html_escape($this->input->post('id_cars'));
 			if ($draft_value == 'draft') {
 				$draft_value = 'true';

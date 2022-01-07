@@ -501,6 +501,46 @@
                     </div>
                     <!-- </div> -->
                 </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="form-group">
+                                <label>Disetujui</label>
+                                <select name="acc_1" id="acc_1" class="form-control">
+                                    <option value="0"> ----- </option>
+                                    <option value="7"> SETIAWAN R </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group" id='label_kendaraan'>
+                                <label>Diverifikasi</label>
+                                <select name="acc_2" id="acc_2" class="form-control">
+                                    <option value="0"> ----- </option>
+                                    <option value="8"> PURWADI </option>
+                                    <option value="10"> RAHMAT </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group" id='label_kendaraan'>
+                                <label>Dibuat</label>
+                                <select name="acc_3" id="acc_3" class="form-control">
+                                    <option value="0"> ----- </option>
+                                    <option value="9"> A SISWANTO </option>
+                                    <option value="12"> DEFRYANTO </option>
+                                    <option value="11"> NURHASANAH </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="form-group" id='label_kendaraan'>
+                                <label>Dibukukan</label>
+                                <input type="text" disabled id="acc_0" class="form-control input-lg">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
                     <button class="btn btn-success my-1 mr-sm-2" type="submit" id="add_btn" data-loading-text="Loading..."><strong>Simpan Data</strong></button>
@@ -523,6 +563,10 @@
             'addBtn': $('#pelunasan_modal').find('#add_btn'),
             'saveEditBtn': $('#pelunasan_modal').find('#save_edit_btn'),
             'id': $('#pelunasan_modal').find('#id'),
+            'acc_1': $('#pelunasan_modal').find('#acc_1'),
+            'acc_2': $('#pelunasan_modal').find('#acc_2'),
+            'acc_3': $('#pelunasan_modal').find('#acc_3'),
+            'acc_0': $('#pelunasan_modal').find('#dibukukan'),
             'parent_id': $('#pelunasan_modal').find('#parent_id'),
             'date_pembayaran': $('#pelunasan_modal').find('#date_pembayaran'),
             'nominal': $('#pelunasan_modal').find('#nominal'),
@@ -669,6 +713,10 @@
             PelunasanModal.saveEditBtn.show();
             var currentData = dataPayments[$(this).data('id')];
             PelunasanModal.id.val(currentData['id']);
+            PelunasanModal.acc_1.val(currentData['acc_1']);
+            PelunasanModal.acc_2.val(currentData['acc_2']);
+            PelunasanModal.acc_3.val(currentData['acc_3']);
+            PelunasanModal.acc_0.val(currentData['acc_0']);
             PelunasanModal.date_pembayaran.val(currentData['date_pembayaran']);
             PelunasanModal.nominal.val(formatRupiah2(currentData['nominal']));
         })
