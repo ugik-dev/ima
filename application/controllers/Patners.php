@@ -33,7 +33,7 @@ class Patners extends CI_Controller
             'No HP',
             'No Telp',
             'Email',
-            'Jenis',
+            'NPWP',
             'Region',
             'Kota',
             'Foto',
@@ -208,6 +208,7 @@ class Patners extends CI_Controller
         $head_label = html_escape($this->input->post('head_label'));
         $customer_town = html_escape($this->input->post('customer_town'));
         $customer_description = html_escape($this->input->post('customer_description'));
+        $npwp = html_escape($this->input->post('npwp'));
         $picture = $this->Crud_model->do_upload_picture("customer_picture", "./uploads/customers/");
 
         // ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY
@@ -223,6 +224,7 @@ class Patners extends CI_Controller
             'cus_description' => $customer_description,
             'cus_type' => $customer_type,
             'cus_date' => date('Y-m-d'),
+            'npwp' => $npwp,
             'cus_picture' => $picture,
             'customer_nationalid' => $customer_cnic,
             'head_label' => $head_label,
@@ -295,7 +297,6 @@ class Patners extends CI_Controller
         // echo json_encode($this->input->post());
         // die();
         // DEFINES READ MEDICINE details FORM MEDICINE FORM
-        $edit_customer_id = html_escape($this->input->post('edit_customer_id'));
         $customer_name = html_escape($this->input->post('customer_name'));
         $customer_email = html_escape($this->input->post('customer_email'));
         $customer_cnic = html_escape($this->input->post('customer_cnic'));
@@ -305,9 +306,13 @@ class Patners extends CI_Controller
         $customer_contact_two = html_escape($this->input->post('customer_contact_two'));
         $customer_company = html_escape($this->input->post('customer_company'));
         $customer_region = html_escape($this->input->post('customer_region'));
+        $head_label = html_escape($this->input->post('head_label'));
         $customer_town = html_escape($this->input->post('customer_town'));
         $customer_description = html_escape($this->input->post('customer_description'));
-        $head_label = html_escape($this->input->post('head_label'));
+        $npwp = html_escape($this->input->post('npwp'));
+
+        $edit_customer_id = html_escape($this->input->post('edit_customer_id'));
+
         $picture = $this->Crud_model->do_upload_picture("customer_picture", "./uploads/customers/");
 
         $upload_data = $this->upload->data();
@@ -321,42 +326,28 @@ class Patners extends CI_Controller
 
         // DATA ARRAY FOR UPDATE QUERY array('abc'=>abc)
         // DEFINES IF NO IMAGES IS SELECTED SO PRIVIOUS PICTURE REMAINS SAME
+        $data = array(
+            'customer_name' => $customer_name,
+            'cus_email' => $customer_email,
+            'cus_address' => $customer_address,
+            'cus_contact_1' => $customer_contatc1,
+            'cus_contact_2' => $customer_contact_two,
+            'cus_company' => $customer_company,
+            'cus_region' => $customer_region,
+            'cus_town' => $customer_town,
+            'cus_description' => $customer_description,
+            'npwp' => $npwp,
+            'cus_type' => $customer_type,
+            'cus_date' => date('Y-m-d'),
+            'customer_nationalid' => $customer_cnic,
+            'head_label' => $head_label,
+            'type' => 'patners'
+        );
         if ($picture == "default.jpg") {
             // ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY
-            $data = array(
-                'customer_name' => $customer_name,
-                'cus_email' => $customer_email,
-                'customer_nationalid' => $customer_cnic,
-                'cus_address' => $customer_address,
-                'cus_contact_1' => $customer_contatc1,
-                'cus_contact_2' => $customer_contact_two,
-                'cus_company' => $customer_company,
-                'cus_region' => $customer_region,
-                'cus_town' => $customer_town,
-                'head_label' => $head_label,
-                'cus_description' => $customer_description,
-                'cus_type' => $customer_type,
-                'cus_date' => date('Y-m-d'),
-                'type' => 'patners'
-            );
         } else {
             // ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY
-            $data = array(
-                'customer_name' => $customer_name,
-                'cus_email' => $customer_email,
-                'customer_nationalid' => $customer_cnic,
-                'cus_address' => $customer_address,
-                'cus_contact_1' => $customer_contatc1,
-                'cus_contact_2' => $customer_contact_two,
-                'cus_company' => $customer_company,
-                'cus_region' => $customer_region,
-                'cus_town' => $customer_town,
-                'cus_description' => $customer_description,
-                'cus_type' => $customer_type,
-                'cus_date' => date('Y-m-d'),
-                'cus_picture' => $picture,
-                'type' => 'patners'
-            );
+            $data['cus_picture'] = $picture;
 
             // DEFINES TO DELETE IMAGE FROM FOLDER PARAMETER REQIURES ARRAY OF IMAGE PATH AND ID
             $this->Crud_model->delete_image('./uploads/customers/', $edit_customer_id, 'mp_payee');
@@ -386,10 +377,12 @@ class Patners extends CI_Controller
         if ($page_name  == 'edit_patner_model') {
             //USED TO REDIRECT LINK
             $data['link'] = 'patners/edit';
-            $data['single_customer'] = $this->Crud_model->fetch_record_by_id('mp_payee', $param);
+            $data['return_data'] = $this->Crud_model->fetch_record_by_id('mp_payee', $param)[0];
+            // echo json_encode($data);
+            // die();
             //model name available in admin models folder
             $this->load->view(
-                'admin_models/edit_models/edit_patner_model.php',
+                'admin_models/add_models/add_patner_model.php',
                 $data
             );
         } else if (

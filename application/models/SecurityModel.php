@@ -65,13 +65,24 @@ class SecurityModel extends CI_Model
     }
   }
 
-  public function apiKeyGuard()
+  public function apiKeyGuard($key)
   {
-    $headers = getallheaders();
-    if (!isset($headers['X-Api-Key']) || NetworkIO::$apiKeys['sim'] != $headers['X-Api-Key']) {
-      header("HTTP/1.1 401 Unauthorized");
-      exit;
+    $this->db->select('*');
+
+    $this->db->from('api_keys');
+    $this->db->where('api_keys.api_key', $key);
+    $res = $this->db->get();
+    $res = $res->result_array();
+    if (empty($res)) {
+      throw new UserException('Keys yang anda masukkan tidak ditemukan', UNAUTHORIZED_CODE);
     }
+
+    // $headers = getallheaders();
+    // echo json_encode($headers);
+    // if (!isset($headers['X-Api-Key']) || NetworkIO::$apiKeys['sim'] != $headers['X-Api-Key']) {
+    //   header("HTTP/1.1 401 Unauthorized");
+    //   exit;
+    // }
   }
 
   public function hasUserdataKeyGuard($key, $ajax = FALSE)

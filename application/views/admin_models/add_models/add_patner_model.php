@@ -1,6 +1,6 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">&times;</button>
-    <h4 class="modal-title"><i class="fa fa-plus-square" aria-hidden="true"></i> Tambah Patners
+    <h4 class="modal-title"><i class="fa fa-plus-square" aria-hidden="true"></i> <?= (!empty($return_data) ? 'Edit Patners' : 'Tambah Patners') ?>
     </h4>
 </div>
 <style>
@@ -22,13 +22,13 @@
                     ?>
                     <?php echo form_open_multipart($link, $attributes); ?>
                     <div class="row box box-default">
-                        <div class="row margin">
+                        <div class="col-sm-12">
 
                             <!-- <div class="col-md-12">
                                 <div class="col-md-6"> -->
                             <h4><label class="box-label"><b>INFORMASI PATNER</b></label></h4>
                             <!-- </div> -->
-                            <div class="col-md-6">
+                            <div class="col-md-6" hidden>
                                 <div class="col-md-8 pull-right row">
                                     <div class="form-group row">
                                         <label for="inputEmail3" class="col-sm-3 col-form-label" style="font-size:20px;">Jenis Customer: </label>
@@ -53,7 +53,7 @@
                             <div class="form-group">
                                 <?php echo form_label('Nama Customer:'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'customer_name', 'placeholder' => 'Masukkan Nama Customer', 'reqiured' => '');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'value' => (!empty($return_data) ? $return_data->customer_name : ''), 'name' => 'customer_name', 'placeholder' => 'Masukkan Nama Customer', 'reqiured' => '');
                                 echo form_input($data);
                                 ?>
                             </div>
@@ -61,9 +61,18 @@
                         <!--------------------- Customer Mobile ------------------>
                         <div class="col-md-4">
                             <div class="form-group">
+                                <?php echo form_label('NPWP :'); ?>
+                                <?php
+                                $data = array('class' => 'form-control input-lg', 'type' => 'number', 'value' => (!empty($return_data) ? $return_data->npwp : ''), 'name' => 'npwp', 'placeholder' => 'e.g 00659855487', 'reqiured' => '');
+                                echo form_input($data);
+                                ?>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
                                 <?php echo form_label('Nomor HP :'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'number', 'name' => 'customer_contact_two', 'placeholder' => 'e.g 00659855487', 'reqiured' => '');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'number', 'value' => (!empty($return_data) ? $return_data->cus_contact_2 : ''), 'name' => 'customer_contact_two', 'placeholder' => 'e.g 00659855487', 'reqiured' => '');
                                 echo form_input($data);
                                 ?>
                             </div>
@@ -72,7 +81,7 @@
                             <div class="form-group">
                                 <?php echo form_label('Alamat Email:'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'email', 'name' => 'customer_email', 'placeholder' => 'example@gmail.com');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'email', 'value' => (!empty($return_data) ? $return_data->cus_email : ''), 'name' => 'customer_email', 'placeholder' => 'example@gmail.com');
                                 echo form_input($data);
 
                                 ?>
@@ -83,7 +92,7 @@
                             <div class="form-group">
                                 <?php echo form_label('Head Label:'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'head_label', 'placeholder' => 'Direktur / Direktur Utama / HRD');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'value' => (!empty($return_data) ? $return_data->head_label : ''), 'name' => 'head_label', 'placeholder' => 'Direktur / Direktur Utama / HRD');
                                 echo form_input($data);
 
                                 ?>
@@ -95,7 +104,7 @@
                             <div class="form-group">
                                 <?php echo form_label('Nomor Telepon:'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'number', 'name' => 'customer_contatc1', 'placeholder' => 'e.g 00659855487', 'reqiured' => '');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'number', 'value' => (!empty($return_data) ? $return_data->cus_contact_1 : ''), 'name' => 'customer_contatc1', 'placeholder' => 'e.g 00659855487', 'reqiured' => '');
                                 echo form_input($data);
                                 ?>
                             </div>
@@ -104,7 +113,7 @@
                             <div class="form-group">
                                 <?php echo form_label('NIK / KTP:'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'customer_cnic', 'placeholder' => 'e.g 5248222154', 'reqiured' => '');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'value' => (!empty($return_data) ? $return_data->customer_nationalid : ''), 'name' => 'customer_cnic', 'placeholder' => 'e.g 5248222154', 'reqiured' => '');
                                 echo form_input($data);
                                 ?>
                             </div>
@@ -115,7 +124,7 @@
                             <div class="form-group">
                                 <?php echo form_label('Alamat Customer:'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'customer_address', 'placeholder' => 'e.g Jl. Apa Saja - 5566', 'reqiured' => '');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'value' => (!empty($return_data) ? $return_data->cus_address : ''), 'name' => 'customer_address', 'placeholder' => 'e.g Jl. Apa Saja - 5566', 'reqiured' => '');
                                 echo form_input($data);
                                 ?>
                             </div>
@@ -127,7 +136,7 @@
                             <div class="form-group">
                                 <?php echo form_label('Perusahaan:'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'customer_company', 'placeholder' => 'e.g Pertamina', 'reqiured' => '');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'value' => (!empty($return_data) ? $return_data->cus_company : ''), 'name' => 'customer_company', 'placeholder' => 'e.g Pertamina', 'reqiured' => '');
                                 echo form_input($data);
                                 ?>
                             </div>
@@ -138,7 +147,7 @@
                             <div class="form-group">
                                 <?php echo form_label('Region:'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'customer_region', 'placeholder' => 'e.g Jawa Barat', 'reqiured' => '');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'value' => (!empty($return_data) ? $return_data->cus_region : ''), 'name' => 'customer_region', 'placeholder' => 'e.g Jawa Barat', 'reqiured' => '');
                                 echo form_input($data);
                                 ?>
                             </div>
@@ -148,7 +157,7 @@
                             <div class="form-group">
                                 <?php echo form_label('Kota:'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'customer_town', 'placeholder' => 'e.g Karawang ', 'reqiured' => '');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'value' => (!empty($return_data) ? $return_data->cus_town : ''), 'name' => 'customer_town', 'placeholder' => 'e.g Karawang ', 'reqiured' => '');
                                 echo form_input($data);
                                 ?>
                             </div>
@@ -160,7 +169,7 @@
                             <div class="form-group">
                                 <?php echo form_label('Keterangan Lain-lain:'); ?>
                                 <?php
-                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'customer_description', 'placeholder' => 'Keterangan lanjut ', 'reqiured' => '');
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'value' => (!empty($return_data) ? $return_data->cus_description : ''), 'name' => 'customer_description', 'placeholder' => 'Keterangan lanjut ', 'reqiured' => '');
                                 echo form_input($data);
                                 ?>
                             </div>
@@ -175,6 +184,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <?php if (!empty($return_data)) { ?>
+                                <input hidden name="edit_customer_id" value="<?= $return_data->id ?>">
+                                <div class=" col-md-4 field-agjust ">
+                                    <div class=" form-group margin">
+                                        <img src="<?php echo base_url('uploads/customers/' . $return_data->cus_picture); ?>" class="img-circle" width="70" height="70" name="" />
+                                    </div>
+                                </div>
+                            <?php } ?>
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <?php

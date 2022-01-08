@@ -71,7 +71,7 @@
                                              </td>
 
                                              <td>
-                                                 <?php echo $obj_customer_list->cus_type; ?>
+                                                 <?php echo $obj_customer_list->npwp; ?>
                                              </td>
                                              <td>
                                                  <?php echo $obj_customer_list->cus_region; ?>
