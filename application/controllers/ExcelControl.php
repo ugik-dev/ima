@@ -237,13 +237,13 @@ class ExcelControl extends CI_Controller
                     $sheet->setCellValue('B' . $rows, $parent['no_jurnal']);
                     $sheet->setCellValue('C' . $rows, $child['head_name']);
                     $sheet->setCellValue('D' . $rows, $child['sub_keterangan']);
-                    // if ($child['type'] == 0) {
-                    //     $cur_debit += $child['amount'];
-                    //     $sheet->setCellValue('E' . $rows, $child['amount']);
-                    // } else {
-                    //     $cur_kredit += $child['amount'];
-                    //     $sheet->setCellValue('F' . $rows, $child['amount']);
-                    // }
+                    if ($child['type'] == 0) {
+                        // $cur_debit += $child['amount'];
+                        $sheet->setCellValue('E' . $rows, $child['amount']);
+                    } else {
+                        // $cur_kredit += $child['amount'];
+                        $sheet->setCellValue('F' . $rows, $child['amount']);
+                    }
                     $rows++;
                 }
                 // $sheet->getRowDimension($rows)->setRowHeight(5);
@@ -310,8 +310,8 @@ class ExcelControl extends CI_Controller
                 $rows++;
                 $rows++;
             }
+            $spreadsheet->getActiveSheet()->getStyle('A5:F' . $rows)->getFont()->setSize(9)->setBold(false);
         }
-        $spreadsheet->getActiveSheet()->getStyle('A5:F' . $rows)->getFont()->setSize(9)->setBold(false);
 
         $writer = new Xlsx($spreadsheet);
 
