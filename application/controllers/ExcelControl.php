@@ -196,63 +196,121 @@ class ExcelControl extends CI_Controller
         $data = $this->General_model->getJurnalUmum($filter);
         $spreadsheet = new Spreadsheet();
 
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->getColumnDimension('A')->setWidth(12);
-        $sheet->getColumnDimension('B')->setWidth(12);
-        $sheet->getColumnDimension('C')->setWidth(30);
-        $sheet->getColumnDimension('D')->setWidth(30);
-        $sheet->getColumnDimension('E')->setWidth(20);
-        $sheet->getColumnDimension('F')->setWidth(20);
-        $spreadsheet->getActiveSheet()->getStyle('A5:F5')->getAlignment()->setHorizontal('center')->setWrapText(true);
-        $spreadsheet->getActiveSheet()->getStyle('A5:F5')->getFont()->setSize(12)->setBold(true);
-        $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->setSize(12)->setBold(true);
-        $spreadsheet->getActiveSheet()->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
 
-        $sheet->getStyle('E:F')->getNumberFormat()->setFormatCode("_(* #,##0.00_);_(* \(#,##0.00\);_(* \"-\"??_);_(@_)");
+        $rows = 1;
+        if (!empty($filter['format'])) {
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(12);
+            $sheet->getColumnDimension('C')->setWidth(30);
+            $sheet->getColumnDimension('D')->setWidth(30);
+            $sheet->getColumnDimension('E')->setWidth(20);
+            $sheet->getColumnDimension('F')->setWidth(20);
+            // $spreadsheet->getActiveSheet()->getStyle('A5:F5')->getAlignment()->setHorizontal('center')->setWrapText(true);
+            // $spreadsheet->getActiveSheet()->getStyle('A5:F5')->getFont()->setSize(12)->setBold(true);
+            // $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->setSize(12)->setBold(true);
+            // $spreadsheet->getActiveSheet()->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
 
-        $this->load->model('Statement_model');
-        $sheet->mergeCells("A1:F1");
-        $sheet->mergeCells("A2:F2");
-        $sheet->mergeCells("A3:F3");
-        $sheet->setCellValue('A1', 'PT INDOMETAL ASIA');
-        $sheet->setCellValue('A2', 'JURNAL UMUM');
-        $sheet->setCellValue('A3', 'Periode : ' . $filter['from'] . ' s.d. ' . $filter['to']);
+            $sheet->getStyle('E:F')->getNumberFormat()->setFormatCode("_(* #,##0.00_);_(* \(#,##0.00\);_(* \"-\"??_);_(@_)");
 
-        $sheet->setCellValue('A5', 'TANGGAL');
-        $sheet->setCellValue('B5', 'NO JURNAL');
-        $sheet->setCellValue('C5', 'AKUN');
-        $sheet->setCellValue('D5', 'SUB KETERANGAN');
-        $sheet->setCellValue('E5', 'DEBIT');
-        $sheet->setCellValue('F5', 'KREDIT');
+            $this->load->model('Statement_model');
+            // $sheet->mergeCells("A1:F1");
+            // $sheet->mergeCells("A2:F2");
+            // $sheet->mergeCells("A3:F3");
+            // $sheet->setCellValue('A1', 'PT INDOMETAL ASIA');
+            // $sheet->setCellValue('A2', 'JURNAL UMUM');
+            // $sheet->setCellValue('A3', 'Periode : ' . $filter['from'] . ' s.d. ' . $filter['to']);
+
+            // $sheet->setCellValue('A5', 'TANGGAL');
+            // $sheet->setCellValue('B5', 'NO JURNAL');
+            // $sheet->setCellValue('C5', 'AKUN');
+            // $sheet->setCellValue('D5', 'SUB KETERANGAN');
+            // $sheet->setCellValue('E5', 'DEBIT');
+            // $sheet->setCellValue('F5', 'KREDIT');
 
 
-        $rows = 6;
-        foreach ($data as $parent) {
-            $cur_debit = 0;
-            $cur_kredit = 0;
-            foreach ($parent['children'] as $child) {
-                $sheet->setCellValue('A' . $rows, $parent['date']);
-                $sheet->setCellValue('B' . $rows, $parent['no_jurnal']);
-                $sheet->setCellValue('C' . $rows, $child['head_name']);
-                $sheet->setCellValue('D' . $rows, $child['sub_keterangan']);
-                if ($child['type'] == 0) {
-                    $cur_debit += $child['amount'];
-                    $sheet->setCellValue('E' . $rows, $child['amount']);
-                } else {
-                    $cur_kredit += $child['amount'];
-                    $sheet->setCellValue('F' . $rows, $child['amount']);
+            foreach ($data as $parent) {
+                // $cur_debit = 0;
+                // $cur_kredit = 0;
+                foreach ($parent['children'] as $child) {
+                    $sheet->setCellValue('A' . $rows, $parent['date']);
+                    $sheet->setCellValue('B' . $rows, $parent['no_jurnal']);
+                    $sheet->setCellValue('C' . $rows, $child['head_name']);
+                    $sheet->setCellValue('D' . $rows, $child['sub_keterangan']);
+                    // if ($child['type'] == 0) {
+                    //     $cur_debit += $child['amount'];
+                    //     $sheet->setCellValue('E' . $rows, $child['amount']);
+                    // } else {
+                    //     $cur_kredit += $child['amount'];
+                    //     $sheet->setCellValue('F' . $rows, $child['amount']);
+                    // }
+                    $rows++;
                 }
+                // $sheet->getRowDimension($rows)->setRowHeight(5);
+                // $sheet->mergeCells("E" . $rows . ":F" . $rows)->setCellValue('E' . $rows,  '__________________________________________________');
+                // $rows++;
+                // $sheet->setCellValue('E' . $rows, $cur_debit);
+                // $sheet->setCellValue('F' . $rows, $cur_kredit);
+                // $rows++;
+                // $rows++;
+            }
+        } else {
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(12);
+            $sheet->getColumnDimension('C')->setWidth(30);
+            $sheet->getColumnDimension('D')->setWidth(30);
+            $sheet->getColumnDimension('E')->setWidth(20);
+            $sheet->getColumnDimension('F')->setWidth(20);
+            $spreadsheet->getActiveSheet()->getStyle('A5:F5')->getAlignment()->setHorizontal('center')->setWrapText(true);
+            $spreadsheet->getActiveSheet()->getStyle('A5:F5')->getFont()->setSize(12)->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A1')->getFont()->setSize(12)->setBold(true);
+            $spreadsheet->getActiveSheet()->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
+
+            $sheet->getStyle('E:F')->getNumberFormat()->setFormatCode("_(* #,##0.00_);_(* \(#,##0.00\);_(* \"-\"??_);_(@_)");
+
+            $this->load->model('Statement_model');
+            $sheet->mergeCells("A1:F1");
+            $sheet->mergeCells("A2:F2");
+            $sheet->mergeCells("A3:F3");
+            $sheet->setCellValue('A1', 'PT INDOMETAL ASIA');
+            $sheet->setCellValue('A2', 'JURNAL UMUM');
+            $sheet->setCellValue('A3', 'Periode : ' . $filter['from'] . ' s.d. ' . $filter['to']);
+
+            $sheet->setCellValue('A5', 'TANGGAL');
+            $sheet->setCellValue('B5', 'NO JURNAL');
+            $sheet->setCellValue('C5', 'AKUN');
+            $sheet->setCellValue('D5', 'SUB KETERANGAN');
+            $sheet->setCellValue('E5', 'DEBIT');
+            $sheet->setCellValue('F5', 'KREDIT');
+
+
+            foreach ($data as $parent) {
+                $cur_debit = 0;
+                $cur_kredit = 0;
+                foreach ($parent['children'] as $child) {
+                    $sheet->setCellValue('A' . $rows, $parent['date']);
+                    $sheet->setCellValue('B' . $rows, $parent['no_jurnal']);
+                    $sheet->setCellValue('C' . $rows, $child['head_name']);
+                    $sheet->setCellValue('D' . $rows, $child['sub_keterangan']);
+                    if ($child['type'] == 0) {
+                        $cur_debit += $child['amount'];
+                        $sheet->setCellValue('E' . $rows, $child['amount']);
+                    } else {
+                        $cur_kredit += $child['amount'];
+                        $sheet->setCellValue('F' . $rows, $child['amount']);
+                    }
+                    $rows++;
+                }
+                $sheet->getRowDimension($rows)->setRowHeight(5);
+                $sheet->mergeCells("E" . $rows . ":F" . $rows)->setCellValue('E' . $rows,  '__________________________________________________');
+                $rows++;
+                $sheet->setCellValue('E' . $rows, $cur_debit);
+                $sheet->setCellValue('F' . $rows, $cur_kredit);
+                $rows++;
                 $rows++;
             }
-            $sheet->getRowDimension($rows)->setRowHeight(5);
-            $sheet->mergeCells("E" . $rows . ":F" . $rows)->setCellValue('E' . $rows,  '__________________________________________________');
-            $rows++;
-            $sheet->setCellValue('E' . $rows, $cur_debit);
-            $sheet->setCellValue('F' . $rows, $cur_kredit);
-            $rows++;
-            $rows++;
         }
-
         $spreadsheet->getActiveSheet()->getStyle('A5:F' . $rows)->getFont()->setSize(9)->setBold(false);
 
         $writer = new Xlsx($spreadsheet);

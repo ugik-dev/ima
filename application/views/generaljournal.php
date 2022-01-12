@@ -13,6 +13,8 @@
                         <?php
                         $data = array('class' => 'btn btn-default btn-outline-primary  mr-2', 'type' => 'button', 'id' => 'btn_export_excel', 'value' => 'true', 'content' => '<i class="fa fa-download" aria-hidden="true"></i> Export Excel');
                         echo form_button($data);
+                        $data = array('class' => 'btn btn-default btn-outline-primary  mr-2', 'type' => 'button', 'id' => 'btn_export_excel2', 'value' => 'true', 'content' => '<i class="fa fa-download" aria-hidden="true"></i> Export Excel F2');
+                        echo form_button($data);
                         ?>
                     </div>
                     <!-- </div> -->
@@ -224,6 +226,13 @@
         from = $('#from').val()
         to = $('#to').val()
         url = `<?= base_url('ExcelControl/jurnal_umum?from=') ?>` + from + '&to=' + to;
+        location.href = url;
+    })
+    $('#btn_export_excel2').on('click', function() {
+        console.log('s')
+        from = $('#from').val()
+        to = $('#to').val()
+        url = `<?= base_url('ExcelControl/jurnal_umum?format=2&from=') ?>` + from + '&to=' + to;
         location.href = url;
     })
 </script>
