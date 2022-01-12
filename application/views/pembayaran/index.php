@@ -210,7 +210,16 @@ for ($i = 0; $i < count($pembayarans_Record); $i++) {
                                 echo " + Rp " . number_format(($pembayarans_Record[$i]['par_am']), '2', ',', '.')  . '</td></tr>';
                             }
                         }
+                        if ($pembayarans_Record[$i]['lebih_bayar_am'] != '0') {
+                            echo '<tr class="text-left" style="border-bottom: 2px dotted #eee;"> <th style="width:50%">' . (!empty($pembayarans_Record[$i]['lebih_bayar_ket']) ? $pembayarans_Record[$i]['lebih_bayar_ket'] : 'Lebih Bayar') . ' : </th><td class="text-right"> - ' . number_format(($pembayarans_Record[$i]['lebih_bayar_am']), '2', ',', '.')  . '</td></tr>';
+                            $total = $total - $pembayarans_Record[$i]['lebih_bayar_am'];
+                        }
+                        if ($pembayarans_Record[$i]['kurang_bayar_am'] != '0') {
+                            echo '<tr class="text-left" style="border-bottom: 2px dotted #eee;"> <th style="width:50%">' . (!empty($pembayarans_Record[$i]['kurang_bayar_ket']) ? $pembayarans_Record[$i]['kurang_bayar_ket'] : 'Kurang Bayar') . ' : </th><td class="text-right"> + ' . number_format(($pembayarans_Record[$i]['kurang_bayar_am']), '2', ',', '.')  . '</td></tr>';
+                            $total = $total + $pembayarans_Record[$i]['kurang_bayar_am'];
+                        }
                         ?>
+
                         <?php
                         ?>
                         <tr style="border-bottom: 2px dotted #eee;">

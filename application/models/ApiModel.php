@@ -28,7 +28,9 @@ class ApiModel extends CI_Model
         mp_invoice_v2.description,
         mp_invoice_v2.no_invoice,
         mp_invoice_v2.status,
-        mp_invoice_v2.sub_total,
+        count(mp_sub_invoice.id) as jumlah_item,
+        mp_invoice_v2.sub_total as dpp,
+        if(mp_invoice_v2.ppn_pph = 1 , round((10/100*sub_total),0), 0) as ppn, 
         mp_invoice_v2.total_final,
         mp_payee.customer_name, cus_address as customer_address,
         mp_payee.npwp as customer_npwp,
@@ -38,6 +40,8 @@ class ApiModel extends CI_Model
          mp_users.title_user as approval_postion,
          mp_users.agentname as approval_name");
         $this->db->from('mp_invoice_v2');
+        $this->db->join('mp_sub_invoice', 'mp_sub_invoice.parent_id = mp_invoice_v2.id');
+        $this->db->group_by('mp_invoice_v2.no_invoice');
 
         if (!empty($parm)) $this->db->where('mp_invoice_v2.id', $parm);
         // $this->db->where('mp_invoice_v2.inv_key', $token);
