@@ -95,6 +95,8 @@
                             <select name="acc_1" id="acc_1" class="form-control select2 input-lg">
                                 <option value="0"> ----- </option>
                                 <option value="7"> SETIAWAN R </option>
+                                <option value="14"> RONY MALINDO </option>
+                                <option value="15"> DUDY </option>
                             </select>
                         </div>
                     </div>
