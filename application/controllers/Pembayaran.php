@@ -1811,7 +1811,7 @@ class Pembayaran extends CI_Controller
     {
         $journal['generalentry'] = array(
             'date' => $data['date'],
-            'naration' => $data['data_jenis_pembayaran']['ref_nojur_pembayaran'] . ' ' . $data['description'],
+            'naration' =>  $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
             'customer_id' => $data['customer_id'],
             'generated_source' => 'Pembayaran'
         );
