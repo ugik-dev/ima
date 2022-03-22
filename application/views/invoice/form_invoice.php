@@ -98,8 +98,9 @@
                                 <table class="table table-striped table-hover  ">
                                     <thead>
                                         <tr>
-                                            <th style="width:  400px">Keterangan</th>
-                                            <th style="width:  200px">Tanggal</th>
+                                            <th style="width:  400px" id="head_col_1" class="kol1">Keterangan</th>
+                                            <th style="width:  200px" id="head_col_2" class="kol2">Tanggal</th>
+                                            <!-- <th style="width:  200px" id="kol3" class="kol3">Tanggal</th> -->
                                             <th style="width:  120px">Satuan</th>
                                             <th style="width: 80px">Qyt</th>
                                             <th style="width:  200px">Harga</th>
@@ -218,7 +219,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="col-lg-12 ">
                                 <div class="form-group">
                                     <?php
@@ -298,6 +298,21 @@
     var amount = document.getElementsByName('amount[]');
     var satuan = document.getElementsByName('satuan[]');
     var id_item = document.getElementsByName('id_item[]');
+
+    // jenis_invoice.on('change', function() {
+    //     if (jenis_invoice.val() == '1') {
+    //         console.log('jenis 1')
+    //         // $('#head_col_2').html('Keterangan')
+    //         // $('#head_col_3').html('Tanggal')
+    //         // $('.date_item').unmask();
+    //         // $('.nopol').prop('type', 'text');
+    //     } else if (jenis_invoice.val() == '4') {
+    //         // $('#head_col_1').html('PO Qyt')
+    //         $('#head_col_2').html('PO Number')
+    //     }
+    //     count_total();
+    // })
+
 
 
     btn_add_row.on('click', () => {

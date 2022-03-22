@@ -5,9 +5,9 @@
              <div class="pull pull-right">
 
                  <!-- Button trigger modal-->
-                 <!-- <button type="button" class="btn btn-primary" id="add_new_data_btn" data-toggle="modal" data-target="#exampleModalLong">
+                 <button type="button" class="btn btn-primary" id="add_new_data_btn" data-toggle="modal" data-target="#exampleModalLong">
                      <i class="fa fa-plus-square" aria-hidden="true"></i> Buat Akun
-                 </button> -->
+                 </button>
 
                  <!-- Modal-->
 
