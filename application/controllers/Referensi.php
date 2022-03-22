@@ -11,7 +11,7 @@ class Referensi extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model(array('General_model', 'InvoiceModel', 'Statement_model', 'Invoice_model'));
+        $this->load->model(array('General_model', 'InvoiceModel', 'Statement_model', 'Invoice_model', 'Payment_model'));
         // $this->load->helper(array('DataStructure'));
         $this->db->db_debug = TRUE;
     }
@@ -87,6 +87,19 @@ class Referensi extends CI_Controller
             // $this->SecurityModel->Aksessbility_VCRUD('production', 'product_list', 'update', true);
             $data = $this->input->post();
             $accounts = $this->Payment_model->editRefAccount($data);
+            $data = $this->General_model->getAllRefAccount(array('id' => $accounts, 'by_id' => true))[$accounts];
+            echo json_encode(array('error' => false, 'data' => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
+    public function addRefAccount()
+    {
+        try {
+            // $this->SecurityModel->Aksessbility_VCRUD('production', 'product_list', 'update', true);
+            $data = $this->input->post();
+            $accounts = $this->Payment_model->addRefAccount($data);
             $data = $this->General_model->getAllRefAccount(array('id' => $accounts, 'by_id' => true))[$accounts];
             echo json_encode(array('error' => false, 'data' => $data));
         } catch (Exception $e) {

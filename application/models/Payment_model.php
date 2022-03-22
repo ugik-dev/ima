@@ -195,6 +195,13 @@ class Payment_model extends CI_Model
         return $data['ref_id'];
     }
 
+    public function addRefAccount($data)
+    {
+
+        $this->db->insert('ref_account', $data);
+        return $this->db->insert_id();
+    }
+
 
 
     public function deletePayment($data)
