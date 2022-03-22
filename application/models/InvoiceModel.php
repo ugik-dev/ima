@@ -18,7 +18,9 @@ class InvoiceModel extends CI_Model
             if (!empty($filter['first_date'])) $this->db->where('mp_invoice_v2.date >=', $filter['first_date']);
             if (!empty($filter['second_date'])) $this->db->where('mp_invoice_v2.date <=', $filter['second_date']);
         }
-        $this->db->join('mp_banks', 'mp_banks.id = mp_invoice_v2.payment_metode', 'LEFT');
+        $this->db->join('ref_account', 'ref_account.ref_id = mp_invoice_v2.payment_metode', 'LEFT');
+        $this->db->join('mp_head', 'ref_account.ref_account = mp_head.id', 'LEFT');
+        $this->db->join('mp_banks', 'mp_banks.relation_head = mp_head.id', 'LEFT');
         $this->db->join('mp_payee', 'mp_payee.id = mp_invoice_v2.customer_id', 'LEFT');
         $this->db->join('mp_users', 'mp_users.id = mp_invoice_v2.acc_1', 'LEFT');
         $this->db->join('mp_generalentry gen', 'gen.id = mp_invoice_v2.general_id', 'LEFT');

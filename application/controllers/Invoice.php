@@ -277,6 +277,8 @@ class Invoice extends CI_Controller
 
         if ($id != NULL) {
             $dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
+            // echo json_encode($dataContent);
+            // die();
         } else {
             echo 'ERROR';
             return;

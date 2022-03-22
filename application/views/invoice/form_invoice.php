@@ -288,6 +288,8 @@
     acc_2 = $('#acc_2');
     acc_3 = $('#acc_3');
     jenis_invoice = $('#jenis_invoice');
+    payment_metode = $('#payment_metode');
+
 
     var btn_add_row = $('#btn_add_row');
     var id_transaction = $('#id_transaction');
@@ -416,6 +418,8 @@
         id_custmer.val('<?= $data_return['customer_id'] ?>');
         date_jurnal.val('<?= $data_return['date'] ?>');
         date2.val('<?= $data_return['date2'] ?>');
+        payment_metode.val('<?= $data_return['payment_metode'] ?>');
+
 
         jenis_invoice.val('<?= $data_return['jenis_invoice'] ?>');
         description.val('<?= $data_return['description'] ?>');

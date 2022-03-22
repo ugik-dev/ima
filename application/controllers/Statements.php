@@ -634,7 +634,6 @@ class Statements extends CI_Controller
 			$noSpace
 		);
 
-
 		$table->addRow(450);
 		$table->addCell(2000, array('vMerge' => 'restart'))->addText('Jumlah', 'paragraph', $noSpace);
 		$table->addCell(300, array('vMerge' => 'restart'))->addText(':', 'paragraph', $noSpace);
