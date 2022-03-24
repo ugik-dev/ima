@@ -37,8 +37,10 @@ class Payment_model extends CI_Model
 
     public function getAllPembayaranWithItem($filter = [])
     {
-        $this->db->select('mpp.* , gen.no_jurnal,sub.id as item_id, sub.parent_id as parent_item, amount, qyt, date_item, keterangan_item, satuan, nopol');
+        $this->db->select('pay.customer_name, ref.jenis_invoice nama_jenis , mpp.* , gen.no_jurnal,sub.id as item_id, sub.parent_id as parent_item, amount, qyt, date_item, keterangan_item, satuan, nopol');
         $this->db->from('mp_pembayaran mpp');
+        $this->db->join('mp_payee as pay', "mpp.customer_id = pay.id", 'LEFT');
+        $this->db->join('ref_jenis_invoice ref', 'ref.id = mpp.jenis_pembayaran', 'LEFT');
         $this->db->join('mp_generalentry gen', 'gen.id = mpp.general_id', 'LEFT');
         $this->db->join('mp_sub_pembayaran sub', 'mpp.id = sub.parent_id', 'LEFT');
         if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
@@ -52,8 +54,8 @@ class Payment_model extends CI_Model
             [
                 [
                     'id', 'no_jurnal', 'id', 'input_date', 'agen_id', 'acc_0', 'acc_1', 'acc_2', 'acc_3', 'date',
-                    'description', 'customer_id', 'payment_metode', 'ppn_pph', 'no_pembayaran', 'inv_key', 'percent_jasa', 'percent_pph',
-                    'am_jasa', 'am_pph', 'manual_math', 'par_label', 'par_am', 'sub_total', 'sub_total_2', 'jenis_pembayaran',
+                    'customer_name', 'description', 'customer_id', 'payment_metode', 'ppn_pph', 'no_pembayaran', 'inv_key', 'percent_jasa', 'percent_pph', 'percent_pph_21',
+                    'am_jasa', 'am_pph', 'am_pph_21', 'manual_math', 'par_label', 'par_am', 'sub_total', 'sub_total_2', 'jenis_pembayaran', 'nama_jenis',
                     'lebih_bayar_ket', 'lebih_bayar_am', 'kurang_bayar_ket', 'kurang_bayar_am', 'pembulatan', 'payed', 'am_back', 'status_pembayaran', 'general_id'
                 ],
                 ["item_id", "amount", "qyt", "date_item", 'nopol', "keterangan_item", "satuan"]
@@ -61,6 +63,8 @@ class Payment_model extends CI_Model
             ['items']
         );
         // $res = $res->result_array();
+        // echo json_encode($res);
+        // die();
         return $ret;
     }
 
@@ -451,9 +455,10 @@ class Payment_model extends CI_Model
             'description' => $data['description'],
             'customer_id' => $data['customer_id'],
             'payment_metode' => $data['payment_method'],
-            'ppn_pph' => $data['ppn_pph'],
             'percent_jasa' => $data['percent_jasa'],
             'percent_pph' => $data['percent_pph'],
+            'percent_pph_21' => $data['percent_pph_21'],
+            'am_pph_21' => $data['am_pph_21'],
             'manual_math' => $data['manual_math'],
             'am_jasa' => $data['am_jasa'],
             'am_pph' => $data['am_pph'],
@@ -535,9 +540,10 @@ class Payment_model extends CI_Model
             'description' => $data['description'],
             'customer_id' => $data['customer_id'],
             'payment_metode' => $data['payment_method'],
-            'ppn_pph' => $data['ppn_pph'],
             'percent_jasa' => $data['percent_jasa'],
             'percent_pph' => $data['percent_pph'],
+            'percent_pph_21' => $data['percent_pph_21'],
+            'am_pph_21' => $data['am_pph_21'],
             'manual_math' => $data['manual_math'],
             'am_jasa' => $data['am_jasa'],
             'am_pph' => $data['am_pph'],

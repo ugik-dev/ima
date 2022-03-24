@@ -131,7 +131,7 @@ for ($i = 0; $i < count($pembayarans_Record); $i++) {
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Keterangan</th>
+                            <th>Keterangans</th>
                             <th>Tanggal</th>
                             <th>Qyt</th>
                             <th>Harga</th>

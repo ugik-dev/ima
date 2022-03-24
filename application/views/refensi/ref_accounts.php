@@ -71,7 +71,8 @@
                          <label>Type</label>
                          <select name="ref_type" id='ref_type' class="form-control input-lg">
                              <option value="payment_method">Metode Pembayaran</option>
-                             <option value="pph_23">PPh 23</option>
+                             <option value="pph_23">Htg PPh 23</option>
+                             <option value="pph_21">Htg PPh 21</option>
                              <option value="dashboard_piutang">Dashboard Piutang</option>
                              <option value="dashboard_kas">Dashboard Kas</option>
                              <option value="dashboard_bank_1">Dashboard Bank</option>

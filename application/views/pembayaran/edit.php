@@ -76,16 +76,16 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row pembayaran">
+                        <div class="pembayaran">
                             <div class="col-lg-12 table-responsive">
                                 <table class="table table-striped table-hover  ">
                                     <thead>
                                         <tr>
-                                            <th style="width:  400px">Keterangan</th>
-                                            <th style="width:  200px" id="head_col_2">No Polisi</th>
+                                            <th style="width:  400px" id="head_col_1">Keterangan</th>
+                                            <th style=" width: 200px" id="head_col_2">No Polisi</th>
                                             <th style="width:  200px" id="head_col_3">Tanggal</th>
-                                            <th style="width:  120px">Satuan</th>
-                                            <th style="width: 80px">Qyt</th>
+                                            <th style="width:  120px" class="head_col_satuan" id="head_col_satuan">Satuan</th>
+                                            <th style="width: 80px" class="head_col_qyt" id="head_col_qyt"> Qyt</th>
                                             <th style="width:  200px">Harga</th>
                                             <th style="width:  200px" class="">Qyt*Harga</th>
                                             <!-- <th class="">Keterangan</th> -->
@@ -93,15 +93,19 @@
                                     </thead>
                                     <tbody id="transaction_table_body_pembayaran_mitra">
                                     </tbody>
+                                </table>
+                            </div>
+                            <div class="col-lg-12 table-responsive">
+                                <table class="table table-striped table-hover  ">
                                     <tfoot>
                                         <tr>
                                             <td colspan="1">
                                                 <button type="button" class="btn btn-primary" id="addline"> <i class="fa fa-plus-circle"></i> Tambah Baris </button>
                                             </td>
-                                            <td id="row_loading_status"></td>
+                                            <td colspan="6" id="row_loading_status"></td>
                                         </tr>
                                         <tr>
-                                            <th colspan="3"></th>
+                                            <th colspan="3" style="width : 500px"></th>
                                             <th colspan="2">Sub Total I: </th>
                                             <th>
                                             </th>
@@ -168,6 +172,21 @@
                                             </th>
                                         </tr>
                                         <tr <?= $acc_role == false ? 'hidden' : '' ?>>
+                                            <th colspan="3"></th>
+                                            <th colspan="2">PPh 21 : </th>
+                                            <th>
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control" min="0" max="5" step="0,0001" id="percent_pph_21" value="<?= (!empty($data_return['percent_pph_21']) ? (float) $data_return['percent_pph_21']  : '')  ?>" name="percent_pph_21" onchange='count_total()' placeholder="" aria-label="" aria-describedby=" basic-addon2">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text"> %</span>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <input name="am_pph_21" id="pph_21_count" value="<?= (!empty($data_return['am_pph_21']) ? $data_return['am_pph_21']  : '') ?>" class="form-control mask" required onchange='count_total()' />
+                                            </th>
+                                        </tr>
+                                        <tr <?= $acc_role == false ? 'hidden' : '' ?>>
                                             <th colspan="3">
                                                 <div id="lebih_ac_layout" style="display: none;">
                                                     <select name="lebih_bayar_ac" id='lebih_bayar_ac' class="form-control select2">
@@ -202,7 +221,6 @@
                                                 <input type="text" class="form-control" id="lebih_bayar_ket" value="<?= (!empty($data_return['lebih_bayar_ket']) ? $data_return['lebih_bayar_ket']  : '') ?>" name="lebih_bayar_ket" placeholder="Keterangan Lebih Bayar">
                                             </th>
                                             <th>
-                                                <!-- <input name="pph_count" value="0" disabled class="accounts_total_amount" /> -->
                                                 <input name="lebih_bayar_am" id="lebih_bayar_am" value="<?= (!empty($data_return['lebih_bayar_am']) ? $data_return['lebih_bayar_am']  : '') ?>" class="form-control mask" onchange='count_total()' />
                                             </th>
                                         </tr>
@@ -242,7 +260,6 @@
                                                 <input type="text" class="form-control" id="kurang_bayar_ket" value="<?= (!empty($data_return['kurang_bayar_ket']) ? $data_return['kurang_bayar_ket']  : '')  ?>" name="kurang_bayar_ket" placeholder="Keterangan Kurang Bayar">
                                             </th>
                                             <th>
-                                                <!-- <input name="pph_count" value="0" disabled class="accounts_total_amount" /> -->
                                                 <input name="kurang_bayar_am" id="kurang_bayar_am" value="<?= (!empty($data_return['kurang_bayar_am']) ? $data_return['kurang_bayar_am']  : '') ?>" class="form-control mask" onchange='count_total()' />
                                             </th>
                                         </tr>
@@ -304,6 +321,7 @@
                                             </th>
                                         </tr> -->
                                     </tfoot>
+
                                 </table>
                             </div>
                             <div class="col-lg-12 ">
@@ -364,15 +382,15 @@
                                         <td>
                                             <input type="text" name="date_item[]" value="" class="form-control input-lg date_item" />
                                         </td>
-                                        <td>
+                                        <td class="head_col_satuan">
                                             <select name="satuan[]" id="satuan" class="form-control">
                                                 <?php foreach ($satuan as $st) {
                                                     echo '<option value="' . $st['name_unit'] . '"> ' . $st['name_unit'] . ' </option>';
                                                 } ?>
                                             </select>
                                         </td>
-                                        <td>
-                                            <input class="form-control input-lg" name="qyt[]" value="" onkeyup="count_total()" required />
+                                        <td class="head_col_qyt">
+                                            <input class="form-control input-lg val_qyt" name="qyt[]" value="" onkeyup="count_total()" required />
                                         </td>
                                         <td>
                                             <input class="form-control input-lg mask" name="amount[]" value="" onkeyup="count_total()" required />
@@ -392,6 +410,7 @@
     transaction_table_body.append(new_row_html)
     addline.on('click', () => {
         transaction_table_body.append(new_row_html);
+        jenis_pembayaran.trigger('change')
     });
 
     function count_total(edit = false) {
@@ -422,10 +441,13 @@
             p_jasa = $('input[name="percent_jasa"]').val();
             p_jasa = p_jasa.replace(",", ".");
             $("#percent_jasa").val(p_jasa);
-
             if (p_jasa == "") p_jasa = 0;
+
             p_pph = $('input[name="percent_pph"]').val();
             if (p_pph == "") p_pph = 0;
+
+            p_pph_21 = $('input[name="percent_pph_21"]').val();
+            if (p_pph_21 == "") p_pph_21 = 0;
 
             var total_debit = 0;
             qyt = $('input[name="qyt[]"]');
@@ -434,10 +456,10 @@
 
             tmp_jasa = $("#jasa_count").val();
             tmp_pph = $("#pph_count").val();
+            tmp_pph_21 = $("#pph_21_count").val();
             i = 0;
             $('input[name="qyt[]"]').each(function() {
                 val1 = 0;
-                ppn_pph = 0;
                 if (
                     qyt[i].value != "" &&
                     qyt[i].value != "0" &&
@@ -465,6 +487,7 @@
             }
             biaya_jasa = 0;
             biaya_pph = 0;
+            biaya_pph_21 = 0;
             if (manual_math && (tmp_jasa != "0" || tmp_jasa != "0,00")) {
                 biaya_jasa = parseFloat(
                     tmp_jasa.replaceAll(".", "").replaceAll(",", ".")
@@ -489,7 +512,18 @@
                     $('input[name="am_pph"]').val(0);
                 }
             }
-            total_final = (setela_jasa - biaya_pph).toFixed(2);
+
+            if (manual_math && (tmp_pph_21 != "0" || tmp_pph_21 != "0,00")) {
+                biaya_pph_21 = parseFloat(tmp_pph_21.replaceAll(".", "").replaceAll(",", "."));
+            } else {
+                if (count_val != "" && count_val != "0") {
+                    biaya_pph_21 = Math.floor((p_pph_21 / 100) * setela_jasa);
+                    $('input[name="am_pph_21"]').val(formatRupiah2(biaya_pph_21));
+                } else {
+                    $('input[name="am_pph_21"]').val(0);
+                }
+            }
+            total_final = (setela_jasa - biaya_pph - biaya_pph_21).toFixed(2);
 
             if (lebih_bayar_am > 0) {
                 total_final = parseFloat(total_final) - parseFloat(lebih_bayar_am);
@@ -557,10 +591,7 @@
 
     pembayaran_form.submit(function(event) {
         event.preventDefault();
-        // var isAdd = BankModal.addBtn.is(':visible');
         var url = "<?= site_url('pembayaran/' . $form_url) ?>";
-        // url += isAdd ? "addBank" : "editBank";
-        // var button = isAdd ? BankModal.addBtn : BankModal.saveEditBtn;
 
         Swal.fire(swalSaveConfigure).then((result) => {
             if (result.isConfirmed == false) {
@@ -642,17 +673,40 @@
     jenis_pembayaran.on('change', function() {
         if (jenis_pembayaran.val() == '1') {
             console.log('jenis 1')
+            $('#head_col_1').html('Keterangan')
             $('#head_col_2').html('No Polisi')
             $('#head_col_3').html('Tanggal')
+            $('table .head_col_satuan').show();
+            $('table .head_col_qyt').show();
             $('.date_item').unmask();
             $('.nopol').prop('type', 'text');
         } else if (jenis_pembayaran.val() == '2') {
+            $('#head_col_1').html('Keterangan')
             $('#head_col_2').html('PO Qyt')
             $('#head_col_3').html('PO Harga')
+            $('table .head_col_satuan').show();
+            $('table .head_col_qyt').show();
             $('.date_item').mask('000.000.000.000.000,00', {
                 reverse: true
             });
             $('.nopol').prop('type', 'number');
+        } else if (jenis_pembayaran.val() == '6') {
+            $('#head_col_1').html('Nama')
+            $('#head_col_2').html('Lokasi')
+            $('#head_col_3').html('KG / Kadar')
+            $('table .head_col_satuan').hide();
+            $('table .head_col_qyt').hide();
+            $('.val_qyt').val('1');
+            $('.date_item').unmask();
+            $('.nopol').prop('type', 'text');
+        } else {
+            $('#head_col_1').html('Keterangan')
+            $('#head_col_2').html('PO Qyt')
+            $('#head_col_3').html('PO Harga')
+            $('table .head_col_satuan').show();
+            $('table .head_col_qyt').show();
+            $('.date_item').unmask();
+            $('.nopol').prop('type', 'text');
         }
         count_total();
     })
