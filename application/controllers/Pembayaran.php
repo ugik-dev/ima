@@ -1898,25 +1898,30 @@ class Pembayaran extends CI_Controller
         }
 
         if (!empty($data['am_pph'])) {
-            $jp = $this->General_model->getAllRefAccount(array('ref_type' => 'pph_23'))[0];
-            $journal['sub_entry'][$i] = array(
-                'accounthead' => $jp['ref_account'],
-                'type' => 1,
-                'sub_keterangan' => 'Ptg PPh 23' . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
-                'amount' => $data['am_pph']
-            );
-            $i++;
+            if ($data['am_pph'] > 0) {
+                $jp = $this->General_model->getAllRefAccount(array('ref_type' => 'pph_23'))[0];
+                $journal['sub_entry'][$i] = array(
+                    'accounthead' => $jp['ref_account'],
+                    'type' => 1,
+                    'sub_keterangan' => 'Ptg PPh 23 ' . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
+                    'amount' => $data['am_pph']
+                );
+                $i++;
+            }
         }
 
         if (!empty($data['am_pph_21'])) {
-            $jp = $this->General_model->getAllRefAccount(array('ref_type' => 'pph_21'))[0];
-            $journal['sub_entry'][$i] = array(
-                'accounthead' => $jp['ref_account'],
-                'type' => 1,
-                'sub_keterangan' => 'Ptg PPh 21' . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
-                'amount' => $data['am_pph_21']
-            );
-            $i++;
+            if ($data['am_pph_21'] > 0) {
+
+                $jp = $this->General_model->getAllRefAccount(array('ref_type' => 'pph_21'))[0];
+                $journal['sub_entry'][$i] = array(
+                    'accounthead' => $jp['ref_account'],
+                    'type' => 1,
+                    'sub_keterangan' => 'Ptg PPh 21 ' . $data['data_jenis_pembayaran']['text_jurnal'] . ' ' . $data['description'],
+                    'amount' => $data['am_pph_21']
+                );
+                $i++;
+            }
         }
 
 
