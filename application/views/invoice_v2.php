@@ -203,7 +203,7 @@
                                     </tr>
                                     <tr>
                                         <th colspan="2"></th>
-                                        <th colspan="2">PPN 10%: </th>
+                                        <th colspan="2">PPN 11%: </th>
                                         <th colspan="1">
                                             <div class="col-3">
                                                 <span class="switch switch-icon">

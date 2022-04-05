@@ -136,7 +136,7 @@
                                     if ($transaction['ppn_pph'] == 1) {
                                     ?>
                                         <tr>
-                                            <td width="200px" class="value" style="margin-right: 2px;">PPN 10%</td>
+                                            <td width="200px" class="value" style="margin-right: 2px;">PPN 11%</td>
                                             <td width="10px" class="value" style="margin-right: 1px;">Rp</td>
                                             <td width='' class="value" style="text-align: right; margin-right: 0"><?= number_format(10 / 100 * $transaction['sub_total'], 0, ',', '.') ?></td>
                                         </tr>

@@ -1077,7 +1077,7 @@ class Pembayaran extends CI_Controller
             $pdf->Cell(42, 14 + $crop2, 'Rp ' . number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
             $pdf->Cell(1, 3 + $crop2, '', 0, 1);
             $pdf->Cell(110, 14, '', 0, 0);
-            $pdf->Cell(25, 14 + $crop, 'PPN 10%', 0, 0, 'L');
+            $pdf->Cell(25, 14 + $crop, 'PPN 11%', 0, 0, 'L');
             $pdf->Cell(47, 14 + $crop, 'Rp ' . number_format(floor($total * 0.10), '0', ',', '.'), 0, 1, 'R');
             $pdf->Cell(1, 3 + $crop3, '', 0, 1);
             $pdf->Cell(110, 14 + $crop2, '', 0, 0);

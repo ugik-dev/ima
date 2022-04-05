@@ -143,7 +143,7 @@
                                         </tr>
                                         <tr>
                                             <th colspan="2"></th>
-                                            <th colspan="2">PPN 10%: </th>
+                                            <th colspan="2">PPN 11%: </th>
                                             <th colspan="1">
                                                 <div class="col-3">
                                                     <span class="switch switch-icon">
@@ -237,7 +237,7 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/invoice.js?v=0.2"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/invoice.js?v=0.3.2"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>

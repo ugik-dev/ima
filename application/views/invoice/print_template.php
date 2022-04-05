@@ -194,7 +194,7 @@
                                 </tr>
                                 <?php if ($transaction['ppn_pph'] == 1) { ?>
                                     <tr>
-                                        <td style="padding: 4px; text-align: right;" colspan="4"> <b>PPN 10%</b></td>
+                                        <td style="padding: 4px; text-align: right;" colspan="4"> <b>PPN 11%</b></td>
                                         <td style="padding: 4px; text-align: right;"><b><?= number_format(0.1 * $transaction['sub_total'], 2, '.', ',') ?></b></td>
                                     </tr>
                                     <tr>

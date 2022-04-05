@@ -189,7 +189,7 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
                             </td>
                         </tr>
 
-                        <th style="width:50%">PPN 10%
+                        <th style="width:50%">PPN 11%
 
                         <td class="text-right">
                             <?php if ($invoices_Record[$i]['ppn_pph'] == '1') {

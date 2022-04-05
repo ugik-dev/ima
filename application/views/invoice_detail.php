@@ -222,7 +222,7 @@
                             </span>
                         </div>
                         <!--end::Shape-->
-                        <div class="font-weight-boldest font-size-h5">PPN 10%</div>
+                        <div class="font-weight-boldest font-size-h5">PPN 11%</div>
                         <div class="text-right d-flex flex-column">
                             <span class="font-weight-boldest font-size-h3 line-height-sm"><?= number_format($tmp1, 0, ',', '.') ?></span>
                         </div>

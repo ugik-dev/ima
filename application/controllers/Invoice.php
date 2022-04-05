@@ -444,7 +444,7 @@ class Invoice extends CI_Controller
             if ($dataContent['ppn_pph'] == 1) {
                 $table->addRow();
                 $cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
-                $table->addCell(200, $cellColSpan)->addText('PPN 10%    ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+                $table->addCell(200, $cellColSpan)->addText('PPN 11%    ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
                 $table->addCell(500, $cellVCentered)->addText('' . number_format(floor($total * 0.10), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
                 $table->addRow();
                 $cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
@@ -859,7 +859,7 @@ class Invoice extends CI_Controller
             $pdf->Cell(42, 14 + $crop2, 'Rp ' . number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
             $pdf->Cell(1, 3 + $crop2, '', 0, 1);
             $pdf->Cell(110, 14, '', 0, 0);
-            $pdf->Cell(25, 14 + $crop, 'PPN 10%', 0, 0, 'L');
+            $pdf->Cell(25, 14 + $crop, 'PPN 11%', 0, 0, 'L');
             $pdf->Cell(47, 14 + $crop, 'Rp ' . number_format(floor($total * 0.10), '0', ',', '.'), 0, 1, 'R');
             $pdf->Cell(1, 3 + $crop3, '', 0, 1);
             $pdf->Cell(110, 14 + $crop2, '', 0, 0);
@@ -950,7 +950,7 @@ class Invoice extends CI_Controller
         // 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
         // 	$pdf->Cell(38, 6,  number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
         // 	$pdf->Cell(100, 6, '', 0, 0);
-        // 	$pdf->Cell(30, 6, 'PPN 10%', 0, 0, 'L');
+        // 	$pdf->Cell(30, 6, 'PPN 11%', 0, 0, 'L');
         // 	$pdf->Cell(8, 6, 'Rp ', 0, 0, 'L');
         // 	$pdf->Cell(38, 6, number_format(floor($total * 0.10), '0', ',', '.'), 0, 1, 'R');
         // 	$pdf->SetLineWidth(0.5);
