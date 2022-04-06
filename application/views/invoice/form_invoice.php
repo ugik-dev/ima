@@ -39,7 +39,7 @@
                                         <div class="form-group">
                                             <?php echo form_label('Tanggal Invoice'); ?>
                                             <?php
-                                            $data = array('class' => 'form-control input-lg', 'type' => 'date', 'name' => 'date', 'id' => 'date', 'reqiured' => '', 'value' => Date('Y-m-d'));
+                                            $data = array('class' => 'form-control input-lg', 'type' => 'date', 'onchange' => 'count_total()', 'name' => 'date', 'id' => 'date', 'reqiured' => '', 'value' => Date('Y-m-d'));
                                             echo form_input($data);
                                             ?>
                                         </div>
@@ -143,8 +143,11 @@
                                         </tr>
                                         <tr>
                                             <th colspan="2"></th>
-                                            <th colspan="2">PPN 11%: </th>
+                                            <th colspan="2" id="label_ppn">
+                                                PPN 11%
+                                            </th>
                                             <th colspan="1">
+                                                <!-- <input type="number" name="percent_ppn" class="form-control" onclick='count_total()' /> % -->
                                                 <div class="col-3">
                                                     <span class="switch switch-icon">
                                                         <label>
@@ -237,7 +240,7 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/invoice.js?v=0.3.2"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/invoice.js?v=0.3.7"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
@@ -287,6 +290,8 @@
     acc_1 = $('#acc_1');
     acc_2 = $('#acc_2');
     acc_3 = $('#acc_3');
+    percent_ppn = $('#percent_ppn');
+
     jenis_invoice = $('#jenis_invoice');
     payment_metode = $('#payment_metode');
 
@@ -426,6 +431,8 @@
         acc_1.val('<?= $data_return['acc_1'] ?>');
         acc_2.val('<?= $data_return['acc_2'] ?>');
         acc_3.val('<?= $data_return['acc_3'] ?>');
+        percent_ppn.val('<?= $data_return['percent_ppn'] ?>');
+
         <?php
 
         for ($i = 0; $i < $count_rows; $i++) { ?>

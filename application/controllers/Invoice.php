@@ -442,15 +442,25 @@ class Invoice extends CI_Controller
             $table->addCell(200, $cellColSpan)->addText('JUMLAH    ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
             $table->addCell(500, $cellVCentered)->addText('' . number_format($total, '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
             if ($dataContent['ppn_pph'] == 1) {
+                $date_inv = new DateTime($dataContent['date']);
+                $date_ppn11  = new DateTime('2022-04-01');
+                if ($date_inv >= $date_ppn11) {
+                    $var_ppn = 11;
+                    $tmp1 = 11 / 100 * $total;
+                } else {
+                    $tmp1 = 10 / 100 * $total;
+                    $var_ppn = 10;
+                }
+
                 $table->addRow();
                 $cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
-                $table->addCell(200, $cellColSpan)->addText('PPN 11%    ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
-                $table->addCell(500, $cellVCentered)->addText('' . number_format(floor($total * 0.10), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+                $table->addCell(200, $cellColSpan)->addText('PPN ' . $var_ppn . '%    ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+                $table->addCell(500, $cellVCentered)->addText('' . number_format(floor($tmp1), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
                 $table->addRow();
                 $cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
                 $table->addCell(200, $cellColSpan)->addText('TOTAL   ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
-                $table->addCell(500, $cellVCentered)->addText('' . number_format((floor($total * 0.10) + floor($total)), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
-                $terbilang = round($total * 0.10) + floor($total);
+                $table->addCell(500, $cellVCentered)->addText('' . number_format((floor($tmp1) + floor($total)), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
+                $terbilang = round($tmp1) + floor($total);
             } else {
                 $terbilang =  floor($total);
             }
@@ -585,7 +595,7 @@ class Invoice extends CI_Controller
 
             $freame7->addCell(1400, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('PPN', 'paragraph', array('spaceAfter' => 0));
             $freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('Rp', 'paragraph', array('spaceAfter' => 0));
-            $freame7->addCell(1600, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText(number_format(floor($total * 0.10), '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
+            $freame7->addCell(1600, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText(number_format(floor($tmp1), '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
             $freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
 
             $freame7->addRow();
@@ -593,7 +603,7 @@ class Invoice extends CI_Controller
             $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
             $freame7->addCell(1400, $cellVCentered)->addText('TOTAL', 'paragraph_bold', array('spaceAfter' => 0));
             $freame7->addCell(30, $cellVCentered)->addText('Rp', 'paragraph_bold', array('spaceAfter' => 0));
-            $freame7->addCell(1600, $cellVCentered)->addText(number_format(floor($total * 0.10) + $total, '0', ',', '.'), 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'right',));
+            $freame7->addCell(1600, $cellVCentered)->addText(number_format(floor($tmp1) + $total, '0', ',', '.'), 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'right',));
             $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 1));
         }
         $freame7->addRow(0.1);
@@ -610,7 +620,7 @@ class Invoice extends CI_Controller
         $freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 
         $freame7->addRow(700);
-        $freame7->addCell(6000, $cellVCentered)->addText('          Rp. ' . number_format(round($total * 0.10) + $total, '0', ',', '.'), array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), array('align' => 'left'));
+        $freame7->addCell(6000, $cellVCentered)->addText('          Rp. ' . number_format(round($tmp1) + $total, '0', ',', '.'), array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), array('align' => 'left'));
         $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
         $freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 
@@ -846,6 +856,15 @@ class Invoice extends CI_Controller
         $pdf->SetXY($cur_x + 120, $cur_y);
 
         if ($dataContent['ppn_pph'] == 1) {
+            $date_inv = new DateTime($dataContent['date']);
+            $date_ppn11  = new DateTime('2022-04-01');
+            if ($date_inv >= $date_ppn11) {
+                $var_ppn = 11;
+                $tmp1 = 11 / 100 * $total;
+            } else {
+                $tmp1 = 10 / 100 * $total;
+                $var_ppn = 10;
+            }
 
             $pdf->Cell(40, 17 + $crop, $pdf->Image(base_url() . "assets/img/bg-3.jpg", 120, $pdf->GetY(), 77, 14 + $crop2), 0, 1, 'C');
             $pdf->Cell(40, 17 + $crop, $pdf->Image(base_url() . "assets/img/bg-2.jpg", 120, $pdf->GetY(), 77, 14 + $crop2), 0, 1, 'C');
@@ -859,13 +878,13 @@ class Invoice extends CI_Controller
             $pdf->Cell(42, 14 + $crop2, 'Rp ' . number_format(floor($total), '0', ',', '.'), 0, 1, 'R');
             $pdf->Cell(1, 3 + $crop2, '', 0, 1);
             $pdf->Cell(110, 14, '', 0, 0);
-            $pdf->Cell(25, 14 + $crop, 'PPN 11%', 0, 0, 'L');
-            $pdf->Cell(47, 14 + $crop, 'Rp ' . number_format(floor($total * 0.10), '0', ',', '.'), 0, 1, 'R');
+            $pdf->Cell(25, 14 + $crop, 'PPN ' . $var_ppn . '%', 0, 0, 'L');
+            $pdf->Cell(47, 14 + $crop, 'Rp ' . number_format(floor($tmp1), '0', ',', '.'), 0, 1, 'R');
             $pdf->Cell(1, 3 + $crop3, '', 0, 1);
             $pdf->Cell(110, 14 + $crop2, '', 0, 0);
             $pdf->Cell(22, 14 + $crop2, 'TOTAL', 0, 0, 'L');
-            $pdf->Cell(50, 14 + $crop2, 'Rp ' . number_format(floor($total * 0.10) + floor($total)), 0, 1, 'R');
-            $terbilang = floor($total * 0.10) + floor($total);
+            $pdf->Cell(50, 14 + $crop2, 'Rp ' . number_format(floor($tmp1) + floor($total)), 0, 1, 'R');
+            $terbilang = floor($tmp1) + floor($total);
         } else {
             $pdf->Cell(40, 17, $pdf->Image(base_url() . "assets/img/bg-1.jpg", 120, $pdf->GetY(), 77, 14), 0, 1, 'C');
             $pdf->SetXY($cur_x + 100, $cur_y);

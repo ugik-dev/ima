@@ -134,11 +134,20 @@
                                     }
 
                                     if ($transaction['ppn_pph'] == 1) {
+                                        $date_inv = new DateTime($transaction['date']);
+                                        $date_ppn11  = new DateTime('2022-04-01');
+                                        if ($date_inv >= $date_ppn11) {
+                                            $var_ppn = 11;
+                                            $tmp1 = 11 / 100 * $transaction['sub_total'];
+                                        } else {
+                                            $tmp1 = 10 / 100 * $transaction['sub_total'];
+                                            $var_ppn = 10;
+                                        }
                                     ?>
                                         <tr>
-                                            <td width="200px" class="value" style="margin-right: 2px;">PPN 11%</td>
+                                            <td width="200px" class="value" style="margin-right: 2px;">PPN <?= $var_ppn ?>%</td>
                                             <td width="10px" class="value" style="margin-right: 1px;">Rp</td>
-                                            <td width='' class="value" style="text-align: right; margin-right: 0"><?= number_format(10 / 100 * $transaction['sub_total'], 0, ',', '.') ?></td>
+                                            <td width='' class="value" style="text-align: right; margin-right: 0"><?= number_format($tmp1, 0, ',', '.') ?></td>
                                         </tr>
                                     <?php
                                         $i++;

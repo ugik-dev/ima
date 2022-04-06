@@ -221,7 +221,15 @@
                     </div>
                     <?php
                     if ($dataContent['ppn_pph'] == 1) {
-                        $tmp1 = floor($total * 0.10);
+                        $date_inv = new DateTime($dataContent['date']);
+                        $date_ppn11  = new DateTime('2022-04-01');
+                        if ($date_inv >= $date_ppn11) {
+                            $var_ppn = 11;
+                            $tmp1 = floor($total * 0.11);
+                        } else {
+                            $tmp1 = floor($total * 0.10);
+                            $var_ppn = 10;
+                        }
                         $total = $total + $tmp1;
                     } else {
                         $tmp1 = 0;
@@ -248,7 +256,7 @@
                             </span>
                         </div>
                         <!--end::Shape-->
-                        <div class="font-weight-boldest font-size-h5">PPN 11%</div>
+                        <div class="font-weight-boldest font-size-h5">PPN <?= $var_ppn ?>%</div>
                         <div class="text-right d-flex flex-column">
                             <span class="font-weight-boldest font-size-h3 line-height-sm"><?= number_format($tmp1, 0, ',', '.') ?></span>
                         </div>

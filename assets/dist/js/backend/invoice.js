@@ -5,6 +5,20 @@ function count_total(edit = false) {
   timmer = setTimeout(function callback() {
     var total_debit = 0;
     qyt = $('input[name="qyt[]"]');
+    date = $('input[name="date"]').val();
+    const d5 = new Date(date).getTime();
+    const d6 = new Date("2022-04-01").getTime();
+
+    if (d5 >= d6) {
+      var_ppn = 0.11;
+      console.log("PPH 11");
+      $("#label_ppn").html("PPN 11%");
+    } else {
+      var_ppn = 0.1;
+      $("#label_ppn").html("PPN 10%");
+      console.log("PPH 10");
+    }
+
     amount = $('input[name="amount[]"]');
     qyt_amount = $('input[name="qyt_amount[]"]');
     i = 0;
@@ -47,7 +61,7 @@ function count_total(edit = false) {
       console.log(count_val);
       str_count_val = count_val.toString();
       str_count_val = str_count_val.substring(0, str_count_val.length - 2);
-      ppn_pph = Math.floor(str_count_val * 0.11) + "00";
+      ppn_pph = Math.floor(str_count_val * var_ppn) + "00";
       ppn_pph = parseInt(ppn_pph);
       // console.log(ppn_pph + "00");
       $('input[name="ppn_pph_count"]').val(formatRupiah(ppn_pph));
@@ -88,7 +102,6 @@ function count_credits() {
 
     $('input[name="total_credit_amount"]').val(formatRupiah(total_credits));
 
-    //USED TO CHECK THE VALIDITY OF THIS TRANSACTION
     check_validity();
   }, 800);
 }
