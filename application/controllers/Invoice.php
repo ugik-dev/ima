@@ -164,6 +164,10 @@ class Invoice extends CI_Controller
                     $dataContent['amount'][$i] =  $dataContent['item'][$i]->amount;
                     $dataContent['date_item'][$i] =  $dataContent['item'][$i]->date_item;
                     $dataContent['satuan'][$i] =  $dataContent['item'][$i]->satuan;
+                    $dataContent['fil_1'][$i] =  $dataContent['item'][$i]->fil_1;
+                    $dataContent['fil_2'][$i] =  $dataContent['item'][$i]->fil_2;
+                    $dataContent['fil_3'][$i] =  $dataContent['item'][$i]->fil_3;
+                    $dataContent['fil_4'][$i] =  $dataContent['item'][$i]->fil_4;
 
                     $dataContent['keterangan_item'][$i] =  $dataContent['item'][$i]->keterangan_item;
                     $dataContent['qyt'][$i] =  $dataContent['item'][$i]->qyt;
@@ -411,35 +415,78 @@ class Invoice extends CI_Controller
         $cellVCentered = array('valign' => 'center');
         // if ($date_item) {
         $fancyTableCellStyle = array('valign' => 'center');
-        $table->addRow();
-        $cell1 = $table->addCell(2000, $cellRowSpan);
-        $textrun1 = $cell1->addTextRun($cellHCentered);
-        $textrun1->addText('KETERANGAN', 'paragraph_bold', array('spaceAfter' => 0));
-        if ($date_item) {
+        $gridspan = 3;
+
+        if ($dataContent['jenis_invoice'] == 6) {
+            $table->addRow();
             $cell1 = $table->addCell(2000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
-            $textrun1->addText('TANGGAL', 'paragraph_bold', array('spaceAfter' => 0));
+            $textrun1->addText('PO Number', 'paragraph', array('spaceAfter' => 0));
+            // if ($date_item) {
+            $cell1 = $table->addCell(3000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Uraian', 'paragraph', array('spaceAfter' => 0));
+            // }
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Realisasi Produksi (Ore)', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Kadar Sn Taksasi', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Realiasi Produksi x Kadar Sn Taksasi', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Biaya Kompensasi', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(2000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Total Pembayaran Angsuran 90%', 'paragraph', array('spaceAfter' => 0));
+            $gridspan = 6;
+        } else {
+
+            $table->addRow();
+            $cell1 = $table->addCell(2000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('KETERANGAN', 'paragraph_bold', array('spaceAfter' => 0));
+            if ($date_item) {
+                $gridspan = 4;
+                $cell1 = $table->addCell(2000, $cellRowSpan);
+                $textrun1 = $cell1->addTextRun($cellHCentered);
+                $textrun1->addText('TANGGAL', 'paragraph_bold', array('spaceAfter' => 0));
+            }
+            $cell1 = $table->addCell(2000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('QYT', 'paragraph_bold', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(2000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('HARGA (Rp)', 'paragraph_bold', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(2000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('SUB TOTAL (Rp)', 'paragraph_bold', array('spaceAfter' => 0));
         }
-        $cell1 = $table->addCell(2000, $cellRowSpan);
-        $textrun1 = $cell1->addTextRun($cellHCentered);
-        $textrun1->addText('QYT', 'paragraph_bold', array('spaceAfter' => 0));
-        $cell1 = $table->addCell(2000, $cellRowSpan);
-        $textrun1 = $cell1->addTextRun($cellHCentered);
-        $textrun1->addText('HARGA (Rp)', 'paragraph_bold', array('spaceAfter' => 0));
-        $cell1 = $table->addCell(2000, $cellRowSpan);
-        $textrun1 = $cell1->addTextRun($cellHCentered);
-        $textrun1->addText('SUB TOTAL (Rp)', 'paragraph_bold', array('spaceAfter' => 0));
         if ($dataContent['item']  != NULL) {
             foreach ($dataContent['item'] as $item) {
-                $table->addRow();
-                $table->addCell(3500, $cellVCentered)->addText($item->keterangan_item, null, array('spaceAfter' => 0));
-                if ($date_item) $table->addCell(1200, $cellVCentered)->addText($item->date_item, null, array('spaceAfter' => 0));
-                $table->addCell(1000, $cellVCentered)->addText($item->qyt . ' ' . $item->satuan, null, array('spaceAfter' => 0, 'align' => 'center'));
-                $table->addCell(1500, $cellVCentered)->addText(number_format(floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
-                $table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
+                if ($dataContent['jenis_invoice'] == 6) {
+                    $table->addRow();
+                    $table->addCell(3500, $cellVCentered)->addText($item->date_item, null, array('spaceAfter' => 0));
+                    if ($date_item) $table->addCell(1200, $cellVCentered)->addText($item->keterangan_item, null, array('spaceAfter' => 0));
+                    $table->addCell(1000, $cellVCentered)->addText($item->fil_1, null, array('spaceAfter' => 0, 'align' => 'center'));
+                    $table->addCell(1500, $cellVCentered)->addText($item->fil_2 . '%', null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText($item->fil_3, null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText($item->fil_4, null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
+                } else {
+                    $table->addRow();
+                    $table->addCell(3500, $cellVCentered)->addText($item->keterangan_item, null, array('spaceAfter' => 0));
+                    if ($date_item) $table->addCell(1200, $cellVCentered)->addText($item->date_item, null, array('spaceAfter' => 0));
+                    $table->addCell(1000, $cellVCentered)->addText($item->qyt . ' ' . $item->satuan, null, array('spaceAfter' => 0, 'align' => 'center'));
+                    $table->addCell(1500, $cellVCentered)->addText(number_format(floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
+                }
             }
             $table->addRow();
-            $cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
+            $cellColSpan = array('gridSpan' => $gridspan, 'valign' => 'center');
             $table->addCell(200, $cellColSpan)->addText('JUMLAH    ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
             $table->addCell(500, $cellVCentered)->addText('' . number_format($total, '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
             if ($dataContent['ppn_pph'] == 1) {
@@ -454,11 +501,11 @@ class Invoice extends CI_Controller
                 }
 
                 $table->addRow();
-                $cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
+                // $cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
                 $table->addCell(200, $cellColSpan)->addText('PPN ' . $var_ppn . '%    ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
                 $table->addCell(500, $cellVCentered)->addText('' . number_format(floor($tmp1), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
                 $table->addRow();
-                $cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
+                // $cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
                 $table->addCell(200, $cellColSpan)->addText('TOTAL   ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
                 $table->addCell(500, $cellVCentered)->addText('' . number_format((floor($tmp1) + floor($total)), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
                 $terbilang = round($tmp1) + floor($total);

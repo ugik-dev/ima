@@ -1,4 +1,5 @@
 var timmer;
+
 function count_total(edit = false) {
   clearTimeout(timmer);
   count_val = 0;

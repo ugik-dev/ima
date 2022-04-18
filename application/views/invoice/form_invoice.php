@@ -101,10 +101,14 @@
                                             <th style="width:  400px" id="head_col_1" class="kol1">Keterangan</th>
                                             <th style="width:  200px" id="head_col_2" class="kol2">Tanggal</th>
                                             <!-- <th style="width:  200px" id="kol3" class="kol3">Tanggal</th> -->
-                                            <th style="width:  120px">Satuan</th>
-                                            <th style="width: 80px">Qyt</th>
+                                            <th style="width: 80px" class="fil_1">Realisasi Produksi (Ore)</th>
+                                            <th style="width: 80px" class="fil_2">Kadar Sn</th>
+                                            <th style="width: 80px" class="fil_3">Realisasi Produksi KgSn Taksasi</th>
+                                            <th style="width: 80px" class="fil_4">Biaya Kompensasi</th>
+                                            <th style="width:  120px" class="fil_satuan">Satuan</th>
+                                            <th style="width: 80px" class="fil_qyt">Qyt</th>
                                             <th style="width:  200px">Harga</th>
-                                            <th style="width:  200px" class="">Qyt*Harga</th>
+                                            <th style="width:  200px" class="fil_qyt_x_harga">Qyt*Harga</th>
                                             <!-- <th class="">Keterangan</th> -->
                                         </tr>
                                     </thead>
@@ -252,7 +256,7 @@
                                             <td>
                                                 <input type="text" name="date_item[]" value="" placeholder="eg. 3 Mar sd 27 Feb" class="form-control input-lg" />
                                             </td>
-                                            <td>
+                                            <td class="fil_satuan">
                                                 <select name="satuan[]" id="satuan" class="form-control">   
                                                 <option value=""> -- </option>
                                                 <?php
@@ -262,13 +266,25 @@
                                                 ?>
                                                 </select>
                                             </td>
-                                            <td>
-                                                 <input class="form-control input-lg" name='qyt[]' value='' required onkeyup="count_total()" />
+                                            <td class="fil_1" style="display: none">
+                                                <input class="form-control input-lg fil_1" name='fil_1[]' value='' required onkeyup="" />
+                                            </td>
+                                            <td class="fil_2" style="display: none">
+                                                <input class="form-control input-lg fil_2" name='fil_2[]' value='' required onkeyup="count_total()" />
+                                            </td>
+                                            <td class="fil_3" style="display: none">
+                                                <input class="form-control input-lg fil_3" name='fil_3[]' value='' required onkeyup="count_total()" />
+                                            </td>
+                                            <td class="fil_4" style="display: none">
+                                                <input class="form-control input-lg fil_4" name='fil_4[]' value='' required onkeyup="count_total()" />
+                                            </td>
+                                            <td class="fil_qyt">
+                                                 <input class="form-control input-lg" name='qyt[]' value='1' required onkeyup="count_total()" />
                                              </td>
-                                            <td>
+                                            <td class="fil_amount">
                                                 <input class="form-control input-lg mask" name='amount[]' value='' required onkeyup="count_total()" />
                                             </td>
-                                            <td>
+                                            <td class="fil_qyt_x_harga">
                                                 <input class="form-control input-lg accounts_total_amount" name='qyt_amount[]' value='' disabled onkeyup="count_total()" />
                                                   <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" value="" data-row="1" name="delete_row[]" id="delete_row[]" onchange="delete_row(this)">
@@ -300,26 +316,58 @@
     var id_transaction = $('#id_transaction');
     var transaction_table_body = $('#transaction_table_body');
     var keterangan_item = document.getElementsByName('keterangan_item[]');
+    var fil_1 = document.getElementsByName('fil_1[]');
+    var fil_2 = document.getElementsByName('fil_2[]');
+    var fil_3 = document.getElementsByName('fil_3[]');
+    var fil_4 = document.getElementsByName('fil_4[]');
     var date_item = document.getElementsByName('date_item[]');
     var qyt = document.getElementsByName('qyt[]');
     var amount = document.getElementsByName('amount[]');
     var satuan = document.getElementsByName('satuan[]');
     var id_item = document.getElementsByName('id_item[]');
 
-    // jenis_invoice.on('change', function() {
-    //     if (jenis_invoice.val() == '1') {
-    //         console.log('jenis 1')
-    //         // $('#head_col_2').html('Keterangan')
-    //         // $('#head_col_3').html('Tanggal')
-    //         // $('.date_item').unmask();
-    //         // $('.nopol').prop('type', 'text');
-    //     } else if (jenis_invoice.val() == '4') {
-    //         // $('#head_col_1').html('PO Qyt')
-    //         $('#head_col_2').html('PO Number')
-    //     }
-    //     count_total();
-    // })
+    jenis_invoice.on('change', function() {
+        // if (jenis_invoice.val() == '1') {
+        //     console.log('jenis 1')
+        //     // $('#head_col_2').html('Keterangan')
+        //     // $('#head_col_3').html('Tanggal')
+        //     // $('.date_item').unmask();
+        //     // $('.nopol').prop('type', 'text');
+        // } else if (jenis_invoice.val() == '4') {
+        //     // $('#head_col_1').html('PO Qyt')
+        //     $('#head_col_2').html('PO Number')
+        // }
+        if (jenis_invoice.val() == '6') {
+            console.log('jenis 1')
+            $('#head_col_1').html('Uraian')
+            $('#head_col_2').html('PO Number')
+            // $('#head_col_3').html('Tanggal')
+            $('.fil_1').show();
+            $('.fil_2').show();
+            $('.fil_3').show();
+            $('.fil_4').show();
+            $('.fil_satuan').hide();
+            $('.fil_qyt').hide();
+            $('.fil_qyt_x_harga').hide();
 
+            // $('.nopol').prop('type', 'text');
+        } else {
+            $('#head_col_1').html('Keterangan')
+            $('#head_col_2').html('Tanggal')
+
+            $('.fil_1').hide();
+            $('.fil_2').hide();
+            $('.fil_3').hide();
+            $('.fil_4').hide();
+            $('.fil_satuan').show();
+            $('.fil_qyt').show();
+            $('.fil_qyt_x_harga').show();
+
+        }
+        // count_total();
+    })
+
+    jenis_invoice.trigger('change')
 
 
     btn_add_row.on('click', () => {
@@ -441,10 +489,15 @@
             date_item[<?= $i ?>].value = '<?= $data_return['date_item'][$i] ?>';
             keterangan_item[<?= $i ?>].value = '<?= $data_return['keterangan_item'][$i] ?>';
             satuan[<?= $i ?>].value = '<?= $data_return['satuan'][$i] ?>';
+            fil_1[<?= $i ?>].value = '<?= $data_return['fil_1'][$i] ?>';
+            fil_2[<?= $i ?>].value = '<?= $data_return['fil_2'][$i] ?>';
+            fil_3[<?= $i ?>].value = '<?= $data_return['fil_3'][$i] ?>';
+            fil_4[<?= $i ?>].value = '<?= $data_return['fil_4'][$i] ?>';
             id_item[<?= $i ?>].value = '<?= !empty($data_return['id_item'][$i]) ? $data_return['id_item'][$i] : '' ?>';
     <?php
         }
     }  ?>
+    jenis_invoice.trigger('change')
 
     $('.mask').mask('000.000.000.000.000,00', {
         reverse: true
