@@ -77,10 +77,10 @@ for ($i = 0; $i < count($pembayarans_Record); $i++) {
                     </b>
                 </div>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                    </b>
+                    <b> No Tagihan # <?= $pembayarans_Record[$i]['no_pembayaran'] ?> </b>
                 </div>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <b> No Tagihan # <?= $pembayarans_Record[$i]['no_pembayaran'] ?> </b>
+                    <b> Jenis Pembayaran : <?= $pembayarans_Record[$i]['nama_jenis'] ?> </b>
                 </div>
 
                 <div class="col-lg-12 col-sm-12 col-xs-12">

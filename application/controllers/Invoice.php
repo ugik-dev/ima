@@ -137,7 +137,8 @@ class Invoice extends CI_Controller
         $data['Model_Title'] = "Edit invoice";
         $data['Model_Button_Title'] = "Update invoices";
         $data['invoices_Record'] = $result_invoices;
-
+        // echo json_encode($data['invoices_Record']);
+        // die();
         $data['main_view'] = 'invoice/list_invoice';
         $this->load->view('main/index.php', $data);
     }

@@ -135,8 +135,11 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
                         <?= $invoices_Record[$i]['customer_name'] ?>
                     </b>
                 </div>
-                <div class="col-lg-12 col-sm-12 col-xs-12">
+                <!-- <div class="col-lg-12 col-sm-12 col-xs-12">
                     </b>
+                </div> -->
+                <div class="col-lg-12 col-sm-12 col-xs-12">
+                    <b> Jenis Invoice : <?= $invoices_Record[$i]['nama_jenis_invoice'] ?> </b>
                 </div>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
                     <b> No Tagihan # <?= $invoices_Record[$i]['no_invoice'] ?> </b>

@@ -6,7 +6,7 @@ class InvoiceModel extends CI_Model
 {
     public function getAllInvoice($filter = [])
     {
-        $this->db->select("mp_invoice_v2.*,gen.no_jurnal, gen.date as gen_date, gen_ppn.date as gen_ppn_date , gen_ppn.no_jurnal as no_jurnal_ppn ,mp_payee.customer_name, cus_address, cus_town, head_label , branch as bank_name, accountno as bank_number,title as title_bank,mp_users.title_user as title_acc_1,mp_users.agentname as name_acc_1");
+        $this->db->select("ref_jenis_invoice.jenis_invoice as nama_jenis_invoice, mp_invoice_v2.*,gen.no_jurnal, gen.date as gen_date, gen_ppn.date as gen_ppn_date , gen_ppn.no_jurnal as no_jurnal_ppn ,mp_payee.customer_name, cus_address, cus_town, head_label , branch as bank_name, accountno as bank_number,title as title_bank,mp_users.title_user as title_acc_1,mp_users.agentname as name_acc_1");
         // $this->db->select("mp_invoice_v2.*,notification.id as notif_id,notification.parent2_id, notification.status as notif_status,mp_payee.customer_name, cus_address, cus_town, head_label , branch as bank_name, accountno as bank_number,title as title_bank,mp_users.title_user as title_acc_1,mp_users.agentname as name_acc_1");
         $this->db->from('mp_invoice_v2');
         // if (!empty($filter['id']))
@@ -22,6 +22,7 @@ class InvoiceModel extends CI_Model
         $this->db->join('mp_head', 'ref_account.ref_account = mp_head.id', 'LEFT');
         $this->db->join('mp_banks', 'mp_banks.relation_head = mp_head.id', 'LEFT');
         $this->db->join('mp_payee', 'mp_payee.id = mp_invoice_v2.customer_id', 'LEFT');
+        $this->db->join('ref_jenis_invoice', 'ref_jenis_invoice.id = mp_invoice_v2.jenis_invoice', 'LEFT');
         $this->db->join('mp_users', 'mp_users.id = mp_invoice_v2.acc_1', 'LEFT');
         $this->db->join('mp_generalentry gen', 'gen.id = mp_invoice_v2.general_id', 'LEFT');
         $this->db->join('mp_generalentry gen_ppn', 'gen_ppn.id = mp_invoice_v2.general_id_ppn', 'LEFT');
@@ -56,7 +57,7 @@ class InvoiceModel extends CI_Model
 
     public function getAllPembayaran($filter = [])
     {
-        $this->db->select("mp_pembayaran.*,notification.id as notif_id,notification.parent2_id, notification.status as notif_status, mp_payee.customer_name, cus_address , branch as bank_name, accountno as bank_number,title as title_bank,mp_users.title_user as title_acc_1,mp_users.agentname as name_acc_1");
+        $this->db->select("ref_jenis_invoice.jenis_invoice as nama_jenis, mp_pembayaran.*,notification.id as notif_id,notification.parent2_id, notification.status as notif_status, mp_payee.customer_name, cus_address , branch as bank_name, accountno as bank_number,title as title_bank,mp_users.title_user as title_acc_1,mp_users.agentname as name_acc_1");
         $this->db->from('mp_pembayaran');
         // if (!empty($filter['id']))
         if (!empty($filter['id'])) $this->db->where('mp_pembayaran.id', $filter['id']);
@@ -66,6 +67,7 @@ class InvoiceModel extends CI_Model
             if (!empty($filter['first_date'])) $this->db->where('date >=', $filter['first_date']);
             if (!empty($filter['second_date'])) $this->db->where('date <=', $filter['second_date']);
         }
+        $this->db->join('ref_jenis_invoice', 'ref_jenis_invoice.id = mp_pembayaran.jenis_pembayaran', 'LEFT');
         $this->db->join('mp_banks', 'mp_banks.id = mp_pembayaran.payment_metode', 'LEFT');
         $this->db->join('mp_payee', 'mp_payee.id = mp_pembayaran.customer_id', 'LEFT');
         $this->db->join('mp_users', 'mp_users.id = mp_pembayaran.acc_1', 'LEFT');
