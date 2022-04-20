@@ -937,7 +937,7 @@ class Invoice extends CI_Controller
 
         $section = $phpWord->addSection($pageStyle);
 
-        $section->addTextBreak(6);
+        $section->addTextBreak(5);
         $section->addText("PT INDOMETAL ASIA", 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
         //  array('align' => 'center')
 
@@ -946,7 +946,7 @@ class Invoice extends CI_Controller
 
         $section->addText($dataContent['name_acc_1'], 'paragraph_bold_underline', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
 
-        $section->addTextBreak();
+        // $section->addTextBreak();
         $section = $phpWord->addSection([
             'breakType' => 'continuous', 'colsNum' => 1,
             'pageSizeW' =>
@@ -957,9 +957,9 @@ class Invoice extends CI_Controller
             'marginTop' => 500,
             'marginBottom' => 1000
         ]);
-        $section->addPageBreak();
+        // $section->addPageBreak();
         $writer = new Word2007($phpWord);
-        $filename = 'SPB_KW_' . $dataContent['no_invoice'];
+        $filename = 'INVOICE_' . $dataContent['no_invoice'];
         header('Content-Type: application/msword');
         header('Content-Disposition: attachment;filename="' . $filename . '.docx"');
         header('Cache-Control: max-age=0');
