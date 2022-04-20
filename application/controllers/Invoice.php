@@ -754,7 +754,7 @@ class Invoice extends CI_Controller
         // }
 
         // $textrun->addTextBreak();
-        $section->addText("\tPangkalpinang, " . $tanggal, 'paragraph', array('spaceAfter' => 100));
+        $section->addText("\t\tPangkalpinang, " . $tanggal, 'paragraph', array('spaceAfter' => 100));
         $section->addTextBreak();
         $section->addText("\t\tKepada Yth.", 'paragraph', array('spaceAfter' => 100));
 
