@@ -68,6 +68,7 @@
                         <a type="button" id="btn_print_kwitansi" class="dropdown-item"> <i class="fa fa-print mr-2" aria-hidden="true"></i> Print Kwitansi</a>
                         <a type="button" id="btn_print_dokumen" class="dropdown-item"> <i class="fa fa-print mr-2" aria-hidden="true"></i> Print Dokumen</a>
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> Download Microsoft Word</a>
+                        <a type="button" href="<?= base_url('invoice/download_invoice/') . $dataContent['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> Download Invoice</a>
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> To KA Akuntansi</a>
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>/2" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> To Divisi Eksplorasi</a>
                         <a type="button" href="<?= base_url('invoice/download_word/') . $dataContent['id'] ?>/3" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> Sewa Tangki BBM</a>
