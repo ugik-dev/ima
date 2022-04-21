@@ -37,7 +37,9 @@ class AccountModel extends CI_Model
                         $sheet->setCellValue('F' . $sheetrow,  $re3->nature);
                         $sheet->setCellValue('G' . $sheetrow,  $re3->type);
                         $sheetrow++;
-                        $res4 =  $this->query_find_account(substr($re2->name, 0, 12), $re3->id, 13, -1, '');
+                        $res4 =  $this->query_find_account(substr($re3->name, 0, 9), $re3->id, 13, 0, '');
+                        // die();
+
                         foreach ($res4 as $re4) {
                             $sheet->setCellValue('A' . $sheetrow, substr($re4->name, 1, 12));
                             $sheet->mergeCells("E" . $sheetrow . ":E" . $sheetrow)->setCellValue('E' . $sheetrow, explode("]",  $re4->name)[1]);
