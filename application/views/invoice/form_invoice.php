@@ -267,19 +267,19 @@
                                                 </select>
                                             </td>
                                             <td class="fil_1" style="display: none">
-                                                <input class="form-control input-lg fil_1" name='fil_1[]' value='' required onkeyup="" />
+                                                <input class="form-control input-lg fil_1" name='fil_1[]' value='' onkeyup="" />
                                             </td>
                                             <td class="fil_2" style="display: none">
-                                                <input class="form-control input-lg fil_2" name='fil_2[]' value='' required onkeyup="count_total()" />
+                                                <input class="form-control input-lg fil_2" name='fil_2[]' value='' onkeyup="count_total()" />
                                             </td>
                                             <td class="fil_3" style="display: none">
-                                                <input class="form-control input-lg fil_3" name='fil_3[]' value='' required onkeyup="count_total()" />
+                                                <input class="form-control input-lg fil_3" name='fil_3[]' value='' onkeyup="count_total()" />
                                             </td>
                                             <td class="fil_4" style="display: none">
-                                                <input class="form-control input-lg fil_4" name='fil_4[]' value='' required onkeyup="count_total()" />
+                                                <input class="form-control input-lg fil_4" name='fil_4[]' value='' onkeyup="count_total()" />
                                             </td>
                                             <td class="fil_qyt">
-                                                 <input class="form-control input-lg" name='qyt[]' value='1' required onkeyup="count_total()" />
+                                                 <input class="form-control input-lg" name='qyt[]' value='1' onkeyup="count_total()" />
                                              </td>
                                             <td class="fil_amount">
                                                 <input class="form-control input-lg mask" name='amount[]' value='' required onkeyup="count_total()" />
