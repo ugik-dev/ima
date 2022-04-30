@@ -244,7 +244,7 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/invoice.js?v=0.3.7"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/invoice.js?v=0.3.9"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
@@ -267,16 +267,16 @@
                                                 </select>
                                             </td>
                                             <td class="fil_1" style="display: none">
-                                                <input class="form-control input-lg fil_1" name='fil_1[]' value='' onkeyup="" />
+                                                <input class="form-control input-lg fil_1" name='fil_1[]' value='' onkeyup="count_total()" />
                                             </td>
                                             <td class="fil_2" style="display: none">
                                                 <input class="form-control input-lg fil_2" name='fil_2[]' value='' onkeyup="count_total()" />
                                             </td>
                                             <td class="fil_3" style="display: none">
-                                                <input class="form-control input-lg fil_3" name='fil_3[]' value='' onkeyup="count_total()" />
+                                                <input class="form-control input-lg fil_3" name='fil_3[]' value='' onkeyup="" />
                                             </td>
                                             <td class="fil_4" style="display: none">
-                                                <input class="form-control input-lg fil_4" name='fil_4[]' value='' onkeyup="count_total()" />
+                                                <input class="form-control input-lg fil_4 fil_4_mask" name='fil_4[]' value='' onkeyup="" />
                                             </td>
                                             <td class="fil_qyt">
                                                  <input class="form-control input-lg" name='qyt[]' value='1' onkeyup="count_total()" />
@@ -327,6 +327,7 @@
     var id_item = document.getElementsByName('id_item[]');
 
     jenis_invoice.on('change', function() {
+        console.log($('#jenis_invoice').val())
         // if (jenis_invoice.val() == '1') {
         //     console.log('jenis 1')
         //     // $('#head_col_2').html('Keterangan')
@@ -337,8 +338,7 @@
         //     // $('#head_col_1').html('PO Qyt')
         //     $('#head_col_2').html('PO Number')
         // }
-        if (jenis_invoice.val() == '6') {
-            console.log('jenis 1')
+        if ($('#jenis_invoice').val() == '6') {
             $('#head_col_1').html('Uraian')
             $('#head_col_2').html('PO Number')
             // $('#head_col_3').html('Tanggal')
@@ -346,6 +346,9 @@
             $('.fil_2').show();
             $('.fil_3').show();
             $('.fil_4').show();
+            $('.fil_4_mask').mask('000.000.000.000.000,00', {
+                reverse: true
+            });
             $('.fil_satuan').hide();
             $('.fil_qyt').hide();
             $('.fil_qyt_x_harga').hide();
@@ -359,6 +362,8 @@
             $('.fil_2').hide();
             $('.fil_3').hide();
             $('.fil_4').hide();
+            $('.fil_4_mask').unmask();
+
             $('.fil_satuan').show();
             $('.fil_qyt').show();
             $('.fil_qyt_x_harga').show();
@@ -367,7 +372,7 @@
         // count_total();
     })
 
-    jenis_invoice.trigger('change')
+    // jenis_invoice.trigger('change')
 
 
     btn_add_row.on('click', () => {

@@ -424,9 +424,9 @@ class Invoice extends CI_Controller
             $textrun1 = $cell1->addTextRun($cellHCentered);
             $textrun1->addText('PO Number', 'paragraph', array('spaceAfter' => 0));
             // if ($date_item) {
-            $cell1 = $table->addCell(3000, $cellRowSpan);
-            $textrun1 = $cell1->addTextRun($cellHCentered);
-            $textrun1->addText('Uraian', 'paragraph', array('spaceAfter' => 0));
+            // $cell1 = $table->addCell(3000, $cellRowSpan);
+            // $textrun1 = $cell1->addTextRun($cellHCentered);
+            // $textrun1->addText('Uraian', 'paragraph', array('spaceAfter' => 0));
             // }
             $cell1 = $table->addCell(1000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
@@ -443,7 +443,7 @@ class Invoice extends CI_Controller
             $cell1 = $table->addCell(2000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
             $textrun1->addText('Total Pembayaran Angsuran 90%', 'paragraph', array('spaceAfter' => 0));
-            $gridspan = 6;
+            $gridspan = 5;
         } else {
 
             $table->addRow();
@@ -471,7 +471,7 @@ class Invoice extends CI_Controller
                 if ($dataContent['jenis_invoice'] == 6) {
                     $table->addRow();
                     $table->addCell(3500, $cellVCentered)->addText($item->date_item, null, array('spaceAfter' => 0));
-                    if ($date_item) $table->addCell(1200, $cellVCentered)->addText($item->keterangan_item, null, array('spaceAfter' => 0));
+                    // if ($date_item) $table->addCell(1200, $cellVCentered)->addText($item->keterangan_item, null, array('spaceAfter' => 0));
                     $table->addCell(1000, $cellVCentered)->addText($item->fil_1, null, array('spaceAfter' => 0, 'align' => 'center'));
                     $table->addCell(1500, $cellVCentered)->addText($item->fil_2 . '%', null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText($item->fil_3, null, array('spaceAfter' => 0, 'align' => 'right'));
@@ -2235,6 +2235,7 @@ class Invoice extends CI_Controller
 
     function find_char($string, $data)
     {
+
         $pos = strpos($string, '{', 2);
         if (!empty($pos)) {
             $pos2 = strpos($string, '}');
@@ -2252,6 +2253,11 @@ class Invoice extends CI_Controller
     function susunchar($type, $data)
 
     {
+        if ($data['jenis_invoice'] == 6) {
+            $data['description'] =  explode('SHP ', $data['description'])[1];
+            // echo   $data['description'];
+            // die();
+        }
         if ($type == 'description') {
             return $data['description'];
         } else if ($type == 'patner_name') {

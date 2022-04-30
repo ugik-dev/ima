@@ -7,6 +7,10 @@ function count_total(edit = false) {
     var total_debit = 0;
     qyt = $('input[name="qyt[]"]');
     date = $('input[name="date"]').val();
+    fil_1 = $('input[name="fil_1[]"]');
+    fil_2 = $('input[name="fil_2[]"]');
+    fil_3 = $('input[name="fil_3[]"]');
+
     const d5 = new Date(date).getTime();
     const d6 = new Date("2022-04-01").getTime();
 
@@ -39,6 +43,13 @@ function count_total(edit = false) {
       } else {
         qyt_amount[i].value = "";
       }
+
+      if ($("#jenis_invoice").val() == 6) {
+        console.log("ore x sn");
+        console.log(fil_1[i].value * fil_2[i].value);
+        fil_3[i].value = ((fil_2[i].value / 100) * fil_1[i].value).toFixed(3);
+      }
+
       //   console.log(qyt[0]);
       //   if (qyt[i].val() != "") {
       //     curency = parseFloat(
