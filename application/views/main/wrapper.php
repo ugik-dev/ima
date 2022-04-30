@@ -1,4 +1,4 @@
-        <div class="d-flex flex-column flex-row-fluid wrapper" id="kt_wrapper">
+        <div class="d-flex flex-column flex-row-fluid wrapper aside-minimize" id="kt_wrapper">
             <div id="kt_header" class="header header-fixed">
                 <!--begin::Container-->
                 <div class="container-fluid d-flex align-items-stretch justify-content-between">

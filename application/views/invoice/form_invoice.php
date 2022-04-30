@@ -98,13 +98,14 @@
                                 <table class="table table-striped table-hover  ">
                                     <thead>
                                         <tr>
-                                            <th style="width:  400px" id="head_col_1" class="kol1">Keterangan</th>
+                                            <th style="width:  200px" id="head_col_1" class="kol1">Keterangan</th>
                                             <th style="width:  200px" id="head_col_2" class="kol2">Tanggal</th>
                                             <!-- <th style="width:  200px" id="kol3" class="kol3">Tanggal</th> -->
                                             <th style="width: 80px" class="fil_1">Realisasi Produksi (Ore)</th>
-                                            <th style="width: 80px" class="fil_2">Kadar Sn</th>
-                                            <th style="width: 80px" class="fil_3">Realisasi Produksi KgSn Taksasi</th>
+                                            <th style="width: 80px" class="fil_2">Kadar Sn (%)</th>
+                                            <th style="width: 80px" class="fil_3">Realisasi x Kadar</th>
                                             <th style="width: 80px" class="fil_4">Biaya Kompensasi</th>
+                                            <th style="width: 200px" class="fil_5">Biaya 100%</th>
                                             <th style="width:  120px" class="fil_satuan">Satuan</th>
                                             <th style="width: 80px" class="fil_qyt">Qyt</th>
                                             <th style="width:  200px">Harga</th>
@@ -248,6 +249,18 @@
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
+    $(document).ready(function() {
+        console.log("ready!");
+        $("#kt_body").addClass('aside-minimize');
+
+        // KTLayoutAsideToggle.init('kt_aside_toggle');
+        // KTCookie.setCookie('kt_aside_toggle_state', toggle.getState());
+        // $('#split_asside').addClass('aside-minimize');
+        // $('#kt_wrapper').css('padding-left', '50px');
+
+    });
+</script>
+<script>
     var invoice_html_row = `                <tr class="row_item[]">
                                             <td>
                                                 <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / BN 9999 QV" />
@@ -277,6 +290,9 @@
                                             </td>
                                             <td class="fil_4" style="display: none">
                                                 <input class="form-control input-lg fil_4 fil_4_mask" name='fil_4[]' value='' onkeyup="" />
+                                            </td>
+                                            <td class="fil_5" style="display: none">
+                                                <input class="form-control input-lg fil_5 fil_5_mask" name='fil_5[]' value='' onkeyup="" />
                                             </td>
                                             <td class="fil_qyt">
                                                  <input class="form-control input-lg" name='qyt[]' value='1' onkeyup="count_total()" />
@@ -320,6 +336,7 @@
     var fil_2 = document.getElementsByName('fil_2[]');
     var fil_3 = document.getElementsByName('fil_3[]');
     var fil_4 = document.getElementsByName('fil_4[]');
+    var fil_5 = document.getElementsByName('fil_5[]');
     var date_item = document.getElementsByName('date_item[]');
     var qyt = document.getElementsByName('qyt[]');
     var amount = document.getElementsByName('amount[]');
@@ -339,6 +356,10 @@
         //     $('#head_col_2').html('PO Number')
         // }
         if ($('#jenis_invoice').val() == '6') {
+            // document.getElementById("kt_aside_toggle").trigger('click');
+            // $("#kt_brand").trigger('click');
+            $("#kt_aside_toggle").trigger('click');
+
             $('#head_col_1').html('Uraian')
             $('#head_col_2').html('PO Number')
             // $('#head_col_3').html('Tanggal')
@@ -347,6 +368,11 @@
             $('.fil_3').show();
             $('.fil_4').show();
             $('.fil_4_mask').mask('000.000.000.000.000,00', {
+                reverse: true
+            });
+
+            $('.fil_5').show();
+            $('.fil_5_mask').mask('000.000.000.000.000,00', {
                 reverse: true
             });
             $('.fil_satuan').hide();
@@ -363,6 +389,9 @@
             $('.fil_3').hide();
             $('.fil_4').hide();
             $('.fil_4_mask').unmask();
+
+            $('.fil_5').hide();
+            $('.fil_5_mask').unmask();
 
             $('.fil_satuan').show();
             $('.fil_qyt').show();
@@ -498,6 +527,7 @@
             fil_2[<?= $i ?>].value = '<?= $data_return['fil_2'][$i] ?>';
             fil_3[<?= $i ?>].value = '<?= $data_return['fil_3'][$i] ?>';
             fil_4[<?= $i ?>].value = '<?= $data_return['fil_4'][$i] ?>';
+            fil_5[<?= $i ?>].value = '<?= $data_return['fil_5'][$i] ?>';
             id_item[<?= $i ?>].value = '<?= !empty($data_return['id_item'][$i]) ? $data_return['id_item'][$i] : '' ?>';
     <?php
         }

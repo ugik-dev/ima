@@ -168,6 +168,7 @@ class Invoice extends CI_Controller
                     $dataContent['fil_2'][$i] =  $dataContent['item'][$i]->fil_2;
                     $dataContent['fil_3'][$i] =  $dataContent['item'][$i]->fil_3;
                     $dataContent['fil_4'][$i] =  $dataContent['item'][$i]->fil_4;
+                    $dataContent['fil_5'][$i] =  $dataContent['item'][$i]->fil_5;
 
                     $dataContent['keterangan_item'][$i] =  $dataContent['item'][$i]->keterangan_item;
                     $dataContent['qyt'][$i] =  $dataContent['item'][$i]->qyt;
@@ -436,14 +437,17 @@ class Invoice extends CI_Controller
             $textrun1->addText('Kadar Sn Taksasi', 'paragraph', array('spaceAfter' => 0));
             $cell1 = $table->addCell(1000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
-            $textrun1->addText('Realiasi Produksi x Kadar Sn Taksasi', 'paragraph', array('spaceAfter' => 0));
+            $textrun1->addText('Realiasi Produksi KgSn Taksasi', 'paragraph', array('spaceAfter' => 0));
             $cell1 = $table->addCell(1000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
             $textrun1->addText('Biaya Kompensasi', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Pembayaran 100%', 'paragraph', array('spaceAfter' => 0));
             $cell1 = $table->addCell(2000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
-            $textrun1->addText('Total Pembayaran Angsuran 90%', 'paragraph', array('spaceAfter' => 0));
-            $gridspan = 5;
+            $textrun1->addText('Total Pembayaran Angsuran', 'paragraph', array('spaceAfter' => 0));
+            $gridspan = 6;
         } else {
 
             $table->addRow();
@@ -476,6 +480,7 @@ class Invoice extends CI_Controller
                     $table->addCell(1500, $cellVCentered)->addText($item->fil_2 . '%', null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText($item->fil_3, null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText($item->fil_4, null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText($item->fil_5, null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
                 } else {
                     $table->addRow();
@@ -848,14 +853,17 @@ class Invoice extends CI_Controller
             $textrun1->addText('Kadar Sn Taksasi', 'paragraph', array('spaceAfter' => 0));
             $cell1 = $table->addCell(1000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
-            $textrun1->addText('Realiasi Produksi x Kadar Sn Taksasi', 'paragraph', array('spaceAfter' => 0));
+            $textrun1->addText('Realiasi Produksi KgSn Taksasi', 'paragraph', array('spaceAfter' => 0));
             $cell1 = $table->addCell(1000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
             $textrun1->addText('Biaya Kompensasi', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Pembayaran 100%', 'paragraph', array('spaceAfter' => 0));
             $cell1 = $table->addCell(2000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
-            $textrun1->addText('Total Pembayaran Angsuran 90%', 'paragraph', array('spaceAfter' => 0));
-            $gridspan = 6;
+            $textrun1->addText('Total Pembayaran Angsuran', 'paragraph', array('spaceAfter' => 0));
+            $gridspan = 7;
         } else {
 
             $table->addRow();
@@ -888,6 +896,7 @@ class Invoice extends CI_Controller
                     $table->addCell(1500, $cellVCentered)->addText($item->fil_2 . '%', null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText($item->fil_3, null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText($item->fil_4, null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText($item->fil_5, null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
                 } else {
                     $table->addRow();

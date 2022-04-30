@@ -15,6 +15,8 @@ if ($this->session->userdata('user_id') == "") {
 
     <body id="kt_body" class="header-fixed header-mobile-fixed subheader-enabled subheader-fixed aside-enabled aside-fixed aside-minimize-hoverable page-loading">
 
+        <!-- <body id="kt_body" class="header-fixed header-mobile-fixed subheader-enabled subheader-fixed aside-enabled aside-fixed aside-minimize aside-minimize-hoverable page-loading"> -->
+
     <?php
     $this->load->view('main/header_mobile.php', $company_data);
     $this->load->view('main/page1.php');

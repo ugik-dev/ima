@@ -1,6 +1,6 @@
-    <div class="d-flex flex-column flex-root">
+    <div class="d-flex flex-column flex-root ">
         <!--begin::Page-->
-        <div class="d-flex flex-row flex-column-fluid page">
+        <div class="d-flex flex-row flex-column-fluid page" id='split_asside'>
             <!--begin::Aside-->
             <div class="aside aside-left aside-fixed d-flex flex-column flex-row-auto" id="kt_aside">
                 <!--begin::Brand-->
