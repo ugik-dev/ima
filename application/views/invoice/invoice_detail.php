@@ -95,18 +95,22 @@
             <!--begin::Invoice body-->
             <div class="row pb-4">
                 <div class="col-md-3 border-right-md pr-md-10 py-md-10">
+                    <div class="text-dark-50 font-size-lg font-weight-bold mb-3">Transaksi.</div>
+                    <div class="font-size-lg font-weight-bold mb-10"><?= $dataContent['nama_jenis_invoice'] ?></div>
                     <!--begin::Invoice To-->
-                    <div class="text-dark-50 font-size-lg font-weight-bold mb-3">INVOICE TO.</div>
+                    <div class="text-dark-50 font-size-lg font-weight-bold mb-3">TO.</div>
                     <div class="font-size-lg font-weight-bold mb-10"><?= $dataContent['customer_name'] ?>
                         <br /><?= $dataContent['cus_address'] ?>
                     </div>
                     <!--end::Invoice To-->
                     <!--begin::Invoice No-->
-                    <div class="text-dark-50 font-size-lg font-weight-bold mb-3">INVOICE NO.</div>
+                    <div class="text-dark-50 font-size-lg font-weight-bold mb-3">NO SURAT.</div>
                     <div class="font-size-lg font-weight-bold mb-10"><?= $dataContent['no_invoice'] ?></div>
+                    <div class="text-dark-50 font-size-lg font-weight-bold mb-3">NO INOVICE.</div>
+                    <div class="font-size-lg font-weight-bold mb-10"><?= $dataContent['no_invoice_2'] ?></div>
                     <!--end::Invoice No-->
                     <!--begin::Invoice Date-->
-                    <div class="text-dark-50 font-size-lg font-weight-bold mb-3">DATE</div>
+                    <div class="text-dark-50 font-size-lg font-weight-bold mb-3">TANGGAL.</div>
                     <div class="font-size-lg font-weight-bold"><?= $dataContent['date'] ?></div>
                     <!--end::Invoice Date-->
                 </div>

@@ -28,9 +28,18 @@
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="form-group">
-                                            <?php echo form_label('No Invoice'); ?>
+                                            <?php echo form_label('No Surat'); ?>
                                             <?php
                                             $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_invoice', 'id' => 'no_invoice');
+                                            echo form_input($data);
+                                            ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group">
+                                            <?php echo form_label('No Invoice'); ?>
+                                            <?php
+                                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'no_invoice_2', 'id' => 'no_invoice_2');
                                             echo form_input($data);
                                             ?>
                                         </div>
@@ -315,6 +324,7 @@
     $('#menu_id_6').addClass('menu-item-active menu-item-open menu-item-here"')
     $('#submenu_id_36').addClass('menu-item-active')
     no_invoice = $('#no_invoice');
+    no_invoice_2 = $('#no_invoice_2');
     description = $('#description');
     date_jurnal = $('#date');
     date2 = $('#date2');
@@ -502,6 +512,7 @@
     ?>
         id_transaction.val('<?= $data_return['id'] ?>');
         no_invoice.val('<?= $data_return['no_invoice'] ?>');
+        no_invoice_2.val('<?= $data_return['no_invoice_2'] ?>');
         id_custmer.val('<?= $data_return['customer_id'] ?>');
         date_jurnal.val('<?= $data_return['date'] ?>');
         date2.val('<?= $data_return['date2'] ?>');

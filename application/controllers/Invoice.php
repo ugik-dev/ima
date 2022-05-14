@@ -818,7 +818,7 @@ class Invoice extends CI_Controller
         $fancyTableStyle = array('borderSize' => 1, 'borderColor' => '000000', 'height' => 100, 'cellMarginButtom' => -100, 'cellMarginTop' => 100, 'cellMarginLeft' => 100, 'cellMarginRight' => 100, 'spaceAfter' => -100);
         $cellVCentered = array('valign' => 'center', 'align' => 'center', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
         $section->addText("INVOICE,", array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), $cellVCentered);
-        $section->addText("Nomor : " . $dataContent['no_invoice'], 'paragraph', $cellVCentered);
+        $section->addText("Nomor : " . $dataContent['no_invoice_2'], 'paragraph', $cellVCentered);
 
         // $section->addText($paragraph_1, 'paragraph', array('spaceAfter' => 0, 'align' => 'both'));
         // $section->addTextBreak();
@@ -1813,7 +1813,7 @@ class Invoice extends CI_Controller
             }
             $res = $this->Invoice_model->check_no_invoice($data['no_invoice']);
             // if ($res != 0) {
-            // 	throw new UserException('Nomor Invoice sudah ada!!');
+            //     throw new UserException('Nomor Invoice sudah ada!!');
             // }
 
             $count_rows = count($data['amount']);

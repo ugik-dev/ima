@@ -286,6 +286,8 @@ class Invoice_model extends CI_Model
             'description' => $data['description'],
             'customer_id' => $data['customer_id'],
             'no_invoice' => $data['no_invoice'],
+            'no_invoice_2' => $data['no_invoice_2'],
+
             'payment_metode' => $data['payment_metode'],
             'ppn_pph' => $data['ppn_pph'],
             'inv_key' => $generateRandomString,
@@ -392,6 +394,7 @@ class Invoice_model extends CI_Model
             'description' => $data['description'],
             'customer_id' => $data['customer_id'],
             'no_invoice' => $data['no_invoice'],
+            'no_invoice_2' => $data['no_invoice_2'],
             'payment_metode' => $data['payment_metode'],
             'ppn_pph' => $data['ppn_pph'],
             // 'inv_key' => $generateRandomString,
