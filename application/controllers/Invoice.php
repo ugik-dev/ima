@@ -151,6 +151,8 @@ class Invoice extends CI_Controller
             $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
 
             $dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
+            echo json_encode($dataContent);
+            die();
             if ($dataContent['agen_id'] != $this->session->userdata('user_id')['id'])
                 throw new UserException('Sorry, Yang dapat mengahapus dan edit hanya agen yang bersangkutan', UNAUTHORIZED_CODE);
             if ($id != NULL) {
