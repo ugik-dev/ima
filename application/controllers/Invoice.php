@@ -284,8 +284,8 @@ class Invoice extends CI_Controller
 
         if ($id != NULL) {
             $dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
-            // echo json_encode($dataContent);
-            // die();
+            echo json_encode($dataContent);
+            die();
         } else {
             echo 'ERROR';
             return;
@@ -687,8 +687,8 @@ class Invoice extends CI_Controller
         // } else {
 
 
-        // echo json_encode($dataContent);
-        // die();
+        echo json_encode($dataContent);
+        die();
         $writer = new Word2007($phpWord);
         $filename = 'SPB_KW_' . $dataContent['no_invoice'];
         header('Content-Type: application/msword');
