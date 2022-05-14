@@ -302,6 +302,20 @@ class Invoice extends CI_Controller
         else
             $text_kwitansi = $dataContent['description'];
 
+        if ($dataContent['jenis_invoice'] == 6) {
+
+            $text_kwitansi = 'Angsuran Pekerjaan Sisa Hasil Pengolahan ' . $dataContent['description'];
+            $i_text_kwitansi = 0;
+            foreach ($dataContent['item'] as $item) {
+                if ($i_text_kwitansi == 0)
+                    $text_kwitansi =  $text_kwitansi . ', PO Number : ' . $item->date_item;
+                else
+                    $text_kwitansi =  $text_kwitansi . ', ' . $item->date_item;
+                // echo json_encode($item);
+                // echo $text_kwitansi;
+                // die();
+            }
+        }
 
         $date_item = false;
         $total = 0;
@@ -647,7 +661,7 @@ class Invoice extends CI_Controller
             $freame7->addCell(6000, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
             $freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
 
-            $freame7->addCell(1400, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('PPN', 'paragraph', array('spaceAfter' => 0));
+            $freame7->addCell(1400, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('PPN 11%', 'paragraph', array('spaceAfter' => 0));
             $freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('Rp', 'paragraph', array('spaceAfter' => 0));
             $freame7->addCell(1600, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText(number_format(floor($tmp1), '0', ',', '.'), 'paragraph', array('spaceAfter' => 0, 'align' => 'right',));
             $freame7->addCell(30, array('borderColor' => '000000', 'borderBottomSize' => '11', 'valign' => 'top', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0)))->addText('', null, array('spaceAfter' => 0));
@@ -674,7 +688,7 @@ class Invoice extends CI_Controller
         $freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 
         $freame7->addRow(700);
-        $freame7->addCell(6000, $cellVCentered)->addText('          Rp. ' . number_format(round($tmp1) + $total, '0', ',', '.'), array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), array('align' => 'left'));
+        $freame7->addCell(6000, $cellVCentered)->addText('          Rp. ' . number_format(floor($tmp1) + $total, '0', ',', '.'), array('name' => 'Times New Roman', 'size' => 15, 'color' => '000000', 'bold' => true), array('align' => 'left'));
         $freame7->addCell(30, $cellVCentered)->addText('', null, array('spaceAfter' => 0));
         $freame7->addCell(3060, array('gridSpan' => 4, 'valign' => 'center'))->addText('', 'paragraph', array('spaceAfter' => 0));
 
