@@ -530,7 +530,8 @@ class Invoice extends CI_Controller
                 // $cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
                 $table->addCell(200, $cellColSpan)->addText('TOTAL   ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
                 $table->addCell(500, $cellVCentered)->addText('' . number_format((floor($tmp1) + floor($total)), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
-                $terbilang = round($tmp1) + floor($total);
+                $terbilang = floor($tmp1) + floor($total);
+                $terbilang = $tmp1 + floor($total);
             } else {
                 $terbilang =  floor($total);
             }
@@ -908,11 +909,17 @@ class Invoice extends CI_Controller
                     $table->addRow();
                     $table->addCell(3500, $cellVCentered)->addText($item->date_item, null, array('spaceAfter' => 0));
                     if ($date_item) $table->addCell(1200, $cellVCentered)->addText($item->keterangan_item, null, array('spaceAfter' => 0));
-                    $table->addCell(1000, $cellVCentered)->addText($item->fil_1, null, array('spaceAfter' => 0, 'align' => 'center'));
-                    $table->addCell(1500, $cellVCentered)->addText($item->fil_2 . '%', null, array('spaceAfter' => 0, 'align' => 'right'));
-                    $table->addCell(1500, $cellVCentered)->addText($item->fil_3, null, array('spaceAfter' => 0, 'align' => 'right'));
-                    $table->addCell(1500, $cellVCentered)->addText($item->fil_4, null, array('spaceAfter' => 0, 'align' => 'right'));
-                    $table->addCell(1500, $cellVCentered)->addText($item->fil_5, null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1000, $cellVCentered)->addText(str_replace('.', ',', $item->fil_1), null, array('spaceAfter' => 0, 'align' => 'center'));
+                    $table->addCell(1500, $cellVCentered)->addText(str_replace('.', ',', $item->fil_2) . '%', null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(str_replace('.', ',', $item->fil_3), null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_4)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_5)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
+
+                    // $table->addCell(1000, $cellVCentered)->addText($item->fil_1, null, array('spaceAfter' => 0, 'align' => 'center'));
+                    // $table->addCell(1500, $cellVCentered)->addText($item->fil_2 . '%', null, array('spaceAfter' => 0, 'align' => 'right'));
+                    // $table->addCell(1500, $cellVCentered)->addText($item->fil_3, null, array('spaceAfter' => 0, 'align' => 'right'));
+                    // $table->addCell(1500, $cellVCentered)->addText($item->fil_4, null, array('spaceAfter' => 0, 'align' => 'right'));
+                    // $table->addCell(1500, $cellVCentered)->addText($item->fil_5, null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
                 } else {
                     $table->addRow();
