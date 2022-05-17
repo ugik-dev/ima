@@ -276,7 +276,7 @@ class Invoice extends CI_Controller
         return "{$t[2]} {$BULAN[intval($t[1])]} {$t[0]}";
     }
 
-    public function download_word($id, $format = 1)
+    public function download_word($id, $format = 1, $definitif = 1)
     {
         $this->load->model(array('SecurityModel', 'InvoiceModel'));
         // $this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
@@ -490,11 +490,13 @@ class Invoice extends CI_Controller
                     $table->addRow();
                     $table->addCell(3500, $cellVCentered)->addText($item->date_item, null, array('spaceAfter' => 0));
                     // if ($date_item) $table->addCell(1200, $cellVCentered)->addText($item->keterangan_item, null, array('spaceAfter' => 0));
-                    $table->addCell(1000, $cellVCentered)->addText($item->fil_1, null, array('spaceAfter' => 0, 'align' => 'center'));
-                    $table->addCell(1500, $cellVCentered)->addText($item->fil_2 . '%', null, array('spaceAfter' => 0, 'align' => 'right'));
-                    $table->addCell(1500, $cellVCentered)->addText($item->fil_3, null, array('spaceAfter' => 0, 'align' => 'right'));
-                    $table->addCell(1500, $cellVCentered)->addText($item->fil_4, null, array('spaceAfter' => 0, 'align' => 'right'));
-                    $table->addCell(1500, $cellVCentered)->addText($item->fil_5, null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1000, $cellVCentered)->addText(str_replace('.', ',', $item->fil_1), null, array('spaceAfter' => 0, 'align' => 'center'));
+                    $table->addCell(1500, $cellVCentered)->addText(str_replace('.', ',', $item->fil_2) . '%', null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(str_replace('.', ',', $item->fil_3), null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_4)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
+                    // echo explode(',', $item->fil_4)[0];
+                    // die();
+                    $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_5)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
                 } else {
                     $table->addRow();
@@ -631,7 +633,7 @@ class Invoice extends CI_Controller
         $freame5->addCell(100, $cellVCentered)->addText('', 'paragraph', array('spaceAfter' => 0));
         $freame5->addCell(2000, $cellVCentered)->addText('Sejumlah', 'paragraph', array('spaceAfter' => 0));
         $freame5->addCell(1, $cellVCentered)->addText(':', 'paragraph', array('spaceAfter' => 0));
-        $freame5->addCell(7000, $cellVCentered)->addText($this->terbilang($terbilang) . ' Rupiah', 'paragraph_italic', array('spaceAfter' => 0));
+        $freame5->addCell(7000, $cellVCentered)->addText($this->terbilang(floor($tmp1) + $total) . ' Rupiah', 'paragraph_italic', array('spaceAfter' => 0));
 
         $freame5->addRow();
         $freame5->addCell(100, $cellVCentered)->addText('', 'paragraph', array('spaceAfter' => 3));
