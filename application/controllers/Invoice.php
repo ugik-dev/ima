@@ -953,7 +953,7 @@ class Invoice extends CI_Controller
                 // $cellColSpan = array('gridSpan' => $date_item ? 4 : 3, 'valign' => 'center');
                 $table->addCell(200, $cellColSpan)->addText('TOTAL   ', 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
                 $table->addCell(500, $cellVCentered)->addText('' . number_format((floor($tmp1) + floor($total)), '0', ',', '.'), 'paragraph_bold', array('align' => 'right', 'spaceAfter' => 0));
-                $terbilang = round($tmp1) + floor($total);
+                $terbilang = floor($tmp1) + floor($total);
             } else {
                 $terbilang =  floor($total);
             }
