@@ -115,6 +115,7 @@
                                             <th style="width: 80px" class="fil_3">Realisasi x Kadar</th>
                                             <th style="width: 80px" class="fil_4">Biaya Kompensasi</th>
                                             <th style="width: 200px" class="fil_5">Biaya 100%</th>
+                                            <th style="width: 200px" class="fil_6">Angsuran</th>
                                             <th style="width:  120px" class="fil_satuan">Satuan</th>
                                             <th style="width: 80px" class="fil_qyt">Qyt</th>
                                             <th style="width:  200px">Harga</th>
@@ -204,6 +205,7 @@
                                                 <option value="7"> SETIAWAN R </option>
                                                 <option value="14"> RONY MALINO </option>
                                                 <option value="15"> DUDY </option>
+                                                <option value="9"> A SISWANTO </option>
                                             </select>
                                         </div>
                                     </div>
@@ -254,7 +256,7 @@
     </div>
 </div>
 
-<script src="<?php echo base_url(); ?>assets/dist/js/backend/invoice.js?v=0.3.9"></script>
+<script src="<?php echo base_url(); ?>assets/dist/js/backend/invoice.js?v=0.3.10"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 
 <script>
@@ -303,6 +305,9 @@
                                             <td class="fil_5" style="display: none">
                                                 <input class="form-control input-lg fil_5 fil_5_mask" name='fil_5[]' value='' onkeyup="" />
                                             </td>
+                                              <td class="fil_6" style="display: none">
+                                                <input class="form-control input-lg fil_6 fil_6_mask" name='fil_6[]' value='' onkeyup="" />
+                                            </td>
                                             <td class="fil_qyt">
                                                  <input class="form-control input-lg" name='qyt[]' value='1' onkeyup="count_total()" />
                                              </td>
@@ -347,6 +352,7 @@
     var fil_3 = document.getElementsByName('fil_3[]');
     var fil_4 = document.getElementsByName('fil_4[]');
     var fil_5 = document.getElementsByName('fil_5[]');
+    var fil_6 = document.getElementsByName('fil_6[]');
     var date_item = document.getElementsByName('date_item[]');
     var qyt = document.getElementsByName('qyt[]');
     var amount = document.getElementsByName('amount[]');
@@ -366,13 +372,9 @@
         //     $('#head_col_2').html('PO Number')
         // }
         if ($('#jenis_invoice').val() == '6') {
-            // document.getElementById("kt_aside_toggle").trigger('click');
-            // $("#kt_brand").trigger('click');
             $("#kt_aside_toggle").trigger('click');
-
             $('#head_col_1').html('Uraian')
             $('#head_col_2').html('PO Number')
-            // $('#head_col_3').html('Tanggal')
             $('.fil_1').show();
             $('.fil_2').show();
             $('.fil_3').show();
@@ -389,7 +391,34 @@
             $('.fil_qyt').hide();
             $('.fil_qyt_x_harga').hide();
 
-            // $('.nopol').prop('type', 'text');
+            $('.fil_6').hide();
+            $('.fil_6_mask').unmask();
+
+
+        } else if ($('#jenis_invoice').val() == '7') {
+            $("#kt_aside_toggle").trigger('click');
+            $('#head_col_1').html('Uraian')
+            $('#head_col_2').html('PO Number')
+            $('.fil_1').show();
+            $('.fil_2').show();
+            $('.fil_3').show();
+            $('.fil_4').show();
+            $('.fil_4_mask').mask('000.000.000.000.000,00', {
+                reverse: true
+            });
+
+            $('.fil_5').show();
+            $('.fil_5_mask').mask('000.000.000.000.000,00', {
+                reverse: true
+            });
+
+            $('.fil_6').show();
+            $('.fil_6_mask').mask('000.000.000.000.000,00', {
+                reverse: true
+            });
+            $('.fil_satuan').hide();
+            $('.fil_qyt').hide();
+            $('.fil_qyt_x_harga').hide();
         } else {
             $('#head_col_1').html('Keterangan')
             $('#head_col_2').html('Tanggal')
@@ -402,6 +431,8 @@
 
             $('.fil_5').hide();
             $('.fil_5_mask').unmask();
+            $('.fil_6').hide();
+            $('.fil_6_mask').unmask();
 
             $('.fil_satuan').show();
             $('.fil_qyt').show();
@@ -539,6 +570,7 @@
             fil_3[<?= $i ?>].value = '<?= $data_return['fil_3'][$i] ?>';
             fil_4[<?= $i ?>].value = '<?= $data_return['fil_4'][$i] ?>';
             fil_5[<?= $i ?>].value = '<?= $data_return['fil_5'][$i] ?>';
+            fil_6[<?= $i ?>].value = '<?= $data_return['fil_6'][$i] ?>';
             id_item[<?= $i ?>].value = '<?= !empty($data_return['id_item'][$i]) ? $data_return['id_item'][$i] : '' ?>';
     <?php
         }

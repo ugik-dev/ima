@@ -169,6 +169,7 @@ class Invoice extends CI_Controller
                     $dataContent['fil_3'][$i] =  $dataContent['item'][$i]->fil_3;
                     $dataContent['fil_4'][$i] =  $dataContent['item'][$i]->fil_4;
                     $dataContent['fil_5'][$i] =  $dataContent['item'][$i]->fil_5;
+                    $dataContent['fil_6'][$i] =  $dataContent['item'][$i]->fil_6;
 
                     $dataContent['keterangan_item'][$i] =  $dataContent['item'][$i]->keterangan_item;
                     $dataContent['qyt'][$i] =  $dataContent['item'][$i]->qyt;
@@ -438,11 +439,6 @@ class Invoice extends CI_Controller
             $cell1 = $table->addCell(2000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
             $textrun1->addText('PO Number', 'paragraph', array('spaceAfter' => 0));
-            // if ($date_item) {
-            // $cell1 = $table->addCell(3000, $cellRowSpan);
-            // $textrun1 = $cell1->addTextRun($cellHCentered);
-            // $textrun1->addText('Uraian', 'paragraph', array('spaceAfter' => 0));
-            // }
             $cell1 = $table->addCell(1000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
             $textrun1->addText('Realisasi Produksi (Ore)', 'paragraph', array('spaceAfter' => 0));
@@ -462,6 +458,33 @@ class Invoice extends CI_Controller
             $textrun1 = $cell1->addTextRun($cellHCentered);
             $textrun1->addText('Total Pembayaran Angsuran', 'paragraph', array('spaceAfter' => 0));
             $gridspan = 6;
+        } else   if ($dataContent['jenis_invoice'] == 7) {
+            $table->addRow();
+            $cell1 = $table->addCell(2000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('PO Number', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Realisasi Produksi (Ore)', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Kadar Sn Taksasi', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Realiasi Produksi KgSn Taksasi', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Biaya Kompensasi', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Pembayaran 100%', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Angsuran', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(2000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Total Pembayaran Angsuran', 'paragraph', array('spaceAfter' => 0));
+            $gridspan = 7;
         } else {
 
             $table->addRow();
@@ -489,14 +512,21 @@ class Invoice extends CI_Controller
                 if ($dataContent['jenis_invoice'] == 6) {
                     $table->addRow();
                     $table->addCell(3500, $cellVCentered)->addText($item->date_item, null, array('spaceAfter' => 0));
-                    // if ($date_item) $table->addCell(1200, $cellVCentered)->addText($item->keterangan_item, null, array('spaceAfter' => 0));
                     $table->addCell(1000, $cellVCentered)->addText(str_replace('.', ',', $item->fil_1), null, array('spaceAfter' => 0, 'align' => 'center'));
                     $table->addCell(1500, $cellVCentered)->addText(str_replace('.', ',', $item->fil_2) . '%', null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText(str_replace('.', ',', $item->fil_3), null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_4)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
-                    // echo explode(',', $item->fil_4)[0];
-                    // die();
                     $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_5)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
+                } else if ($dataContent['jenis_invoice'] == 7) {
+                    $table->addRow();
+                    $table->addCell(3500, $cellVCentered)->addText($item->date_item, null, array('spaceAfter' => 0));
+                    $table->addCell(1000, $cellVCentered)->addText(str_replace('.', ',', $item->fil_1), null, array('spaceAfter' => 0, 'align' => 'center'));
+                    $table->addCell(1500, $cellVCentered)->addText(str_replace('.', ',', $item->fil_2) . '%', null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(str_replace('.', ',', $item->fil_3), null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_4)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_5)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_6)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
                 } else {
                     $table->addRow();
@@ -559,7 +589,7 @@ class Invoice extends CI_Controller
         $section->addText("PT INDOMETAL ASIA", 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
         //  array('align' => 'center')
 
-        $section->addText("Direktur", 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
+        $section->addText($dataContent['title_acc_1'], 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
         $section->addTextBreak(2);
 
         $section->addText($dataContent['name_acc_1'], 'paragraph_bold_underline', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
@@ -857,11 +887,9 @@ class Invoice extends CI_Controller
             $cell1 = $table->addCell(2000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
             $textrun1->addText('PO Number', 'paragraph', array('spaceAfter' => 0));
-            // if ($date_item) {
             $cell1 = $table->addCell(3000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
             $textrun1->addText('Uraian', 'paragraph', array('spaceAfter' => 0));
-            // }
             $cell1 = $table->addCell(1000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
             $textrun1->addText('Realisasi Produksi (Ore)', 'paragraph', array('spaceAfter' => 0));
@@ -881,6 +909,36 @@ class Invoice extends CI_Controller
             $textrun1 = $cell1->addTextRun($cellHCentered);
             $textrun1->addText('Total Pembayaran Angsuran', 'paragraph', array('spaceAfter' => 0));
             $gridspan = 7;
+        } else  if ($dataContent['jenis_invoice'] == 7) {
+            $table->addRow();
+            $cell1 = $table->addCell(2000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('PO Number', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(3000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Uraian', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Realisasi Produksi (Ore)', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Kadar Sn Taksasi', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Realiasi Produksi KgSn Taksasi', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Biaya Kompensasi', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Pembayaran 100%', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(1000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Angsuran', 'paragraph', array('spaceAfter' => 0));
+            $cell1 = $table->addCell(2000, $cellRowSpan);
+            $textrun1 = $cell1->addTextRun($cellHCentered);
+            $textrun1->addText('Total Pembayaran Angsuran', 'paragraph', array('spaceAfter' => 0));
+            $gridspan = 8;
         } else {
 
             $table->addRow();
@@ -914,12 +972,17 @@ class Invoice extends CI_Controller
                     $table->addCell(1500, $cellVCentered)->addText(str_replace('.', ',', $item->fil_3), null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_4)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_5)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
-
-                    // $table->addCell(1000, $cellVCentered)->addText($item->fil_1, null, array('spaceAfter' => 0, 'align' => 'center'));
-                    // $table->addCell(1500, $cellVCentered)->addText($item->fil_2 . '%', null, array('spaceAfter' => 0, 'align' => 'right'));
-                    // $table->addCell(1500, $cellVCentered)->addText($item->fil_3, null, array('spaceAfter' => 0, 'align' => 'right'));
-                    // $table->addCell(1500, $cellVCentered)->addText($item->fil_4, null, array('spaceAfter' => 0, 'align' => 'right'));
-                    // $table->addCell(1500, $cellVCentered)->addText($item->fil_5, null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
+                } else  if ($dataContent['jenis_invoice'] == 7) {
+                    $table->addRow();
+                    $table->addCell(3500, $cellVCentered)->addText($item->date_item, null, array('spaceAfter' => 0));
+                    if ($date_item) $table->addCell(1200, $cellVCentered)->addText($item->keterangan_item, null, array('spaceAfter' => 0));
+                    $table->addCell(1000, $cellVCentered)->addText(str_replace('.', ',', $item->fil_1), null, array('spaceAfter' => 0, 'align' => 'center'));
+                    $table->addCell(1500, $cellVCentered)->addText(str_replace('.', ',', $item->fil_2) . '%', null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(str_replace('.', ',', $item->fil_3), null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_4)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_5)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
+                    $table->addCell(1500, $cellVCentered)->addText(explode(',', $item->fil_6)[0], null, array('spaceAfter' => 0, 'align' => 'right'));
                     $table->addCell(1500, $cellVCentered)->addText(number_format($item->qyt * floor($item->amount), '0', ',', '.'), null, array('spaceAfter' => 0, 'align' => 'right'));
                 } else {
                     $table->addRow();
@@ -973,7 +1036,7 @@ class Invoice extends CI_Controller
         $section->addText("PT INDOMETAL ASIA", 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
         //  array('align' => 'center')
 
-        $section->addText("Direktur", 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
+        $section->addText($dataContent['title_acc_1'], 'paragraph_bold', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));
         $section->addTextBreak(2);
 
         $section->addText($dataContent['name_acc_1'], 'paragraph_bold_underline', array('spaceAfter' => 0, 'align' => 'center', 'indentation' => array('left' => 1000, 'right' => 0)));

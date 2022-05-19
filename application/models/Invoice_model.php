@@ -321,6 +321,7 @@ class Invoice_model extends CI_Model
                     'fil_3' => $data['fil_3'][$i],
                     'fil_4' => $data['fil_4'][$i],
                     'fil_5' => $data['fil_5'][$i],
+                    'fil_6' => $data['fil_6'][$i],
                     'amount'      => substr($data['amount'][$i], 0, -2) . '.' . substr($data['amount'][$i], -2),
                 );
                 $this->db->insert('mp_sub_invoice', $trans_data);
@@ -430,6 +431,7 @@ class Invoice_model extends CI_Model
                         'fil_3' => $data['fil_3'][$i],
                         'fil_4' => $data['fil_4'][$i],
                         'fil_5' => $data['fil_5'][$i],
+                        'fil_6' => $data['fil_6'][$i],
                     );
                     $this->db->where('id', $data['id_item'][$i]);
                     $this->db->update('mp_sub_invoice', $trans_data);
@@ -451,6 +453,7 @@ class Invoice_model extends CI_Model
                         'fil_3' => $data['fil_3'][$i],
                         'fil_4' => $data['fil_4'][$i],
                         'fil_5' => $data['fil_5'][$i],
+                        'fil_6' => $data['fil_6'][$i],
                     );
                     $this->db->insert('mp_sub_invoice', $trans_data);
                 }

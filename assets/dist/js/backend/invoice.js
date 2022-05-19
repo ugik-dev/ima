@@ -44,7 +44,7 @@ function count_total(edit = false) {
         qyt_amount[i].value = "";
       }
 
-      if ($("#jenis_invoice").val() == 6) {
+      if ($("#jenis_invoice").val() == 6 || $("#jenis_invoice").val() == 7) {
         console.log("ore x sn");
         console.log(fil_1[i].value * fil_2[i].value);
         fil_3[i].value = ((fil_2[i].value / 100) * fil_1[i].value).toFixed(3);
