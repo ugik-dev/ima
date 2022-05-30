@@ -316,6 +316,9 @@ class Invoice extends CI_Controller
                 // echo $text_kwitansi;
                 // die();
             }
+        } else  if ($dataContent['jenis_invoice'] == 7) {
+
+            $text_kwitansi = 'Definitif Pekerjaan Sisa Hasil Pengolahan Produksi ' . $dataContent['description'];
         }
 
         $date_item = false;
@@ -937,7 +940,7 @@ class Invoice extends CI_Controller
             $textrun1->addText('Angsuran', 'paragraph', array('spaceAfter' => 0));
             $cell1 = $table->addCell(2000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
-            $textrun1->addText('Total Pembayaran Angsuran', 'paragraph', array('spaceAfter' => 0));
+            $textrun1->addText('Definitif', 'paragraph', array('spaceAfter' => 0));
             $gridspan = 8;
         } else {
 
