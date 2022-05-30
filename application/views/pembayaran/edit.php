@@ -154,13 +154,28 @@
                                                 <input name="sub_total_2" value="0" readonly class="accounts_total_amount" />
                                             </th>
                                         </tr>
-
+                                        <tr <?= $acc_role == false ? 'hidden' : '' ?>>
+                                            <th colspan="3"></th>
+                                            <th colspan="2">PPN 11% : </th>
+                                            <th>
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control" min="0" max="5" step="0,0001" name="percent_ppn" id="percent_ppn" value="<?= (!empty($data_return['percent_ppn']) ? (float) $data_return['percent_ppn']  : '')  ?>" name="percent_ppn" onchange='count_total()' placeholder="" aria-label="" aria-describedby=" basic-addon2">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text"> %</span>
+                                                    </div>
+                                                </div>
+                                                <!-- <input type="number" name="percentage_jasa" class="form-control" min="0" step="0.00001" max="100" onchange='count_total()' /> -->
+                                            </th>
+                                            <th>
+                                                <input name="am_ppn" id="ppn_count" value="<?= (!empty($data_return['am_ppn']) ? $data_return['am_ppn']  : '') ?>" class="form-control mask" required onchange='count_total()' />
+                                            </th>
+                                        </tr>
                                         <tr <?= $acc_role == false ? 'hidden' : '' ?>>
                                             <th colspan="3"></th>
                                             <th colspan="2">PPh 23 : </th>
                                             <th>
                                                 <div class="input-group mb-3">
-                                                    <input type="text" class="form-control" min="0" max="5" step="0,0001" id="percent_pph" value="<?= (!empty($data_return['percent_pph']) ? (float) $data_return['percent_pph']  : '')  ?>" name="percent_pph" onchange='count_total()' placeholder="" aria-label="" aria-describedby=" basic-addon2">
+                                                    <input type="text" class="form-control" min="0" max="5" step="0,0001" name="percent_pph" id="percent_pph" value="<?= (!empty($data_return['percent_pph']) ? (float) $data_return['percent_pph']  : '')  ?>" name="percent_pph" onchange='count_total()' placeholder="" aria-label="" aria-describedby=" basic-addon2">
                                                     <div class="input-group-append">
                                                         <span class="input-group-text"> %</span>
                                                     </div>
@@ -446,6 +461,9 @@
             p_pph = $('input[name="percent_pph"]').val();
             if (p_pph == "") p_pph = 0;
 
+            p_ppn = $('input[name="percent_ppn"]').val();
+            if (p_ppn == "") p_ppn = 0;
+
             p_pph_21 = $('input[name="percent_pph_21"]').val();
             if (p_pph_21 == "") p_pph_21 = 0;
 
@@ -455,6 +473,7 @@
             qyt_amount = $('input[name="qyt_amount[]"]');
 
             tmp_jasa = $("#jasa_count").val();
+            tmp_ppn = $("#ppn_count").val();
             tmp_pph = $("#pph_count").val();
             tmp_pph_21 = $("#pph_21_count").val();
             i = 0;
@@ -487,6 +506,7 @@
             }
             biaya_jasa = 0;
             biaya_pph = 0;
+            biaya_ppn = 0;
             biaya_pph_21 = 0;
             if (manual_math && (tmp_jasa != "0" || tmp_jasa != "0,00")) {
                 biaya_jasa = parseFloat(
@@ -513,6 +533,18 @@
                 }
             }
 
+            console.log(tmp_ppn)
+            if (manual_math && (tmp_ppn != "0" || tmp_ppn != "0,00")) {
+                biaya_ppn = parseFloat(tmp_ppn.replaceAll(".", "").replaceAll(",", "."));
+            } else {
+                if (count_val != "" && count_val != "0") {
+                    biaya_ppn = Math.floor((p_ppn / 100) * setela_jasa);
+                    $('input[name="am_ppn"]').val(formatRupiah2(biaya_ppn));
+                } else {
+                    $('input[name="am_ppn"]').val(0);
+                }
+            }
+
             if (manual_math && (tmp_pph_21 != "0" || tmp_pph_21 != "0,00")) {
                 biaya_pph_21 = parseFloat(tmp_pph_21.replaceAll(".", "").replaceAll(",", "."));
             } else {
@@ -523,7 +555,7 @@
                     $('input[name="am_pph_21"]').val(0);
                 }
             }
-            total_final = (setela_jasa - biaya_pph - biaya_pph_21).toFixed(2);
+            total_final = (setela_jasa - biaya_pph - biaya_pph_21 - biaya_ppn).toFixed(2);
 
             if (lebih_bayar_am > 0) {
                 total_final = parseFloat(total_final) - parseFloat(lebih_bayar_am);
