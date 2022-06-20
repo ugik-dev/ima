@@ -454,6 +454,7 @@
         $('.mask').mask('000.000.000.000.000,00', {
             reverse: true
         });
+        jenis_invoice.trigger('change')
     };
     add_new_row()
     id_custmer = $('#customer_id');
