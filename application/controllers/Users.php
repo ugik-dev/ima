@@ -20,6 +20,7 @@ class Users extends CI_Controller
 	{
 
 		try {
+			$this->SecurityModel->MultiplerolesStatus(array('Admin', 'Users'), TRUE);
 
 			// $this->SecurityModel->MultiplerolesGuard('Users', true);
 			// DEFINES PAGE TITLE
@@ -59,7 +60,8 @@ class Users extends CI_Controller
 	public function add_user()
 	{
 		try {
-			$this->SecurityModel->MultiplerolesGuard('Users', true);
+			// $this->SecurityModel->MultiplerolesGuard('Users', true);
+			$this->SecurityModel->MultiplerolesStatus(array('Admin', 'Users'), TRUE);
 
 			// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
 			$this->load->model('Crud_model');
@@ -126,7 +128,7 @@ class Users extends CI_Controller
 	// Users/delete
 	public function delete($args)
 	{
-		$this->SecurityModel->MultiplerolesGuard('Users', true);
+		$this->SecurityModel->MultiplerolesStatus(array('Admin', 'Users'), TRUE);
 
 		// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
 		$this->load->model('Crud_model');
@@ -154,7 +156,7 @@ class Users extends CI_Controller
 	// Users/edit
 	public function edit()
 	{
-		$this->SecurityModel->MultiplerolesGuard('Users', true);
+		$this->SecurityModel->MultiplerolesStatus(array('Admin', 'Users'), TRUE);
 
 		// DEFINES LOAD CRUDS_MODEL FORM MODELS FOLDERS
 		$this->load->model('Crud_model');
