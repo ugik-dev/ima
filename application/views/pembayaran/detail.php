@@ -63,6 +63,7 @@
                         <a type="button" href="<?= base_url('Pembayaran/download_word/') . $transaction['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i>Doc Pembayaran Mitra</a>
                         <a type="button" href="<?= base_url('Pembayaran/download_word2/') . $transaction['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i> Daftar Kendaraan Insidentil</a>
                         <a type="button" href="<?= base_url('Pembayaran/download_word_reklamasi/') . $transaction['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i>Doc Pembayaran Reklamasi</a>
+                        <a type="button" href="<?= base_url('Pembayaran/download_word_pengganti_borongan/') . $transaction['id'] ?>" class="dropdown-item"> <i class="fa fa-download mr-2" aria-hidden="true"></i>Doc Nilai Pengganti Borongan</a>
                         <?php if ($transaction['jenis_pembayaran'] == 1) { ?>
                         <?php    } else  if ($transaction['jenis_pembayaran'] == 2) { ?>
                         <?php } ?>

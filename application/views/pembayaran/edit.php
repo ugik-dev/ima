@@ -322,6 +322,21 @@
                                                 <input name="payed" id="payed" value="0,00" class="form-control mask" required />
                                             </th>
                                         </tr>
+                                        <tr id="layout_kordinator">
+                                            <th> </th>
+                                            <th colspan="2"></th>
+                                            <th colspan="2">Koordinator : </th>
+                                            <th>
+                                            </th>
+                                            <th>
+                                                <select name="koordinator" id="koordinator" value="0,00" class="form-control">
+                                                    <option>-</option>
+                                                    <option value="PANCA KARTIKA KENANGA">PANCA KARTIKA KENANGA</option>
+                                                    <option value="BENNY SETIAWAN">BENNY SETIAWAN</option>
+                                                </select>
+                                            </th>
+                                        </tr>
+
                                         <!-- <tr>
                                             <th> </th>
                                             <th colspan="2"></th>
@@ -359,6 +374,8 @@
 <!-- <script src="<?php echo base_url(); ?>assets/dist/js/backend/pembayaran.js?v=2.001"></script> -->
 <script src="<?php echo base_url(); ?>assets/plugins/input-mask/jquery.mask.min.js"></script>
 <script>
+    $("#kt_body").addClass('aside-minimize');
+
     <?php
     // $this->load->view()
     ?>
@@ -371,6 +388,7 @@
     date_jurnal = $('#date');
     kurang_bayar_ac = $('#kurang_bayar_ac');
     lebih_bayar_ac = $('#lebih_bayar_ac');
+    koordinator = $('#koordinator');
 
 
     payed = $("#payed");
@@ -711,6 +729,7 @@
             $('table .head_col_satuan').show();
             $('table .head_col_qyt').show();
             $('.date_item').unmask();
+            $('#layout_kordinator').hide();
             $('.nopol').prop('type', 'text');
         } else if (jenis_pembayaran.val() == '2') {
             $('#head_col_1').html('Keterangan')
@@ -721,6 +740,7 @@
             $('.date_item').mask('000.000.000.000.000,00', {
                 reverse: true
             });
+            $('#layout_kordinator').hide();
             $('.nopol').prop('type', 'number');
         } else if (jenis_pembayaran.val() == '6') {
             $('#head_col_1').html('Nama')
@@ -731,6 +751,7 @@
             $('.val_qyt').val('1');
             $('.date_item').unmask();
             $('.nopol').prop('type', 'text');
+            $('#layout_kordinator').show();
         } else {
             $('#head_col_1').html('Keterangan')
             $('#head_col_2').html('PO Qyt')
@@ -739,9 +760,13 @@
             $('table .head_col_qyt').show();
             $('.date_item').unmask();
             $('.nopol').prop('type', 'text');
+            $('#layout_kordinator').hide();
+
         }
         count_total();
     })
+
+    jenis_pembayaran.trigger('change');
 
 
     id_custmer = $('#customer_id');
@@ -791,6 +816,8 @@
         lebih_bayar_ac.val('<?= $data_return['lebih_bayar_ac'] ?>');
         kurang_bayar_ac.val('<?= $data_return['kurang_bayar_ac'] ?>');
         payed.val('<?= $data_return['payed'] ?>');
+        koordinator.val('<?= $data_return['koordinator'] ?>');
+
         jenis_pembayaran.trigger('change');
         <?php
         $count_rows = count($data_return['amount']);
@@ -804,8 +831,8 @@
             id_item[<?= $i ?>].value = '<?= $data_return['id_item'][$i] ?>';
             amount[<?= $i ?>].value = '<?= $data_return['amount'][$i] ?>';
             qyt[<?= $i ?>].value = '<?= $data_return['qyt'][$i] ?>';
-            nopol[<?= $i ?>].value = '<?php
-                                        // $data_return['nopol'][$i] 
+            nopol[<?= $i ?>].value = '<?=
+                                        $data_return['nopol'][$i]
                                         ?>';
             date_item[<?= $i ?>].value = '<?= $data_return['date_item'][$i] ?>';
             keterangan_item[<?= $i ?>].value = '<?= $data_return['keterangan_item'][$i] ?>';

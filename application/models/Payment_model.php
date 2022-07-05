@@ -56,7 +56,7 @@ class Payment_model extends CI_Model
                     'id', 'no_jurnal', 'id', 'input_date', 'agen_id', 'acc_0', 'acc_1', 'acc_2', 'acc_3', 'date',
                     'customer_name', 'description', 'customer_id', 'payment_metode', 'ppn_pph', 'no_pembayaran', 'inv_key', 'percent_jasa', 'percent_pph', 'percent_pph_21',
                     'am_jasa', 'am_pph', 'am_pph_21', 'manual_math', 'par_label', 'par_am', 'sub_total', 'sub_total_2', 'jenis_pembayaran', 'nama_jenis',
-                    'lebih_bayar_ket', 'lebih_bayar_am', 'kurang_bayar_ket', 'kurang_bayar_am', 'pembulatan', 'payed', 'am_back', 'status_pembayaran', 'general_id'
+                    'koordinator', 'lebih_bayar_ket', 'lebih_bayar_am', 'kurang_bayar_ket', 'kurang_bayar_am', 'pembulatan', 'payed', 'am_back', 'status_pembayaran', 'general_id'
                 ],
                 ["item_id", "amount", "qyt", "date_item", 'nopol', "keterangan_item", "satuan"]
             ],
@@ -464,6 +464,8 @@ class Payment_model extends CI_Model
             'am_jasa' => $data['am_jasa'],
             'am_pph' => $data['am_pph'],
             'am_ppn' => $data['am_ppn'],
+            'koordinator' => $data['koordinator'],
+
             'lebih_bayar_am' => $data['lebih_bayar_am'],
             'kurang_bayar_am' => $data['kurang_bayar_am'],
             'lebih_bayar_ket' => $data['lebih_bayar_ket'],
@@ -551,6 +553,7 @@ class Payment_model extends CI_Model
             'am_jasa' => $data['am_jasa'],
             'am_pph' => $data['am_pph'],
             'am_ppn' => $data['am_ppn'],
+            'koordinator' => $data['koordinator'],
 
             'lebih_bayar_am' => $data['lebih_bayar_am'],
             'kurang_bayar_am' => $data['kurang_bayar_am'],
