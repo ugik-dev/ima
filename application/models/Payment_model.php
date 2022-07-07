@@ -464,7 +464,6 @@ class Payment_model extends CI_Model
             'am_jasa' => $data['am_jasa'],
             'am_pph' => $data['am_pph'],
             'am_ppn' => $data['am_ppn'],
-            'koordinator' => $data['koordinator'],
 
             'lebih_bayar_am' => $data['lebih_bayar_am'],
             'kurang_bayar_am' => $data['kurang_bayar_am'],
@@ -485,7 +484,10 @@ class Payment_model extends CI_Model
             'acc_0' => $this->session->userdata('user_id')['name'],
             'agen_id' => $this->session->userdata('user_id')['id'],
         );
-
+        if (!empty($data['koordinator'])) {
+            $trans_data['koordinator'] =
+                $data['koordinator'];
+        }
         $this->db->insert('mp_pembayaran', $trans_data);
         $order_id = $this->db->insert_id();
         $total_heads = count($data['amount']);
@@ -553,8 +555,6 @@ class Payment_model extends CI_Model
             'am_jasa' => $data['am_jasa'],
             'am_pph' => $data['am_pph'],
             'am_ppn' => $data['am_ppn'],
-            'koordinator' => $data['koordinator'],
-
             'lebih_bayar_am' => $data['lebih_bayar_am'],
             'kurang_bayar_am' => $data['kurang_bayar_am'],
             'lebih_bayar_ket' => $data['lebih_bayar_ket'],
@@ -570,6 +570,11 @@ class Payment_model extends CI_Model
             'acc_0' => $this->session->userdata('user_id')['name'],
             'agen_id' => $this->session->userdata('user_id')['id'],
         );
+        // 'koordinator' => $data['koordinator'],
+        if (!empty($data['koordinator'])) {
+            $trans_data['koordinator'] =
+                $data['koordinator'];
+        }
 
         $this->db->trans_start();
         $this->db->where('id', $data['id']);
