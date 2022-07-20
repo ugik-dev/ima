@@ -2247,7 +2247,7 @@ class Pembayaran extends CI_Controller
 
 
         $section->addText("NILAI PENGGANTIAN BORONGAN PEKERJAAN " . strtoupper($dataContent['nama_jenis']), 'paragraph_bold', array('spaceAfter' => 100, 'align' => 'center'));
-        $section->addText(strtoupper($dataContent['description']), 'paragraph_bold', array('spaceAfter' => 100, 'align' => 'center'));
+        // $section->addText(strtoupper($dataContent['description']), 'paragraph_bold', array('spaceAfter' => 100, 'align' => 'center'));
         $section->addTextBreak();
         $fancyTableStyle = array('borderSize' => 1, 'borderColor' => '000000', 'height' => 100, 'cellMarginButtom' => -100, 'cellMarginTop' => 100, 'cellMarginLeft' => 100, 'cellMarginRight' => 100, 'spaceAfter' => -100);
         $cellVCentered = array('valign' => 'center', 'align' => 'center', 'spaceAfter' => \PhpOffice\PhpWord\Shared\Converter::pointToTwip(0));
