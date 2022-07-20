@@ -142,13 +142,13 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
                     </b>
                 </div> -->
                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <b> Jenis Invoice : <?= $invoices_Record[$i]['nama_jenis_invoice'] ?> </b>
+                    <b> Jenis : <?= $invoices_Record[$i]['nama_jenis_invoice'] ?> </b>
                 </div>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
                     <b> No Surat # <?= $invoices_Record[$i]['no_invoice'] ?> </b>
                 </div>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <b> No Surat # <?= $invoices_Record[$i]['no_invoice_2'] ?> </b>
+                    <b> No Invoice # <?= $invoices_Record[$i]['no_invoice_2'] ?> </b>
                 </div>
 
                 <div class="col-lg-12 col-sm-12 col-xs-12">
