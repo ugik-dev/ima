@@ -12,12 +12,13 @@ class InvoiceModel extends CI_Model
         // if (!empty($filter['id']))
         if (!empty($filter['id'])) $this->db->where('mp_invoice_v2.id', $filter['id']);
         if (!empty($filter['status'])) $this->db->where('mp_invoice_v2.status', $filter['status']);
-        if (!empty($filter['no_invoice'])) {
-            $this->db->where('no_invoice like "%' . $filter['no_invoice'] . '%"');
-        } else {
-            if (!empty($filter['first_date'])) $this->db->where('mp_invoice_v2.date >=', $filter['first_date']);
-            if (!empty($filter['second_date'])) $this->db->where('mp_invoice_v2.date <=', $filter['second_date']);
+        if (!empty($filter['search'])) {
+            $this->db->where('(no_invoice like "%' . $filter['search'] . '%" OR no_invoice_2 like "%' . $filter['search'] . '%" OR description like "%' . $filter['search'] . '%")');
         }
+        // else {
+        if (!empty($filter['first_date'])) $this->db->where('mp_invoice_v2.date >=', $filter['first_date']);
+        if (!empty($filter['second_date'])) $this->db->where('mp_invoice_v2.date <=', $filter['second_date']);
+        // }
         $this->db->join('ref_account', 'ref_account.ref_id = mp_invoice_v2.payment_metode', 'LEFT');
         $this->db->join('mp_head', 'ref_account.ref_account = mp_head.id', 'LEFT');
         $this->db->join('mp_banks', 'mp_banks.relation_head = mp_head.id', 'LEFT');

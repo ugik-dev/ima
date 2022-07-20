@@ -6,6 +6,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 use PhpOffice\PhpWord\Writer\Word2007;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+// use PhpOffice\PhpWord\PhpWord;
+// use PhpOffice\PhpWord\Writer\Word2007;
 class Invoice extends CI_Controller
 {
     public function __construct()
@@ -107,6 +111,104 @@ class Invoice extends CI_Controller
         // return;
         redirect('invoice/manage');
     }
+
+    public function export($s1, $s2)
+    {
+
+        $this->load->model('Accounts_model');
+        $filter['first_date'] = $s1;
+        $filter['second_date'] = $s2;
+        // $filter['search'] = html_escape($this->input->post('search'));
+        // $filter['status'] = html_escape($this->input->post('status'));
+
+        if ($filter['first_date'] == NULL && $filter['second_date'] == NULL) {
+            $filter['first_date'] = date('Y-m-01');
+            $filter['second_date'] = date('Y-m-31');
+        }
+        $data['filter'] = $filter;
+        $this->load->model(array('InvoiceModel'));
+        $result_invoices = $this->InvoiceModel->getAllInvoice($filter);
+
+        $spreadsheet = new Spreadsheet();
+
+        $sheet = $spreadsheet->getActiveSheet();
+        $spreadsheet->getActiveSheet()->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setTop(0.3);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setRight(0.25);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setLeft(0.25);
+        $spreadsheet->getActiveSheet()->getPageMargins()->setBottom(0.45);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setFitToWidth(1);
+        $spreadsheet->getActiveSheet()->getPageSetup()->setFitToHeight(0);
+        // paper size
+        // $spreadsheet->getActiveSheet()->getPageSetup()->setPaperSize(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::PAPERSIZE_A4);
+        $sheet->getColumnDimension('A')->setWidth(12);
+        $sheet->getColumnDimension('B')->setWidth(25);
+        $sheet->getColumnDimension('C')->setWidth(25);
+        $sheet->getColumnDimension('D')->setWidth(40);
+        $sheet->getColumnDimension('E')->setWidth(20);
+        $sheet->getColumnDimension('F')->setWidth(16);
+        $spreadsheet->getActiveSheet()->getStyle('A5:F5')->getAlignment()->setHorizontal('center')->setWrapText(true);
+        $spreadsheet->getActiveSheet()->getStyle('A1:A3')->getAlignment()->setVertical('center')->setHorizontal('center')->setWrapText(true);
+
+        $sheet->getStyle('E:F')->getNumberFormat()->setFormatCode("_(* #,##0.00_);_(* \(#,##0.00\);_(* \"-\"??_);_(@_)");
+
+        // $this->load->model('Statement_model');
+        // $data['transaction_records'] = $this->Statement_model->export_excel($from, $to, $sheet);
+        $sheet->mergeCells("A1:F1");
+        $sheet->mergeCells("A2:F2");
+        $sheet->mergeCells("A3:F3");
+        $sheet->setCellValue('A1', 'PT INDOMETAL ASIA');
+        $sheet->setCellValue('A2', 'INVOICE');
+        $sheet->setCellValue('A3', 'Periode : ' .  $filter['first_date'] . ' s.d. ' .  $filter['second_date']);
+
+        $sheet->setCellValue('A5', 'TANGGAL');
+        $sheet->setCellValue('B5', 'NO SURAT');
+        $sheet->setCellValue('C5', 'NO INVOICE');
+        $sheet->setCellValue('D5', 'DESKRIPSI');
+        $sheet->setCellValue('E5', 'PATNER');
+        $sheet->setCellValue('F5', 'NOMINAL');
+        $sheetrow = 6;
+        $sheet->getHeaderFooter()->setOddFooter('&LPT INDOMETAL ASIA - INVOICE &R &P of &N');
+        $spreadsheet->getActiveSheet()->getPageSetup()->setRowsToRepeatAtTopByStartAndEnd(1, 5);
+
+        $writer = new Xlsx($spreadsheet);
+        foreach ($result_invoices as $dat) {
+            $sheet->setCellValue('A' . $sheetrow, $dat['date']);
+            $sheet->setCellValue('B' . $sheetrow, $dat['no_invoice']);
+            $sheet->setCellValue('C' . $sheetrow, $dat['no_invoice_2']);
+            $sheet->setCellValue('D' . $sheetrow, $dat['description']);
+            $sheet->setCellValue('E' . $sheetrow, $dat['customer_name']);
+            $nominal = 0;
+            foreach ($dat['item'] as $it) {
+                $nominal = $nominal + ($it->qyt * $it->amount);
+            }
+            $sheet->setCellValue('F' . $sheetrow, $nominal);
+            $sheetrow++;
+            // echo json_encode($dat);
+            // die();
+        }
+        $spreadsheet->getActiveSheet()->getStyle("A1:F5")->getFont()->setBold(true);
+        $spreadsheet->getActiveSheet()->getStyle('A6:F' . ($sheetrow - 1))->getAlignment()->setHorizontal('left')->setVertical('top')->setWrapText(true);
+        $spreadsheet->getActiveSheet()->getStyle('A5:F' . ($sheetrow - 1))->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+        // $spreadsheet
+        //     ->getActiveSheet()
+        //     ->getStyle('B2')
+        //     ->getBorders()
+        //     ->getOutline()
+        //     ->setBorderStyle(Border::BORDER_THICK)
+        //     ->setColor(new Color('FFFF0000'));
+
+        $filename = 'export_invoice_' .  $filter['first_date'] . ' s.d. ' .  $filter['second_date'];
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer->save('php://output'); // download file 
+        // echo json_encode($filter);
+        // die();
+    }
+
     public function manage()
     {
 
@@ -119,7 +221,7 @@ class Invoice extends CI_Controller
         $this->load->model('Accounts_model');
         $filter['first_date'] = html_escape($this->input->post('date1'));
         $filter['second_date'] = html_escape($this->input->post('date2'));
-        $filter['no_invoice'] = html_escape($this->input->post('invoice_no'));
+        $filter['search'] = html_escape($this->input->post('search'));
         $filter['status'] = html_escape($this->input->post('status'));
 
         if ($filter['first_date'] == NULL && $filter['second_date'] == NULL) {

@@ -18,7 +18,7 @@
                         </div>
                         <?php
                         // echo $filter['first_date'];
-                        $data = array('class' => 'form-control  input-lg', 'type' => 'date', 'id' => 'datepicker', 'name' => 'date1', 'value' => $filter['first_date'], 'reqiured' => '');
+                        $data = array('class' => 'form-control  input-lg', 'type' => 'date', 'id' => 'date1', 'name' => 'date1', 'value' => $filter['first_date'], 'reqiured' => '');
                         echo form_input($data);
                         ?>
                     </div>
@@ -32,7 +32,7 @@
                             <i class="fa fa-calendar"></i>
                         </div>
                         <?php
-                        $data = array('class' => 'form-control  input-lg', 'type' => 'date', 'id' => 'datepicker', 'name' => 'date2', 'value' => $filter['second_date'], 'reqiured' => '');
+                        $data = array('class' => 'form-control  input-lg', 'type' => 'date', 'id' => 'date2', 'name' => 'date2', 'value' => $filter['second_date'], 'reqiured' => '');
                         echo form_input($data);
                         ?>
                     </div>
@@ -40,9 +40,9 @@
             </div>
             <div class="col-lg-3">
                 <div class="form-group margin ">
-                    <?php echo form_label('Atau Masukan No Invoice:'); ?>
+                    <?php echo form_label('Search :'); ?>
                     <?php
-                    $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'invoice_no', 'value' => $filter['no_invoice'],);
+                    $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'search', 'id' => 'search', 'value' => $filter['search'],);
                     echo form_input($data);
                     ?>
                 </div>
@@ -57,11 +57,14 @@
                     </select>
                 </div>
             </div>
-            <div class="col-lg-2" style="margin-top:27px;">
+            <div class="col-lg-4 col-md-12 col-sm-12" style="margin-top:27px;">
                 <?php
                 $data = array('class' => 'btn btn-info btn-outline-secondary margin  pull-right input-lg', 'type' => 'submit', 'name' => 'searchecord', 'value' => 'true', 'content' => '<i class="fa fa-search" aria-hidden="true"></i> Cari');
                 echo form_button($data);
                 ?>
+
+                <a href="<?= base_url('invoice/export/' . $filter['first_date'] . '/' . $filter['second_date']) ?>" class="btn btn-info btn-outline-secondary margin  pull-right input-lg mr-2 "><i class="fa fa-file-export" aria-hidden="true"></i> Export</a>
+                <!-- <a id="export_btn" class="btn btn-info btn-outline-secondary margin  pull-right input-lg mr-2 "><i class="fa fa-file-export" aria-hidden="true"></i> Export</a> -->
             </div>
             <?php echo form_close(); ?>
         </div>
@@ -142,7 +145,10 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
                     <b> Jenis Invoice : <?= $invoices_Record[$i]['nama_jenis_invoice'] ?> </b>
                 </div>
                 <div class="col-lg-12 col-sm-12 col-xs-12">
-                    <b> No Tagihan # <?= $invoices_Record[$i]['no_invoice'] ?> </b>
+                    <b> No Surat # <?= $invoices_Record[$i]['no_invoice'] ?> </b>
+                </div>
+                <div class="col-lg-12 col-sm-12 col-xs-12">
+                    <b> No Surat # <?= $invoices_Record[$i]['no_invoice_2'] ?> </b>
                 </div>
 
                 <div class="col-lg-12 col-sm-12 col-xs-12">
@@ -281,6 +287,22 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
 <script>
     $('#menu_id_6').addClass('menu-item-active menu-item-open menu-item-here"')
     $('#submenu_id_13').addClass('menu-item-active')
+
+    $('#export_btn').on('click', () => {
+        d1 = $('#date1').val();
+        d2 = $('#date2').val();
+        srcs = $('#search').val();
+        console.log('s')
+        return $.ajax({
+            url: '<?= base_url('invoice/export') ?>',
+            method: 'POST',
+            data: {
+                date1: d1,
+                date2: d2,
+                search: srcs
+            }
+        })
+    })
 </script>
 <?php
 // print "<pre>";
