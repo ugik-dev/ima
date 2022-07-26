@@ -2285,7 +2285,7 @@ class Pembayaran extends CI_Controller
         }
         $cell1 = $table->addCell(2000, $cellRowSpan);
         $textrun1 = $cell1->addTextRun($cellHCentered);
-        $textrun1->addText('HARGA (Rp)', 'paragraph_bold', array('spaceAfter' => 0));
+        $textrun1->addText('JUMLAH BAYAR (Rp)', 'paragraph_bold', array('spaceAfter' => 0));
         if ($harga) {
             $cell1 = $table->addCell(2000, $cellRowSpan);
             $textrun1 = $cell1->addTextRun($cellHCentered);
