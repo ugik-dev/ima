@@ -331,7 +331,7 @@
                                             <th>
                                                 <select name="koordinator" id="koordinator" value="0,00" class="form-control">
                                                     <option>-</option>
-                                                    <option value="PANCA KARTIKA KENANGA">PANCA KARTIKA KENANGA</option>
+                                                    <option value="PANCA KARTIKA KENCANA">PANCA KARTIKA KENCANA</option>
                                                     <option value="BENNY SETIAWAN">BENNY SETIAWAN</option>
                                                 </select>
                                             </th>
