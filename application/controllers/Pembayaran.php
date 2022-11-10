@@ -27,9 +27,119 @@ class Pembayaran extends CI_Controller
         }
     }
 
+    public function shp()
+    {
+        // $data['patner_record'] = $this->Statement_model->patners_cars_list();
+
+        $data['main_view'] = 'shp/list_keu';
+        $this->load->view('main/index.php', $data);
+    }
+
+    public function shp_show($id)
+    {
+        $this->load->model('ShpModel');
+        $data['title'] = 'Pengangkutan Sisa Hasil Pengolahan (SHP)';
+        $data['acc_pembayaran'] = true;
+        $collection = array();
+
+        // DEFINES TO LOAD THE MODEL
+        // $this->load->model('InvoiceModel');
+        if ($id != NULL) {
+            $result = $this->ShpModel->getAll(array('id_shp' =>  $id))[$id];
+
+            if (empty($result)) {
+                $data['main_view'] = 'error-5';
+                $data['message'] = 'Sepertinya data yang anda cari tidak ditemukan atau sudah di hapus.';
+            } else {
+                $data['dataContent'] = $result;
+                $data['riwayat'] = $this->General_model->searchPembayaran(['id_custmer' => $result['id_mitra'], 'date_penerimaan' => $result['date_penerimaan']]);
+                $data['main_view'] = 'shp/detail';
+            }
+            // DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
+            $this->load->view('main/index.php', $data);
+            return;
+        } else {
+            echo 'NOT FOUND';
+            return;
+        }
+    }
+
+    public function create_pembayaran_shp($id)
+    {
+        $this->load->model('ShpModel');
+        $data['title'] = 'Pengangkutan Sisa Hasil Pengolahan (SHP)';
+        $data['acc_pembayaran'] = true;
+        $collection = array();
+
+        // DEFINES TO LOAD THE MODEL
+        // $this->load->model('InvoiceModel');
+        if ($id != NULL) {
+            $result = $this->ShpModel->getAll(array('id_shp' =>  $id))[$id];
+
+            if (empty($result)) {
+                $data['main_view'] = 'error-5';
+                $data['message'] = 'Sepertinya data yang anda cari tidak ditemukan atau sudah di hapus.';
+                $this->load->view('main/index.php', $data);
+            } else {
+                $this->load->model(array('SecurityModel', 'InvoiceModel'));
+                $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
+
+                if ($id != NULL) {
+                    $dataContent = $this->InvoiceModel->getAllPembayaran(array('id' =>  1161))[0];
+
+                    // echo json_encode($dataContent);
+                    // echo json_encode($result);
+                    // die();
+                    $dataContent['id'] = '';
+                    $item = count($result['child']);
+                    $i = 0;
+                    $berat = 0;
+                    foreach ($result['child'] as $child) {
+                        $berat += $child['berat'];
+                    }
+                    // $tgl = tanggal_indonesia($result['date_penerimaan']);
+                    $tgl = explode('-', $result['date_penerimaan']);
+
+                    $dataContent = [
+                        'description' => "NILAI PENGGANTIAN PENGKTN SHP " . strtoupper(singkatan_bulan($tgl[1])) . ' ' . substr($tgl[0], 2) . " $berat KgOre BASEL",
+                        'customer_id' => $result['id_mitra'],
+                        'manual_math' => 0,
+                        'date' => date('Y-m-d'),
+                        'payment_metode' => 8,
+                        'jenis_pembayaran' => 6,
+                        'lebih_bayar_ac' => 6,
+                        'kurang_bayar_ac' => 6,
+                        'payed' => preg_replace("/[^0-9]/", "", $result['sub_total']),
+                        'koordinator' => $result['agentname'],
+                        'percent_pph_21' => $result['percent_pph_21'],
+                        'am_pph_21' => $result['am_pph_21'],
+                        'id_shp' => $result['id_shp'],
+                    ];
+                    $dataContent['id_item'][$i] = '';
+                    $dataContent['amount'][$i] = preg_replace("/[^0-9]/", "", $result['sub_total']);
+                    $dataContent['nopol'][$i] =  $result['lokasi'];
+                    $dataContent['keterangan_item'][$i] =  $result['customer_name'];
+                    // $dataContent['keterangan_item'][$i] =  $result['lokasi'];
+                    $dataContent['qyt'][$i] =  '1';
+                    $dataContent['satuan'][$i] = 'unit';
+                    $dataContent['date_item'][$i] =  $berat . ' / ' . floatval($child['kadar']);
+                } else {
+                    return;
+                }
+                $dataContent['id'] = '';
+
+                $this->index($dataContent);
+            }
+            return;
+        } else {
+            echo 'NOT FOUND';
+            return;
+        }
+    }
     function index($data_return = NULL)
     {
 
+        $this->SecurityModel->MultiplerolesGuard('Pembayaran Mitra', true);
 
         $this->load->model('Crud_model');
         $this->load->model('General_model');
@@ -45,7 +155,6 @@ class Pembayaran extends CI_Controller
         $to   = html_escape($this->input->post('to'));
 
         if ($from == NULL or $to == NULL) {
-
             $from = date('Y-m-') . '1';
             $to =  date('Y-m-') . '31';
         }
@@ -82,6 +191,7 @@ class Pembayaran extends CI_Controller
     {
         try {
             $this->load->model(array('SecurityModel', 'InvoiceModel'));
+            $this->SecurityModel->MultiplerolesGuard('Pembayaran Mitra', true);
             $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
             $dataContent = $this->Payment_model->getAllPembayaran(array('id' =>  $id))[0];
             $dataContent['data_pelunasan'] = $this->Payment_model->getAllPelunasan(array('parent_id' => $id));
@@ -107,6 +217,7 @@ class Pembayaran extends CI_Controller
     public function manage()
     {
 
+        $this->SecurityModel->MultiplerolesGuard('Pembayaran Mitra', true);
         // DEFINES PAGE TITLE
         $data['title'] = 'Invoice';
 
@@ -138,22 +249,14 @@ class Pembayaran extends CI_Controller
 
         $data['main_view'] = 'pembayaran/index';
         $this->load->view('main/index.php', $data);
-        // } else {
-        // 	// DEFINES WHICH PAGE TO RENDER
-        // 	$data['main_view'] = 'main/error_pembayarans.php';
-        // 	$data['actionresult'] = "pembayaran/manage";
-        // 	$data['heading1'] = "Tidak ada faktur yang tersedia. ";
-        // 	$data['heading2'] = "Ups! Maaf tidak ada catatan faktur yang tersedia di detail yang diberikan";
-        // 	$data['details'] = "Kami akan segera memperbaikinya. Sementara itu, Anda dapat kembali atau mencoba menggunakan formulir pencarian.";
-        // 	// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
-        // 	$this->load->view('main/index.php', $data);
-        // }
+     
     }
 
     public function edit($id)
     {
         try {
 
+            $this->SecurityModel->MultiplerolesGuard('Pembayaran Mitra', true);
             $this->load->model(array('SecurityModel', 'InvoiceModel'));
             $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
             $dataContent = $this->InvoiceModel->getAllPembayaran(array('id' =>  $id))[0];
@@ -218,6 +321,7 @@ class Pembayaran extends CI_Controller
     {
         $this->load->model(array('SecurityModel', 'InvoiceModel'));
         $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
+        $this->SecurityModel->MultiplerolesGuard('Pembayaran Mitra', true);
 
         if ($id != NULL) {
             $dataContent = $this->InvoiceModel->getAllPembayaran(array('id' =>  $id))[0];
@@ -290,7 +394,7 @@ class Pembayaran extends CI_Controller
     {
         $this->load->model(array('SecurityModel', 'InvoiceModel'));
         // $this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
-        $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
+        // $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
 
         if ($id != NULL) {
             $dataContent = $this->Payment_model->getAllPembayaranWithItem(array('id' =>  $id))[$id];
@@ -1735,22 +1839,20 @@ class Pembayaran extends CI_Controller
 
 
                 $sisa_pembayaran = $data['sub_total_2'] - $data['payed'];
-                // $sisa_pembayaran = $data['sub_total_2'] - $data['payed'];
+
                 if ($sisa_pembayaran > 0) {
                     $data['status_pembayaran'] = 'unpaid';
                 } else {
                     $data['status_pembayaran'] = 'paid';
                 }
+
                 $journal = $this->make_journal($data);
                 $data['generalentry'] = $journal['generalentry'];
                 $data['generalentry']['no_jurnal'] = $this->General_model->gen_numberABC($data['date'], $data['data_jenis_pembayaran']['ref_nojur_pembayaran'], 'PEMBAYARAN');
 
                 $data['sub_entry'] = $journal['sub_entry'];
-                // echo json_encode($data);
-                // die();
-                $result = $this->Payment_model->pembayaran_entry($data);
 
-                // die();
+                $result = $this->Payment_model->pembayaran_entry($data);
                 if ($result != NULL) {
                     // $this->Crud_model->insert_data('notification', array('notification_url' => 'pembayaran/show/' . $result['order_id'], 'parent_id' => $result['order_id'], 'parent2_id' => $result['parent2_id'], 'to_role' => '23', 'status' => 1, 'deskripsi' => 'Pembayaran Mitra', 'agent_name' => $this->session->userdata('user_id')['name']));
                 } else {
@@ -2179,7 +2281,7 @@ class Pembayaran extends CI_Controller
     {
         $this->load->model(array('SecurityModel', 'InvoiceModel'));
         // $this->SecurityModel->rolesOnlyGuard(array('accounting'), TRUE);
-        $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
+        // $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
 
         if ($id != NULL) {
             $dataContent = $this->Payment_model->getAllPembayaranWithItem(array('id' =>  $id))[$id];

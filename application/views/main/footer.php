@@ -1,5 +1,5 @@
   <script>
-      var HOST_URL = "https://ugikdev.id";
+      var HOST_URL = "https://indometalasia.com";
   </script>
   <!--begin::Global Config(global config for global JS scripts)-->
   <script>
@@ -84,6 +84,11 @@
   <!-- DataTables -->
   <!-- <script src="<?php echo base_url(); ?>assets/plugins/datatables/jquery.dataTables.min.js"></script>
   <script src="<?php echo base_url(); ?>assets/plugins/datatables/dataTables.bootstrap.min.js"></script> -->
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.4/kt-2.7.0/r-2.3.0/rg-1.2.0/rr-1.2.8/sc-2.0.7/sb-1.3.4/sp-2.0.2/sl-1.4.0/sr-1.1.1/datatables.min.js"></script>
+
   <!-- SlimScroll -->
   <script src="<?php echo base_url(); ?>assets/plugins/slimScroll/jquery.slimscroll.min.js"></script>
   <!-- FastClick -->
@@ -95,6 +100,7 @@
   <!-- bootstrap datepicker -->
   <script src="<?php echo base_url(); ?>assets/plugins/datepicker/bootstrap-datepicker.js"></script>
   <!-- Select2 -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> -->
   <script src="<?php echo base_url(); ?>assets/plugins/select2/select2.full.min.js"></script>
   <script src="<?php echo base_url(); ?>assets/jquery/jquery.validate.js"></script>
   <!-- <script src="<?= base_url() ?>assets/metronic/plugins/custom/jstree/jstree.bundle.js"></script> -->
@@ -106,7 +112,7 @@
   <!-- bootstrap color picker -->
   <script src="<?php echo base_url(); ?>assets/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
   <!-- Form Validation -->
-  <script src="<?php echo base_url(); ?>assets/dist/js/custom.js?v=0.0.2"></script>
+  <script src="<?php echo base_url(); ?>assets/dist/js/custom.js?v=0.0.3"></script>
   <!-- ChartJS 1.0.1 -->
   <!-- <script src="<?php echo base_url(); ?>assets/plugins/chartjs/Chart.min.js"></script> -->
   <script src="<?php echo base_url(); ?>assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>

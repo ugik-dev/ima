@@ -94,6 +94,7 @@ $st_unpaid = '<div class="btn btn-danger font-weight-bold col-lg-9">
     <i class="flaticon2-exclamation"></i> <b>Belum Lunas</b>
 </div>
                         ';
+$date_ppn11  = new DateTime('2022-04-01');
 
 for ($i = 0; $i < count($invoices_Record); $i++) {
 ?>
@@ -253,8 +254,18 @@ for ($i = 0; $i < count($invoices_Record); $i++) {
                         <th style="width:50%">PPN 11%
 
                         <td class="text-right">
-                            <?php if ($invoices_Record[$i]['ppn_pph'] == '1') {
-                                $total_final = $total + ceil(($total * 0.10));
+                            <?php
+
+
+                            if ($invoices_Record[$i]['ppn_pph'] == '1') {
+                                $date_inv = new DateTime(
+                                    $invoices_Record[$i]['date']
+                                );
+                                if ($date_inv >= $date_ppn11) {
+                                    $total_final = $total + ceil(($total * 0.11));
+                                } else {
+                                    $total_final = $total + ceil(($total * 0.10));
+                                }
                                 echo number_format(ceil($total * 0.10), '2', ',', '.');
                             } else {
                                 $total_final = $total;

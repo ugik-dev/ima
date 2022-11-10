@@ -6,10 +6,10 @@ if ($this->session->userdata('user_id') == "") {
 } else {
     $user_id = $this->session->userdata('user_id');
     //TO AVOID USER TO ACCESS THE UNASSIGNED LINKS
-    if (Authenticate_Url($user_id['id'], $this->uri->segment(1)) != NULL) {
-    } else {
-        redirect('profile');
-    }
+    // if (Authenticate_Url($user_id['id'], $this->uri->segment(1)) != NULL) {
+    // } else {
+    //     redirect('profile');
+    // }
 
     $this->load->view('main/header.php', $company_data); ?>
 

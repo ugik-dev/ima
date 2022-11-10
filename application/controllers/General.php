@@ -24,6 +24,27 @@ class General extends CI_Controller
             ExceptionHandler::handle($e);
         }
     }
+    function serachRab()
+    {
+        try {
+            $filter = $this->input->get();
+            $data = $this->General_model->searchRab($filter);
+            echo json_encode(array('error' => false, 'data' => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
+    function getZona()
+    {
+        try {
+            $filter = $this->input->get();
+            $data = $this->General_model->getZona($filter);
+            echo json_encode(array('error' => false, 'data' => $data));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
 
     function getAllPelunasanInvoice()
     {
@@ -148,6 +169,31 @@ class General extends CI_Controller
         try {
             $filter = $this->input->get();
             echo json_encode(array('error' => false, 'data' => $this->General_model->getAllUnit($filter)));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
+    public function searchMitra()
+    {
+        try {
+            $filter = $this->input->get();
+            $result['result'] = $this->General_model->searchMitra($filter);
+            // echo json_encode($result);
+            echo json_encode(array('error' => false, 'data' => $result));
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
+
+    public function searchPembayaran()
+    {
+        try {
+            $filter = $this->input->get();
+            // $result = $this->General_model->searchPembayaran($filter);
+            // echo json_encode($result);
+            echo json_encode(array('error' => false, 'data' =>  $this->General_model->searchPembayaran($filter)));
         } catch (Exception $e) {
             ExceptionHandler::handle($e);
         }

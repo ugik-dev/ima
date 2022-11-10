@@ -4,6 +4,73 @@
 */
 class General_model extends CI_Model
 {
+    public function searchRab($filter = [])
+    {
+        $this->db->from('ref_rab');
+        $res = $this->db->get();
+        return DataStructure::keyValue($res->result_array(), 'id_rab');
+    }
+    public function RABTerbaru($filter = [])
+    {
+        $this->db->from('ref_rab');
+        $this->db->limit(1);
+        $this->db->order_by('date_rab', 'desc');
+        $res = $this->db->get();
+        $id_rab = $res->result_array()[0]['id_rab'];
+        return $this->getRabDetail($id_rab)[$id_rab]['child'];
+    }
+    public function getRabDetail($id)
+    {
+        $this->db->select("*");
+        $this->db->from('ref_rab z');
+        $this->db->join('ref_rab_child w', 'z.id_rab = w.id_rab');
+        $this->db->where('z.id_rab', $id);
+        // $this->db->group_by('YEAR(date)');
+        // $this->db->order_by('YEAR(date)', 'DESC');
+        // if (!empty($filter['user_id'])) $this->db->where('mp_users.id', $filter['user_id']);
+        $res = $this->db->get();
+        $res = DataStructure::groupByRecursive2(
+            $res->result_array(),
+            ['id_rab'],
+            ['percent'],
+            [
+                [
+                    'id_rab', 'date_rab', 'id_agent'
+                ],
+                ["id_rab_child", "percent", "harga"]
+            ],
+            ['child'],
+            true
+        );
+
+        return $res;
+    }
+    public function searchMitra($filter = [])
+    {
+        $this->db->select(" id, CONCAT(customer_name , ' | ' ,customer_nationalid) as text");
+        $this->db->from('mp_payee');
+        $query = $this->db->get();
+        // return
+        return $query->result_array();
+    }
+
+    public function searchPembayaran($filter = [])
+    {
+        $this->db->select("*");
+        $this->db->from('mp_pembayaran');
+        // $this->db->where('id > 0');
+        // $this->db->limit('20');
+        // $this->db->order_by('YEAR(date)', 'DESC');
+        if (!empty($filter['jenis_pembayaran'])) $this->db->where('jenis_pembayaran', $filter['jenis_pembayaran']);
+        if (!empty($filter['id_custmer'])) $this->db->where('customer_id', $filter['id_custmer']);
+        if (!empty($filter['date_pembayaran'])) $this->db->where('date < ', $filter['date_pembayaran']);
+        if (!empty($filter['date_pembayaran'])) $this->db->where('YEAR(date)', explode('-', $filter['date_pembayaran'])[0]);
+        $query = $this->db->get();
+        // die();
+        // return
+        return $query->result_array();
+    }
+
 
     public function getYearData($filter = [])
     {
@@ -17,7 +84,32 @@ class General_model extends CI_Model
         // return
         return $query->result_array();
     }
+    public function getZona($filter = [])
+    {
+        $this->db->select("*");
+        $this->db->from('ref_zona z');
+        $this->db->join('ref_wilayah w', 'z.id_zona = w.id_zona');
+        // $this->db->where('id > 0');
+        // $this->db->group_by('YEAR(date)');
+        // $this->db->order_by('YEAR(date)', 'DESC');
+        // if (!empty($filter['user_id'])) $this->db->where('mp_users.id', $filter['user_id']);
+        $res = $this->db->get();
+        $res = DataStructure::groupByRecursive2(
+            $res->result_array(),
+            ['id_zona'],
+            ['id_wilayah'],
+            [
+                [
+                    'id_zona', 'nama_zona'
+                ],
+                ["id_wilayah", "nama_wilayah",]
+            ],
+            ['child'],
+            true
+        );
 
+        return $res;
+    }
     // function getAllGeneralenral($id)
     // {
     //     $this->db->select("gen_lock as gen_lock");

@@ -15,6 +15,28 @@ function confirmation_alert(message, url = "") {
   }
 }
 
+var swalSaveConfigure = {
+  title: "Konfirmasi simpan",
+  text: "Yakin akan menyimpan data ini?",
+  icon: "info",
+  showCancelButton: true,
+  confirmButtonColor: "#18a689",
+  confirmButtonText: "Ya, Simpan!",
+  reverseButtons: true,
+};
+
+var swalSuccessConfigure = {
+  title: "Simpan berhasil",
+  icon: "success",
+  timer: 500,
+};
+function swalLoading() {
+  swal.fire({
+    title: "Loading...",
+    allowOutsideClick: true,
+  });
+  swal.showLoading();
+}
 // validate the Category Add  Model form
 $("#Category_form").validate({
   rules: {
@@ -967,7 +989,7 @@ function formatRupiah(angka, prefix) {
   split = [];
   split[0] = number_string.slice(0, -2);
   split[1] = number_string.slice(-2);
-
+  console.log(split);
   sisa = split[0].length % 3;
   (rupiah = split[0].substr(0, sisa)),
     (ribuan = split[0].substr(sisa).match(/\d{3}/gi));
@@ -979,6 +1001,55 @@ function formatRupiah(angka, prefix) {
   }
 
   rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
+  return prefix == undefined ? rupiah : rupiah ? "Rp. " + rupiah : "";
+}
+function formatRupiah2(angka, prefix) {
+  var number_string = angka.toString();
+  expl = number_string.split(".", 2);
+  // console.log("ex");
+  if (expl[1] == undefined) {
+    expl[1] = "00";
+  } else {
+    if (expl[1].length == 1) expl[1] = expl[1] + "0";
+    else expl[1] = expl[1].slice(0, 2);
+  }
+
+  sisa = expl[0].length % 3;
+  (rupiah = expl[0].substr(0, sisa)),
+    (ribuan = expl[0].substr(sisa).match(/\d{3}/gi));
+
+  // tambahkan titik jika yang di input sudah menjadi angka ribuan
+  if (ribuan) {
+    separator = sisa ? "." : "";
+    rupiah += separator + ribuan.join(".");
+  }
+
+  rupiah = expl[1] != undefined ? rupiah + "," + expl[1] : rupiah;
+  return prefix == undefined ? rupiah : rupiah ? "Rp. " + rupiah : "";
+}
+
+function formatRupiahComa(angka, prefix) {
+  var number_string = angka.toString();
+  expl = number_string.split(",", 2);
+  // console.log("ex");
+  if (expl[1] == undefined) {
+    expl[1] = "00";
+  } else {
+    if (expl[1].length == 1) expl[1] = expl[1] + "0";
+    else expl[1] = expl[1].slice(0, 2);
+  }
+
+  sisa = expl[0].length % 3;
+  (rupiah = expl[0].substr(0, sisa)),
+    (ribuan = expl[0].substr(sisa).match(/\d{3}/gi));
+
+  // tambahkan titik jika yang di input sudah menjadi angka ribuan
+  if (ribuan) {
+    separator = sisa ? "." : "";
+    rupiah += separator + ribuan.join(".");
+  }
+
+  rupiah = expl[1] != undefined ? rupiah + "," + expl[1] : rupiah;
   return prefix == undefined ? rupiah : rupiah ? "Rp. " + rupiah : "";
 }
 
@@ -1201,6 +1272,7 @@ function terbilang(bilangan) {
       kalimat = kalimat.replace("Satu Ribu", "Seribu");
     }
   }
+
   // console.log(kalimat);
   return kalimat + " Rupiah";
   // document.getElementById("terbilang").innerHTML = kalimat;

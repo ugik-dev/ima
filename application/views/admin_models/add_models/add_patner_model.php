@@ -162,6 +162,15 @@
                                 ?>
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <?php echo form_label('Lokasi GBTL / GBT:'); ?>
+                                <?php
+                                $data = array('class' => 'form-control input-lg', 'type' => 'text', 'value' => (!empty($return_data) ? $return_data->cus_town : ''), 'name' => 'customer_town', 'placeholder' => 'e.g Karawang ', 'reqiured' => '');
+                                echo form_input($data);
+                                ?>
+                            </div>
+                        </div>
                         <!-- <h4>
 	              			  <label class="box-label"><b>CUSTOMER IMAGE</b></label>
 	              			</h4> -->

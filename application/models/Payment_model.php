@@ -488,6 +488,10 @@ class Payment_model extends CI_Model
             $trans_data['koordinator'] =
                 $data['koordinator'];
         }
+        if (!empty($data['id_shp'])) {
+            $trans_data['id_shp'] =
+                $data['id_shp'];
+        }
         $this->db->insert('mp_pembayaran', $trans_data);
         $order_id = $this->db->insert_id();
         $total_heads = count($data['amount']);
@@ -527,6 +531,15 @@ class Payment_model extends CI_Model
         $this->db->insert('mp_approv');
 
         $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'pembayaran/show/' . $order_id, 'sub_id' => $order_id, 'desk' => 'Entry Pembayaran'));
+
+        if (!empty($data['id_shp'])) {
+            $this->db->set('status_shp', 1);
+            $this->db->set('id_jurnal', $gen_id);
+            $this->db->set('id_pembayaran', $order_id);
+            $this->db->where('id_shp', $data['id_shp']);
+            $this->db->update('app_shp');
+        }
+
         $this->db->trans_complete();
         if ($this->db->trans_status() === FALSE) {
             $this->db->trans_rollback();
@@ -535,7 +548,13 @@ class Payment_model extends CI_Model
         } else {
             $this->db->trans_commit();
         }
+
+
         return array('order_id' => $order_id, 'parent2_id' => $gen_id);
+    }
+
+    function updateSHP($id_shp, $id_pembayaran, $id_jurnal)
+    {
     }
 
     function pembayaran_edit($data)
@@ -570,7 +589,7 @@ class Payment_model extends CI_Model
             'acc_0' => $this->session->userdata('user_id')['name'],
             'agen_id' => $this->session->userdata('user_id')['id'],
         );
-        // 'koordinator' => $data['koordinator'],
+
         if (!empty($data['koordinator'])) {
             $trans_data['koordinator'] =
                 $data['koordinator'];

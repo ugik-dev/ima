@@ -20,6 +20,7 @@ class Invoice_model extends CI_Model
         $this->db->from('mp_invoice_v2 mpp');
         $this->db->join('mp_generalentry gen', 'gen.id = mpp.general_id', 'LEFT');
         if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
+        if (!empty($filter['id_shp'])) $this->db->where('mpp.id_shp', $filter['id_shp']);
         // if (!empty($filter['id_parent1'])) $this->db->where('gen.id', $filter['id']);
         // $this->db->order_by('gen.status, gen.id,  sub.id_item ', 'DESC');
         $res = $this->db->get();
@@ -32,7 +33,7 @@ class Invoice_model extends CI_Model
 
     public function getAllInvoiceDetail($filter = [])
     {
-        $this->db->select('mpp.* ,ac_1.agentname acc_1_name ,payee.cus_address, payee.cus_town, ac_1.title_user as acc_1_title ,ac_2.agentname as acc_2_name,ac_3.agentname acc_3_name ,payee.customer_name as customer_name, gen.no_jurnal,sub.id as item_id, sub.parent_id as parent_item, amount, qyt, date_item, keterangan_item, satuan');
+        $this->db->select('mpp.* ,ac_1.agentname acc_1_name ,payee.cus_address, payee.cus_town, ac_1.title_user as acc_1_title ,ac_2.agentname as acc_2_name,ac_3.agentname acc_3_name ,payee.customer_name as customer_name, gen.no_jurnal,sub.id as item_id, sub.parent_id as parent_item, fil_1, fil_2, fil_3, fil_4, fil_5, fil_6, amount, qyt, date_item, keterangan_item, satuan');
         $this->db->from('mp_invoice_v2 mpp');
         $this->db->join('mp_generalentry gen', 'gen.id = mpp.general_id', 'LEFT');
         $this->db->join('mp_sub_invoice sub', 'mpp.id = sub.parent_id', 'LEFT');
@@ -41,6 +42,7 @@ class Invoice_model extends CI_Model
         $this->db->join('mp_users ac_2', 'ac_2.id = mpp.acc_2', 'LEFT');
         $this->db->join('mp_users ac_3', 'ac_3.id = mpp.acc_3', 'LEFT');
         if (!empty($filter['id'])) $this->db->where('mpp.id', $filter['id']);
+        if (!empty($filter['id_shp'])) $this->db->where('mpp.id_shp', $filter['id_shp']);
         // if (!empty($filter['id_parent1'])) $this->db->where('gen.id', $filter['id']);
         // $this->db->order_by('gen.status, gen.id,  sub.id_item ', 'DESC');
         $res = $this->db->get();
@@ -55,7 +57,8 @@ class Invoice_model extends CI_Model
                     'am_jasa', 'am_pph', 'manual_math', 'par_label', 'par_am', 'sub_total', 'total_final', 'jenis_invoice',
                     'lebih_bayar_ket', 'lebih_bayar_am', 'kurang_bayar_ket', 'kurang_bayar_am', 'pembulatan', 'payed', 'am_back', 'status_invoice', 'general_id'
                 ],
-                ["item_id", "amount", "qyt", "date_item", 'nopol', "keterangan_item", "satuan"]
+                ["item_id", "amount", "qyt", "date_item", 'nopol', "keterangan_item", "satuan",
+                'fil_1', 'fil_2', 'fil_3', 'fil_4', 'fil_5', 'fil_6',]
             ],
             ['items']
         );
@@ -301,7 +304,7 @@ class Invoice_model extends CI_Model
             'acc_0' => $this->session->userdata('user_id')['name'],
             'agen_id' => $this->session->userdata('user_id')['id'],
         );
-
+if(!empty($data['id_shp'])) $trans_data['id_shp'] = $data['id_shp'];
         $this->db->insert('mp_invoice_v2', $trans_data);
         $order_id = $this->db->insert_id();
         // $order_id = $this->db->insert_id();

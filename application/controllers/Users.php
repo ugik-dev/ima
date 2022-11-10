@@ -36,6 +36,7 @@ class Users extends CI_Controller
 			$data['table_heading_names_of_coloums'] = array(
 				'Nama',
 				'Email',
+				'Jabatan',
 				'Alamat',
 				'Nomor HP',
 				'Foto',
@@ -67,6 +68,7 @@ class Users extends CI_Controller
 			$this->load->model('Crud_model');
 			// DEFINES READ MEDICINE details FORM MEDICINE FORM
 			$users_name = html_escape($this->input->post('user_name'));
+			$title_user = html_escape($this->input->post('title_user'));
 			$users_email = html_escape($this->input->post('user_email'));
 			$users_address = html_escape($this->input->post('User_Address'));
 			$users_contatc1 = html_escape($this->input->post('User_Contatc1'));
@@ -76,12 +78,13 @@ class Users extends CI_Controller
 			$user_password = sha1($login_customer);
 			$user_Date = Date('Y-m-d');
 			$picture = $this->Crud_model->do_upload_picture("User_Picture", "./uploads/users/");
-			$user_name = $this->session->userdata('user_id');
+			$user_name = html_escape($this->input->post('user_name'));
 
 			// ASSIGN THE VALUES OF TEXTBOX TO ASSOCIATIVE ARRAY
 			$args = array(
 				'user_name' => $users_name,
 				'user_email' => $users_email,
+				'title_user' => $title_user,
 				'user_address' => $users_address,
 				'user_contact_1' => $users_contatc1,
 				'user_contact_2' => $users_contatc2,
@@ -162,9 +165,10 @@ class Users extends CI_Controller
 		$this->load->model('Crud_model');
 
 		// USER'S ACTIVE SESSION
-		$user_name = $this->session->userdata('user_id');
+		$user_name = html_escape($this->input->post('Edit_user_name'));
 
 		// RETRIEVING UPDATED VALUES FROM FORM MEDICINE FORM
+		$title_user = html_escape($this->input->post('title_user'));
 		$edit_users_id = html_escape($this->input->post('Edit_user_id'));
 		$edit_users_name = html_escape($this->input->post('Edit_user_name'));
 		$edit_users_email = html_escape($this->input->post('Edit_user_email'));
@@ -178,22 +182,24 @@ class Users extends CI_Controller
 			$data = array(
 				'user_name' => $edit_users_name,
 				'user_email' => $edit_users_email,
+				'title_user' => $title_user,
 				'user_address' => $edit_users_address,
 				'user_contact_1' => $edit_users_contatc1,
 				'user_contact_2' => $edit_users_contatc2,
 				'user_description' => $edit_users_description,
-				'agentname' => $user_name['name']
+				'agentname' => $user_name
 			);
 		} else {
 			// DATA ARRAY FOR UPDATE QUERY array('abc'=>abc)
 			$data = array(
 				'user_name' => $edit_users_name,
+				'title_user' => $title_user,
 				'user_email' => $edit_users_email,
 				'user_address' => $edit_users_address,
 				'user_contact_1' => $edit_users_contatc1,
 				'user_contact_2' => $edit_users_contatc2,
 				'user_description' => $edit_users_description,
-				'agentname' => $user_name['name'],
+				'agentname' => $user_name,
 				'cus_picture' => $edit_picture
 			);
 

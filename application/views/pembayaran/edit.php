@@ -21,9 +21,17 @@
                                             <?php
                                             $data = array('class' => 'form-control input-lg', 'type' => 'hidden', 'name' => 'id', 'value' => (!empty($data_return['id']) ? $data_return['id'] : ''));
                                             echo form_input($data);
-                                            echo form_label('Patner'); ?>
-                                            <select name="customer_id" id="customer_id" class="form-control select2 input-lg">
-                                                <option value="0"> ------- </option>
+                                            echo form_label('Mitra'); ?>
+                                            <input name="id_shp" value="<?= !empty($data_return['id_shp']) ? $data_return['id_shp'] : '' ?>">
+                                            <?php if (!empty($data_return['id_shp'])) {
+                                                echo "
+                                                <input type='' name='customer_id' value='{$data_return['customer_id']}'>
+                                                <input type='' name='jenis_pembayaran' value='{$data_return['jenis_pembayaran']}'>
+                                                <input type='' name='payment_method' value='{$data_return['payment_metode']}'>
+                                                ";
+                                            } ?>
+                                            <select name="customer_id" id="customer_id" class="form-control select2 input-lg " <?= !empty($data_return['id_shp']) ? 'disabled' : '' ?>>
+                                                <option value=""> ------- </option>
                                                 <?php echo $patner_record; ?>
                                             </select>
                                         </div>
@@ -41,7 +49,7 @@
                                     <div class="col-lg-3">
 
                                         <div class="form-group">
-                                            <label>Jenis Pembayaran</label> <select name="jenis_pembayaran" id="jenis_pembayaran" class="form-control">
+                                            <label>Jenis Pembayaran</label> <select <?= !empty($data_return['id_shp']) ? 'disabled' : '' ?> name="jenis_pembayaran" id="jenis_pembayaran" class="form-control">
                                                 <?php foreach ($jenis_pembayaran as $st) {
                                                     echo '<option value="' . $st['id'] . '"> ' . $st['jenis_invoice'] . ' </option>';
                                                 } ?>
@@ -55,7 +63,7 @@
                                         <div class="form-group">
                                             <?php echo form_label('Rincian Transaksi'); ?>
                                             <?php
-                                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'description', 'id' => 'description', 'reqiured' => '');
+                                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'description', 'id' => 'description', 'readonly' => '');
                                             echo form_input($data);
                                             ?>
                                         </div>
@@ -65,7 +73,7 @@
                                         <div class="form-group">
                                             <?php echo form_label('Metode Pembayaran'); ?>
 
-                                            <select name="payment_method" id="payment_method" class="form-control">
+                                            <select name="payment_method" id="payment_method" <?= !empty($data_return['id_shp']) ? 'disabled' : '' ?> class="form-control">
                                                 <?php foreach ($ref_account as $st) {
                                                     echo '<option value="' . $st['ref_id'] . '"> ' . $st['ref_text'] . ' </option>';
                                                 } ?>
@@ -98,7 +106,7 @@
                             <div class="col-lg-12 table-responsive">
                                 <table class="table table-striped table-hover  ">
                                     <tfoot>
-                                        <tr>
+                                        <tr <?= !empty($data_return['id_shp']) ? 'hidden' : '' ?>>
                                             <td colspan="1">
                                                 <button type="button" class="btn btn-primary" id="addline"> <i class="fa fa-plus-circle"></i> Tambah Baris </button>
                                             </td>
@@ -191,14 +199,14 @@
                                             <th colspan="2">PPh 21 : </th>
                                             <th>
                                                 <div class="input-group mb-3">
-                                                    <input type="text" class="form-control" min="0" max="5" step="0,0001" id="percent_pph_21" value="<?= (!empty($data_return['percent_pph_21']) ? (float) $data_return['percent_pph_21']  : '')  ?>" name="percent_pph_21" onchange='count_total()' placeholder="" aria-label="" aria-describedby=" basic-addon2">
+                                                    <input type="text" class="form-control" min="0" max="5" step="0,0001" id="percent_pph_21" value="<?= (!empty($data_return['percent_pph_21']) ? (float) $data_return['percent_pph_21']  : '')  ?>" name="percent_pph_21" onchange='count_total()' placeholder="" aria-label="" <?= !empty($data_return['id_shp']) ? 'readonly' : '' ?> aria-describedby=" basic-addon2">
                                                     <div class="input-group-append">
                                                         <span class="input-group-text"> %</span>
                                                     </div>
                                                 </div>
                                             </th>
                                             <th>
-                                                <input name="am_pph_21" id="pph_21_count" value="<?= (!empty($data_return['am_pph_21']) ? $data_return['am_pph_21']  : '') ?>" class="form-control mask" required onchange='count_total()' />
+                                                <input name="am_pph_21" id="pph_21_count" value="<?= (!empty($data_return['am_pph_21']) ? $data_return['am_pph_21']  : '') ?>" <?= !empty($data_return['id_shp']) ? 'readonly' : '' ?> class="form-control mask" required onchange='count_total()' />
                                             </th>
                                         </tr>
                                         <tr <?= $acc_role == false ? 'hidden' : '' ?>>
@@ -329,11 +337,12 @@
                                             <th>
                                             </th>
                                             <th>
-                                                <select name="koordinator" id="koordinator" value="0,00" class="form-control">
+                                                <input name="koordinator" <?= !empty($data_return['id_shp']) ? 'readonly' : '' ?> id="koordinator" value="" class="form-control">
+                                                <!-- <select name="koordinator" id="koordinator" value="0,00" class="form-control">
                                                     <option>-</option>
                                                     <option value="PANCA KARTIKA KENCANA">PANCA KARTIKA KENCANA</option>
                                                     <option value="BENNY SETIAWAN">BENNY SETIAWAN</option>
-                                                </select>
+                                                </select> -->
                                             </th>
                                         </tr>
 
@@ -407,13 +416,13 @@
                                         <td>
                                             <input type="text" name="id_item[]" value="" class="form-control input-lg" hidden />
 
-                                            <input type="text" name="keterangan_item[]" value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / Toyota AVZ" />
+                                            <input type="text" name="keterangan_item[]"  <?= !empty($data_return['id_shp']) ? 'readonly' : '' ?> value="" class="form-control input-lg" placeholder="eg. Logam 2 btg / Toyota AVZ" />
                                         </td>
                                         <td>
-                                            <input type="text" name="nopol[]" value="" step="0.002" class="form-control input-lg nopol" />
+                                            <input type="text" name="nopol[]" value=""  <?= !empty($data_return['id_shp']) ? 'readonly' : '' ?> step="0.002" class="form-control input-lg nopol" />
                                         </td>
                                         <td>
-                                            <input type="text" name="date_item[]" value="" class="form-control input-lg date_item" />
+                                            <input type="text" name="date_item[]"  <?= !empty($data_return['id_shp']) ? 'readonly' : '' ?> value="" class="form-control input-lg date_item" />
                                         </td>
                                         <td class="head_col_satuan">
                                             <select name="satuan[]" id="satuan" class="form-control">
@@ -423,10 +432,10 @@
                                             </select>
                                         </td>
                                         <td class="head_col_qyt">
-                                            <input class="form-control input-lg val_qyt" name="qyt[]" value="" onkeyup="count_total()" required />
+                                            <input class="form-control input-lg val_qyt"  <?= !empty($data_return['id_shp']) ? 'readonly' : '' ?> name="qyt[]" value="" onkeyup="count_total()" required />
                                         </td>
                                         <td>
-                                            <input class="form-control input-lg mask" name="amount[]" value="" onkeyup="count_total()" required />
+                                            <input class="form-control input-lg mask"  <?= !empty($data_return['id_shp']) ? 'readonly' : '' ?> name="amount[]" value="" onkeyup="count_total()" required />
                                         </td>
                                         <td>
                                             <div class="row">
