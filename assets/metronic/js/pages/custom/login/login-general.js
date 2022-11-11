@@ -120,7 +120,7 @@ var KTLogin = (function () {
           swal
             .fire({
               text:
-                "Maaf. sepertinya terjadi kesalahan, harap periksa email dann password ",
+                "Maaf. sepertinya terjadi kesalahan, harap periksa email dan password ",
               icon: "error",
               buttonsStyling: false,
               confirmButtonText: "Ok, got it!",

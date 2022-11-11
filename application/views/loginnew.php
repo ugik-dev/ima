@@ -204,7 +204,7 @@
     <script src="<?= base_url() ?>assets/metronic/js/scripts.bundle.js"></script>
     <!--end::Global Theme Bundle-->
     <!--begin::Page Scripts(used by this page)-->
-    <script src="<?= base_url() ?>assets/metronic/js/pages/custom/login/login-general.js"></script>
+    <script src="<?= base_url() ?>assets/metronic/js/pages/custom/login/login-general.js?v=0.01"></script>
     <!--end::Page Scripts-->
 </body>
 <!--end::Body-->
