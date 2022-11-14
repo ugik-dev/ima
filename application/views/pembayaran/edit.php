@@ -63,7 +63,7 @@
                                         <div class="form-group">
                                             <?php echo form_label('Rincian Transaksi'); ?>
                                             <?php
-                                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'description', 'id' => 'description', 'readonly' => '');
+                                            $data = array('class' => 'form-control input-lg', 'type' => 'text', 'name' => 'description', 'id' => 'description');
                                             echo form_input($data);
                                             ?>
                                         </div>
