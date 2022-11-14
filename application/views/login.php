@@ -18,14 +18,15 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/dist/css/AdminLTE.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
-       folder instead of downloading all of them to reduce the load. -->
+        folder instead of downloading all of them to reduce the load. -->
+
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 
 <body class="hold-transition login-page " style="background-image:url('<?php echo base_url(); ?>uploads/systemimgs/bg-login.png'); background-size:cover; position: relative;">
@@ -95,7 +96,6 @@
                 allow_dismiss: true,
                 stackup_spacing: 10 // spacing between consecutively stacked growls.
             });
-
         };
     </script>
     <?php

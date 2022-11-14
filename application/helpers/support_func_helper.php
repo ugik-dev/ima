@@ -119,14 +119,15 @@ if (!function_exists('terbilang')) {
 	}
 }
 if (!function_exists('bln_romawi')) {
-	 function bln_romawi($bln){
-    $bln = (int) $bln;
-    $array_bln = array(1=>"I","II","III", "IV", "V","VI","VII","VIII","IX","X", "XI","XII");
-   return $array_bln[$bln];
-    echo $bln;
-  }
+	function bln_romawi($bln)
+	{
+		$bln = (int) $bln;
+		$array_bln = array(1 => "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII");
+		return $array_bln[$bln];
+		// echo $bln;
+	}
 }
-  
+
 function penyebut($nilai)
 {
 	$nilai = abs($nilai);

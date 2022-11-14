@@ -1297,11 +1297,11 @@ class Statements extends CI_Controller
 			}
 			if ($draft_value == 'false' && empty($no_jurnal)) {
 				throw new UserException("Nomor jurnal tidak boleh kosong", USER_NOT_FOUND_CODE);
-			}else{
-				if(explode("/",$no_jurnal)[2]  != bln_romawi(explode('-',$date)[1]));
-				throw new UserException("Nomor jurnal dan tanggal tidak valid", USER_NOT_FOUND_CODE);
+			} else {
+				if (strval(explode("/", $no_jurnal)[2])  != strval(bln_romawi(explode('-', $date)[1])))
+					throw new UserException("Nomor jurnal dan tanggal tidak valid", USER_NOT_FOUND_CODE);
 			}
-			
+
 			if (!empty($id_cars)) {
 				$count_cars = count($id_cars);
 			} else {
