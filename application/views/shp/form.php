@@ -326,7 +326,7 @@
                 ) {
                     jumlah = parseFloat(harga[i].value.replaceAll('.', '').replace(',', '.')) * berat[i].value;
                     pengurangan = (7.75 / 100) * jumlah
-                    jumlah = jumlah - pengurangan;
+                    // jumlah = jumlah - pengurangan;
                     // val1 = parseFloat(amount[i].value.replaceAll('.', '').replace(',', '.'));
                     sub_total = sub_total + jumlah;
                     console.log(pengurangan);
