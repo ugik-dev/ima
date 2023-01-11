@@ -316,62 +316,61 @@ class Invoice extends CI_Controller
         $this->load->model('ShpModel');
         $data['title'] = 'Pengangkutan Sisa Hasil Pengolahan (SHP)';
         $data['acc_pembayaran'] = true;
-       if ($id != NULL) {
+        if ($id != NULL) {
             $result = $this->ShpModel->getAll(array('id_shp' =>  $id))[$id];
             $invs = $this->Invoice_model->getAllInvoiceDetail(array('id_shp' =>  $id));
-             if (empty($result) ) {
+            if (empty($result)) {
                 $data['main_view'] = 'error-5';
                 $data['message'] = 'Sepertinya data yang anda cari tidak ditemukan atau sudah di hapus.';
                 $this->load->view('main/index.php', $data);
-            } else if (empty($invs) ) {
+            } else if (empty($invs)) {
                 $data['main_view'] = 'error-5';
                 $data['message'] = 'Buatkan Invoice Angsuran terlebi dahulu!.';
                 $this->load->view('main/index.php', $data);
-            }else {
+            } else {
                 $this->load->model(array('SecurityModel', 'InvoiceModel'));
                 $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
-           foreach ($invs as $inv) {
+                foreach ($invs as $inv) {
                     // echo json_encode($invs);
                     // die();
                     $dataContent['id'] = '';
                     $tgl = explode('-', $result['date_penerimaan']);
                     $dataContent = [
-                        'id'=> '',
-                        'id_shp'=> $result['id_shp'],
-                        'no_invoice'=> '',
-                        'no_invoice_2'=> '',
-                        'acc_1'=> '',
-                        'acc_2'=> '',
-                        'acc_3'=> '',
-                        'description' => "TKT NO PO : ____ Tanggal " .$tgl[2].' '. strtoupper(singkatan_bulan($tgl[1])) . ' ' . substr($tgl[0], 2) .' Wilayah ' . $result['nama_wilayah'],  
+                        'id' => '',
+                        'id_shp' => $result['id_shp'],
+                        'no_invoice' => '',
+                        'no_invoice_2' => '',
+                        'acc_1' => '',
+                        'acc_2' => '',
+                        'acc_3' => '',
+                        'description' => "TKT NO PO : ____ Tanggal " . $tgl[2] . ' ' . strtoupper(singkatan_bulan($tgl[1])) . ' ' . substr($tgl[0], 2) . ' Wilayah ' . $result['nama_wilayah'],
                         'customer_id' => 21,
                         'date' => date('Y-m-d'),
                         'date2' => $result['date_penerimaan'],
                         'payment_metode' => 6,
                         'jenis_invoice' => 7,
-                         'koordinator' => $result['agentname'],
+                        'koordinator' => $result['agentname'],
                         'id_shp' => $result['id_shp'],
                         "ppn_pph" => "1",
                         "percent_ppn" => "0",
                     ];
-                    $i= 0;
+                    $i = 0;
                     foreach ($inv['items'] as $child) {
                         $dataContent['id_item'][$i] = '';
                         $dataContent['date_item'][$i] =  $child['date_item'];
                         $dataContent['keterangan_item'][$i] =  $child['keterangan_item'];
                         $dataContent['qyt'][$i] =  '1';
                         $dataContent['satuan'][$i] = 'unit';
-                        $dataContent['fil_1'][$i] =  floatval($child['fil_1']); 
-                        $dataContent['fil_2'][$i] =  floatval($child['fil_2']); 
-                        $dataContent['fil_3'][$i] =  floatval($child['fil_3'] ); 
-                        $dataContent['fil_4'][$i] =  $child['fil_4']; 
-                        $dataContent['fil_6'][$i] =  $child['amount']; 
-                        $dataContent['fil_5'][$i] =  $child['fil_5']; 
-                        $dataContent['amount'][$i] =  floatval(str_replace('.','',$child['fil_5']))-$child['amount']; 
+                        $dataContent['fil_1'][$i] =  floatval($child['fil_1']);
+                        $dataContent['fil_2'][$i] =  floatval($child['fil_2']);
+                        $dataContent['fil_3'][$i] =  floatval($child['fil_3']);
+                        $dataContent['fil_4'][$i] =  $child['fil_4'];
+                        $dataContent['fil_6'][$i] =  $child['amount'];
+                        $dataContent['fil_5'][$i] =  $child['fil_5'];
+                        $dataContent['amount'][$i] =  floatval(str_replace('.', '', $child['fil_5'])) - $child['amount'];
                         $i++;
                     }
-                   
-                } 
+                }
                 $this->index($dataContent);
             }
             return;
@@ -385,7 +384,7 @@ class Invoice extends CI_Controller
         $this->load->model('ShpModel');
         $data['title'] = 'Pengangkutan Sisa Hasil Pengolahan (SHP)';
         $data['acc_pembayaran'] = true;
-       if ($id != NULL) {
+        if ($id != NULL) {
             $result = $this->ShpModel->getAll(array('id_shp' =>  $id))[$id];
 
             if (empty($result)) {
@@ -395,32 +394,32 @@ class Invoice extends CI_Controller
             } else {
                 $this->load->model(array('SecurityModel', 'InvoiceModel'));
                 $this->SecurityModel->MultiplerolesStatus(array('Akuntansi', 'Invoice'), TRUE);
-           if ($id != NULL) {
+                if ($id != NULL) {
                     $dataContent['id'] = '';
                     $tgl = explode('-', $result['date_penerimaan']);
 
                     $dataContent = [
-                        'id'=> '',
-                        'id_shp'=> $result['id_shp'],
-                        'no_invoice'=> '',
-                        'no_invoice_2'=> '',
-                        'acc_1'=> '',
-                        'acc_2'=> '',
-                        'acc_3'=> '',
-                        'description' => "TKT NO PO : ____ Tanggal " .$tgl[2].' '. strtoupper(singkatan_bulan($tgl[1])) . ' ' . substr($tgl[0], 2) .' Wilayah ' . $result['nama_wilayah'],  
+                        'id' => '',
+                        'id_shp' => $result['id_shp'],
+                        'no_invoice' => '',
+                        'no_invoice_2' => '',
+                        'acc_1' => '',
+                        'acc_2' => '',
+                        'acc_3' => '',
+                        'description' => "TKT NO PO : ____ Tanggal " . $tgl[2] . ' ' . strtoupper(singkatan_bulan($tgl[1])) . ' ' . substr($tgl[0], 2) . ' Wilayah ' . $result['nama_wilayah'],
                         'customer_id' => 21,
                         'date' => date('Y-m-d'),
                         'date2' => $result['date_penerimaan'],
                         'payment_metode' => 6,
                         'jenis_invoice' => 6,
-                         'koordinator' => $result['agentname'],
+                        'koordinator' => $result['agentname'],
                         'percent_pph_21' => $result['percent_pph_21'],
                         'am_pph_21' => $result['am_pph_21'],
                         'id_shp' => $result['id_shp'],
                         "ppn_pph" => "1",
                         "percent_ppn" => "0",
                     ];
-                    $i= 0;
+                    $i = 0;
                     foreach ($result['child'] as $child) {
                         $dataContent['id_item'][$i] = '';
                         $dataContent['amount'][$i] = $result['sub_total'];
@@ -428,13 +427,12 @@ class Invoice extends CI_Controller
                         $dataContent['keterangan_item'][$i] =  $result['customer_name'];
                         $dataContent['qyt'][$i] =  '1';
                         $dataContent['satuan'][$i] = 'unit';
-                        $dataContent['fil_1'][$i] =  floatval($child['berat']); 
-                        $dataContent['fil_2'][$i] =  floatval($child['kadar']); 
-                        $dataContent['fil_3'][$i] =  floatval($child['berat'] * (100/$child['kadar'])); 
-                        $dataContent['fil_5'][$i] =  $result['sub_total']; 
+                        $dataContent['fil_1'][$i] =  floatval($child['berat']);
+                        $dataContent['fil_2'][$i] =  floatval($child['kadar']);
+                        $dataContent['fil_3'][$i] =  floatval($child['berat'] * (100 / $child['kadar']));
+                        $dataContent['fil_5'][$i] =  $result['sub_total'];
                         $i++;
                     }
-                   
                 } else {
                     echo 'ngapain cok';
                     return;
@@ -523,7 +521,6 @@ class Invoice extends CI_Controller
 
         if ($id != NULL) {
             $dataContent = $this->InvoiceModel->getAllInvoice(array('id' =>  $id))[0];
-            
         } else {
             echo 'ERROR';
             return;
@@ -534,16 +531,14 @@ class Invoice extends CI_Controller
             $paragraph_1 = $this->find_char($template['paragraph_1'], $dataContent);
         else
             $paragraph_1 = 'Bersamaan dengan ini kami sampaikan tagihan sebagai berikut :';
-        if(!empty($dataContent['id_shp'])){
+        if (!empty($dataContent['id_shp'])) {
             $this->load->model("ShpModel");
             $no_sp = $this->ShpModel->getAll(['id_shp' => $dataContent['id_shp']])[$dataContent['id_shp']]['sp_shp'];
-           if($dataContent['jenis_invoice'] == 6)
-           {
-               $paragraph_1 = "Bersama ini kami sampaikan permohonan pembayaran Angsuran Pekerjaan Pengangkutan Sisa Hasil Pengolahan Produksi ".$dataContent['description']." berdasarkan Surat Perjanjian No : ".$no_sp." dengan rincian sebagai berikut :";
-           } else if($dataContent['jenis_invoice'] == 7)
-           {
-               $paragraph_1 = "Bersama ini kami sampaikan permohonan pembayaran Definitif Pekerjaan Pengangkutan Sisa Hasil Pengolahan Produksi ".$dataContent['description']." berdasarkan Surat Perjanjian No : ".$no_sp." dengan rincian sebagai berikut :";
-           } 
+            if ($dataContent['jenis_invoice'] == 6) {
+                $paragraph_1 = "Bersama ini kami sampaikan permohonan pembayaran Angsuran Pekerjaan Pengangkutan Sisa Hasil Pengolahan Produksi " . $dataContent['description'] . " berdasarkan Surat Perjanjian No : " . $no_sp . " dengan rincian sebagai berikut :";
+            } else if ($dataContent['jenis_invoice'] == 7) {
+                $paragraph_1 = "Bersama ini kami sampaikan permohonan pembayaran Definitif Pekerjaan Pengangkutan Sisa Hasil Pengolahan Produksi " . $dataContent['description'] . " berdasarkan Surat Perjanjian No : " . $no_sp . " dengan rincian sebagai berikut :";
+            }
         }
         // echo $paragraph_1;
         // die();
@@ -2004,7 +1999,7 @@ class Invoice extends CI_Controller
             $result = null;
             $status = FALSE;
             $data = $this->input->post();
-            if(empty($data['acc_1'])){
+            if (empty($data['acc_1'])) {
                 throw new UserException('!');
             }
             if (empty($data['manual_math'])) {
@@ -2059,7 +2054,7 @@ class Invoice extends CI_Controller
                     $data['sub_entry_ppn'] = $journal['sub_entry_ppn'];
                     $data['generalentry_ppn']['no_jurnal'] = $this->General_model->gen_number($data['date'], 'JU');
                 }
-                 $result = $this->Invoice_model->invoice_entry($data);
+                $result = $this->Invoice_model->invoice_entry($data);
             } else {
                 throw new UserException('Please check data!');
             }

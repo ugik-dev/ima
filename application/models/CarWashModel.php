@@ -22,12 +22,16 @@ class CarWashModel extends CI_Model
     }
     public function getAll($filter = [])
     {
-        $this->db->select('eks.* ,jk.*');
+        // $this->db->select('eks.* ,jk.*');
+        $this->db->select('eks.*, s1.label s1_label, s1.price s1_price,s2.label s2_label, s2.price s2_price');
+
         $this->db->select('cu.nama, cu.email, cu.no_telp, cu.alamat');
         $this->db->select('au.user_name as nama_petugas');
 
         $this->db->from("carwash as eks");
-        $this->db->join("ref_jenis_kendaraan as jk", "jk.id_ref_jk = eks.jenis_kendaraan");
+        $this->db->join("ref_cw_service1 as s1", "s1.id_ref = eks.service_1");
+        $this->db->join("ref_cw_service2 as s2", "s2.id_ref = eks.service_1");
+        // $this->db->join("ref_jenis_kendaraan as jk", "jk.id_ref_jk = eks.jenis_kendaraan");
         $this->db->join("mp_user_customer as cu", "cu.id_user = eks.id_user");
         $this->db->join("mp_users as au", "au.id = eks.id_petugas", 'LEFT');
         $this->db->Order_by('id_carwash', 'ASC');

@@ -27,10 +27,12 @@
                             <table id="FDataTable" class="table table-bordered table-hover" style="padding:0px">
                                 <thead>
                                     <tr>
-                                        <th style="width: 7%; text-align:center!important">ID</th>
-                                        <th style="width: 24%; text-align:left!important">Nama</th>
+                                        <th style="width: 7%; text-align:center!important">Waktu Request (Client)</th>
+                                        <th style="width: 7%; text-align:center!important">Waktu Perkiraan (Petugas)</th>
+                                        <th style="width: 24%; text-align:left!important">Info Pemesanan</th>
                                         <th style="width: 24%; text-align:left!important">Plat</th>
                                         <th style="width: 24%; text-align:left!important">Antrian</th>
+                                        <th style="width: 24%; text-align:left!important">Layanan</th>
                                         <th style="width: 24%; text-align:left!important">Petugas</th>
                                         <th style="width: 24%; text-align:left!important">Status</th>
                                         <th style="width: 5%; text-align:center!important">Action</th>
@@ -171,10 +173,13 @@
           
       `;
                 renderData.push([
+                    d['reg_time'],
                     d['req_time'],
-                    d['nama'] + '<br>Telp : ' + d['no_telp'] + '<br>Email : ' + d['email'] + '<br>Alamat : ' + d['alamat'],
+                    'Nama Pemesan : ' + d['nama'] +
+                    '<br>Nama Driver : ' + d['nama_driver'] + '<br>Telp : ' + d['no_telp'] + '<br>Email : ' + d['email'] + '<br>Alamat : ' + d['alamat'],
                     d['plat'],
                     d['nomor_antrian'],
+                    d['s1_label'],
                     d['nama_petugas'],
                     statusAntrian(d['status']),
                     button
