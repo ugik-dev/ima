@@ -377,14 +377,14 @@
                 <tr>
                     <td style="width: 50%"><img style="heigt: 100px; width : 80%" src="<?= base_url() ?>assets/img/header_ima.png" alt="Paris" class="center"></td>                 
                     <td style="width: 50%">
-                                <h3 style="text-align:center">${tpe == 'AM' ? 'VOUCHER PENERIMAAN' : (tpe == 'AK' ? 'VOUCHER PENGELUARAN' : 'JURNAL UMUM')}</h3>    
+                                <h3 style="text-align:center">${tpe == 'AM' ? 'VOUCHER PENERIMAAN' : (tpe == 'AK' || tpe == "EK" ? 'VOUCHER PENGELUARAN' : 'JURNAL UMUM')}</h3>    
                     </td>                 
                 </tr>
             </table>   
             <br>
                     <table style="font-size: 15px;" border="0">
                               <tr>
-                            <td ${displyhide ? '' : ''} style=";text-align:left ;width: 100px">${tpe == 'AM' ? 'Diterima dari' : (tpe == 'AK' ? 'Dibayar kepada' : '')}</td>
+                            <td ${displyhide ? '' : ''} style=";text-align:left ;width: 100px">${tpe == 'AM' ? 'Diterima dari' : (tpe == 'AK' || tpe == "EK" ? 'Dibayar kepada' : '')}</td>
                             <td style=;width: 10px">${displyhide ? '' : ':'}</td>
                             <td style=";text-align:left ;width: 400px"> ${displyhide ? '' : mitra_name} </td>
                             <td style="text-align:left ;width: 100px">No Voucher</td>
