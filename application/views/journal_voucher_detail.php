@@ -302,14 +302,14 @@
                       if (arus_kas_kredit > 0) tpe = 'AK';
                   <?php } ?>
 
-                  if (tpe == 'AM') {
+                  if (tpe == 'AM' || tpe == 'EM') {
                       displyhide = false
                       show =
                           show +
                           (debit[i].innerHTML ?
                               parseInt(debit[i].innerHTML.replace(/[^0-9]/g, "")) :
                               0);
-                  } else if (tpe == 'AK') {
+                  } else if (tpe == 'AK' || tpe == 'EK') {
                       displyhide = false
                       show =
                           show +
