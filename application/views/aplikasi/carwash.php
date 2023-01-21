@@ -38,6 +38,7 @@
                                         <!-- <th style="width: 24%; text-align:left!important">Layanan</th> -->
                                         <!-- <th style="width: 7%; text-align:left!important">Petugas</th> -->
                                         <th style="width: 7%; text-align:left!important">Status</th>
+                                        <th style="width: 7%; text-align:left!important">Pembayaran</th>
                                         <th style="width: 5%; text-align:center!important">Action</th>
                                     </tr>
                                 </thead>
@@ -149,7 +150,7 @@
 
 <script>
     $(document).ready(function() {
-        $('#menu_id_31').addClass('menu-item-active menu-item-open menu-item-here"')
+        $('#menu_id_31').addClass('menu-item-active menu-item-open menu-item-here')
         $('#submenu_id_85').addClass('menu-item-active')
 
         var toolbar = {
@@ -355,12 +356,18 @@
                                             <div class="pull-left text-left"><b>Kembalian</b></div>
                                             <div class="pull-right">${number_format(d['pembayaran_kembalian'])}</div>
                                         </div>
-                                        <div class="clearfix">
-                                            <div class="pull-left text-left"><b>Petugas </b></div>
-                                            <div class="pull-right">${number_format(d['pembayaran_id_petugas'])}</div>
-                                        </div>
-                                        `;
 
+                                        `;
+                filePembayaran = '';
+                if (d['pembayaran_file'] != '') {
+                    filePembayaran = `
+                    <br>
+                    <div class="clearfix">
+                                            <div class="pull-left text-left"><b>refensi : </b></div>
+                                            <div class="pull-right">${d['pembayaran_ref']}</div>
+                                        </div>
+                                        <a class="btn btn-info" href='http://indometalasia.com/store/uploads/file_pembayaran/${d['pembayaran_file']}'>Lihat Bukti Pembayaran</a>`
+                }
                 renderData.push([
                     d['req_tanggal'],
                     d['est_time'],
@@ -369,7 +376,7 @@
                     // d['plat'],
                     d['nomor_antrian'],
                     // d['nama_petugas'],
-                    statusAntrian(d['status']),
+                    statusAntrian(d['status']), statusPembayaran(d['status_pembayaran']) + filePembayaran,
                     button
                 ]);
             });
@@ -387,6 +394,15 @@
                 return `<i class='fa fa-check text-success'> Selesai </i>`;
             else if (status == "5")
                 return `<i class='fa fa-times text-danger'> Di Batalkan</i>`;
+        }
+
+        function statusPembayaran(status) {
+            if (status == "1")
+                return `<i class='fa fa-edit text-danger'> Belum bayar</i>`;
+            else if (status == "2")
+                return `<i class='fa fa-hourglass-start text-primary'> Pembayaran menunggu konfirmasi petugas</i>`;
+            else if (status == "5")
+                return `<i class='fa fa-check text-success'> Sudah bayar </i>`;
         }
         var Loading = {
             title: 'Loading',
@@ -502,7 +518,7 @@
                         var data = json['data']
                         dataCarwash[data['id_carwash']] = data;
                         renderJenisDokumen(dataCarwash);
-                        CarwashModal.self.modal('hide');
+                        PembayaranModal.self.modal('hide');
                         Swal.fire({
                             title: 'Berhasil',
                             icon: 'success',
