@@ -57,34 +57,9 @@ class Bank_model extends CI_Model
             ],
             ['children']
         );
-        // $ret = $res->result_array();
-        // echo json_encode($ret);
-        // die();
         return $ret;
     }
 
-    public function getHakAksess2($filter = [])
-    {
-        $this->db->select("mp_menu.id as parent_id,mp_menulist.id as page_id,mp_menu.name,mp_menu.icon,mp_menu.order_number,title as sub_name, link as sub_link,slug as link, , id_hak_aksess, view, hk_create,hk_update, hk_delete");
-        $this->db->from('mp_menulist');
-        $this->db->join('mp_menu', "mp_menu.id = mp_menulist.menu_Id");
-        $this->db->join('hak_aksess', "mp_menulist.id = hak_aksess.id_menulist AND hak_aksess.id_user = " . $filter['user_id'], 'left');
-        // $this->db->where('hak_aksess.id_user = "' . $filter['user_id'] . '" OR ( hak_aksess.id_user IS NULL) ',);
-        $this->db->order_by('mp_menu.order_number');
-        $res = $this->db->get();
-        $ret = DataStructure::jstreeStructure(
-            $res->result_array(),
-            ['parent_id'],
-            ['page_id'],
-            [
-                ['parent_id', 'name', 'link', 'icon'],
-                ['page_id', 'sub_name', 'sub_link', 'id_hak_aksess', 'view', 'hk_create', 'hk_update', 'hk_delete']
-            ],
-            ['children'],
-            false
-        );
-        return $ret;
-    }
     public function clear_hak_aksess($data)
     {
         $this->db->where('id_user', $data['user_id']);
