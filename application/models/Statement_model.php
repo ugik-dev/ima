@@ -2449,6 +2449,8 @@ class Statement_model extends CI_Model
                         ORDER BY mp_head.name
                         ';
         $res = $this->db->query($QUERY);
+        echo json_encode($res);
+        die();
         $res = $res->result();
         if (!empty($res[0])) {
             return $res[0]->saldo_sebelum + $res[0]->mutasi;
