@@ -2436,7 +2436,7 @@ class Statement_model extends CI_Model
                                     JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                                     JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                                     WHERE
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . date('Y') . '-' .  date('m') . '-1" AND 			mp_generalentry.date <="' . date('Y-m-t') .'
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . date('Y') . '-' .  date('m') . '-1" AND 			mp_generalentry.date <="' . date('Y-m-t') .'"
                                     ),0)  mutasi,
                                 mp_head.id,
                                 mp_head.name
