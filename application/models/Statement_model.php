@@ -2449,6 +2449,7 @@ class Statement_model extends CI_Model
                         ORDER BY mp_head.name
                         ';
         $res = $this->db->query($QUERY);
+        echo $this->db->last_query();
         echo json_encode($res);
         die();
         $res = $res->result();
