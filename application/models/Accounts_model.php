@@ -554,7 +554,7 @@ class Accounts_model extends CI_Model
     function amount_return()
     {
         $date1 = date('Y-m') . '-1';
-        $date2 = date('Y-m') . '-31';
+        $date2 = date('Y-m-t');
 
         $amount = 0;
 
