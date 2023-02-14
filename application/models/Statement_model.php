@@ -2319,7 +2319,7 @@ class Statement_model extends CI_Model
             $this->db->where('mp_head.name like "[' . $filter['name'] . '%"');
             if (!empty($filter['filter']['year'])) {
                 $filter['filter']['from'] = $filter['filter']['year'] . '-' . $i . '-01';
-                $filter['filter']['to'] = $filter['filter']['year'] . '-' . $i . '-31';
+                $filter['filter']['to'] = date("Y-m-t", strtotime($filter['filter']['year'] . '-' . $i . '-1'));
             }
             $this->db->where('mp_generalentry.date >= "' . $filter['filter']['from'] . '"');
             $this->db->where('mp_generalentry.date <= "' . $filter['filter']['to'] . '"');
@@ -2530,7 +2530,8 @@ class Statement_model extends CI_Model
             $this->db->where('mp_head.name like "[' . $filter['name'] . '%"');
             if (!empty($filter['filter']['year'])) {
                 $filter['filter']['from'] = $filter['filter']['year'] . '-' . $i . '-01';
-                $filter['filter']['to'] = $filter['filter']['year'] . '-' . $i . '-31';
+                // date("Y-m-t", strtotime($filter['filter']['year'] . '-' . $i . '-1'));
+                $filter['filter']['to'] = date("Y-m-t", strtotime($filter['filter']['year'] . '-' . $i . '-1'));
             }
             $this->db->where('mp_generalentry.date >= "' . $filter['filter']['from'] . '"');
             $this->db->where('mp_generalentry.date <= "' . $filter['filter']['to'] . '"');
