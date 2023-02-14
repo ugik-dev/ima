@@ -270,7 +270,8 @@ class Accounts_model extends CI_Model
         $arr_ctr = 0;
         for ($counteri = 1; $counteri <= 12; $counteri++) {
             $date1 = date('Y') . '-' . $counteri . '-1';
-            $date2 = date('Y') . '-' . $counteri . '-30';
+            // $date2 = date('Y') . '-' . $counteri . '-30';
+            $date2 = date("Y-m-t", strtotime($date1));
 
             // echo $date1.'<br />';
             //  $date1 = date('Y').'-5-1';
@@ -604,7 +605,7 @@ class Accounts_model extends CI_Model
     function purchase_amount()
     {
         $date1 = date('Y-m-') . '1';
-        $date2 = date('Y-m-') . '31';
+        $date2 = date('Y-m-t') ;
         $amount = 0;
 
         $this->db->select('mp_purchase.total_amount');
