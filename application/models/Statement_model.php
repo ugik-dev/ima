@@ -2473,6 +2473,7 @@ class Statement_model extends CI_Model
         $debit = 0;
         $kredit = 0;
         for ($i = 1; $i <= $filter['bulan']; $i++) {
+            $tmpdt = date("Y-m-t", strtotime($filter['tahun'] . '-' . $i . '-1'));
             $QUERY = 'SELECT
                                     @names := SUBSTR(mp_head.name, 1, ' . $cut . ') as pars,SUBSTR(mp_head.name, 2, 5) as title,
                                     COALESCE((
@@ -2484,7 +2485,7 @@ class Statement_model extends CI_Model
                                     JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                                     WHERE
                                     mp_generalentry.id > 0 AND
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' .  $i . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $i . '-31"
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' .  $i . '-1" AND 			mp_generalentry.date <="' . $tmpdt. '"
                                     ),0) mutasi,
                                 mp_head.id,
                                 mp_head.name
