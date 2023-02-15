@@ -1665,7 +1665,7 @@ class Statement_model extends CI_Model
                         JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                         JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                         WHERE
-                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . date("Y-m-t", strtotime($filter['tahun'] . '-' . $filter['bulan'] . '-1')) . '"
                         ),0)  mutasi,
                     mp_head.id,
                     mp_head.name
@@ -1719,7 +1719,7 @@ class Statement_model extends CI_Model
                         JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                         JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                         WHERE
-                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . date("Y-m-t", strtotime($filter['tahun'] . '-' . $filter['bulan'] . '-1')) . '"
                         ),0)  mutasi,
                     mp_head.id,
                     mp_head.name
@@ -1998,7 +1998,7 @@ class Statement_model extends CI_Model
                         JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                         JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                         WHERE
-                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . date("Y-m-t", strtotime($filter['tahun'] . '-' . $filter['bulan'] . '-1')) . '"
                         ),0)  mutasi,
                     mp_head.id,
                     mp_head.name
@@ -2052,7 +2052,7 @@ class Statement_model extends CI_Model
                         JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                         JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                         WHERE
-                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . date("Y-m-t", strtotime($filter['tahun'] . '-' . $filter['bulan'] . '-1')) . '"
                         ),0)  mutasi,
                     mp_head.id,
                     mp_head.name
@@ -2114,7 +2114,7 @@ class Statement_model extends CI_Model
                                     JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                                     JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                                     WHERE
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . date("Y-m-t", strtotime($filter['tahun'] . '-' . $filter['bulan'] . '-1')) . '"
                                     ),0)  mutasi,
                                 mp_head.id,
                                 mp_head.name
@@ -2215,7 +2215,7 @@ class Statement_model extends CI_Model
                                     JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                                     WHERE
                                     mp_sub_entry.parent_id > 0  AND 
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . date("Y-m-t", strtotime($filter['tahun'] . '-' . $filter['bulan'] . '-1')) . '"
                                     ),0)  mutasi,
                                 mp_head.id,
                                 mp_head.name
@@ -2436,7 +2436,7 @@ class Statement_model extends CI_Model
                                     JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                                     JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                                     WHERE
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . date('Y') . '-' .  date('m') . '-1" AND 			mp_generalentry.date <="' . date('Y-m-t') .'"
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . date('Y') . '-' .  date('m') . '-1" AND 			mp_generalentry.date <="' . date('Y-m-t') . '"
                                     ),0)  mutasi,
                                 mp_head.id,
                                 mp_head.name
@@ -2485,7 +2485,7 @@ class Statement_model extends CI_Model
                                     JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                                     WHERE
                                     mp_generalentry.id > 0 AND
-                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' .  $i . '-1" AND 			mp_generalentry.date <="' . $tmpdt. '"
+                                    mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' .  $i . '-1" AND 			mp_generalentry.date <="' . $tmpdt . '"
                                     ),0) mutasi,
                                 mp_head.id,
                                 mp_head.name
@@ -2714,7 +2714,7 @@ class Statement_model extends CI_Model
                         JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                         WHERE
                         mp_sub_entry.parent_id > 0 AND
-                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-1-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-12-31"
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-1-1" AND 			mp_generalentry.date <="' .  date("Y-m-t", strtotime($filter['tahun'] . '-12-1')) . '"
                         ),0)  mutasi,
                     mp_head.id,
                     mp_head.name
@@ -2763,7 +2763,7 @@ class Statement_model extends CI_Model
                         JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                         JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                         WHERE
-                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' .  date("Y-m-t", strtotime($filter['tahun'] . '-' . $filter['bulan'] . '-1')) . '"
                         ),0)  mutasi,
                     mp_head.id,
                     mp_head.name
@@ -2817,7 +2817,7 @@ class Statement_model extends CI_Model
                         JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                         JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                         WHERE
-                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . date("Y-m-t", strtotime($filter['tahun'] . '-' . $filter['bulan'] . '-1')) . '"
                         ),0)  mutasi,
                     mp_head.id,
                     mp_head.name
@@ -3107,7 +3107,7 @@ class Statement_model extends CI_Model
                         JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                         JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                         WHERE
-                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . date("Y-m-t", strtotime($filter['tahun'] . '-' . $filter['bulan'] . '-1')) . '"
                         ),0)  mutasi,
                     mp_head.id,
                     mp_head.name
@@ -3161,7 +3161,7 @@ class Statement_model extends CI_Model
                         JOIN mp_generalentry ON mp_generalentry.id = mp_sub_entry.parent_id
                         JOIN mp_head ON mp_head.id = mp_sub_entry.accounthead
                         WHERE
-                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . $filter['tahun'] . '-' . $filter['bulan'] . '-31"
+                        mp_head.name LIKE CONCAT(@names, "%") AND mp_generalentry.date >= "' . $filter['tahun'] . '-' . $filter['bulan'] . '-1" AND 			mp_generalentry.date <="' . date("Y-m-t", strtotime($filter['tahun'] . '-' . $filter['bulan'] . '-1')) . '"
                         ),0)  mutasi,
                     mp_head.id,
                     mp_head.name

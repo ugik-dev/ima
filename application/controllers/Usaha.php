@@ -411,7 +411,7 @@ class Usaha extends CI_Controller
 
         if ($filter['first_date'] == NULL && $filter['second_date'] == NULL) {
             $filter['first_date'] = date('Y-m-01');
-            $filter['second_date'] = date('Y-m-31');
+            $filter['second_date'] = date('Y-m-t');
 
             // FETCH SALES RECORD FROM invoices TABLE
             // $result_invoices = $this->Accounts_model->get('mp_invoices', $first_date, $second_date);

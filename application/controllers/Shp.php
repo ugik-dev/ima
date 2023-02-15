@@ -142,7 +142,7 @@ class Shp extends CI_Controller
             } else {
                 $data['dataContent'] = $result;
                 $data['riwayat'] = $this->General_model->searchPembayaran(['id_custmer' => $result['id_mitra'], 'date_penerimaan' => $result['date_penerimaan']]);
-              $this->load->model('Invoice_model');
+                $this->load->model('Invoice_model');
                 $data['invoice'] = $this->Invoice_model->getAllInvoice(['id_shp' => $result['id_shp']]);
                 $data['main_view'] = 'shp/detail';
             }
@@ -662,7 +662,7 @@ class Shp extends CI_Controller
 
         if ($filter['first_date'] == NULL && $filter['second_date'] == NULL) {
             $filter['first_date'] = date('Y-m-01');
-            $filter['second_date'] = date('Y-m-31');
+            $filter['second_date'] = date('Y-m-t');
 
             // FETCH SALES RECORD FROM invoices TABLE
             // $result_invoices = $this->Accounts_model->get('mp_invoices', $first_date, $second_date);

@@ -31,7 +31,7 @@ class ExcelControl extends CI_Controller
     {
         $filter = $this->input->get();
         if (empty($filter['from'])) $filter['from'] = date('Y-m-1');
-        if (empty($filter['to'])) $filter['to'] = date('Y-m-31');
+        if (empty($filter['to'])) $filter['to'] = date('Y-m-t');
 
         $this->load->model('General_model');
         $data = $this->General_model->getAllBaganAkun(array('by_DataStructure2' => true));
@@ -191,7 +191,7 @@ class ExcelControl extends CI_Controller
 
         $this->load->model('General_model');
         if (empty($filter['from'])) $filter['from'] = date('Y-m-1');
-        if (empty($filter['to'])) $filter['to'] = date('Y-m-31');
+        if (empty($filter['to'])) $filter['to'] = date('Y-m-t');
 
         $data = $this->General_model->getJurnalUmum($filter);
         $spreadsheet = new Spreadsheet();
