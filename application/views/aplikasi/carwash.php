@@ -227,7 +227,7 @@
         });
         var x = setInterval(function() {
             getAllList();
-        }, 200000000);
+        }, 3000);
 
         getPetugas()
 
