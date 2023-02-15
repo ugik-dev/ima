@@ -231,7 +231,7 @@ class Pembayaran extends CI_Controller
 
         if ($filter['first_date'] == NULL && $filter['second_date'] == NULL) {
             $filter['first_date'] = date('Y-m-01');
-            $filter['second_date'] = date('Y-m-31');
+            $filter['second_date'] = date('Y-m-t');
 
             // FETCH SALES RECORD FROM pembayarans TABLE
             // $result_pembayarans = $this->Accounts_model->get('mp_pembayarans', $first_date, $second_date);
