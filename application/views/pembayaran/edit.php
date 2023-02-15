@@ -22,12 +22,12 @@
                                             $data = array('class' => 'form-control input-lg', 'type' => 'hidden', 'name' => 'id', 'value' => (!empty($data_return['id']) ? $data_return['id'] : ''));
                                             echo form_input($data);
                                             echo form_label('Mitra'); ?>
-                                            <input name="id_shp" value="<?= !empty($data_return['id_shp']) ? $data_return['id_shp'] : '' ?>">
+                                            <input type="hidden" name="id_shp" value="<?= !empty($data_return['id_shp']) ? $data_return['id_shp'] : '' ?>">
                                             <?php if (!empty($data_return['id_shp'])) {
                                                 echo "
-                                                <input type='' name='customer_id' value='{$data_return['customer_id']}'>
-                                                <input type='' name='jenis_pembayaran' value='{$data_return['jenis_pembayaran']}'>
-                                                <input type='' name='payment_method' value='{$data_return['payment_metode']}'>
+                                                <input type='hidden' name='customer_id' value='{$data_return['customer_id']}'>
+                                                <input type='hidden' name='jenis_pembayaran' value='{$data_return['jenis_pembayaran']}'>
+                                                <input type='hidden' name='payment_method' value='{$data_return['payment_metode']}'>
                                                 ";
                                             } ?>
                                             <select name="customer_id" id="customer_id" class="form-control select2 input-lg " <?= !empty($data_return['id_shp']) ? 'disabled' : '' ?>>
