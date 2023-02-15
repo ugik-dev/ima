@@ -54,7 +54,7 @@
                                 <input class="form-control h-auto text-white bg-white-o-5 rounded-pill border-0 py-4 px-8" type="text" placeholder="Email" name="username" autocomplete="off" />
                             </div>
                             <div class="form-group">
-                 ss               <input class="form-control h-auto text-white bg-white-o-5 rounded-pill border-0 py-4 px-8" type="password" placeholder="Password" name="password" />
+                                <input class="form-control h-auto text-white bg-white-o-5 rounded-pill border-0 py-4 px-8" type="password" placeholder="Password" name="password" />
                             </div>
                             <div class="form-group d-flex flex-wrap justify-content-between align-items-center px-8 opacity-60">
                                 <div class="checkbox-inline">
