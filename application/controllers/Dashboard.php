@@ -8,7 +8,7 @@ class Dashboard extends CI_Controller
 	// Homepage
 	public function index()
 	{
-		echo "1";
+		// echo "1";
 		$filter = $this->input->get();
 		if (empty($filter['year'])) $filter['year'] = date('Y');
 
@@ -34,7 +34,7 @@ class Dashboard extends CI_Controller
 
 		// DEFINES WHICH PAGE TO RENDER
 		$data['main_view'] = 'dashboard';
-		echo "2";
+		// echo "2";
 
 		// DIFINES THE TABLE HEAD
 		$data['table_heading_names_of_coloums'] = array(
@@ -61,7 +61,7 @@ class Dashboard extends CI_Controller
 		//USED TO SHOW THE LIST OF STOCK SHORTAGE ITEMS DEFINED BY USER
 		$data['product_alert_limit'] = $this->Crud_model->fetch_record_product_alert_limit(8);
 		echo "<br>63";
-		var_dump($data);
+		// var_dump($data);
 		//CASH IN HAND
 		$data['cash_in_hand'] = $this->Statement_model->count_current_time(array('acc_number' => '1.11.000.000'));
 
@@ -101,7 +101,8 @@ class Dashboard extends CI_Controller
 
 		//CURRENCY 
 		$data['currency'] = '( RP )';
-
+		echo "<br>104<br>";
+		var_dump($data);
 		// $data['Sales_today_count'] = $this->Crud_model->count_sales('mp_invoices', date('Y-m-d'), date('Y-m-d'));
 		// $data['Sales_month_count'] = $this->Crud_model->count_sales('mp_invoices', date('Y-m') . '-1', date('Y-m') . '-30');
 
