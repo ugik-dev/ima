@@ -49,7 +49,8 @@ class Dashboard extends CI_Controller
 
 		// DEFINES FETCH THE productS RECORD FROM TABLE mp_productslist WITH LIMIT OF ONLY 6 RECORD
 		$data['productList_records'] = $this->Crud_model->fetch_limit_record('mp_productslist', 6);
-		echo "3";
+		echo "<br>52";
+		var_dump($data['productList_records']);
 
 		// DEFINES FETCH THE CUSTOMER RECORD FROM TABLE MP_CUSTOMER WITH LIMIT OF ONLY 8 RECORD
 		$data['total_retial_cost'] = $this->Crud_model->result_retail_cost();
@@ -59,7 +60,8 @@ class Dashboard extends CI_Controller
 
 		//USED TO SHOW THE LIST OF STOCK SHORTAGE ITEMS DEFINED BY USER
 		$data['product_alert_limit'] = $this->Crud_model->fetch_record_product_alert_limit(8);
-
+		echo "<br>63";
+		var_dump($data);
 		//CASH IN HAND
 		$data['cash_in_hand'] = $this->Statement_model->count_current_time(array('acc_number' => '1.11.000.000'));
 
