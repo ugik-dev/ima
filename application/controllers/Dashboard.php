@@ -87,7 +87,8 @@ class Dashboard extends CI_Controller
 
 		//EXPENSE AMOUNT 
 		$data['expense_amount'] = $this->Accounts_model->expense_amount();
-
+		echo "<br>90<br>";
+		var_dump($data);
 		//EXPENSE AMOUNT 
 		$data['purchase_amount'] = $this->Accounts_model->purchase_amount();
 
@@ -104,8 +105,7 @@ class Dashboard extends CI_Controller
 
 		//CURRENCY 
 		$data['currency'] = '( RP )';
-		echo "<br>104<br>";
-		var_dump($data);
+
 		// $data['Sales_today_count'] = $this->Crud_model->count_sales('mp_invoices', date('Y-m-d'), date('Y-m-d'));
 		// $data['Sales_month_count'] = $this->Crud_model->count_sales('mp_invoices', date('Y-m') . '-1', date('Y-m') . '-30');
 
