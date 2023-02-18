@@ -63,11 +63,11 @@ class Dashboard extends CI_Controller
 
 		//USED TO SHOW THE LIST OF STOCK SHORTAGE ITEMS DEFINED BY USER
 		$data['product_alert_limit'] = $this->Crud_model->fetch_record_product_alert_limit(8);
-		echo "<br>63";
+		// echo "<br>63";
 		// var_dump($data);
 		//CASH IN HAND
 		$data['cash_in_hand'] = $this->Statement_model->count_current_time(array('acc_number' => '1.11.000.000'));
-		echo "<br>70<br>";
+		// echo "<br>70<br>";
 		// var_dump($data);
 
 		//ACCOUNT RECEIVABLE
@@ -132,8 +132,8 @@ class Dashboard extends CI_Controller
 
 		$data['result_profit_this_year'] = json_encode($result_sales_this_year_and_total_profit[1]);
 
-		echo json_encode($data);
-		die();
+		// echo json_encode($data);
+		// die();
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
 		$data['filter']  = $filter;
 		$this->load->view('main/index.php', $data);
