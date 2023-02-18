@@ -37,7 +37,7 @@
             <a href="<?php echo base_url('login'); ?>"> <b style="color:#faffbd;">PT Indometal Asia</b></a>
         </h3>
         <div class="login-box-body">
-            <p class="login-box-msg" style="color: #fffdfde0;font-size: 18px;">Silahkan masukkan Email dan Kata Sandi untuk melanjutkan</p>
+            <p class="login-box-msg" style="color: #fffdfde0;font-size: 18px;">Silahkan masukkan Email dan Kata Sandi untuk melanjutkan.</p>
             <?php
             $attributes = array('id' => 'Customer_form', 'method' => 'post', 'class' => 'form-horizontal');
             ?>
