@@ -8,6 +8,8 @@ class Dashboard extends CI_Controller
 	// Homepage
 	public function index()
 	{
+		echo "msk";
+		die();
 		$filter = $this->input->get();
 		if (empty($filter['year'])) $filter['year'] = date('Y');
 
