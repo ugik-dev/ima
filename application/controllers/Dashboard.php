@@ -67,14 +67,14 @@ class Dashboard extends CI_Controller
 		// var_dump($data);
 		//CASH IN HAND
 		$data['cash_in_hand'] = $this->Statement_model->count_current_time(array('acc_number' => '1.11.000.000'));
+		echo "<br>70<br>";
+		var_dump($data);
 
 		//ACCOUNT RECEIVABLE
 		$data['account_recieveble'] = $this->Statement_model->count_current_time(array('acc_number' => '1.13.000.000'));
 
 		//CASH IN BANK
 		$data['cash_in_bank'] = $this->Statement_model->count_head_amount_by_id(16);
-		echo "<br>76<br>";
-		var_dump($data);
 
 		//PAYABLES
 		$data['payables'] = $this->Statement_model->count_current_time(array('acc_number' => '2.11.000.000'));
