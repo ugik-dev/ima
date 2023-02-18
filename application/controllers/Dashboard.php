@@ -8,8 +8,7 @@ class Dashboard extends CI_Controller
 	// Homepage
 	public function index()
 	{
-		echo "msk";
-		die();
+		echo "1";
 		$filter = $this->input->get();
 		if (empty($filter['year'])) $filter['year'] = date('Y');
 
@@ -35,6 +34,7 @@ class Dashboard extends CI_Controller
 
 		// DEFINES WHICH PAGE TO RENDER
 		$data['main_view'] = 'dashboard';
+		echo "2";
 
 		// DIFINES THE TABLE HEAD
 		$data['table_heading_names_of_coloums'] = array(
@@ -49,6 +49,7 @@ class Dashboard extends CI_Controller
 
 		// DEFINES FETCH THE productS RECORD FROM TABLE mp_productslist WITH LIMIT OF ONLY 6 RECORD
 		$data['productList_records'] = $this->Crud_model->fetch_limit_record('mp_productslist', 6);
+		echo "3";
 
 		// DEFINES FETCH THE CUSTOMER RECORD FROM TABLE MP_CUSTOMER WITH LIMIT OF ONLY 8 RECORD
 		$data['total_retial_cost'] = $this->Crud_model->result_retail_cost();
