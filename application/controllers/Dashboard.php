@@ -73,6 +73,8 @@ class Dashboard extends CI_Controller
 
 		//CASH IN BANK
 		$data['cash_in_bank'] = $this->Statement_model->count_head_amount_by_id(16);
+		echo "<br>76<br>";
+		var_dump($data);
 
 		//PAYABLES
 		$data['payables'] = $this->Statement_model->count_current_time(array('acc_number' => '2.11.000.000'));
@@ -87,8 +89,6 @@ class Dashboard extends CI_Controller
 
 		//EXPENSE AMOUNT 
 		$data['expense_amount'] = $this->Accounts_model->expense_amount();
-		echo "<br>90<br>";
-		var_dump($data);
 		//EXPENSE AMOUNT 
 		$data['purchase_amount'] = $this->Accounts_model->purchase_amount();
 
