@@ -123,8 +123,8 @@ class Dashboard extends CI_Controller
 
 		$data['result_profit_this_year'] = json_encode($result_sales_this_year_and_total_profit[1]);
 
-		// echo json_encode($data['result_profit_this_year']);
-		// die();
+		echo json_encode($data['result_profit_this_year']);
+		die();
 		// DEFINES GO TO MAIN FOLDER FOND INDEX.PHP  AND PASS THE ARRAY OF DATA TO THIS PAGE
 		$data['filter']  = $filter;
 		$this->load->view('main/index.php', $data);
