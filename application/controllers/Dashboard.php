@@ -16,6 +16,9 @@ class Dashboard extends CI_Controller
 		$this->load->model('Crud_model');
 		$this->load->model('Statement_model');
 		$this->load->model('Accounts_model');
+		ini_set('display_errors', 1);
+		ini_set('display_startup_errors', 1);
+		error_reporting(E_ALL);
 
 		// DEFINES PAGE TITLE
 		$data['title'] = 'Dashboard';
