@@ -16,9 +16,9 @@ class Dashboard extends CI_Controller
 		$this->load->model('Crud_model');
 		$this->load->model('Statement_model');
 		$this->load->model('Accounts_model');
-		ini_set('display_errors', 1);
-		ini_set('display_startup_errors', 1);
-		error_reporting(E_ALL);
+		// ini_set('display_errors', 1);
+		// ini_set('display_startup_errors', 1);
+		// error_reporting(E_ALL);
 
 		// DEFINES PAGE TITLE
 		$data['title'] = 'Dashboard';
@@ -52,7 +52,7 @@ class Dashboard extends CI_Controller
 
 		// DEFINES FETCH THE productS RECORD FROM TABLE mp_productslist WITH LIMIT OF ONLY 6 RECORD
 		$data['productList_records'] = $this->Crud_model->fetch_limit_record('mp_productslist', 6);
-		echo "<br>52";
+		// echo "<br>52";
 		// var_dump($data['productList_records']);
 
 		// DEFINES FETCH THE CUSTOMER RECORD FROM TABLE MP_CUSTOMER WITH LIMIT OF ONLY 8 RECORD
