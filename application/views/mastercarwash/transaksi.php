@@ -3,8 +3,8 @@
         <div class="ibox ssection-container">
             <div class="ibox-content">
                 <form class="form-inline" id="toolbar_form" onsubmit="return false;">
-                    <input class="form-control mr-sm-2" type="date" name="req_tanggal_start" id="req_tanggal_start" value="<?= date('Y-m-d') ?>">
-                    <input class="form-control mr-sm-2" type="date" name="req_tanggal_end" id="req_tanggal_end" value="<?= date('Y-m-d') ?>">
+                    <input class="form-control mr-sm-2" type="date" name="req_tanggal_start" id="req_tanggal_start" value="<?= date('Y-01-01') ?>">
+                    <input class="form-control mr-sm-2" type="date" name="req_tanggal_end" id="req_tanggal_end" value="<?= date('Y-12-31') ?>">
                     <select class="form-control mr-sm-2" name="status" id="status">
                         <option value="">Semua</option>
                         <option value="1|2|3">Belum Check-in / Dalam Antrian / Sedang di Cuci</option>
@@ -34,9 +34,9 @@
                                         <th style="width: 24%; text-align:left!important">Info Pemesanan</th>
                                         <th style="width: 24%; text-align:left!important">Info Pembayaran</th>
                                         <!-- <th style="width: 7%; text-align:left!important">Plat</th> -->
-                                        <th style="width: 7%; text-align:left!important">Antrian</th>
+                                        <!-- <th style="width: 7%; text-align:left!important">Antrian</th> -->
                                         <!-- <th style="width: 24%; text-align:left!important">Layanan</th> -->
-                                        <!-- <th style="width: 7%; text-align:left!important">Petugas</th> -->
+                                        <th style="width: 7%; text-align:left!important">Petugas</th>
                                         <th style="width: 7%; text-align:left!important">Status</th>
                                         <th style="width: 7%; text-align:left!important">Pembayaran</th>
                                         <th style="width: 5%; text-align:center!important">Action</th>
@@ -51,7 +51,7 @@
         </div>
     </div>
 </div>
-<div class="modal inmodal" id="petugas_edit_modal" tabindex="-1" opd="dialog" aria-hidden="true">
+<div class="modal inmodal" id="car_wash_modal" tabindex="-1" opd="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content animated fadeIn">
             <div class="modal-header">
@@ -63,27 +63,73 @@
                 <form opd="form" id="form_carwash" onsubmit="return false;" type="multipart" autocomplete="off">
                     <input type="hidden" id="id_carwash" name="id_carwash">
                     <div class="row">
-                        <div class="col-md-6">
-
-                            <div class="form-group">
-                                <label for="status">Status</label>
-                                <select type="text" class="form-control" id="status" name="status" required="required">
-                                    <!-- <option value="1"></option> -->
-                                    <option value="1">Menunggu dijadwalkan petugas</option>
-                                    <option value="2">Dijadwalkan</option>
-                                    <option value="3">Sedang di Cuci</option>
-                                    <option value="4">Selesai</option>
-                                    <option value="5">Di Batalkan</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6" id="est_time_layout">
-                            <div class="form-group">
-                                <label for="est_time">Waktu Pencucian : </label>
-                                <input type="time" name="est_time" id="est_time" class="form-control" />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="status">Status</label>
+                                    <select type="text" class="form-control" id="status" name="status" required="required">
+                                        <!-- <option value="1"></option> -->
+                                        <option value="1">Menunggu dijadwalkan petugas</option>
+                                        <option value="2">Dijadwalkan</option>
+                                        <option value="3">Sedang di Cuci</option>
+                                        <option value="4">Selesai</option>
+                                        <option value="5">Di Batalkan</option>
+                                    </select>
+                                </div>
                             </div>
 
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="service_1">Layanan 1</label>
+                                    <select type="text" class="form-control" id="service_1" name="service_1" required="required">
 
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="service_2">Layanan 2</label>
+                                    <select type="text" class="form-control" id="service_2" name="service_2" required="required">
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="req_tanggal">Tanggal Pencucian : </label>
+                                    <input type="date" name="req_tanggal" id="req_tanggal" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="est_time">Waktu Pencucian : </label>
+                                    <input type="time" name="est_time" id="est_time" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="plat">Plat : </label>
+                                    <input type="text" name="plat" id="plat" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="nama_pemesan">Nama Pemesan : </label>
+                                    <input type="text" name="nama_pemesan" id="nama_pemesan" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="nama_driver">Nama Driver : </label>
+                                    <input type="text" name="nama_driver" id="nama_driver" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="notelp">No Telp : </label>
+                                    <input type="text" name="notelp" id="notelp" class="form-control" />
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-6" id="id_petugas_jemput_layout">
                             <div class="form-group">
@@ -149,8 +195,8 @@
 
 <script>
     $(document).ready(function() {
-        $('#menu_id_31').addClass('menu-item-active menu-item-open menu-item-here')
-        $('#submenu_id_85').addClass('menu-item-active')
+        $('#menu_id_36').addClass('menu-item-active menu-item-open menu-item-here')
+        $('#submenu_id_98').addClass('menu-item-active')
 
         var toolbar = {
             'form': $('#toolbar_form'),
@@ -181,17 +227,24 @@
         });
 
         var CarwashModal = {
-            'self': $('#petugas_edit_modal'),
-            'info': $('#petugas_edit_modal').find('.info'),
-            'form': $('#petugas_edit_modal').find('#form_carwash'),
-            'saveEditBtn': $('#petugas_edit_modal').find('#save_edit_btn'),
-            'id_carwash': $('#petugas_edit_modal').find('#id_carwash'),
-            'status': $('#petugas_edit_modal').find('#status'),
-            'id_petugas_jemput': $('#petugas_edit_modal').find('#id_petugas_jemput'),
-            'id_petugas_jemput_layout': $('#petugas_edit_modal').find('#id_petugas_jemput_layout'),
+            'self': $('#car_wash_modal'),
+            'info': $('#car_wash_modal').find('.info'),
+            'form': $('#car_wash_modal').find('#form_carwash'),
+            'saveEditBtn': $('#car_wash_modal').find('#save_edit_btn'),
+            'id_carwash': $('#car_wash_modal').find('#id_carwash'),
+            'status': $('#car_wash_modal').find('#status'),
+            'id_petugas_jemput': $('#car_wash_modal').find('#id_petugas_jemput'),
+            'id_petugas_jemput_layout': $('#car_wash_modal').find('#id_petugas_jemput_layout'),
+            'service_1': $('#car_wash_modal').find('#service_1'),
+            'service_2': $('#car_wash_modal').find('#service_2'),
+            'plat': $('#car_wash_modal').find('#plat'),
+            'req_tanggal': $('#car_wash_modal').find('#req_tanggal'),
+            'nama_pemesan': $('#car_wash_modal').find('#nama_pemesan'),
+            'nama_driver': $('#car_wash_modal').find('#nama_driver'),
+            'notelp': $('#car_wash_modal').find('#notelp'),
 
-            'est_time': $('#petugas_edit_modal').find('#est_time'),
-            'est_time_layout': $('#petugas_edit_modal').find('#est_time_layout'),
+            'est_time': $('#car_wash_modal').find('#est_time'),
+            'est_time_layout': $('#car_wash_modal').find('#est_time_layout'),
         }
 
 
@@ -224,10 +277,11 @@
         toolbar.req_tanggal_start.on('change', () => {
             getAllList();
         });
-        var x = setInterval(function() {
-            getAllList();
-        }, 3000);
-
+        // var x = setInterval(function() {
+        //     getAllList();
+        // }, 3000);
+        getAllService1();
+        getAllService2();
         getPetugas()
 
         function getAllList() {
@@ -241,7 +295,7 @@
                         return;
                     }
                     dataCarwash = json['data'];
-                    renderJenisDokumen(dataCarwash);
+                    renderTransaksi(dataCarwash);
                 },
                 error: function(e) {}
             });
@@ -265,6 +319,79 @@
             });
         }
 
+        function getAllService1() {
+            swal.fire({
+                title: 'Loading PriceList...',
+                allowOutsideClick: false
+            });
+            swal.showLoading();
+            return $.ajax({
+                url: `<?php echo base_url('MasterCarwash/getAllPriceList?by_id=true') ?>`,
+                'type': 'GET',
+                data: {},
+                success: function(data) {
+                    swal.close();
+                    var json = JSON.parse(data);
+                    if (json['error']) {
+                        return;
+                    }
+                    data = json['data'];
+                    renderSelectService1(data);
+                },
+                error: function(e) {}
+            });
+        }
+
+        function renderSelectService1(data) {
+            if (data == null || typeof data != "object") {
+                console.log("Jenis Dokumen::UNKNOWN DATA");
+                return;
+            }
+
+            Object.values(data).forEach((d) => {
+                CarwashModal.service_1.append($('<option>', {
+                    value: d['id_ref'],
+                    text: d['label'] + ' :: ' + formatRupiah2(d['price'])
+                }))
+            });
+        }
+
+        function getAllService2() {
+            swal.fire({
+                title: 'Loading PriceList...',
+                allowOutsideClick: false
+            });
+            swal.showLoading();
+            return $.ajax({
+                url: `<?php echo base_url('MasterCarwash/getAllPriceList2?by_id=true') ?>`,
+                'type': 'GET',
+                data: {},
+                success: function(data) {
+                    swal.close();
+                    var json = JSON.parse(data);
+                    if (json['error']) {
+                        return;
+                    }
+                    data = json['data'];
+                    renderSelectService2(data);
+                },
+                error: function(e) {}
+            });
+        }
+
+        function renderSelectService2(data) {
+            if (data == null || typeof data != "object") {
+                console.log("Jenis Dokumen::UNKNOWN DATA");
+                return;
+            }
+            Object.values(data).forEach((d) => {
+                CarwashModal.service_2.append($('<option>', {
+                    value: d['id_ref'],
+                    text: d['label'] + ' :: ' + formatRupiah2(d['price'])
+                }))
+            });
+        }
+
         function renderPetugas(data) {
             if (data == null || typeof data != "object") {
                 console.log("Jenis Dokumen::UNKNOWN DATA");
@@ -280,7 +407,7 @@
             });
         }
 
-        function renderJenisDokumen(data) {
+        function renderTransaksi(data) {
             if (data == null || typeof data != "object") {
                 console.log("Jenis Dokumen::UNKNOWN DATA");
                 return;
@@ -299,31 +426,30 @@
                     d['notelp'] = '62' + d['notelp'].substring(3);
                 }
 
-
                 info = 'Nama Pemesan : ' + d['nama_pemesan'] +
                     '<br>No Telp : ' + d['notelp'] +
                     '<br>Nama Driver : ' + d['nama_driver'] +
                     '<br>Plat : ' + d['plat'] +
-                    '<br>Telp : ' + d['notelp'] +
                     '<br>Waktu Entri : ' + d['reg_time'];
-                var editButton = `<a  class="edit btn btn-primary" data-id='${d['id_carwash']}'><i class="fas fa-pencil-alt" aria-hidden="true"></i>Form</a>`;
+                var delButton = `<a  class="delete btn btn-danger" data-id='${d['id_carwash']}'><i class="fas fa-trash" aria-hidden="true"></i>Hapus</a>`;
+                var editButton = `<a  class="edit btn btn-primary" data-id='${d['id_carwash']}'><i class="fas fa-pencil-alt" aria-hidden="true"></i>Edit Data</a>`;
                 var pembayaranButton = `<a  class="konfirmasi_bayar btn btn-warning btn-sm" data-id='${d['id_carwash']}'><i class="fa fa-money-bill" aria-hidden="true"></i>Pembayaran</a>`;
-                var mapsButton = `<a href="https://www.google.com/maps/dir/?api=1&destination=${d['latitude']},${d['longitude']}" target="_blank" class="btn btn-secondary btn-sm" data-id='${d['id_carwash']}'><i class="fa fa-map" aria-hidden="true"></i>Maps</a>`;
+                // var mapsButton = `<a href="https://www.google.com/maps/dir/?api=1&destination=${d['latitude']},${d['longitude']}" target="_blank" class="btn btn-secondary btn-sm" data-id='${d['id_carwash']}'><i class="fa fa-map" aria-hidden="true"></i>Maps</a>`;
                 var deleteButton = `<a class="delete danger btn-sm" data-id='${d['id_carwash']}'><i class='fa fa-trash text-danger'></i></a>`;
                 message1 = encodeURIComponent(`Halo ini admin IMA Carwash,\nkami menginformasikan bahwa status pesanan anda sudah dijadwalkan pada jam ${d['est_time']}`)
                 var wa1 = `<a class="" href="https://api.whatsapp.com/send?phone=${d['notelp']}&text=${message1}"'><i class='fa fa-whatsapp text-danger mr-5'></i> Send </a>`;
                 var wa2 = '';
-                if (d['service_2'] == 2 && d['id_petugas_jemput'] != null) {
-                    messagemaps = 'Silahkan melakukan penjemputkan dengan \nNama Pemesan : ' + d['nama_pemesan'] +
-                        '\nNama Driver : ' + d['nama_driver'] +
-                        '\nPlat : ' + d['plat'] +
-                        '\nTelp : ' + d['notelp'] +
-                        '\nNo Antrian : ' + d['nomor_antrian'] +
-                        `\nLokasi : https://www.google.com/maps/dir/?api=1&destination=${d['latitude']},${d['longitude']}`;
+                // if (d['service_2'] == 2 && d['id_petugas_jemput'] != null) {
+                //     messagemaps = 'Silahkan melakukan penjemputkan dengan \nNama Pemesan : ' + d['nama_pemesan'] +
+                //         '\nNama Driver : ' + d['nama_driver'] +
+                //         '\nPlat : ' + d['plat'] +
+                //         '\nTelp : ' + d['notelp'] +
+                //         '\nNo Antrian : ' + d['nomor_antrian'] +
+                //         `\nLokasi : https://www.google.com/maps/dir/?api=1&destination=${d['latitude']},${d['longitude']}`;
 
-                    console.log(send_wa(dataPetugas[d['id_petugas_jemput']]['no_wa'], messagemaps));
-                    wa2 = `<a class="dropdown-item" href="${send_wa(dataPetugas[d['id_petugas_jemput']]['no_wa'],messagemaps)}">ke Petugas</a>`;
-                }
+                //     console.log(send_wa(dataPetugas[d['id_petugas_jemput']]['no_wa'], messagemaps));
+                //     wa2 = `<a class="dropdown-item" href="${send_wa(dataPetugas[d['id_petugas_jemput']]['no_wa'],messagemaps)}">ke Petugas</a>`;
+                // }
                 // console.log(dataPetugas[d['id_petugas_jemput']]);
                 whatsapp = `<div class="btn-group">
                                                                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -339,8 +465,8 @@
                 var button = `
                                 <div class="btn-group-vertical" role="group" aria-label="">
                                     ${editButton}
+                                    ${delButton}
                                     ${pembayaranButton}
-                                    ${mapsButton}
                                     ${whatsapp}
                                 </div>`;
 
@@ -383,8 +509,8 @@
                     d['est_time'],
                     info,
                     infopembayaran,
-                    d['nomor_antrian'],
-                    // d['nama_petugas'],
+                    // d['nomor_antrian'],
+                    d['nama_petugas'],
                     statusAntrian(d['status']), statusPembayaran(d['status_pembayaran']) + filePembayaran,
                     button
                 ]);
@@ -425,20 +551,19 @@
             },
         }
 
-        CarwashModal.status.on('change', () => {
-            if (CarwashModal.status.val() == 2) {
-                CarwashModal.est_time.prop('disabled', false);
-                CarwashModal.est_time_layout.prop('hidden', false);
-            } else {
-                CarwashModal.est_time.prop('disabled', true);
-                CarwashModal.est_time_layout.prop('hidden', true);
-            }
-        });
+        // CarwashModal.status.on('change', () => {
+        //     if (CarwashModal.status.val() == 2) {
+        //         CarwashModal.est_time.prop('disabled', false);
+        //         CarwashModal.est_time_layout.prop('hidden', false);
+        //     } else {
+        //         CarwashModal.est_time.prop('disabled', true);
+        //         CarwashModal.est_time_layout.prop('hidden', true);
+        //     }
+        // });
 
         CarwashModal.form.submit(function(event) {
             event.preventDefault();
-            var url = "<?= site_url('CarWash/edit') ?>";
-
+            var url = "<?= site_url('MasterCarWash/edit') ?>";
             Swal.fire({
                 title: 'Konfirmasi',
                 html: 'Yakin simpan data? .. ', // add html attribute if you want or remove
@@ -472,7 +597,7 @@
                         }
                         var data = json['data']
                         dataCarwash[data['id_carwash']] = data;
-                        renderJenisDokumen(dataCarwash);
+                        renderTransaksi(dataCarwash);
                         CarwashModal.self.modal('hide');
                         Swal.fire({
                             title: 'Berhasil',
@@ -526,7 +651,7 @@
                         }
                         var data = json['data']
                         dataCarwash[data['id_carwash']] = data;
-                        renderJenisDokumen(dataCarwash);
+                        renderTransaksi(dataCarwash);
                         PembayaranModal.self.modal('hide');
                         Swal.fire({
                             title: 'Berhasil',
@@ -547,8 +672,17 @@
             CarwashModal.self.modal('show');
             CarwashModal.saveEditBtn.show();
             var currentData = dataCarwash[$(this).data('id')];
+            console.log(currentData)
             CarwashModal.id_carwash.val(currentData['id_carwash']);
             CarwashModal.status.val(currentData['status']);
+            CarwashModal.req_tanggal.val(currentData['req_tanggal']);
+            CarwashModal.est_time.val(currentData['est_time']);
+            CarwashModal.nama_driver.val(currentData['nama_driver']);
+            CarwashModal.nama_pemesan.val(currentData['nama_pemesan']);
+            CarwashModal.service_1.val(currentData['service_1']);
+            CarwashModal.service_2.val(currentData['service_2']);
+            CarwashModal.notelp.val(currentData['notelp']);
+            CarwashModal.plat.val(currentData['plat']);
             if (currentData['service_2'] == 2) {
                 CarwashModal.id_petugas_jemput_layout.prop('hidden', false);
                 CarwashModal.id_petugas_jemput.prop('disabled', false);
@@ -586,10 +720,10 @@
                     return;
                 }
                 $.ajax({
-                    url: "<?= site_url('CarWash/getAll') ?>",
+                    url: "<?= site_url('MasterCarwash/Delete') ?>",
                     'type': 'get',
                     data: {
-                        // 'id_carwash': id
+                        'id_carwash': id
                     },
                     success: function(data) {
                         var json = JSON.parse(data);
@@ -615,7 +749,7 @@
                             confirmButtonText: "Ok!",
                             allowOutsideClick: true,
                         });
-                        renderJenisDokumen(dataCarwash);
+                        renderTransaksi(dataCarwash);
                     },
                     error: function(e) {}
                 });

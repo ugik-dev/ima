@@ -30,10 +30,8 @@ class CarWash extends CI_Controller
     public function edit()
     {
         $data = $this->input->post();
-
         $data['id_petugas'] = $this->session->userdata('user_id')['id'];
         $id =  $this->CarWashModel->edit($data);
-
         $dataLog = [
             'id_carwash' => $id,
             'nama' => $this->session->userdata('user_id')['name'],
@@ -82,10 +80,13 @@ class CarWash extends CI_Controller
         try {
             $this->SecurityModel->MultiplerolesStatus(array('Aplikasi', 'CarWash'), False);
 
-            // $crud = $this->SecurityModel->Aksessbility_VCRUD('aplikasi', 'carwash', 'view');
+            $master = $this->SecurityModel->MultiplerolesStatus('Master Carwash');
+            // echo json_encode($master);
+            // die();
             // $privileges = $this->CarWashModel->getAllUser();
             $data['title'] = 'Carwash Apps';
             $data['table_name'] = 'Carwash Apps';
+            $data['master'] = $master;
             $data['main_view'] = 'aplikasi/carwash';
             // $data['vcrud'] = $crud;
             // $data['privileges'] = $privileges;
