@@ -89,7 +89,7 @@
  </div>
  <script>
      $('#menu_id_36').addClass('menu-item-active menu-item-open menu-item-here"')
-     $('#submenu_id_96').addClass('menu-item-active')
+     $('#submenu_id_98').addClass('menu-item-active')
      $(document).ready(function() {
          var dataBanks = [];
          var add_new_data_btn = $('#add_new_data_btn');

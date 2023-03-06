@@ -196,7 +196,7 @@
 <script>
     $(document).ready(function() {
         $('#menu_id_36').addClass('menu-item-active menu-item-open menu-item-here')
-        $('#submenu_id_98').addClass('menu-item-active')
+        $('#submenu_id_100').addClass('menu-item-active')
 
         var toolbar = {
             'form': $('#toolbar_form'),

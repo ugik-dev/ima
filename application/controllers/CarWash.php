@@ -9,6 +9,7 @@ class CarWash extends CI_Controller
     {
         parent::__construct();
         $this->load->model(array('SecurityModel', 'CarWashModel', 'General_model'));
+        $this->SecurityModel->MultiplerolesGuard('Car Wash', true);
         // $this->load->helper(array('DataStructure'));
         $this->db->db_debug = TRUE;
     }
@@ -78,18 +79,26 @@ class CarWash extends CI_Controller
     public function index()
     {
         try {
-            $this->SecurityModel->MultiplerolesStatus(array('Aplikasi', 'CarWash'), False);
-
+            // $this->SecurityModel->MultiplerolesGuard('Car Wash', true);
             $master = $this->SecurityModel->MultiplerolesStatus('Master Carwash');
-            // echo json_encode($master);
-            // die();
-            // $privileges = $this->CarWashModel->getAllUser();
             $data['title'] = 'Carwash Apps';
             $data['table_name'] = 'Carwash Apps';
             $data['master'] = $master;
             $data['main_view'] = 'aplikasi/carwash';
             // $data['vcrud'] = $crud;
             // $data['privileges'] = $privileges;
+            $this->load->view('main/index2.php', $data);
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
+    public function close()
+    {
+        try {
+            // $this->SecurityModel->MultiplerolesGuard('Car Wash', true);
+            $master = $this->SecurityModel->MultiplerolesStatus('Master Carwash');
+            $data['main_view'] = 'aplikasi/carwash_close';
             $this->load->view('main/index2.php', $data);
         } catch (Exception $e) {
             ExceptionHandler::handle($e);

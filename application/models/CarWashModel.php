@@ -70,6 +70,15 @@ class CarWashModel extends CI_Model
         if (!empty($filter['id_ref'])) $this->db->where('id_ref', $filter['id_ref']);
         return DataStructure::keyValue($res->result_array(), 'id_ref');
     }
+
+    public function getAllCarwashClose($filter = [])
+    {
+        $this->db->from("carwash_close as eks");
+        $res = $this->db->get();
+        if (!empty($filter['id_carwash_close '])) $this->db->where('id_carwash_close ', $filter['id_carwash_close ']);
+        return DataStructure::keyValue($res->result_array(), 'id_carwash_close ');
+    }
+
     public function getAllPegawai($filter = [])
     {
         $this->db->from("carwash_petugas as eks");
