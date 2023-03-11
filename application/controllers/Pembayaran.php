@@ -249,7 +249,6 @@ class Pembayaran extends CI_Controller
 
         $data['main_view'] = 'pembayaran/index';
         $this->load->view('main/index.php', $data);
-     
     }
 
     public function edit($id)

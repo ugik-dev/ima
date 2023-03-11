@@ -21,6 +21,15 @@ class CarWash extends CI_Controller
         $data = $this->CarWashModel->getAll($filter);
         echo json_encode(['error' => false, 'data' => $data]);
     }
+
+    public function getAllRekap()
+    {
+        $filter = $this->input->get();
+        // $filter['id_user'] = $this->session->userdata('id_user');
+        $data = $this->CarWashModel->getAllRekap($filter);
+        echo json_encode(['error' => false, 'data' => $data]);
+    }
+
     public function getPetugas()
     {
         $filter = $this->input->get();
@@ -74,6 +83,113 @@ class CarWash extends CI_Controller
 
         $data = $this->CarWashModel->getAll(['id_carwash' => $id])[$id];
         echo json_encode(['error' => false, 'data' => $data]);
+    }
+
+
+    public function lihat_rekap($id)
+    {
+        try {
+            // $data = $this->input->post();
+            $dataContent = $this->CarWashModel->getAllRekap(['id_carwash_close' => $id]);
+
+            if (empty($dataContent)) {
+                throw new UserException("Data untuk diposting tidak ditemukan", USER_NOT_FOUND_CODE);
+            } else {
+                $dataContent = $dataContent[$id];
+            }
+
+            $this->load->model('Statement_model');
+
+            $data['jurnal'] = $this->Statement_model->detail_fetch_transasctions(['id' => $dataContent['jurnal_id'], 'draft' => false]);
+            // echo json_encode($data);
+            // die();
+            $data['accounting_role'] = $this->SecurityModel->MultiplerolesStatus('Akuntansi');
+
+
+            // die();
+            $data['transaction'] = $this->CarWashModel->getAllTransaksi(['book' => $dataContent['id_carwash_close']]);
+            $data['main_view'] = 'aplikasi/carwash_rekap';
+            $data['dataContent'] = $dataContent;
+            // $data['privileges'] = $privileges;
+            $this->load->view('main/index2.php', $data);
+
+            // echo json_encode(['error' => false, 'data' => $data]);
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
+    }
+
+    public function close_process()
+    {
+        try {
+            $data = $this->input->post();
+            $data_carwash = $this->CarWashModel->getAllTransaksi(['close_book' => true]);
+
+            if (empty($data_carwash)) {
+                throw new UserException("Data untuk diposting tidak ditemukan", USER_NOT_FOUND_CODE);
+            }
+
+
+            $total = 0;
+            $data['id_carwash'] = [];
+            foreach ($data_carwash as $key => $dc) {
+                $total = $total + $dc['pembayaran_tagihan'];
+                $data['id_carwash'][] = $dc['id_carwash'];
+            }
+
+            $data['generalentry'] = array(
+                'date' => date('Y-m-d'),
+                'naration' =>  'Tutup buku Car Wash per tanggal ' . date('Y-m-d'),
+                'no_jurnal' => $this->General_model->gen_number(date('Y-m-d'), 'APP'),
+                // 'customer_id' => $data['customer_id'],
+                'generated_source' => 'Carwash App'
+            );
+
+            $data['sub_entry'][0] = array(
+                'accounthead' =>  5,
+                'type' => 0,
+                'amount' => $total,
+                'sub_keterangan' => "Pendapatan IMA CAR WASH Per Tanggal " . date('Y-m-d'),
+            );
+            // $
+            $ppn = $total * 0.0998;
+            // $total = $total * 0.0998;
+            $data['sub_entry'][1] = array(
+                'accounthead' =>  1579,
+                'type' => 1,
+                'amount' => $total - $ppn,
+                'sub_keterangan' => "Pendapatan IMA CAR WASH Per Tanggal " . date('Y-m-d'),
+            );
+            $data['sub_entry'][2] = array(
+                'accounthead' =>  183,
+                'type' => 1,
+                'amount' => $ppn,
+                'sub_keterangan' => "PPN Pendapatan IMA CAR WASH Per Tanggal " . date('Y-m-d'),
+            );
+
+            $id =  $this->CarWashModel->close_book($data);
+            // 5
+            //     $i++;
+            // }
+
+            // echo $total;
+            // die();
+            // $data['pembayaran_id_petugas'] = $this->session->userdata('user_id')['id'];
+
+            // $dataLog = [
+            //     'id_carwash' => $id,
+            //     'nama' => $this->session->userdata('user_id')['name'],
+            //     'keterangan' => "Pembayaran diterima oleh " . $this->session->userdata('user_id')['name']
+            // ];
+
+
+            // $this->CarWashModel->add_log($dataLog);
+
+            // $data = $this->CarWashModel->getAll(['id_carwash' => $id])[$id];
+            echo json_encode(['error' => false, 'data' => $data]);
+        } catch (Exception $e) {
+            ExceptionHandler::handle($e);
+        }
     }
 
     public function index()

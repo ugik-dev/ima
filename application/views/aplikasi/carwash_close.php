@@ -2,8 +2,8 @@
     <div class="card-body">
         <div class="col-md-12">
             <div class="pull pull-right">
-                <button type="button" class="btn btn-primary" id="add_new_data_btn" data-toggle="modal" data-target="#exampleModalLong">
-                    <i class="fa fa-plus-square" aria-hidden="true"></i> Buat Baru
+                <button type="button" class="btn btn-primary" id="posting_btn" data-toggle="modal" data-target="#exampleModalLong">
+                    <i class="fa fa-plus-square" aria-hidden="true"></i> Posting
                 </button>
                 <button onclick="printDiv('print-section')" class="btn btn-default btn-outline-primary   pull-right "><i class="fa fa-print  pull-left"></i> Cetak</button>
             </div>
@@ -23,9 +23,9 @@
                         <table class="table table-bordered table-hover table-checkable mt-10" id="FDataTable">
                             <thead>
                                 <tr>
-                                    <th>Tahun</th>
-                                    <th>Harga</th>
-                                    <th>Status</th>
+                                    <th>Tanggal</th>
+                                    <th>Petugas</th>
+                                    <th>Jumlah Transaksi</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -57,35 +57,21 @@
                         ?>
                     </div>
                     <div class="row">
-                        <div class="col-lg6">
+                        <!-- <div class="col-lg-6">
                             <label>Dari Tanggal</label>
-                            <input class="form-control" id="dari_tanggal">
+                            <input class="form-control" id="dari_tanggal" name="dari_tanggal">
+                        </div> -->
+                        <div class="col-lg-6">
+                            <label>Sampai Tanggal</label>
+                            <input class="form-control" id="sampai_tanggal" name="sampai_tanggal">
                         </div>
-                        <div class="col-lg6">
-                            <label>Dari Tanggal</label>
-                            <input class="form-control" id="sampai_tanggal">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <?php
-                        echo form_label('Harga:');
-                        $data = array('class' => 'form-control input-lg', 'type' => 'number', 'name' => 'price', 'id' => 'price', 'placeholder' => 'e.g 1200000', 'reqiured' => 'reqiured');
-                        echo form_input($data);
-                        ?>
-                    </div>
-                    <div class="form-group">
-                        <label>Status</label>
-                        <select class="form-control input-lg" name='active' id='active'>
-                            <option value="1">Active</option>
-                            <option value="2">Non Active</option>
-                        </select>
                     </div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
                     <button class="btn btn-success my-1 mr-sm-2" type="submit" id="add_btn" data-loading-text="Loading..."><strong>Add Data</strong></button>
-                    <button class="btn btn-success my-1 mr-sm-2" type="submit" id="save_edit_btn" data-loading-text="Loading..."><strong>Save Change</strong></button>
+                    <!-- <button class="btn btn-success my-1 mr-sm-2" type="submit" id="save_edit_btn" data-loading-text="Loading..."><strong>Save Change</strong></button> -->
                 </div>
             </form>
         </div>
@@ -96,7 +82,7 @@
     $('#submenu_id_101').addClass('menu-item-active')
     $(document).ready(function() {
         var dataBanks = [];
-        var add_new_data_btn = $('#add_new_data_btn');
+        var posting_btn = $('#posting_btn');
         var BankModal = {
             'self': $('#accounts_modal'),
             'info': $('#accounts_modal').find('.info'),
@@ -118,6 +104,15 @@
             reverseButtons: true
         };
 
+        var swalRekapConfigure = {
+            title: "Konfirmasi Posting",
+            text: "Yakin akan posting data saat ini?",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "#18a689",
+            confirmButtonText: "Ya, Posting!",
+            reverseButtons: true
+        };
         var swalSuccessConfigure = {
             title: "Simpan berhasil",
             icon: "success",
@@ -140,12 +135,12 @@
             //  BankModal.head_number.mask('0.00.000', {});
         }
         //   BankModal.self.mod   al('show');
-        add_new_data_btn.on('click', (e) => {
-            BankModal.form.trigger('reset');
-            BankModal.self.modal('show');
-            BankModal.addBtn.show();
-            BankModal.saveEditBtn.hide();
-        });
+        // posting_btn.on('click', (e) => {
+        //     BankModal.form.trigger('reset');
+        //     BankModal.self.modal('show');
+        //     BankModal.addBtn.show();
+        //     BankModal.saveEditBtn.hide();
+        // });
         var FDataTable = $('#FDataTable').DataTable({
             'columnDefs': [],
             deferRender: true,
@@ -154,14 +149,14 @@
             ]
         });
 
-        function getAllBaganAkun() {
+        function getAllRekap() {
             swal.fire({
                 title: 'Loading PriceList...',
                 allowOutsideClick: false
             });
             swal.showLoading();
             return $.ajax({
-                url: `<?php echo base_url('MasterCarwash/getAllPriceList?by_id=true') ?>`,
+                url: `<?php echo base_url('CarWash/getAllRekap') ?>`,
                 'type': 'GET',
                 data: {},
                 success: function(data) {
@@ -189,14 +184,16 @@
                 var editButton = `
                  <button type="button" class="edit btn btn-primary  btn-icon" data-id='${d['id_carwash_close']}' title="Edit"><i class='la la-pencil-alt'></i></button>
                  `;
+                var lihatButton = `
+                 <a class=" btn btn-primary  btn-icon" href='<?= base_url() ?>CarWash/lihat_rekap/${d['id_carwash_close']}' title="Edit"><i class='la la-eye'></i></a>
+                 `;
                 var deleteButton = `
                  <button  type="button" class="delete btn btn-warning btn-icon" data-id='${d['id_carwash_close']}' title="Delete"><i class='la la-trash'></i></button>
                  `;
                 //  var button = `    ${vcrud['hk_update'] == 1 ? editButton : ''}  ${vcrud['hk_delete'] == 1 ? deleteButton : ''}`;
-                var button = `    ${editButton }  ${deleteButton }`;
+                var button = `${lihatButton }`;
 
-
-                renderData.push([d['label'], d['price'], d['active'] == 1 ? 'active' : 'non active', button]);
+                renderData.push([d['date'], d['user_name'], formatRupiah2(d['total']), button]);
             });
             FDataTable.clear().rows.add(renderData).draw('full-hold');
         }
@@ -220,7 +217,7 @@
                     return;
                 }
                 $.ajax({
-                    url: "<?= base_url('MasterCarwash/actPriceList/del') ?>",
+                    url: "<?= base_url('MasterCarwash/actRekap/del') ?>",
                     'type': 'post',
                     data: {
                         'id_carwash_close': currentData
@@ -245,41 +242,33 @@
 
         })
 
-        BankModal.form.submit(function(event) {
-            event.preventDefault();
-            var isAdd = BankModal.addBtn.is(':visible');
-            var url = "<?= site_url('MasterCarwash/actPriceList/') ?>";
-            url += isAdd ? "add" : "edit";
-            var button = isAdd ? BankModal.addBtn : BankModal.saveEditBtn;
-
-            Swal.fire(swalSaveConfigure).then((result) => {
+        posting_btn.on('click', function() {
+            Swal.fire(swalRekapConfigure).then((result) => {
                 if (result.isConfirmed == false) {
                     return;
                 }
                 $.ajax({
-                    url: url,
+                    url: '<?= base_url() ?>CarWash/close_process',
                     'type': 'POST',
-                    data: new FormData(BankModal.form[0]),
-                    contentType: false,
-                    processData: false,
+                    data: {},
                     success: function(data) {
                         var json = JSON.parse(data);
                         if (json['error']) {
-                            swal.fire("Simpan Gagal", json['message'], "error");
+                            swal.fire("Posting Gagal", json['message'], "error");
                             return;
                         }
                         //  return;
+                        swal.fire("Posting Berhasil", 'data sudah di posting', "success").then((result) => {
+                            location.reload();
+                        });
                         var d = json['data']
-                        dataBanks[d['id_carwash_close']] = d;
-                        swal.fire(swalSuccessConfigure);
-                        renderBanks(dataBanks);
-                        BankModal.self.modal('hide');
+
                     },
                     error: function(e) {}
                 });
             });
         });
-        getAllBaganAkun()
+        getAllRekap()
     });
 </script>
 <!-- Bootstrap model  -->

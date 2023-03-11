@@ -33,9 +33,6 @@
                                         <th style="width: 5%; text-align:center!important">Waktu Perkiraan (Petugas)</th>
                                         <th style="width: 24%; text-align:left!important">Info Pemesanan</th>
                                         <th style="width: 24%; text-align:left!important">Info Pembayaran</th>
-                                        <!-- <th style="width: 7%; text-align:left!important">Plat</th> -->
-                                        <!-- <th style="width: 7%; text-align:left!important">Antrian</th> -->
-                                        <!-- <th style="width: 24%; text-align:left!important">Layanan</th> -->
                                         <th style="width: 7%; text-align:left!important">Petugas</th>
                                         <th style="width: 7%; text-align:left!important">Status</th>
                                         <th style="width: 7%; text-align:left!important">Pembayaran</th>
@@ -482,8 +479,8 @@
                                         <hr>
                                         <div class="clearfix">
                                             <div class="pull-left text-left"><b>Total</b></div>
-                                            <div class="pull-right">${number_format(d['s2_price']+d['s1_price'])}</div>
-                                        </div>
+                                            <div class="pull-right">${number_format(parseInt( d['s2_price'])+parseInt(d['s1_price']))}</div>
+                                      </div>
                                         <div class="clearfix">
                                             <div class="pull-left text-left"><b>Diterima</b></div>
                                             <div class="pull-right">${number_format(d['pembayaran_dibayarkan'])}</div>

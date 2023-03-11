@@ -40,12 +40,17 @@ class CarWashModel extends CI_Model
         // $this->db->Order_by('id_carwash', 'ASC');
         if (!empty($filter['id_carwash'])) $this->db->where('eks.id_carwash', $filter['id_carwash']);
         if (!empty($filter['notelp'])) $this->db->where('eks.notelp', $filter['notelp']);
+        if (!empty($filter['book'])) $this->db->where('eks.book', $filter['book']);
         if (!empty($filter['date1'])) $this->db->where('eks.req_tanggal >=' .  $filter['date1']);
         // if (!empty($filter['id_user'])) $this->db->where('eks.id_user', $filter['id_user']);
         // if (!empty($filter['req_time'])) $this->db->where('DATE(eks.req_time)', $filter['req_time']);
         if (!empty($filter['onprogress'])) {
             $this->db->where('eks.status != 4');
         }
+        if (!empty($filter['close_book'])) {
+            $this->db->where('eks.status_pembayaran = 5 AND  book is null');
+        }
+
         // $this->db->limit(2);
         $this->db->order_by('id_carwash', 'DESC');
         $res = $this->db->get();
@@ -62,6 +67,7 @@ class CarWashModel extends CI_Model
         if (!empty($filter['id_ref'])) $this->db->where('id_ref', $filter['id_ref']);
         return DataStructure::keyValue($res->result_array(), 'id_ref');
     }
+
     public function getAllPriceList2($filter = [])
     {
         $this->db->from("ref_cw_service2 as eks");
@@ -71,12 +77,15 @@ class CarWashModel extends CI_Model
         return DataStructure::keyValue($res->result_array(), 'id_ref');
     }
 
-    public function getAllCarwashClose($filter = [])
+    public function getAllRekap($filter = [])
     {
+        $this->db->select('eks.*, u.user_name, gen.*');
         $this->db->from("carwash_close as eks");
+        $this->db->join("mp_users as u", 'u.id = eks.user_id');
+        $this->db->join("mp_generalentry as gen", 'gen.id = eks.jurnal_id');
+        if (!empty($filter['id_carwash_close'])) $this->db->where('id_carwash_close', $filter['id_carwash_close']);
         $res = $this->db->get();
-        if (!empty($filter['id_carwash_close '])) $this->db->where('id_carwash_close ', $filter['id_carwash_close ']);
-        return DataStructure::keyValue($res->result_array(), 'id_carwash_close ');
+        return DataStructure::keyValue($res->result_array(), 'id_carwash_close');
     }
 
     public function getAllPegawai($filter = [])
@@ -256,5 +265,57 @@ class CarWashModel extends CI_Model
         $this->db->delete('carwash');
 
         ExceptionHandler::handleDBError($this->db->error(), "Hapus CarWash gagal", "carwash");
+    }
+
+    function close_book($data)
+    {
+        $this->db->trans_start();
+        $trans_data = array(
+            'tanggal' => date('Y-m-d'),
+            'user_id' => $this->session->userdata('user_id')['id'],
+            'total' => $data['sub_entry'][0]['amount'],
+            'pendapatan' => $data['sub_entry'][1]['amount'],
+            'ppn' => $data['sub_entry'][2]['amount'],
+        );
+
+        $this->db->insert('carwash_close', $trans_data);
+        $book_id = $this->db->insert_id();
+
+        $data['generalentry']['url'] = 'CarWash/rekap/' . $book_id;
+        $this->db->insert('mp_generalentry', $data['generalentry']);
+
+        $gen_id = $this->db->insert_id();
+
+        foreach ($data['sub_entry'] as $sub) {
+            $sub['parent_id'] = $gen_id;
+            $this->db->insert('mp_sub_entry', $sub);
+        }
+
+        $this->db->set('jurnal_id', $gen_id);
+        $this->db->where('id_carwash_close', $book_id);
+        $this->db->update('carwash_close');
+
+        $this->db->set('book', $book_id);
+        $this->db->where_in('id_carwash', $data['id_carwash']);
+        $this->db->update('carwash');
+
+        $this->db->set("acc_0", $this->session->userdata('user_id')['name']);
+        $this->db->set("date_acc_0", date('Y-m-d'));
+        $this->db->set("id_transaction", $gen_id);
+        $this->db->insert('mp_approv');
+
+        // $this->record_activity(array('jenis' => '0', 'color' => 'primary', 'url_activity' => 'pembayaran/show/' . $book_id, 'sub_id' => $book_id, 'desk' => 'Entry Pembayaran'));
+
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            $data = NULL;
+            return NULL;
+        } else {
+            $this->db->trans_commit();
+        }
+
+
+        return array('book_id' => $book_id, 'parent2_id' => $gen_id);
     }
 }
