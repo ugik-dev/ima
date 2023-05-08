@@ -233,7 +233,19 @@
                                             <div class="pull-left text-left"><b>Kembalian</b></div>
                                             <div class="pull-right">${number_format(d['pembayaran_kembalian'])}</div>
                                         </div>
+                                        
 
+                                        `;
+                infomargin = `
+                                      
+                                        <div class="clearfix">
+                                            <div class="pull-left text-left"><b>Margin</b></div>
+                                            <div class="pull-right">${number_format(d['margin'])}</div>
+                                        </div>
+                                        <div class="clearfix">
+                                            <div class="pull-left text-left"><b>Fee</b></div>
+                                            <div class="pull-right">${number_format(d['fee'])}</div>
+                                        </div>
                                         `;
                 filePembayaran = '';
                 if (d['pembayaran_file'] != '') {
@@ -251,6 +263,7 @@
                     d['est_time'],
                     info,
                     infopembayaran,
+                    infomargin,
                     // d['nomor_antrian'],
                     d['nama_petugas'],
                     formatRupiah2(d['pembayaran_tagihan']), filePembayaran

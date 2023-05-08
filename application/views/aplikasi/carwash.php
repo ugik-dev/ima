@@ -125,13 +125,21 @@
                             <option value="2">Cashless</option>
                         </select>
                     </div>
+
+                    <div class="form-group">
+                        <label for="status">Petugas Cuci</label>
+                        <select type="text" class="form-control" id="id_petugas_cuci" name="id_petugas_cuci" required="required">
+                            <option value="">-</option>
+                        </select>
+                    </div>
+
                     <div class="form-group" id="est_time_layout">
                         <label for="est_time">Jumlah Tagihan : </label>
                         <input readonly type="text" name="pembayaran_tagihan" id="pembayaran_tagihan" class="mask form-control" />
                     </div>
                     <div class="form-group" id="est_time_layout">
                         <label for="est_time">Jumlah di Bayarkan : <span class="text-danger" id="notif_pembayaran"></span></label>
-                        <input type="text" name="pembayaran_dibayarkan" onkeyup="count()" id="pembayaran_dibayarkan" class="mask form-control" />
+                        <input type="text" name="pembayaran_dibayarkan" onkeyup="count()" id="pembayaran_dibayarkan" class="mask form-control" required="required" />
                     </div>
                     <div class="form-group" id="est_time_layout">
                         <label for="est_time">Kembalian : </label>
@@ -204,6 +212,7 @@
             'pembayaran_metode': $('#pembayaran_modal').find('#pembayaran_metode'),
             'pembayaran_tagihan': $('#pembayaran_modal').find('#pembayaran_tagihan'),
             'pembayaran_dibayarkan': $('#pembayaran_modal').find('#pembayaran_dibayarkan'),
+            'id_petugas_cuci': $('#pembayaran_modal').find('#id_petugas_cuci'),
             'pembayaran_kembalian': $('#pembayaran_modal').find('#pembayaran_kembalian'),
             'notif_pembayaran': $('#pembayaran_modal').find('#notif_pembayaran'),
 
@@ -274,6 +283,10 @@
 
             Object.values(data).forEach((d) => {
                 CarwashModal.id_petugas_jemput.append($('<option>', {
+                    value: d['id_cw_petugas'],
+                    text: d['nama_petugas']
+                }))
+                PembayaranModal.id_petugas_cuci.append($('<option>', {
                     value: d['id_cw_petugas'],
                     text: d['nama_petugas']
                 }))
@@ -561,13 +574,16 @@
         });
 
         FDataTable.on('click', '.konfirmasi_bayar', function() {
-            PembayaranModal.pembayaran_dibayarkan.trigger('onkeyup');
             PembayaranModal.self.modal('show');
             PembayaranModal.saveEditBtn.show();
             var currentData = dataCarwash[$(this).data('id')];
             PembayaranModal.id_carwash.val(currentData['id_carwash']);
-            console.log(currentData['s1_price'] + currentData['s2_price'])
+            PembayaranModal.id_petugas_cuci.val(currentData['id_petugas_cuci']);
             PembayaranModal.pembayaran_tagihan.val(number_format(Number(currentData['s1_price']) + Number(currentData['s2_price'])));
+            PembayaranModal.pembayaran_dibayarkan.val(number_format(Number(currentData['pembayaran_dibayarkan'])));
+            PembayaranModal.pembayaran_dibayarkan.trigger('onkeyup');
+
+            console.log(currentData['s1_price'] + currentData['s2_price'])
         });
 
         FDataTable.on('click', '.delete', function() {

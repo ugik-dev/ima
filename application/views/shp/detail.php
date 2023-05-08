@@ -415,19 +415,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <tr>
+                                <tr>
                                     <td><b>Pembayaran Mitra</b></td>
-                                    <td><?=$dataContent['agentname']?></td>
+                                    <td><?= $dataContent['agentname'] ?></td>
                                     <td class="text-right"></td>
                                     <td class="text-right"></td>
                                     <td><?= '<a target="_blank" href=' . base_url('pembayaran/show/') . $dataContent['id_pembayaran'] . '>Lihat<a>' ?></td>
-                                     </tr>   <?php
-                                $total_tr = 0;
-                                $total_pph = 0;
-                                foreach ($invoice as $r) {
-                                   ?>
+                                </tr> <?php
+                                        $total_tr = 0;
+                                        $total_pph = 0;
+                                        foreach ($invoice as $r) {
+                                        ?>
                                     <tr>
-                                        <td><b><?=$r['jenis_invoice'] == '6'? 'Invoice Angsuran':'Invoice Definitif'?></b><br><?= $r['date'] ?></td>
+                                        <td><b><?= $r['jenis_invoice'] == '6' ? 'Invoice Angsuran' : 'Invoice Definitif' ?></b><br><?= $r['date'] ?></td>
                                         <td><?= $r['acc_0'] ?></td>
                                         <td class="text-right"><?= number_format($r['sub_total'], 0, ',', '.') ?></td>
                                         <td class="text-right"><?= number_format($r['total_final'], 0, ',', '.') ?></td>
@@ -516,6 +516,7 @@
                                     <label>Dibuat</label>
                                     <select name="acc_3" id="acc_3" class="form-control">
                                         <option value="0"> ----- </option>
+                                        <option value="18"> EVA MAHDALENA </option>
                                         <option value="9"> A SISWANTO </option>
                                         <option value="12"> DEFRYANTO </option>
                                         <option value="11"> NURHASANAH </option>

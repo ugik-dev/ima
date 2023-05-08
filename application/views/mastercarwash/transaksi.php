@@ -33,7 +33,10 @@
                                         <th style="width: 5%; text-align:center!important">Waktu Perkiraan (Petugas)</th>
                                         <th style="width: 24%; text-align:left!important">Info Pemesanan</th>
                                         <th style="width: 24%; text-align:left!important">Info Pembayaran</th>
+                                        <th style="width: 7%; text-align:left!important">Margin</th>
+                                        <th style="width: 7%; text-align:left!important">Fee</th>
                                         <th style="width: 7%; text-align:left!important">Petugas</th>
+                                        <th style="width: 7%; text-align:left!important">Admin</th>
                                         <th style="width: 7%; text-align:left!important">Status</th>
                                         <th style="width: 7%; text-align:left!important">Pembayaran</th>
                                         <th style="width: 5%; text-align:center!important">Action</th>
@@ -491,6 +494,17 @@
                                         </div>
 
                                         `;
+
+                infomargin = `
+                                      <div class="clearfix">
+                                          <div class="pull-left text-left"><b>Margin</b></div>
+                                          <div class="pull-right">${number_format(d['margin'])}</div>
+                                      </div>
+                                      <div class="clearfix">
+                                          <div class="pull-left text-left"><b>Fee</b></div>
+                                          <div class="pull-right">${number_format(d['fee'])}</div>
+                                      </div>
+                                      `;
                 filePembayaran = '';
                 if (d['pembayaran_file'] != '') {
                     filePembayaran = `
@@ -506,7 +520,10 @@
                     d['est_time'],
                     info,
                     infopembayaran,
+                    number_format(d['margin']),
+                    number_format(d['fee']),
                     // d['nomor_antrian'],
+                    d['nama_petugas_cuci'],
                     d['nama_petugas'],
                     statusAntrian(d['status']), statusPembayaran(d['status_pembayaran']) + filePembayaran,
                     button

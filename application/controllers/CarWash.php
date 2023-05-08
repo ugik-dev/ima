@@ -70,8 +70,9 @@ class CarWash extends CI_Controller
         $data['pembayaran_dibayarkan'] =   preg_replace('/[^0-9\-]/', '', $data['pembayaran_dibayarkan']);
         $data['pembayaran_tagihan'] =   preg_replace('/[^0-9\-]/', '', $data['pembayaran_tagihan']);
         $data['pembayaran_kembalian'] =   preg_replace('/[^0-9\-]/', '', $data['pembayaran_kembalian']);
+        $data['margin'] = 0.65 * $data['pembayaran_tagihan'];
+        $data['fee'] = 0.35 * $data['pembayaran_tagihan'];
         $id =  $this->CarWashModel->edit($data);
-
         $dataLog = [
             'id_carwash' => $id,
             'nama' => $this->session->userdata('user_id')['name'],
@@ -131,11 +132,22 @@ class CarWash extends CI_Controller
 
 
             $total = 0;
+            $margin = 0;
+            $pegawai = [];
             $data['id_carwash'] = [];
             foreach ($data_carwash as $key => $dc) {
-                $total = $total + $dc['pembayaran_tagihan'];
+                $total = $total + $dc['margin'] + $dc['fee'];
+                $margin = $margin + $dc['margin'];
+                if (empty($pegawai[$dc['id_petugas_cuci']])) {
+                    $pegawai[$dc['id_petugas_cuci']]['nama'] = $dc['nama_petugas_cuti'];
+                    $pegawai[$dc['id_petugas_cuci']]['fee'] = $dc['fee'];
+                } else {
+                    $pegawai[$dc['id_petugas_cuci']]['fee'] = $pegawai[$dc['id_petugas_cuci']]['fee'] + $dc['fee'];
+                }
                 $data['id_carwash'][] = $dc['id_carwash'];
             }
+            // echo json_encode([$pegawai, $margin, $total]);
+            // die();
 
             $data['generalentry'] = array(
                 'date' => date('Y-m-d'),
@@ -167,25 +179,7 @@ class CarWash extends CI_Controller
                 'sub_keterangan' => "PPN Pendapatan IMA CAR WASH Per Tanggal " . date('Y-m-d'),
             );
 
-            $id =  $this->CarWashModel->close_book($data);
-            // 5
-            //     $i++;
-            // }
-
-            // echo $total;
-            // die();
-            // $data['pembayaran_id_petugas'] = $this->session->userdata('user_id')['id'];
-
-            // $dataLog = [
-            //     'id_carwash' => $id,
-            //     'nama' => $this->session->userdata('user_id')['name'],
-            //     'keterangan' => "Pembayaran diterima oleh " . $this->session->userdata('user_id')['name']
-            // ];
-
-
-            // $this->CarWashModel->add_log($dataLog);
-
-            // $data = $this->CarWashModel->getAll(['id_carwash' => $id])[$id];
+            // $id =  $this->CarWashModel->close_book($data);
             echo json_encode(['error' => false, 'data' => $data]);
         } catch (Exception $e) {
             ExceptionHandler::handle($e);

@@ -31,12 +31,13 @@ class CarWashModel extends CI_Model
     public function getAllTransaksi($filter = [])
     {
         $this->db->select('eks.*, s1.label s1_label, s1.price s1_price,s2.label s2_label, s2.price s2_price');
-        $this->db->select('au.user_name as nama_petugas, DATE_FORMAT(est_time, "%H:%i") est_time');
+        $this->db->select('au.user_name as nama_petugas,ac.nama_petugas as nama_petugas_cuti, DATE_FORMAT(est_time, "%H:%i") est_time');
 
         $this->db->from("carwash as eks");
         $this->db->join("ref_cw_service1 as s1", "s1.id_ref = eks.service_1");
         $this->db->join("ref_cw_service2 as s2", "s2.id_ref = eks.service_2");
         $this->db->join("mp_users as au", "au.id = eks.id_petugas", 'LEFT');
+        $this->db->join("carwash_petugas as ac", "ac.id_cw_petugas = eks.id_petugas_cuci", 'LEFT');
         // $this->db->Order_by('id_carwash', 'ASC');
         if (!empty($filter['id_carwash'])) $this->db->where('eks.id_carwash', $filter['id_carwash']);
         if (!empty($filter['notelp'])) $this->db->where('eks.notelp', $filter['notelp']);
@@ -111,13 +112,15 @@ class CarWashModel extends CI_Model
 
         $this->db->select('cu.nama, cu.email, cu.no_telp, cu.alamat');
         $this->db->select('au.user_name as nama_petugas');
+        $this->db->select('ac.nama_petugas as nama_petugas_cuci');
 
         $this->db->from("carwash as eks");
         $this->db->join("ref_cw_service1 as s1", "s1.id_ref = eks.service_1");
         $this->db->join("ref_cw_service2 as s2", "s2.id_ref = eks.service_2");
         // $this->db->join("ref_jenis_kendaraan as jk", "jk.id_ref_jk = eks.jenis_kendaraan");
         $this->db->join("mp_user_customer as cu", "cu.id_user = eks.id_user", 'LEFT');
-        $this->db->join("mp_users as au", "au.id = eks.id_petugas", 'LEFT');
+        $this->db->join("mp_users as au", "au.id = eks.pembayaran_id_petugas", 'LEFT');
+        $this->db->join("carwash_petugas as ac", "ac.id_cw_petugas = eks.id_petugas_cuci", 'LEFT');
         $this->db->Order_by('id_carwash', 'ASC');
         if (!empty($filter['id_carwash'])) $this->db->where('eks.id_carwash', $filter['id_carwash']);
         if (!empty($filter['status'])) {
@@ -179,7 +182,7 @@ class CarWashModel extends CI_Model
         $this->db->where('id_carwash', $data['id_carwash']);
         $this->db->update('carwash', DataStructure::slice($data, [
             'id_user',
-            'req_tanggal', 'est_time', 'reg_time', 'plat', 'jenis_kendaraan', 'notelp',
+            'req_tanggal', 'est_time', 'reg_time', 'plat', 'jenis_kendaraan', 'notelp', 'id_petugas_cuci', 'margin', 'fee',
             'status', 'nomor_antrian', 'id_petugas', 'id_petugas_jemput', 'plat', 'nama_pemesan', 'nama_driver', 'service_1', 'service_2',
             'pembayaran_metode', 'pembayaran_tagihan', 'pembayaran_dibayarkan', 'pembayaran_kembalian', 'status_pembayaran', 'pembayaran_id_petugas'
         ], TRUE));
