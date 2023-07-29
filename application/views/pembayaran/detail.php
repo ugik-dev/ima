@@ -576,6 +576,7 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-lg-3">
                             <div class="form-group" id='label_kendaraan'>
                                 <label>Dibuat</label>
