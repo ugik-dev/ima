@@ -130,6 +130,9 @@ class CarWash extends CI_Controller
                 throw new UserException("Data untuk diposting tidak ditemukan", USER_NOT_FOUND_CODE);
             }
 
+            // echo json_encode($data_carwash);
+            // die();
+
 
             $total = 0;
             $margin = 0;
@@ -151,35 +154,46 @@ class CarWash extends CI_Controller
 
             $data['generalentry'] = array(
                 'date' => date('Y-m-d'),
-                'naration' =>  'Tutup buku Car Wash per tanggal ' . date('Y-m-d'),
+                'naration' =>  'Tutup buku Car Wash per ' . date('Y-m-d'),
                 'no_jurnal' => $this->General_model->gen_number(date('Y-m-d'), 'APP'),
                 // 'customer_id' => $data['customer_id'],
                 'generated_source' => 'Carwash App'
             );
 
             $data['sub_entry'][0] = array(
-                'accounthead' =>  5,
+                'accounthead' =>  8,
                 'type' => 0,
-                'amount' => $total,
-                'sub_keterangan' => "Pendapatan IMA CAR WASH Per Tanggal " . date('Y-m-d'),
+                'amount' => $margin,
+                'sub_keterangan' => "Pendapatan IMA CAR WASH Per " . date('d My'),
             );
+
+            $i = 1;
+            foreach ($pegawai as $p) {
+                $data['sub_entry'][$i] = array(
+                    'accounthead' =>  1585,
+                    'type' => 0,
+                    'amount' => $p['fee'],
+                    'sub_keterangan' => "By Gaji TK Lepas " . date('d My') . ' ' . $p['nama'],
+                );
+                $i++;
+            }
             // $
-            $ppn = $total * 0.0998;
+            $ppn = $total * 0.10;
             // $total = $total * 0.0998;
-            $data['sub_entry'][1] = array(
+            $data['sub_entry'][$i] = array(
                 'accounthead' =>  1579,
                 'type' => 1,
                 'amount' => $total - $ppn,
-                'sub_keterangan' => "Pendapatan IMA CAR WASH Per Tanggal " . date('Y-m-d'),
+                'sub_keterangan' => "Pendapatan IMA CAR WASH Per " . date('d My'),
             );
-            $data['sub_entry'][2] = array(
+            $data['sub_entry'][$i + 1] = array(
                 'accounthead' =>  183,
                 'type' => 1,
                 'amount' => $ppn,
-                'sub_keterangan' => "PPN Pendapatan IMA CAR WASH Per Tanggal " . date('Y-m-d'),
+                'sub_keterangan' => "PPN Pendapatan IMA CAR WASH Per " . date('d My'),
             );
 
-            // $id =  $this->CarWashModel->close_book($data);
+            $id =  $this->CarWashModel->close_book($data);
             echo json_encode(['error' => false, 'data' => $data]);
         } catch (Exception $e) {
             ExceptionHandler::handle($e);

@@ -201,6 +201,7 @@
                                     <select name="acc_1" id="acc_1" class="form-control select2 input-lg">
                                         <option value="0"> ----- </option>
                                         <option value="7"> SETIAWAN R </option>
+                                        <option value="19"> Achmad Haspani </option>
                                         <option value="14"> RONY MALINO </option>
                                         <option value="15"> DUDY </option>
                                     </select>
@@ -222,6 +223,7 @@
                                     <select name="acc_3" id="acc_3" class="form-control select2 input-lg">
                                         <option value="0"> ----- </option>
                                         <option value="18"> EVA MAHDALENA </option>
+                                        <option value="20"> Ahmad Tarmizi </option>
                                         <option value="9"> A SISWANTO </option>
                                         <option value="12"> DEFRYANTO </option>
                                         <option value="11"> NURHASANAH </option>

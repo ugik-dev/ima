@@ -131,6 +131,65 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-lg-12">
+                            <hr>
+                            <strong>Pembayaran</strong>
+                            <div class="row">
+                                <div class="col-md-4">
+
+                                    <div class="form-group">
+                                        <label for="status">Metode Pembayaran</label>
+                                        <select type="text" class="form-control" id="pembayaran_metode" name="pembayaran_metode" required="required">
+                                            <option value="1">Cash</option>
+                                            <option value="2">Transfer</option>
+                                            <option value="2">Cashless</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+
+                                    <div class="form-group">
+                                        <label for="status">Petugas Cuci</label>
+                                        <select type="text" class="form-control" id="id_petugas_cuci" name="id_petugas_cuci" required="required">
+                                            <option value="">-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group" id="est_time_layout">
+                                        <label for="est_time">Jumlah Tagihan : </label>
+                                        <input readonly type="text" name="pembayaran_tagihan" id="pembayaran_tagihan" class="mask form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+
+                                    <div class="form-group" id="est_time_layout">
+                                        <label for="est_time">Jumlah di Bayarkan : <span class="text-danger" id="notif_pembayaran"></span></label>
+                                        <input type="text" name="pembayaran_dibayarkan" onkeyup="count()" id="pembayaran_dibayarkan" class="mask form-control" required="required" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group" id="est_time_layout">
+                                        <label for="est_time">Kembalian : </label>
+                                        <input readonly type="text" name="pembayaran_kembalian" id="pembayaran_kembalian" class="mask form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+
+                                    <div class="form-group" id="">
+                                        <label for="">Margin:</label>
+                                        <input type="text" name="margin" id="margin" class="mask form-control" required="required" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group" id="">
+                                        <label for="">fee : </label>
+                                        <input readonly type="text" name="fee" id="fee" class="mask form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="col-md-6" id="id_petugas_jemput_layout">
                             <div class="form-group">
                                 <label for="status">Petugas Penjemputan</label>
@@ -139,6 +198,7 @@
                                 </select>
                             </div>
                         </div>
+                        <hr>
                     </div>
                     <button class="btn btn-success my-1 mr-sm-2" type="submit" id="save_edit_btn" data-loading-text="Loading..."><strong>Simpan Perubahan</strong></button>
                 </form>
@@ -242,7 +302,15 @@
             'nama_pemesan': $('#car_wash_modal').find('#nama_pemesan'),
             'nama_driver': $('#car_wash_modal').find('#nama_driver'),
             'notelp': $('#car_wash_modal').find('#notelp'),
-
+            // pay
+            'id_petugas_cuci': $('#car_wash_modal').find('#id_petugas_cuci'),
+            'pembayaran_metode': $('#car_wash_modal').find('#pembayaran_metode'),
+            'pembayaran_tagihan': $('#car_wash_modal').find('#pembayaran_tagihan'),
+            'pembayaran_dibayarkan': $('#car_wash_modal').find('#pembayaran_dibayarkan'),
+            'pembayaran_kembalian': $('#car_wash_modal').find('#pembayaran_kembalian'),
+            'margin': $('#car_wash_modal').find('#margin'),
+            'fee': $('#car_wash_modal').find('#fee'),
+            // endpay
             'est_time': $('#car_wash_modal').find('#est_time'),
             'est_time_layout': $('#car_wash_modal').find('#est_time_layout'),
         }
@@ -356,6 +424,7 @@
             });
         }
 
+
         function getAllService2() {
             swal.fire({
                 title: 'Loading PriceList...',
@@ -404,7 +473,14 @@
                     value: d['id_cw_petugas'],
                     text: d['nama_petugas']
                 }))
+
+                CarwashModal.id_petugas_cuci.append($('<option>', {
+                    value: d['id_cw_petugas'],
+                    text: d['nama_petugas']
+                }))
             });
+
+
         }
 
         function renderTransaksi(data) {
@@ -696,7 +772,14 @@
             CarwashModal.service_1.val(currentData['service_1']);
             CarwashModal.service_2.val(currentData['service_2']);
             CarwashModal.notelp.val(currentData['notelp']);
+            CarwashModal.id_petugas_cuci.val(currentData['id_petugas_cuci']);
             CarwashModal.plat.val(currentData['plat']);
+            CarwashModal.pembayaran_metode.val(currentData['pembayaran_metode']);
+            CarwashModal.pembayaran_tagihan.val(currentData['pembayaran_tagihan']);
+            CarwashModal.pembayaran_dibayarkan.val(currentData['pembayaran_dibayarkan']);
+            CarwashModal.pembayaran_kembalian.val(currentData['pembayaran_kembalian']);
+            CarwashModal.margin.val(currentData['margin']);
+            CarwashModal.fee.val(currentData['fee']);
             if (currentData['service_2'] == 2) {
                 CarwashModal.id_petugas_jemput_layout.prop('hidden', false);
                 CarwashModal.id_petugas_jemput.prop('disabled', false);

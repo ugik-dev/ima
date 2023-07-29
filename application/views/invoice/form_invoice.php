@@ -17,7 +17,7 @@
                                     <div class="col-lg-6">
                                         <div class="form-group">
                                             <input type="hidden" id="id_transaction" name="id">
-                                            <input type="" id="id_transaction" name="id_shp" value="<?=!empty($data_return['id_shp'])? $data_return['id_shp']: ''?>">
+                                            <input type="" id="id_transaction" name="id_shp" value="<?= !empty($data_return['id_shp']) ? $data_return['id_shp'] : '' ?>">
                                             <?php echo form_label('Patner'); ?>
                                             <select name="customer_id" id="customer_id" class="form-control select2 input-lg">
                                                 <option value="0"> ------- </option>
@@ -204,6 +204,7 @@
                                             <select name="acc_1" id="acc_1" required class="form-control select2 input-lg">
                                                 <option value="0"> ----- </option>
                                                 <option value="7"> SETIAWAN R </option>
+                                                <option value="19"> Achmad Haspani </option>
                                                 <option value="14"> RONY MALINO </option>
                                                 <option value="15"> DUDY </option>
                                                 <option value="18"> EVA MAHDALENA </option>
@@ -212,7 +213,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
-                                        <div class="form-group"  id='label_kendaraan'>
+                                        <div class="form-group" id='label_kendaraan'>
                                             <label>Diverifikasi</label>
                                             <select name="acc_2" required id="acc_2" class="form-control select2 input-lg">
                                                 <option value="0"> ----- </option>
@@ -222,11 +223,12 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-3">
-                                        <div class="form-group"  id='label_kendaraan'>
+                                        <div class="form-group" id='label_kendaraan'>
                                             <label>Dibuat</label>
                                             <select name="acc_3" required id="acc_3" class="form-control select2 input-lg">
                                                 <option value="0"> ----- </option>
                                                 <option value="18"> EVA MAHDALENA </option>
+                                                <option value="20"> Ahmad Tarmizi </option>
                                                 <option value="9"> A SISWANTO </option>
                                                 <option value="12"> DEFRYANTO </option>
                                                 <option value="11"> NURHASANAH </option>
@@ -569,15 +571,15 @@
             date_item[<?= $i ?>].value = '<?= $data_return['date_item'][$i] ?>';
             keterangan_item[<?= $i ?>].value = '<?= $data_return['keterangan_item'][$i] ?>';
             satuan[<?= $i ?>].value = '<?= $data_return['satuan'][$i] ?>';
-            fil_1[<?= $i ?>].value = '<?= !empty($data_return['fil_1'][$i] )? $data_return['fil_1'][$i] : ''?>';
-            fil_2[<?= $i ?>].value = '<?= !empty($data_return['fil_2'][$i]) ? $data_return['fil_2'][$i] : ''?>';
-            fil_3[<?= $i ?>].value = '<?= !empty($data_return['fil_3'][$i] ) ? $data_return['fil_3'][$i] : ''?>';
-            fil_4[<?= $i ?>].value = '<?= !empty($data_return['fil_4'][$i] ) ? $data_return['fil_4'][$i] : ''?>';
-            fil_5[<?= $i ?>].value = '<?= !empty($data_return['fil_5'][$i]) ? $data_return['fil_5'][$i] : ''?>';
-            fil_6[<?= $i ?>].value = '<?= !empty($data_return['fil_6'][$i] ) ? $data_return['fil_6'][$i] : ''?>';
+            fil_1[<?= $i ?>].value = '<?= !empty($data_return['fil_1'][$i]) ? $data_return['fil_1'][$i] : '' ?>';
+            fil_2[<?= $i ?>].value = '<?= !empty($data_return['fil_2'][$i]) ? $data_return['fil_2'][$i] : '' ?>';
+            fil_3[<?= $i ?>].value = '<?= !empty($data_return['fil_3'][$i]) ? $data_return['fil_3'][$i] : '' ?>';
+            fil_4[<?= $i ?>].value = '<?= !empty($data_return['fil_4'][$i]) ? $data_return['fil_4'][$i] : '' ?>';
+            fil_5[<?= $i ?>].value = '<?= !empty($data_return['fil_5'][$i]) ? $data_return['fil_5'][$i] : '' ?>';
+            fil_6[<?= $i ?>].value = '<?= !empty($data_return['fil_6'][$i]) ? $data_return['fil_6'][$i] : '' ?>';
             id_item[<?= $i ?>].value = '<?= !empty($data_return['id_item'][$i]) ? $data_return['id_item'][$i] : '' ?>';
-  
-  <?php
+
+    <?php
         }
     }  ?>
     jenis_invoice.trigger('change')
