@@ -517,7 +517,7 @@
                                     <label>Dibuat</label>
                                     <select name="acc_3" id="acc_3" class="form-control">
                                         <option value="0"> ----- </option>
-                                        <option value="18"> EVA MAHDALENA </option>
+                                        <option value="21"> AHMAD SYAHFRIADI </option>
                                         <option value="20"> Ahmad Tarmizi </option>
                                         <option value="9"> A SISWANTO </option>
                                         <option value="12"> DEFRYANTO </option>

@@ -207,7 +207,7 @@
                                                 <option value="19"> Achmad Haspani </option>
                                                 <option value="14"> RONY MALINO </option>
                                                 <option value="15"> DUDY </option>
-                                                <option value="18"> EVA MAHDALENA </option>
+                                                <option value="21"> AHMAD SYAHFRIADI </option>
                                                 <option value="9"> A SISWANTO </option>
                                             </select>
                                         </div>
@@ -227,7 +227,7 @@
                                             <label>Dibuat</label>
                                             <select name="acc_3" required id="acc_3" class="form-control select2 input-lg">
                                                 <option value="0"> ----- </option>
-                                                <option value="18"> EVA MAHDALENA </option>
+                                                <option value="21"> AHMAD SYAHFRIADI </option>
                                                 <option value="20"> Ahmad Tarmizi </option>
                                                 <option value="9"> A SISWANTO </option>
                                                 <option value="12"> DEFRYANTO </option>

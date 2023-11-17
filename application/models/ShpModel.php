@@ -27,7 +27,7 @@ class ShpModel extends CI_Model
             [
                 [
                     'id_shp', 'id_pembayaran', 'id_jurnal', 'status_shp', 'id_mitra', 'date_penerimaan', 'date_analisis', 'metode_pengujian', 'sub_total', 'tx_sebelumnya', 'percent_pph_21', 'am_pph_21', 'percent_oh', 'am_oh', 'agentname', 'agent_title',
-                    'percent_profit', 'am_profit', 'total_final', 'lokasi', 'zona', 'id_zona','sp_shp', 'wilayah', 'nama_wilayah', 'nama_zona', 'customer_name', 'ktp', 'cus_address', 'npwp'
+                    'percent_profit', 'am_profit', 'total_final', 'lokasi', 'zona', 'id_zona', 'sp_shp', 'wilayah', 'nama_wilayah', 'nama_zona', 'customer_name', 'ktp', 'cus_address', 'npwp'
                 ],
                 ['id_shp_child', 'kode_timah', 'ket', 'kadar', 'berat', 'terak', 'harga', 'amount']
             ],
